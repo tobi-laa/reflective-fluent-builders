@@ -15,4 +15,18 @@ public interface CodeFragment {
      * @return The Java source code for this code fragment.
      */
     String toString();
+
+    /**
+     * <p>
+     *     Returns indentation, i.e. a certain number of spaces according to {@code depth}.
+     * </p>
+     * @param depth The depth of indentation. Must not be negative.
+     * @return Indentation consisting of {@code depth} times 4 spaces.
+     */
+    default String indent(final int depth) {
+        if (depth < 0) {
+            throw new IllegalArgumentException("Depth must not be negative.");
+        }
+        return "    ".repeat(depth);
+    }
 }
