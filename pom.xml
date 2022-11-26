@@ -48,7 +48,7 @@ under the License.
         <lombok.version>1.18.24</lombok.version>
         <maven-plugin-api.version>3.8.6</maven-plugin-api.version>
         <!-- versions of testing dependencies -->
-        <junit-jupiter.version>5.8.2</junit-jupiter.version>
+        <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <dagger.version>2.44.2</dagger.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
