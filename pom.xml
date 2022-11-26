@@ -46,7 +46,7 @@ under the License.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- versions of external dependencies -->
         <lombok.version>1.18.24</lombok.version>
-        <maven-plugin-api.version>3.8.5</maven-plugin-api.version>
+        <maven-plugin-api.version>3.8.6</maven-plugin-api.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <dagger.version>2.16</dagger.version>
