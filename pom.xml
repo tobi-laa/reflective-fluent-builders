@@ -49,7 +49,7 @@ under the License.
         <maven-plugin-api.version>3.8.6</maven-plugin-api.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
-        <dagger.version>2.16</dagger.version>
+        <dagger.version>2.44.2</dagger.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-plugin-plugin.version>3.7.0</maven-plugin-plugin.version>
