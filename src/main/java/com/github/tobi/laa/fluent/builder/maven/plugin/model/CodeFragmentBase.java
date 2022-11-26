@@ -1,7 +1,5 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.model;
 
-import java.util.stream.IntStream;
-
 /**
  * <p>
  *     Some helper methods for {@link CodeFragment} implementations.
