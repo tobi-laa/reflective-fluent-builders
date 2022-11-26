@@ -1,7 +1,5 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.model;
 
-import java.lang.reflect.Modifier;
-
 /**
  * <p>
  * Represents an import statement to be used in the generation of source code.
