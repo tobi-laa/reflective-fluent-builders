@@ -110,6 +110,10 @@ under the License.
             <artifactId>maven-plugin-annotations</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
+        </dependency>
         <!-- testing dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
