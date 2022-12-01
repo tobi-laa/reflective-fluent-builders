@@ -1,6 +1,8 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.model;
 
+import javax.lang.model.type.ArrayType;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 
 /**
  * <p>
