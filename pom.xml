@@ -47,6 +47,7 @@ under the License.
         <!-- versions of external dependencies -->
         <lombok.version>1.18.24</lombok.version>
         <maven-plugin-api.version>3.8.6</maven-plugin-api.version>
+        <javapoet.version>1.13.0</javapoet.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <dagger.version>2.44.2</dagger.version>
@@ -77,6 +78,11 @@ under the License.
                 <groupId>com.google.dagger</groupId>
                 <artifactId>dagger</artifactId>
                 <version>${dagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>javapoet</artifactId>
+                <version>${javapoet.version}</version>
             </dependency>
             <!-- testing dependencies -->
             <dependency>
