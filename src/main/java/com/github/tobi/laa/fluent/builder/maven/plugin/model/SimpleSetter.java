@@ -1,5 +1,8 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.model;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -8,7 +11,14 @@ import lombok.experimental.SuperBuilder;
  *     {@link java.util.Map map}.
  * </p>
  */
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class SimpleSetter extends AbstractSetter {
-    // no content
+
+    @Override
+    public SimpleSetter withParamName(final String paramName) {
+        return toBuilder().paramName(paramName).build();
+    }
 }

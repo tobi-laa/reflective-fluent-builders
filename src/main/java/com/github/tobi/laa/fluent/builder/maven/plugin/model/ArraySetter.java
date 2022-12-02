@@ -1,15 +1,22 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+
+import javax.lang.model.type.TypeMirror;
+import java.lang.reflect.Type;
 
 /**
  * <p>
  *     The setter of an array.
  * </p>
  */
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class ArraySetter extends AbstractSetter {
 
     /**
@@ -19,5 +26,10 @@ public class ArraySetter extends AbstractSetter {
      * </p>
      */
     @lombok.NonNull
-    private final Class<?> paramComponentType;
+    private final Type paramComponentType;
+
+    @Override
+    public ArraySetter withParamName(final String paramName) {
+        return toBuilder().paramName(paramName).build();
+    }
 }

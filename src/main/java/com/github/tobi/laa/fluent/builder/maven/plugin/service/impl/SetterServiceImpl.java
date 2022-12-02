@@ -4,12 +4,11 @@ import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
 import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.SetterService;
 import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,6 +43,7 @@ public class SetterServiceImpl implements SetterService {
             classHierarchy.add(i);
             Arrays.stream(i.getInterfaces()).forEach(classHierarchy::add);
         }
+        classHierarchy.remove(Object.class);
         return classHierarchy.stream();
     }
 
@@ -57,28 +57,38 @@ public class SetterServiceImpl implements SetterService {
         if (param.getType().isArray()) {
             builder = ArraySetter.builder().paramComponentType(param.getType().getComponentType());
         } else if (Collection.class.isAssignableFrom(param.getType())) {
-            builder = CollectionSetter.builder().paramTypeArg(getTypeArg(param, 0));
+            builder = CollectionSetter.builder().paramTypeArg(typeArg(param, 0));
         } else if (Map.class.isAssignableFrom(param.getType())) {
             builder = MapSetter.builder() //
-                    .keyType(getTypeArg(param,0)) //
-                    .valueType(getTypeArg(param,1));
+                    .keyType(typeArg(param,0)) //
+                    .valueType(typeArg(param,1));
         } else {
             builder = SimpleSetter.builder();
         }
         return builder
                 .methodName(method.getName())
                 .paramType(param.getType())
+                .paramName(paramName(method))
                 .visibility(visibilityService.toVisibility(param.getModifiers()))
                 .build();
     }
 
-    private Class<?> getTypeArg(final Parameter param, final int num) {
-        final var parameterizedType = (ParameterizedType) param.getParameterizedType();
-        final var typeArg = parameterizedType.getActualTypeArguments()[num];
-        if (typeArg instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) typeArg).getRawType();
+    private Type typeArg(final Parameter param, final int num) {
+        final Type typeArg;
+        if (param.getParameterizedType() instanceof ParameterizedType) {
+            final var parameterizedType = (ParameterizedType) param.getParameterizedType();
+            return parameterizedType.getActualTypeArguments()[num];
         } else {
-            return (Class<?>) typeArg;
+            return Object.class;
         }
+    }
+
+    private String paramName(final Method method) {
+        if (StringUtils.isEmpty(setterPrefix) || method.getName().length() <= setterPrefix.length()) {
+            return StringUtils.uncapitalize(method.getName());
+        }
+        final var paramName = method.getName()
+                .replaceFirst('^' + Pattern.quote(setterPrefix), "");
+        return StringUtils.uncapitalize(paramName);
     }
 }
