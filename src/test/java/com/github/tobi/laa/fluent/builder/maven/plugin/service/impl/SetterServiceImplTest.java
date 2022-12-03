@@ -1,5 +1,7 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
 
+import static org.assertj.core.api.Assertions.*;
+
 import static com.github.tobi.laa.fluent.builder.maven.plugin.model.Visibility.*;
 import static org.mockito.Mockito.*;
 
@@ -7,6 +9,9 @@ import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
 import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
 import lombok.AccessLevel;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -17,10 +22,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.TypeMirror;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,7 +58,12 @@ class SetterServiceImplTest {
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert
-        assertEquals(expected, actual);
+        assertThat(actual)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withEqualsForType((a, b) -> true, WildcardType.class)
+                        .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
+                        .build())
+                .isEqualTo(expected);
         verify(visibilityService, times(expected.size())).toVisibility(anyInt());
     }
 
@@ -59,36 +71,40 @@ class SetterServiceImplTest {
         return Stream.of( //
                 Arguments.of("set", SimpleClass.class, PUBLIC, //
                         Set.of( //
-                                SimpleSetter.builder().methodName("setAnInt").paramType(int.class).visibility(PUBLIC).build(), //
-                                SimpleSetter.builder().methodName("setAString").paramType(String.class).visibility(PUBLIC).build(), //
-                                SimpleSetter.builder().methodName("setBooleanField").paramType(boolean.class).visibility(PUBLIC).build(), //
-                                SimpleSetter.builder().methodName("setSetClass").paramType(Class.class).visibility(PUBLIC).build())), //
-                Arguments.of("a", SimpleClass.class, PACKAGE_PRIVATE, //
+                                SimpleSetter.builder().methodName("setAnInt").paramName("anInt").paramType(int.class).visibility(PUBLIC).build(), //
+                                SimpleSetter.builder().methodName("setAString").paramName("aString").paramType(String.class).visibility(PUBLIC).build(), //
+                                SimpleSetter.builder().methodName("setBooleanField").paramName("booleanField").paramType(boolean.class).visibility(PUBLIC).build(), //
+                                SimpleSetter.builder().methodName("setSetClass").paramName("setClass").paramType(Class.class).visibility(PUBLIC).build())), //
+                Arguments.of("", SimpleClassNoSetPrefix.class, PACKAGE_PRIVATE, //
                         Set.of( //
-                                SimpleSetter.builder().methodName("anInt").paramType(int.class).visibility(PACKAGE_PRIVATE).build(), //
-                                SimpleSetter.builder().methodName("aString").paramType(String.class).visibility(PACKAGE_PRIVATE).build())), //
+                                SimpleSetter.builder().methodName("anInt").paramName("anInt").paramType(int.class).visibility(PACKAGE_PRIVATE).build(), //
+                                SimpleSetter.builder().methodName("aString").paramName("aString").paramType(String.class).visibility(PACKAGE_PRIVATE).build())), //
                 Arguments.of("set", ClassWithCollections.class, PRIVATE, //
                         Set.of( //
-                                CollectionSetter.builder().methodName("setInts").paramType(Collection.class).paramTypeArg(Integer.class).visibility(PRIVATE).build(), //
-                                CollectionSetter.builder().methodName("setStrings").paramType(List.class).paramTypeArg(String.class).visibility(PRIVATE).build(),
-                                CollectionSetter.builder().methodName("setSet").paramType(Set.class).paramTypeArg(List.class).visibility(PRIVATE).build(),
-                                ArraySetter.builder().methodName("setFloats").paramType(float[].class).paramComponentType(float.class).visibility(PRIVATE).build(),
-                                MapSetter.builder().methodName("setMap").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(PRIVATE).build())), //
+                                CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(Collection.class).paramTypeArg(Integer.class).visibility(PRIVATE).build(), //
+                                CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(PRIVATE).build(),
+                                CollectionSetter.builder().methodName("setSet").paramName("set").paramType(Set.class).paramTypeArg(List.class).visibility(PRIVATE).build(),
+                                CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(Deque.class).paramTypeArg(TypeUtils.wildcardType().build()).visibility(PRIVATE).build(),
+                                ArraySetter.builder().methodName("setFloats").paramName("floats").paramType(float[].class).paramComponentType(float.class).visibility(PRIVATE).build(),
+                                MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(PRIVATE).build(),
+                                MapSetter.builder().methodName("setMapWildT").paramName("mapWildT").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(typeVariableT()).visibility(PRIVATE).build(),
+                                MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(PRIVATE).build())), //
                 Arguments.of("set", ClassWithHierarchy.class, PROTECTED, //
                         Stream.of("setOne", "setTwo", "setThree", "setFour", "setFive") //
-                                .map(name -> SimpleSetter.builder().methodName(name).paramType(int.class).visibility(PROTECTED).build()) //
+                                .map(name -> SimpleSetter.builder().methodName(name).paramName(StringUtils.uncapitalize(name.substring(3))).paramType(int.class).visibility(PROTECTED).build()) //
                                 .collect(Collectors.toSet())) //
         );
     }
 
+    private static TypeVariable typeVariableT() {
+        return ClassWithCollections.class.getTypeParameters()[0];
+    }
+
+    @lombok.Setter
     class SimpleClass {
-        @lombok.Setter
         int anInt;
-        @lombok.Setter
         String aString;
-        @lombok.Setter
         boolean booleanField;
-        @lombok.Setter
         Class<?> setClass;
 
         void anInt(final int anInt) {
@@ -100,26 +116,38 @@ class SetterServiceImplTest {
         }
     }
 
-    class ClassWithCollections {
-        @lombok.Setter
-        Collection<Integer> ints;
-        @lombok.Setter
-        List<String> strings;
-        @lombok.Setter
-        Set<List<?>> set;
-        @lombok.Setter
-        float[] floats;
-        @lombok.Setter
-        Map<String, Object> map;
+    class SimpleClassNoSetPrefix {
+        int anInt;
+        String aString;
+
+        void anInt(final int anInt) {
+            this.anInt = anInt;
+        }
+
+        void aString(final String aString) {
+            this.aString = aString;
+        }
     }
 
+    @lombok.Setter
+    class ClassWithCollections<T> {
+        Collection<Integer> ints;
+        List list;
+        java.util.Set<List> set;
+        Deque<?> deque;
+        float[] floats;
+        Map<String, Object> map;
+        Map<?, T> mapWildT;
+        Map mapNoTypeArgs;
+    }
+
+    @lombok.Setter
     class ClassWithHierarchy extends FirstSuperClass implements AnInterface {
-        @lombok.Setter
         int one;
     }
 
+    @lombok.Setter
     class FirstSuperClass extends TopLevelSuperClass {
-        @lombok.Setter
         int two;
     }
 

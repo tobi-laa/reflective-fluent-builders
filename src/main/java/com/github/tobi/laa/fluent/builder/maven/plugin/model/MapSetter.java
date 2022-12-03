@@ -1,15 +1,21 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+
+import java.lang.reflect.Type;
 
 /**
  * <p>
  *     The setter of a {@link java.util.Map map}.
  * </p>
  */
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class MapSetter extends AbstractSetter {
 
     /**
@@ -19,7 +25,7 @@ public class MapSetter extends AbstractSetter {
      * </p>
      */
     @lombok.NonNull
-    private final Class<?> keyType;
+    private final Type keyType;
 
 
     /**
@@ -29,5 +35,10 @@ public class MapSetter extends AbstractSetter {
      * </p>
      */
     @lombok.NonNull
-    private final Class<?> valueType;
+    private final Type valueType;
+
+    @Override
+    public MapSetter withParamName(final String paramName) {
+        return toBuilder().paramName(paramName).build();
+    }
 }

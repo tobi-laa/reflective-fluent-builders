@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
  *     Basic implementation of {@link Setter}.
  * </p>
  */
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class AbstractSetter implements Setter {
@@ -21,6 +21,9 @@ public abstract class AbstractSetter implements Setter {
     @lombok.NonNull
     @EqualsAndHashCode.Include
     private final Class<?> paramType;
+
+    @lombok.NonNull
+    private final String paramName;
 
     @lombok.NonNull
     private final Visibility visibility;
