@@ -1,14 +1,7 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
 
-import static org.assertj.core.api.Assertions.*;
-
-import static com.github.tobi.laa.fluent.builder.maven.plugin.model.Visibility.*;
-import static org.mockito.Mockito.*;
-
 import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
 import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
-import lombok.AccessLevel;
-import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
@@ -18,20 +11,20 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.lang.model.type.ArrayType;
-import javax.lang.model.type.TypeMirror;
-import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.github.tobi.laa.fluent.builder.maven.plugin.model.Visibility.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SetterServiceImplTest {
@@ -40,9 +33,38 @@ class SetterServiceImplTest {
     private VisibilityService visibilityService;
 
     @Test
+    void testDropSetterPrefixNull() {
+        // Arrange
+        final var setterService = new SetterServiceImpl(visibilityService, "");
+        // Act
+        final Executable dropSetterPrefix = () -> setterService.dropSetterPrefix(null);
+        // Assert
+        assertThrows(NullPointerException.class, dropSetterPrefix);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testDropSetterPrefix(final String setterPrefix, final String name, final String expected) {
+        // Arrange
+        final var setterService = new SetterServiceImpl(visibilityService, setterPrefix);
+        // Act
+        final String actual = setterService.dropSetterPrefix(name);
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    private static Stream<Arguments> testDropSetterPrefix() {
+        return Stream.of( //
+                Arguments.of("set", "set", "set"), //
+                Arguments.of("set", "setAge", "age"), //
+                Arguments.of("set", "withAge", "withAge"), //
+                Arguments.of("set", "setSetAge", "setAge"));
+    }
+
+    @Test
     void gatherAllSettersNull() {
         // Arrange
-        final SetterServiceImpl setterService = new SetterServiceImpl(visibilityService, "");
+        final var setterService = new SetterServiceImpl(visibilityService, "");
         // Act
         final Executable gatherAllSetters = () -> setterService.gatherAllSetters(null);
         // Assert
@@ -53,7 +75,7 @@ class SetterServiceImplTest {
     @MethodSource
     void gatherAllSetters(final String setterPrefix, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
         // Arrange
-        final SetterServiceImpl setterService = new SetterServiceImpl(visibilityService, setterPrefix);
+        final var setterService = new SetterServiceImpl(visibilityService, setterPrefix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
@@ -96,12 +118,13 @@ class SetterServiceImplTest {
         );
     }
 
-    private static TypeVariable typeVariableT() {
+    private static TypeVariable<?> typeVariableT() {
         return ClassWithCollections.class.getTypeParameters()[0];
     }
 
+    @SuppressWarnings("unused")
     @lombok.Setter
-    class SimpleClass {
+    static class SimpleClass {
         int anInt;
         String aString;
         boolean booleanField;
@@ -116,7 +139,8 @@ class SetterServiceImplTest {
         }
     }
 
-    class SimpleClassNoSetPrefix {
+    @SuppressWarnings("unused")
+    static class SimpleClassNoSetPrefix {
         int anInt;
         String aString;
 
@@ -129,8 +153,9 @@ class SetterServiceImplTest {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @lombok.Setter
-    class ClassWithCollections<T> {
+    static class ClassWithCollections<T> {
         Collection<Integer> ints;
         List list;
         java.util.Set<List> set;
@@ -142,25 +167,29 @@ class SetterServiceImplTest {
     }
 
     @lombok.Setter
-    class ClassWithHierarchy extends FirstSuperClass implements AnInterface {
+    static class ClassWithHierarchy extends FirstSuperClass implements AnInterface {
         int one;
     }
 
     @lombok.Setter
-    class FirstSuperClass extends TopLevelSuperClass {
+    static class FirstSuperClass extends TopLevelSuperClass {
         int two;
     }
 
-    abstract class TopLevelSuperClass implements AnotherInterface {
+    static abstract class TopLevelSuperClass implements AnotherInterface {
         @lombok.Setter
         int three;
     }
 
+    @SuppressWarnings("unused")
     interface AnInterface {
-        default void setFour(final int four) {}
+        default void setFour(final int four) {
+        }
     }
 
+    @SuppressWarnings("unused")
     interface AnotherInterface {
-        default void setFive(final int five) {}
+        default void setFive(final int five) {
+        }
     }
 }

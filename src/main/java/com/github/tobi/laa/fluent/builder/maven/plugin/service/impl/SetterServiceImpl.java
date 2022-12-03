@@ -6,7 +6,10 @@ import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilitySer
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -14,7 +17,7 @@ import java.util.stream.Stream;
 
 /**
  * <p>
- *     Standard implementation of {@link SetterService}.
+ * Standard implementation of {@link SetterService}.
  * </p>
  */
 @RequiredArgsConstructor
@@ -69,7 +72,7 @@ public class SetterServiceImpl implements SetterService {
         return builder
                 .methodName(method.getName())
                 .paramType(param.getType())
-                .paramName(paramName(method))
+                .paramName(dropSetterPrefix(method.getName()))
                 .visibility(visibilityService.toVisibility(param.getModifiers()))
                 .build();
     }
@@ -84,13 +87,13 @@ public class SetterServiceImpl implements SetterService {
         }
     }
 
-    // TODO add method for removing setter prefix and uncaptializing
-    private String paramName(final Method method) {
-        if (StringUtils.isEmpty(setterPrefix) || method.getName().length() <= setterPrefix.length()) {
-            return StringUtils.uncapitalize(method.getName());
+    @Override
+    public String dropSetterPrefix(final String name) {
+        Objects.requireNonNull(name);
+        if (StringUtils.isEmpty(setterPrefix) || name.length() <= setterPrefix.length()) {
+            return name;
         }
-        final var paramName = method.getName()
-                .replaceFirst('^' + Pattern.quote(setterPrefix), "");
+        final var paramName = name.replaceFirst('^' + Pattern.quote(setterPrefix), "");
         return StringUtils.uncapitalize(paramName);
     }
 }
