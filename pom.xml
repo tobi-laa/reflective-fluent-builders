@@ -53,12 +53,13 @@ under the License.
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <dagger.version>2.44.2</dagger.version>
+        <mockito.version>4.9.0</mockito.version>
+        <assertj.version>3.23.1</assertj.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-plugin-plugin.version>3.7.0</maven-plugin-plugin.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
-        <mockito.version>4.9.0</mockito.version>
-        <assertj.version>3.23.1</assertj.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -168,6 +169,11 @@ under the License.
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
