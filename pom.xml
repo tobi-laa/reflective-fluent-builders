@@ -141,6 +141,14 @@
                             <include>*IntegrationTest.java</include>
                         </includes>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -166,9 +174,11 @@
                                 <goal>add-test-resource</goal>
                             </goals>
                             <configuration>
-                                <sources>
-                                    <source>src/integration-test/resources</source>
-                                </sources>
+                                <resources>
+                                    <resource>
+                                        <directory>src/integration-test/resources</directory>
+                                    </resource>
+                                </resources>
                             </configuration>
                         </execution>
                     </executions>
