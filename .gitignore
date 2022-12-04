@@ -27,15 +27,7 @@ target/
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/misc.xml
-.idea/uiDesigner.xml
-.idea/vcs.xml
-.idea/encodings.xml
-.idea/workspace.xml
-.idea/libraries/
+.idea
 *.iws
 *.iml
 *.ipr
