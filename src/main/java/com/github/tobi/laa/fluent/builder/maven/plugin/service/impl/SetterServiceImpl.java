@@ -1,6 +1,7 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
 
 import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
+import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.ClassService;
 import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.SetterService;
 import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * <p>
@@ -27,28 +27,21 @@ public class SetterServiceImpl implements SetterService {
     private final VisibilityService visibilityService;
 
     @lombok.NonNull
+    private final ClassService classService;
+
+    @lombok.NonNull
     private final String setterPrefix;
 
     @Override
     public Set<Setter> gatherAllSetters(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
-        return fullClassHierarchy(clazz) //
+        return classService.collectFullClassHierarchy(clazz) //
+                .stream() //
                 .map(Class::getDeclaredMethods) //
                 .flatMap(Arrays::stream) //
                 .filter(this::isSetter) //
                 .map(this::toSetter) //
                 .collect(Collectors.toSet());
-    }
-
-    // TODO add service for class hierarchy + finding all classes from a package
-    private Stream<Class<?>> fullClassHierarchy(final Class<?> clazz) {
-        final Set<Class<?>> classHierarchy = new HashSet<>();
-        for (var i = clazz; i != null; i = i.getSuperclass()) {
-            classHierarchy.add(i);
-            Arrays.stream(i.getInterfaces()).forEach(classHierarchy::add);
-        }
-        classHierarchy.remove(Object.class);
-        return classHierarchy.stream();
     }
 
     private boolean isSetter(final Method method) {
@@ -57,30 +50,41 @@ public class SetterServiceImpl implements SetterService {
 
     private Setter toSetter(final Method method) {
         final var param = method.getParameters()[0];
-        final AbstractSetter.AbstractSetterBuilder builder;
         if (param.getType().isArray()) {
-            builder = ArraySetter.builder().paramComponentType(param.getType().getComponentType());
+            return ArraySetter.builder().paramComponentType(param.getType().getComponentType())
+                    .methodName(method.getName())
+                    .paramType(param.getType())
+                    .paramName(dropSetterPrefix(method.getName()))
+                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+                    .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
-            builder = CollectionSetter.builder().paramTypeArg(typeArg(param, 0));
+            return CollectionSetter.builder().paramTypeArg(typeArg(param, 0))
+                    .methodName(method.getName())
+                    .paramType(param.getType())
+                    .paramName(dropSetterPrefix(method.getName()))
+                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+                    .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
-            builder = MapSetter.builder() //
-                    .keyType(typeArg(param, 0)) //
-                    .valueType(typeArg(param, 1));
+            return MapSetter.builder()
+                    .keyType(typeArg(param, 0))
+                    .valueType(typeArg(param, 1))
+                    .methodName(method.getName())
+                    .paramType(param.getType())
+                    .paramName(dropSetterPrefix(method.getName()))
+                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+                    .build();
         } else {
-            builder = SimpleSetter.builder();
+            return SimpleSetter.builder()
+                    .methodName(method.getName())
+                    .paramType(param.getType())
+                    .paramName(dropSetterPrefix(method.getName()))
+                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+                    .build();
         }
-        return builder
-                .methodName(method.getName())
-                .paramType(param.getType())
-                .paramName(dropSetterPrefix(method.getName()))
-                .visibility(visibilityService.toVisibility(param.getModifiers()))
-                .build();
     }
 
     private Type typeArg(final Parameter param, final int num) {
-        final Type typeArg;
-        if (param.getParameterizedType() instanceof ParameterizedType) {
-            final var parameterizedType = (ParameterizedType) param.getParameterizedType();
+        if (param.getParameterizedType() instanceof final ParameterizedType parameterizedType) {
             return parameterizedType.getActualTypeArguments()[num];
         } else {
             return Object.class;

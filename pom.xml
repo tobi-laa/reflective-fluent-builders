@@ -48,6 +48,8 @@ under the License.
         <lombok.version>1.18.24</lombok.version>
         <maven-plugin-api.version>3.8.6</maven-plugin-api.version>
         <javapoet.version>1.13.0</javapoet.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <guava.version>31.1-jre</guava.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <dagger.version>2.44.2</dagger.version>
@@ -57,7 +59,6 @@ under the License.
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
         <mockito.version>4.9.0</mockito.version>
         <assertj.version>3.23.1</assertj.version>
-        <commons-lang3.version>3.12.0</commons-lang3.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -91,6 +92,11 @@ under the License.
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <!-- testing dependencies -->
             <dependency>
@@ -137,6 +143,10 @@ under the License.
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
         <!-- testing dependencies -->
         <dependency>

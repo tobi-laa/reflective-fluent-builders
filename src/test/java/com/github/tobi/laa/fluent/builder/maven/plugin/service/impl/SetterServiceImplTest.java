@@ -1,6 +1,7 @@
 package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
 
 import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
+import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.ClassService;
 import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -32,10 +33,13 @@ class SetterServiceImplTest {
     @Mock
     private VisibilityService visibilityService;
 
+    @Mock
+    private ClassService classService;
+
     @Test
     void testDropSetterPrefixNull() {
         // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, "");
+        final var setterService = new SetterServiceImpl(visibilityService, classService, "");
         // Act
         final Executable dropSetterPrefix = () -> setterService.dropSetterPrefix(null);
         // Assert
@@ -46,7 +50,7 @@ class SetterServiceImplTest {
     @MethodSource
     void testDropSetterPrefix(final String setterPrefix, final String name, final String expected) {
         // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, setterPrefix);
+        final var setterService = new SetterServiceImpl(visibilityService, classService, setterPrefix);
         // Act
         final String actual = setterService.dropSetterPrefix(name);
         // Assert
@@ -64,7 +68,7 @@ class SetterServiceImplTest {
     @Test
     void gatherAllSettersNull() {
         // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, "");
+        final var setterService = new SetterServiceImpl(visibilityService, classService, "");
         // Act
         final Executable gatherAllSetters = () -> setterService.gatherAllSetters(null);
         // Assert
@@ -75,8 +79,9 @@ class SetterServiceImplTest {
     @MethodSource
     void gatherAllSetters(final String setterPrefix, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
         // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, setterPrefix);
+        final var setterService = new SetterServiceImpl(visibilityService, classService, setterPrefix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
+        when(classService.collectFullClassHierarchy(clazz)).thenReturn(Set.of(clazz));
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert
@@ -87,6 +92,26 @@ class SetterServiceImplTest {
                         .build())
                 .isEqualTo(expected);
         verify(visibilityService, times(expected.size())).toVisibility(anyInt());
+    }
+
+    @Test
+    void gatherAllSettersForClassWithHierarchy() {
+        // Arrange
+        final var setterService = new SetterServiceImpl(visibilityService, classService, "set");
+        when(visibilityService.toVisibility(anyInt())).thenReturn(PROTECTED);
+        when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
+        // Act
+        final Set<Setter> actual = setterService.gatherAllSetters(ClassWithHierarchy.class);
+        // Assert
+        assertThat(actual)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withEqualsForType((a, b) -> true, WildcardType.class)
+                        .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
+                        .build())
+                .isEqualTo(Stream.of("setOne", "setTwo", "setThree", "setFour", "setFive") //
+                        .map(name -> SimpleSetter.builder().methodName(name).paramName(StringUtils.uncapitalize(name.substring(3))).paramType(int.class).visibility(PROTECTED).build()) //
+                        .collect(Collectors.toSet()));
+        verify(visibilityService, times(5)).toVisibility(anyInt());
     }
 
     private static Stream<Arguments> gatherAllSetters() {
@@ -110,12 +135,7 @@ class SetterServiceImplTest {
                                 ArraySetter.builder().methodName("setFloats").paramName("floats").paramType(float[].class).paramComponentType(float.class).visibility(PRIVATE).build(),
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(PRIVATE).build(),
                                 MapSetter.builder().methodName("setMapWildT").paramName("mapWildT").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(typeVariableT()).visibility(PRIVATE).build(),
-                                MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(PRIVATE).build())), //
-                Arguments.of("set", ClassWithHierarchy.class, PROTECTED, //
-                        Stream.of("setOne", "setTwo", "setThree", "setFour", "setFive") //
-                                .map(name -> SimpleSetter.builder().methodName(name).paramName(StringUtils.uncapitalize(name.substring(3))).paramType(int.class).visibility(PROTECTED).build()) //
-                                .collect(Collectors.toSet())) //
-        );
+                                MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(PRIVATE).build())));
     }
 
     private static TypeVariable<?> typeVariableT() {
