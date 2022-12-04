@@ -25,8 +25,8 @@
     <properties>
         <!-- general properties -->
         <java.version>17</java.version>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<!-- integration with SonarCloud -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- integration with SonarCloud -->
         <sonar.organization>tobi-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!-- versions of external dependencies -->
@@ -46,6 +46,7 @@
         <maven-plugin-plugin.version>3.7.0</maven-plugin-plugin.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
         <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     </properties>
     <modules>
         <module>fluent-builder-generator</module>
@@ -148,7 +149,32 @@
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven-plugin-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
