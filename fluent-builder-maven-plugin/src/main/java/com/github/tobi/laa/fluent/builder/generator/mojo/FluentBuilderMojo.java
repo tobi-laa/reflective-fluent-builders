@@ -1,4 +1,4 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.mojo;
+package com.github.tobi.laa.fluent.builder.generator.mojo;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;

@@ -37,6 +37,7 @@
         <dagger.version>2.44.2</dagger.version>
         <mockito.version>4.9.0</mockito.version>
         <assertj.version>3.23.1</assertj.version>
+        <archunit.version>1.0.1</archunit.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-plugin-plugin.version>3.7.0</maven-plugin-plugin.version>
@@ -102,6 +103,12 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>${archunit.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

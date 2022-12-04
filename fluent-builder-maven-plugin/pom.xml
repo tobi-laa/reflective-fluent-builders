@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    	<groupId>com.github.tobi-laa</groupId>
-    	<artifactId>fluent-builder-project</artifactId>
+        <groupId>com.github.tobi-laa</groupId>
+        <artifactId>fluent-builder-project</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>fluent-builder-maven-plugin</artifactId>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.github.tobi-laa</groupId>
             <artifactId>fluent-builder-generator</artifactId>
-	    <version>${project.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- external dependencies -->
         <dependency>
@@ -41,6 +41,11 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
