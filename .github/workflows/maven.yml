@@ -11,7 +11,7 @@ on:
       - reopened
 
 jobs:
-    build:
+  build:
     name: Build and analyze
     runs-on: ubuntu-latest
     steps:
