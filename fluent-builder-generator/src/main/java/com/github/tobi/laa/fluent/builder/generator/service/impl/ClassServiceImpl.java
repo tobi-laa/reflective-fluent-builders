@@ -6,6 +6,7 @@ import com.google.common.reflect.ClassPath;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -51,5 +52,12 @@ public class ClassServiceImpl implements ClassService {
         } catch (IOException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
+    }
+
+    public long thisIsTest(final int a, final int b) {
+        int c = a + b;
+        final var bar = Integer.toString(c).substring(1) + "foobar";
+        final var by = bar.getBytes(StandardCharsets.UTF_8);
+        return by[4];
     }
 }
