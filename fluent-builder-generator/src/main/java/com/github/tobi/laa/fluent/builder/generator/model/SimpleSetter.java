@@ -1,4 +1,4 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.model;
+package com.github.tobi.laa.fluent.builder.generator.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,8 +7,8 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * <p>
- *     A simple setter, meaning the field being set by it is no array, {@link java.util.Collection collection} or
- *     {@link java.util.Map map}.
+ * A simple setter, meaning the field being set by it is no array, {@link java.util.Collection collection} or
+ * {@link java.util.Map map}.
  * </p>
  */
 @SuperBuilder(toBuilder = true)

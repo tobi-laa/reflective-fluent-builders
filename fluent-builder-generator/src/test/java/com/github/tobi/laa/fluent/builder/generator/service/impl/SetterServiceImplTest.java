@@ -1,8 +1,8 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
+package com.github.tobi.laa.fluent.builder.generator.service.impl;
 
-import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
-import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.ClassService;
-import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
+import com.github.tobi.laa.fluent.builder.generator.model.*;
+import com.github.tobi.laa.fluent.builder.generator.service.api.ClassService;
+import com.github.tobi.laa.fluent.builder.generator.service.api.VisibilityService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.tobi.laa.fluent.builder.maven.plugin.model.Visibility.*;
+import static com.github.tobi.laa.fluent.builder.generator.model.Visibility.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

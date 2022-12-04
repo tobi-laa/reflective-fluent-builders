@@ -1,4 +1,4 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.model;
+package com.github.tobi.laa.fluent.builder.generator.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * <p>
- *     Basic implementation of {@link Setter}.
+ * Basic implementation of {@link Setter}.
  * </p>
  */
 @SuperBuilder(toBuilder = true)

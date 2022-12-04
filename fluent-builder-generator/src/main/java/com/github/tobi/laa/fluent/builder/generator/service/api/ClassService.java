@@ -1,4 +1,6 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.api;
+package com.github.tobi.laa.fluent.builder.generator.service.api;
+
+import com.github.tobi.laa.fluent.builder.generator.exception.ReflectionException;
 
 import java.util.Set;
 
@@ -30,9 +32,9 @@ public interface ClassService {
      *
      * @param packageName The package from which to start class collection. Must not be {@code null}.
      * @return All classes within the package {@code pack} and all its sub-packages.
-     * @throws com.github.tobi.laa.fluent.builder.maven.plugin.exception.ReflectionException If an error occurs while
-     *                                                                                       accessing classes in
-     *                                                                                       {@code packageName}.
+     * @throws ReflectionException If an error occurs while
+     *                             accessing classes in
+     *                             {@code packageName}.
      */
     Set<Class<?>> collectClassesRecursively(final String packageName);
 

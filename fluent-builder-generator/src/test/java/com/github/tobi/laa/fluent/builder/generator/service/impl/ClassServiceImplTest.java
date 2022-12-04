@@ -1,6 +1,6 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
+package com.github.tobi.laa.fluent.builder.generator.service.impl;
 
-import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
+import com.github.tobi.laa.fluent.builder.generator.model.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;

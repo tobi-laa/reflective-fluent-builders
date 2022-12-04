@@ -1,4 +1,4 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.exception;
+package com.github.tobi.laa.fluent.builder.generator.exception;
 
 
 import java.io.Serial;

@@ -1,4 +1,4 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.model;
+package com.github.tobi.laa.fluent.builder.generator.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 
 /**
  * <p>
- *     The setter of a {@link java.util.Collection collection}, so for instance a list or a set.
+ * The setter of a {@link java.util.Collection collection}, so for instance a list or a set.
  * </p>
  */
 @SuperBuilder(toBuilder = true)
@@ -20,8 +20,8 @@ public class CollectionSetter extends AbstractSetter {
 
     /**
      * <p>
-     *     The type of the elements within the collection being set by the setter method's single parameter, for
-     *     instance {@code Integer.class}.
+     * The type of the elements within the collection being set by the setter method's single parameter, for
+     * instance {@code Integer.class}.
      * </p>
      */
     @lombok.NonNull

@@ -1,7 +1,7 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
+package com.github.tobi.laa.fluent.builder.generator.service.impl;
 
-import com.github.tobi.laa.fluent.builder.maven.plugin.exception.ReflectionException;
-import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.ClassService;
+import com.github.tobi.laa.fluent.builder.generator.exception.ReflectionException;
+import com.github.tobi.laa.fluent.builder.generator.service.api.ClassService;
 import com.google.common.reflect.ClassPath;
 import lombok.RequiredArgsConstructor;
 

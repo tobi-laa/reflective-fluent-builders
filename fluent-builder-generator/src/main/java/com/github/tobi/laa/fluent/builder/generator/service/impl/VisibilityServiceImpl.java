@@ -1,13 +1,13 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
+package com.github.tobi.laa.fluent.builder.generator.service.impl;
 
-import com.github.tobi.laa.fluent.builder.maven.plugin.model.Visibility;
-import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
+import com.github.tobi.laa.fluent.builder.generator.model.Visibility;
+import com.github.tobi.laa.fluent.builder.generator.service.api.VisibilityService;
 
 import java.lang.reflect.Modifier;
 
 /**
  * <p>
- *     Standard implementation of {@link VisibilityService}.
+ * Standard implementation of {@link VisibilityService}.
  * </p>
  */
 public class VisibilityServiceImpl implements VisibilityService {

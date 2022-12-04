@@ -1,6 +1,6 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
+package com.github.tobi.laa.fluent.builder.generator.service.impl;
 
-import com.github.tobi.laa.fluent.builder.maven.plugin.model.Visibility;
+import com.github.tobi.laa.fluent.builder.generator.model.Visibility;
 import lombok.SneakyThrows;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VisibilityServiceImplTest {
 
@@ -41,20 +41,44 @@ class VisibilityServiceImplTest {
     }
 
     private class SomeMethods {
-        private void privateMethod() {};
+        private void privateMethod() {
+        }
 
-        private static void privateStaticMethod() {};
+        ;
 
-        protected void protectedMethod() {};
+        private static void privateStaticMethod() {
+        }
 
-        protected static void protectedStaticMethod() {};
+        ;
 
-        void packagePrivateMethod() {};
+        protected void protectedMethod() {
+        }
 
-        static void packagePrivateStaticMethod() {};
+        ;
 
-        public void publicMethod() {};
+        protected static void protectedStaticMethod() {
+        }
 
-        public static void publicStaticMethod() {};
+        ;
+
+        void packagePrivateMethod() {
+        }
+
+        ;
+
+        static void packagePrivateStaticMethod() {
+        }
+
+        ;
+
+        public void publicMethod() {
+        }
+
+        ;
+
+        public static void publicStaticMethod() {
+        }
+
+        ;
     }
 }

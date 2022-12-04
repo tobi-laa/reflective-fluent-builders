@@ -1,9 +1,9 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.impl;
+package com.github.tobi.laa.fluent.builder.generator.service.impl;
 
-import com.github.tobi.laa.fluent.builder.maven.plugin.model.*;
-import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.ClassService;
-import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.SetterService;
-import com.github.tobi.laa.fluent.builder.maven.plugin.service.api.VisibilityService;
+import com.github.tobi.laa.fluent.builder.generator.model.*;
+import com.github.tobi.laa.fluent.builder.generator.service.api.ClassService;
+import com.github.tobi.laa.fluent.builder.generator.service.api.SetterService;
+import com.github.tobi.laa.fluent.builder.generator.service.api.VisibilityService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 

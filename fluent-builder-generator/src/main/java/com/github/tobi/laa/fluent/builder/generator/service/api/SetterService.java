@@ -1,6 +1,6 @@
-package com.github.tobi.laa.fluent.builder.maven.plugin.service.api;
+package com.github.tobi.laa.fluent.builder.generator.service.api;
 
-import com.github.tobi.laa.fluent.builder.maven.plugin.model.Setter;
+import com.github.tobi.laa.fluent.builder.generator.model.Setter;
 
 import java.util.Set;
 
