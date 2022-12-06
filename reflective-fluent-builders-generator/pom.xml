@@ -3,19 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.github.tobi-laa</groupId>
-        <artifactId>fluent-builder-project</artifactId>
+        <artifactId>reflective-fluent-builders</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>fluent-builder-maven-plugin</artifactId>
-    <packaging>maven-plugin</packaging>
-    <name>fluent-builder-maven-plugin</name>
+    <artifactId>reflective-fluent-builders-generator</artifactId>
+    <packaging>jar</packaging>
+    <name>Reflective fluent builder generator</name>
+    <description>Provides a set of services that can be used for generating fluent builders for existing classes via
+        reflection
+    </description>
     <dependencies>
-        <!-- modules -->
-        <dependency>
-            <groupId>com.github.tobi-laa</groupId>
-            <artifactId>fluent-builder-generator</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -23,14 +20,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <scope>provided</scope>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.plugin-tools</groupId>
-            <artifactId>maven-plugin-annotations</artifactId>
-            <scope>provided</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
         <!-- testing dependencies -->
         <dependency>
@@ -39,13 +38,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit-junit5</artifactId>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
