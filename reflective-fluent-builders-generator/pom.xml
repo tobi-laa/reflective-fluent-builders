@@ -8,7 +8,6 @@
     </parent>
     <artifactId>reflective-fluent-builders-generator</artifactId>
     <packaging>jar</packaging>
-    <name>Reflective fluent builder generator</name>
     <description>Provides a set of services that can be used for generating fluent builders for existing classes via
         reflection
     </description>
