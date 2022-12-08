@@ -3,8 +3,6 @@ package com.github.tobi.laa.fluent.builder.generator.service.impl;
 import com.github.tobi.laa.fluent.builder.generator.exception.ReflectionException;
 import com.github.tobi.laa.fluent.builder.generator.service.api.ClassService;
 import com.google.common.reflect.ClassPath;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.util.Arrays;
