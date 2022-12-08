@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ClassServiceImplTest {
 
-    private final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
-
     @Test
     void testCollectFullClassHierarchyNull() {
+        // Arrange
+        final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
         // Act
         final Executable collectFullClassHierarchy = () -> classServiceImpl.collectFullClassHierarchy(null);
         // Assert
@@ -29,8 +29,10 @@ class ClassServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectFullClassHierarchy(final Class<?> clazz, final Class<?>[] excludes, final Set<Class<?>> expected) {
+        // Arrange
+        final ClassServiceImpl classServiceImpl = new ClassServiceImpl(excludes);
         // Act
-        final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz, excludes);
+        final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
         assertEquals(expected, actual);
     }
@@ -74,6 +76,8 @@ class ClassServiceImplTest {
 
     @Test
     void testCollectClassesRecursivelyNull() {
+        // Arrange
+        final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
         // Act
         final Executable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively(null);
         // Assert
@@ -83,6 +87,8 @@ class ClassServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
+        // Arrange
+        final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
         // Act
         final Set<Class<?>> actual = classServiceImpl.collectClassesRecursively(packageName);
         // Assert

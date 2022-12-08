@@ -14,16 +14,14 @@ public interface ClassService {
     /**
      * <p>
      * Collects the full class hierarchy of {@code clazz}. That includes {@code clazz} itself, all super classes of
-     * {@code clazz} as well as all interfaces implemented by {@code clazz} and all its ancestors.
+     * {@code clazz} as well as all interfaces implemented by {@code clazz} and all its ancestors. Implementations may
+     * offer the possibility to exclude some classes.
      * </p>
      *
      * @param clazz    The class for which the full class hierarchy should be collected. Must not be {@code null}.
-     * @param excludes Classes to be excluded from the hierarchy collection. They will not be added to the result.
-     *                 Furthermore, if a class from {@code excludes} is encountered during ancestor traversal of
-     *                 {@code clazz} it is immediately stopped.
      * @return The full class hierarchy of {@code clazz}. Never {@code null}.
      */
-    Set<Class<?>> collectFullClassHierarchy(final Class<?> clazz, final Class<?>... excludes);
+    Set<Class<?>> collectFullClassHierarchy(final Class<?> clazz);
 
     /**
      * <p>
