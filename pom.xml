@@ -44,9 +44,9 @@
         <javapoet.version>1.13.0</javapoet.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.1-jre</guava.version>
+        <dagger.version>2.44.2</dagger.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
-        <dagger.version>2.44.2</dagger.version>
         <mockito.version>4.9.0</mockito.version>
         <assertj.version>3.23.1</assertj.version>
         <archunit.version>1.0.1</archunit.version>
