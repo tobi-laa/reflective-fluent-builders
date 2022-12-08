@@ -1,4 +1,4 @@
-package com.github.tobi.laa.fluent.builder.archunit;
+package com.github.tobi.laa.reflective.fluent.builders.archunit;
 
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;

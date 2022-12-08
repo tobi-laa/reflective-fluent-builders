@@ -1,4 +1,4 @@
-package com.github.tobi.laa.fluent.builder;
+package com.github.tobi.laa.reflective.fluent.builders;
 
 /**
  * <p>
