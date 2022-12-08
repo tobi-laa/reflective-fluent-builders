@@ -60,6 +60,7 @@
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     </properties>
     <modules>
+        <module>reflective-fluent-builders-test-models</module>
         <module>reflective-fluent-builders-generator</module>
         <module>reflective-fluent-builders-maven-plugin</module>
     </modules>

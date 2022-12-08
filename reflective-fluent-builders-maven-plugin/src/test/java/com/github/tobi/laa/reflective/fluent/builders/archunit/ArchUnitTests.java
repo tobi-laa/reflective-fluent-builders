@@ -1,6 +1,6 @@
-package com.github.tobi.laa.fluent.builder.archunit;
+package com.github.tobi.laa.reflective.fluent.builders.archunit;
 
-import com.github.tobi.laa.fluent.builder.ArchUnitMarker;
+import com.github.tobi.laa.reflective.fluent.builders.ArchUnitMarker;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
