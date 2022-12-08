@@ -3,6 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.service.impl;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.ClassService;
 import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.VisibilityService;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
@@ -139,76 +140,5 @@ class SetterServiceImplTest {
 
     private static TypeVariable<?> typeVariableT() {
         return ClassWithCollections.class.getTypeParameters()[0];
-    }
-
-    @SuppressWarnings("unused")
-    @lombok.Setter
-    static class SimpleClass {
-        int anInt;
-        String aString;
-        boolean booleanField;
-        Class<?> setClass;
-
-        void anInt(final int anInt) {
-            this.anInt = anInt;
-        }
-
-        void aString(final String aString) {
-            this.aString = aString;
-        }
-    }
-
-    @SuppressWarnings("unused")
-    static class SimpleClassNoSetPrefix {
-        int anInt;
-        String aString;
-
-        void anInt(final int anInt) {
-            this.anInt = anInt;
-        }
-
-        void aString(final String aString) {
-            this.aString = aString;
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    @lombok.Setter
-    static class ClassWithCollections<T> {
-        Collection<Integer> ints;
-        List list;
-        java.util.Set<List> set;
-        Deque<?> deque;
-        float[] floats;
-        Map<String, Object> map;
-        Map<?, T> mapWildT;
-        Map mapNoTypeArgs;
-    }
-
-    @lombok.Setter
-    static class ClassWithHierarchy extends FirstSuperClass implements AnInterface {
-        int one;
-    }
-
-    @lombok.Setter
-    static class FirstSuperClass extends TopLevelSuperClass {
-        int two;
-    }
-
-    static abstract class TopLevelSuperClass implements AnotherInterface {
-        @lombok.Setter
-        int three;
-    }
-
-    @SuppressWarnings("unused")
-    interface AnInterface {
-        default void setFour(final int four) {
-        }
-    }
-
-    @SuppressWarnings("unused")
-    interface AnotherInterface {
-        default void setFive(final int five) {
-        }
     }
 }

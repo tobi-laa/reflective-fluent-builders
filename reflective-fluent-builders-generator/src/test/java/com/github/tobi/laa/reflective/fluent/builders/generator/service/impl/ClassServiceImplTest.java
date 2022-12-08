@@ -1,6 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.*;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -109,32 +110,5 @@ class ClassServiceImplTest {
                                 SimpleSetter.class, //
                                 Visibility.class)) //
         );
-    }
-
-    @lombok.Setter
-    static class ClassWithHierarchy extends FirstSuperClass implements AnInterface {
-        int one;
-    }
-
-    @lombok.Setter
-    static class FirstSuperClass extends TopLevelSuperClass {
-        int two;
-    }
-
-    static abstract class TopLevelSuperClass implements AnotherInterface {
-        @lombok.Setter
-        int three;
-    }
-
-    @SuppressWarnings("unused")
-    interface AnInterface {
-        default void setFour(final int four) {
-        }
-    }
-
-    @SuppressWarnings("unused")
-    interface AnotherInterface {
-        default void setFive(final int five) {
-        }
     }
 }
