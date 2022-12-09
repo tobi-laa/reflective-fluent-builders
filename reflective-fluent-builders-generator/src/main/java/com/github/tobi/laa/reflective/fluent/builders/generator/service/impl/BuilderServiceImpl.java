@@ -10,6 +10,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
 
 import static com.github.tobi.laa.reflective.fluent.builders.generator.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
@@ -39,7 +40,7 @@ public class BuilderServiceImpl implements BuilderService {
         Objects.requireNonNull(clazz);
         return Builder.builder() //
                 .packageName(resolveBuilderPackage(clazz)) //
-                .name(clazz.getName() + builderSuffix) //
+                .name(clazz.getSimpleName() + builderSuffix) //
                 .builtType(Builder.BuiltType.builder() //
                         .type(clazz) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
@@ -55,8 +56,8 @@ public class BuilderServiceImpl implements BuilderService {
         return Arrays //
                 .stream(clazz.getConstructors()) //
                 .filter(this::isAccessible) //
-                .filter(constructor -> constructor.getParameterCount() == 0) //
-                .count() >= 1;
+                .mapToInt(Constructor::getParameterCount) //
+                .anyMatch(count -> count == 0);
     }
 
     private boolean isAccessible(final Constructor<?> constructor) {
