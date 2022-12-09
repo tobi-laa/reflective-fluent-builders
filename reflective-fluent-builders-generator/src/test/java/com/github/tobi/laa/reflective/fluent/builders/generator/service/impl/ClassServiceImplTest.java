@@ -1,7 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.*;
-import com.github.tobi.laa.reflective.fluent.builders.test.models.*;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;

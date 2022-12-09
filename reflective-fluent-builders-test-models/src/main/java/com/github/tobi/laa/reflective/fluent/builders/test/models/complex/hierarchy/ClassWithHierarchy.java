@@ -1,4 +1,4 @@
-package com.github.tobi.laa.reflective.fluent.builders.test.models;
+package com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy;
 
 @lombok.Setter
 public class ClassWithHierarchy extends FirstSuperClass implements AnInterface {
