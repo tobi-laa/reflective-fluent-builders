@@ -1,6 +1,9 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.model;
 
 import lombok.Data;
+import lombok.Singular;
+
+import java.util.Set;
 
 /**
  * <p>
@@ -28,5 +31,9 @@ public class BuilderMetadata {
         private final Class<?> type;
 
         private final boolean accessibleNonArgsConstructor;
+
+        @lombok.NonNull
+        @Singular
+        private final Set<Setter> setters;
     }
 }

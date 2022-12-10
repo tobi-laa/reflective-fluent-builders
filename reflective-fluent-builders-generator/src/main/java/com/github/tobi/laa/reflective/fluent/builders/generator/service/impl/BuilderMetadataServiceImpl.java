@@ -1,7 +1,10 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.generator.model.Setter;
+import com.github.tobi.laa.reflective.fluent.builders.generator.model.Visibility;
 import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.BuilderMetadataService;
+import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.VisibilityService;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +32,9 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private final VisibilityService visibilityService;
 
     @lombok.NonNull
+    private final SetterService setterService;
+
+    @lombok.NonNull
     private final String builderPackage;
 
     @lombok.NonNull
@@ -43,6 +49,7 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
+                        .setters(gatherAndFilterAccessibleSetters(clazz))
                         .build()) //
                 .build();
     }
@@ -61,6 +68,13 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private boolean isAccessible(final Constructor<?> constructor) {
         return isAccessible(constructor.getDeclaringClass(), constructor.getModifiers());
+    }
+
+    private Set<Setter> gatherAndFilterAccessibleSetters(final Class<?> clazz) {
+        return setterService.gatherAllSetters(clazz) //
+                .stream() //
+                .filter(setter -> isAccessible(clazz, setter.getVisibility()))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -88,9 +102,12 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers) {
         final var visibility = visibilityService.toVisibility(modifiers);
-        return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
+        return isAccessible(clazz, visibility);
     }
 
+    private boolean isAccessible(final Class<?> clazz, final Visibility visibility) {
+        return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
+    }
     private boolean placeBuildersInSamePackage(final Class<?> clazz) {
         return PACKAGE_PLACEHOLDER.equals(builderPackage) || builderPackage.equals(clazz.getPackageName());
     }
