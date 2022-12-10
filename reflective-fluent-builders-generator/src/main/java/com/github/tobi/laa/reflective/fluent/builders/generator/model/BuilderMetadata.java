@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @lombok.Builder
 @Data
-public class Builder {
+public class BuilderMetadata {
 
     @lombok.NonNull
     private final String packageName;

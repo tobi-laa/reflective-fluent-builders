@@ -1,7 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.service.impl;
 
-import com.github.tobi.laa.reflective.fluent.builders.generator.model.Builder;
-import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.BuilderService;
+import com.github.tobi.laa.reflective.fluent.builders.generator.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.VisibilityService;
 import lombok.RequiredArgsConstructor;
 
@@ -10,7 +10,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
 
 import static com.github.tobi.laa.reflective.fluent.builders.generator.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
@@ -20,11 +19,11 @@ import static java.util.function.Predicate.not;
 
 /**
  * <p>
- * Standard implementation of {@link BuilderService}.
+ * Standard implementation of {@link BuilderMetadataService}.
  * </p>
  */
 @RequiredArgsConstructor
-public class BuilderServiceImpl implements BuilderService {
+public class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     @lombok.NonNull
     private final VisibilityService visibilityService;
@@ -36,12 +35,12 @@ public class BuilderServiceImpl implements BuilderService {
     private final String builderSuffix;
 
     @Override
-    public Builder collectBuilderMetadata(final Class<?> clazz) {
+    public BuilderMetadata collectBuilderMetadata(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
-        return Builder.builder() //
+        return BuilderMetadata.builder() //
                 .packageName(resolveBuilderPackage(clazz)) //
                 .name(clazz.getSimpleName() + builderSuffix) //
-                .builtType(Builder.BuiltType.builder() //
+                .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
                         .build()) //

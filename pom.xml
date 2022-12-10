@@ -9,7 +9,7 @@
     <description>
         Provides the possibility of generating fluent builders for existing classes via reflection.
     </description>
-    <url>https://github.com/tobi-laa/fluent-builder-maven-plugin</url>
+    <url>https://github.com/tobi-laa/fluent-builderMetadata-maven-plugin</url>
     <developers>
         <developer>
             <id>tobi-laa</id>
@@ -27,9 +27,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git://github.com/tobi-laa/fluent-builder-maven-plugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:tobi-laa/fluent-builder-maven-plugin.git</developerConnection>
-        <url>http://github.com/tobi-laa/fluent-builder-maven-plugin/tree/master</url>
+        <connection>scm:git:git://github.com/tobi-laa/fluent-builderMetadata-maven-plugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:tobi-laa/fluent-builderMetadata-maven-plugin.git</developerConnection>
+        <url>http://github.com/tobi-laa/fluent-builderMetadata-maven-plugin/tree/master</url>
     </scm>
     <properties>
         <!-- general properties -->

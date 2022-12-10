@@ -51,34 +51,34 @@ public class SetterServiceImpl implements SetterService {
     private Setter toSetter(final Method method) {
         final var param = method.getParameters()[0];
         if (param.getType().isArray()) {
-            return ArraySetter.builder().paramComponentType(param.getType().getComponentType())
-                    .methodName(method.getName())
-                    .paramType(param.getType())
-                    .paramName(dropSetterPrefix(method.getName()))
-                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+            return ArraySetter.builder().paramComponentType(param.getType().getComponentType()) //
+                    .methodName(method.getName()) //
+                    .paramType(param.getType()) //
+                    .paramName(dropSetterPrefix(method.getName())) //
+                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
                     .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
-            return CollectionSetter.builder().paramTypeArg(typeArg(param, 0))
-                    .methodName(method.getName())
-                    .paramType(param.getType())
-                    .paramName(dropSetterPrefix(method.getName()))
-                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+            return CollectionSetter.builder().paramTypeArg(typeArg(param, 0)) //
+                    .methodName(method.getName()) //
+                    .paramType(param.getType()) //
+                    .paramName(dropSetterPrefix(method.getName())) //
+                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
                     .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
-            return MapSetter.builder()
-                    .keyType(typeArg(param, 0))
-                    .valueType(typeArg(param, 1))
-                    .methodName(method.getName())
-                    .paramType(param.getType())
-                    .paramName(dropSetterPrefix(method.getName()))
-                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+            return MapSetter.builder() //
+                    .keyType(typeArg(param, 0)) //
+                    .valueType(typeArg(param, 1)) //
+                    .methodName(method.getName()) //
+                    .paramType(param.getType()) //
+                    .paramName(dropSetterPrefix(method.getName())) //
+                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
                     .build();
         } else {
-            return SimpleSetter.builder()
-                    .methodName(method.getName())
-                    .paramType(param.getType())
-                    .paramName(dropSetterPrefix(method.getName()))
-                    .visibility(visibilityService.toVisibility(param.getModifiers()))
+            return SimpleSetter.builder() //
+                    .methodName(method.getName()) //
+                    .paramType(param.getType()) //
+                    .paramName(dropSetterPrefix(method.getName())) //
+                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
                     .build();
         }
     }

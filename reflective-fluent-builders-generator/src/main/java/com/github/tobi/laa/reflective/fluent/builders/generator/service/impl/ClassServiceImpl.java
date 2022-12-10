@@ -60,10 +60,10 @@ public class ClassServiceImpl implements ClassService {
     public Set<Class<?>> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
         try {
-            return ClassPath.from(ClassLoader.getSystemClassLoader())
-                    .getTopLevelClassesRecursive(packageName)
-                    .stream()
-                    .map(ClassPath.ClassInfo::load)
+            return ClassPath.from(ClassLoader.getSystemClassLoader()) //
+                    .getTopLevelClassesRecursive(packageName) //
+                    .stream() //
+                    .map(ClassPath.ClassInfo::load) //
                     .collect(Collectors.toUnmodifiableSet());
         } catch (IOException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);

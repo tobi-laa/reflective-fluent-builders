@@ -103,7 +103,7 @@ class ClassServiceImplTest {
                         Set.of( //
                                 AbstractSetter.class, //
                                 ArraySetter.class, //
-                                Builder.class, //
+                                BuilderMetadata.class, //
                                 CollectionSetter.class, //
                                 MapSetter.class, //
                                 Setter.class, //

@@ -1,16 +1,16 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.service.api;
 
-import com.github.tobi.laa.reflective.fluent.builders.generator.model.Builder;
+import com.github.tobi.laa.reflective.fluent.builders.generator.model.BuilderMetadata;
 
 import java.util.Set;
 
 /**
  * <p>
  * Offers methods for identifying for which classes builder generation is possible as well as collecting
- * {@link Builder metadata about a builder class}.
+ * {@link BuilderMetadata metadata about a builder class}.
  * </p>
  */
-public interface BuilderService {
+public interface BuilderMetadataService {
 
     /**
      * <p>
@@ -21,7 +21,7 @@ public interface BuilderService {
      *              {@code null}.
      * @return Metadata necessary for generating a builder for {@code clazz}.
      */
-    Builder collectBuilderMetadata(final Class<?> clazz);
+    BuilderMetadata collectBuilderMetadata(final Class<?> clazz);
 
     /**
      * <p>
