@@ -48,7 +48,7 @@
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <mockito.version>4.11.0</mockito.version>
-        <assertj.version>3.23.1</assertj.version>
+        <assertj.version>3.24.1</assertj.version>
         <archunit.version>1.0.1</archunit.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
