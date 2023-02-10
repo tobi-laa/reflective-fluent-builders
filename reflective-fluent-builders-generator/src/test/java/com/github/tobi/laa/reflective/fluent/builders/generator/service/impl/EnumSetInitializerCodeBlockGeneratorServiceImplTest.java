@@ -98,7 +98,7 @@ class EnumSetInitializerCodeBlockGeneratorServiceImplTest {
         // Act
         final CodeBlock actual = enumSetInitializerCodeBlockerGeneratorServiceImpl.generateCollectionInitializer(collectionSetter);
         // Assert
-        assertThat(actual.toString()).isEqualTo(expected.toString());
+        assertThat(actual).hasToString(expected.toString());
     }
 
     private static Stream<Arguments> generateCollectionInitializer() {
