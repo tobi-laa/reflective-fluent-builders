@@ -25,7 +25,7 @@ class EnumSetInitializerCodeBlockGeneratorServiceImplTest {
     private final EnumSetInitializerCodeBlockerGeneratorServiceImpl enumSetInitializerCodeBlockerGeneratorServiceImpl = new EnumSetInitializerCodeBlockerGeneratorServiceImpl();
 
     @Test
-    void isApplicableNull() {
+    void testIApplicableNull() {
         // Act
         final Executable isApplicable = () -> enumSetInitializerCodeBlockerGeneratorServiceImpl.isApplicable(null);
         // Assert
@@ -34,27 +34,27 @@ class EnumSetInitializerCodeBlockGeneratorServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void isApplicableTrue(final CollectionSetter collectionSetter) {
+    void testIsApplicableTrue(final CollectionSetter collectionSetter) {
         // Act
         final boolean isApplicable = enumSetInitializerCodeBlockerGeneratorServiceImpl.isApplicable(collectionSetter);
         // Assert
         assertTrue(isApplicable);
     }
 
-    private static Stream<CollectionSetter> isApplicableTrue() {
-        return generateCollectionInitializer().map(args -> args.get()[0]).map(CollectionSetter.class::cast);
+    private static Stream<CollectionSetter> testIsApplicableTrue() {
+        return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionSetter.class::cast);
     }
 
     @ParameterizedTest
     @MethodSource
-    void isApplicableFalse(final CollectionSetter collectionSetter) {
+    void testIsApplicableFalse(final CollectionSetter collectionSetter) {
         // Act
         final boolean isApplicable = enumSetInitializerCodeBlockerGeneratorServiceImpl.isApplicable(collectionSetter);
         // Assert
         assertFalse(isApplicable);
     }
 
-    private static Stream<CollectionSetter> isApplicableFalse() {
+    private static Stream<CollectionSetter> testIsApplicableFalse() {
         return Stream.concat(
                         SimpleCollectionInitializerCodeBlockGeneratorServiceImpl.SUPPORTED_COLLECTIONS.stream(),
                         Stream.of(Set.class, List.class, SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest.MyList.class))
@@ -68,7 +68,7 @@ class EnumSetInitializerCodeBlockGeneratorServiceImplTest {
     }
 
     @Test
-    void generateCollectionInitializerNull() {
+    void testGenerateCollectionInitializerNull() {
         // Act
         final Executable generateCollectionInitializer = () -> enumSetInitializerCodeBlockerGeneratorServiceImpl.generateCollectionInitializer(null);
         // Assert
@@ -77,7 +77,7 @@ class EnumSetInitializerCodeBlockGeneratorServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void generateCollectionInitializerCodeGenerationException(final CollectionSetter collectionSetter) {
+    void testGenerateCollectionInitializerCodeGenerationException(final CollectionSetter collectionSetter) {
         // Act
         final ThrowableAssert.ThrowingCallable generateCollectionInitializer = () -> enumSetInitializerCodeBlockerGeneratorServiceImpl.generateCollectionInitializer(collectionSetter);
         // Assert
@@ -88,20 +88,20 @@ class EnumSetInitializerCodeBlockGeneratorServiceImplTest {
                 .contains(collectionSetter.getParamType().getName());
     }
 
-    private static Stream<CollectionSetter> generateCollectionInitializerCodeGenerationException() {
-        return isApplicableFalse();
+    private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {
+        return testIsApplicableFalse();
     }
 
     @ParameterizedTest
     @MethodSource
-    void generateCollectionInitializer(final CollectionSetter collectionSetter, final CodeBlock expected) {
+    void testGenerateCollectionInitializer(final CollectionSetter collectionSetter, final CodeBlock expected) {
         // Act
         final CodeBlock actual = enumSetInitializerCodeBlockerGeneratorServiceImpl.generateCollectionInitializer(collectionSetter);
         // Assert
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> generateCollectionInitializer() {
+    private static Stream<Arguments> testGenerateCollectionInitializer() {
         return Stream.of(
                 Arguments.of(
                         CollectionSetter.builder() //

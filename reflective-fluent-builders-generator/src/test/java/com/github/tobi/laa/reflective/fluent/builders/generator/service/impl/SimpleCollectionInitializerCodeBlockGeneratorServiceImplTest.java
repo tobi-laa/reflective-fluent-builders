@@ -27,7 +27,7 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
     private final SimpleCollectionInitializerCodeBlockGeneratorServiceImpl simpleCollectionInitializerCodeBlockGeneratorService = new SimpleCollectionInitializerCodeBlockGeneratorServiceImpl();
 
     @Test
-    void isApplicableNull() {
+    void testIsApplicableNull() {
         // Act
         final Executable isApplicable = () -> simpleCollectionInitializerCodeBlockGeneratorService.isApplicable(null);
         // Assert
@@ -36,34 +36,34 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void isApplicableTrue(final CollectionSetter collectionSetter) {
+    void testIsApplicableTrue(final CollectionSetter collectionSetter) {
         // Act
         final boolean isApplicable = simpleCollectionInitializerCodeBlockGeneratorService.isApplicable(collectionSetter);
         // Assert
         assertTrue(isApplicable);
     }
 
-    private static Stream<CollectionSetter> isApplicableTrue() {
-        return generateCollectionInitializer().map(args -> args.get()[0]).map(CollectionSetter.class::cast);
+    private static Stream<CollectionSetter> testIsApplicableTrue() {
+        return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionSetter.class::cast);
     }
 
     @ParameterizedTest
     @MethodSource
-    void isApplicableFalse(final CollectionSetter collectionSetter) {
+    void testIsApplicableFalse(final CollectionSetter collectionSetter) {
         // Act
         final boolean isApplicable = simpleCollectionInitializerCodeBlockGeneratorService.isApplicable(collectionSetter);
         // Assert
         assertFalse(isApplicable);
     }
 
-    private static Stream<CollectionSetter> isApplicableFalse() {
+    private static Stream<CollectionSetter> testIsApplicableFalse() {
         return Stream.of(
                 collectionSetter(EnumSet.class),
                 collectionSetter(MyList.class));
     }
 
     @Test
-    void generateCollectionInitializerNull() {
+    void testGenerateCollectionInitializerNull() {
         // Act
         final Executable generateCollectionInitializer = () -> simpleCollectionInitializerCodeBlockGeneratorService.generateCollectionInitializer(null);
         // Assert
@@ -72,7 +72,7 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void generateCollectionInitializerCodeGenerationException(final CollectionSetter collectionSetter) {
+    void testGenerateCollectionInitializerCodeGenerationException(final CollectionSetter collectionSetter) {
         // Act
         final ThrowableAssert.ThrowingCallable generateCollectionInitializer = () -> simpleCollectionInitializerCodeBlockGeneratorService.generateCollectionInitializer(collectionSetter);
         // Assert
@@ -83,20 +83,20 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
                 .contains(collectionSetter.getParamType().getName());
     }
 
-    private static Stream<CollectionSetter> generateCollectionInitializerCodeGenerationException() {
-        return isApplicableFalse();
+    private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {
+        return testIsApplicableFalse();
     }
 
     @ParameterizedTest
     @MethodSource
-    void generateCollectionInitializer(final CollectionSetter collectionSetter, final CodeBlock expected) {
+    void testGenerateCollectionInitializer(final CollectionSetter collectionSetter, final CodeBlock expected) {
         // Act
         final CodeBlock actual = simpleCollectionInitializerCodeBlockGeneratorService.generateCollectionInitializer(collectionSetter);
         // Assert
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> generateCollectionInitializer() {
+    private static Stream<Arguments> testGenerateCollectionInitializer() {
         return Stream.concat( //
                 SimpleCollectionInitializerCodeBlockGeneratorServiceImpl.SUPPORTED_COLLECTIONS //
                         .stream() //
