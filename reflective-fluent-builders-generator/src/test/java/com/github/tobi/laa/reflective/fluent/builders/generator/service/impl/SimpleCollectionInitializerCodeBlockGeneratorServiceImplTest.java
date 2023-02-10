@@ -1,14 +1,17 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.service.impl;
 
+import com.github.tobi.laa.reflective.fluent.builders.generator.exception.CodeGenerationException;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionSetter;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.Visibility;
 import com.squareup.javapoet.CodeBlock;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.Serial;
 import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
@@ -16,8 +19,8 @@ import java.util.concurrent.TransferQueue;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
 
@@ -44,8 +47,19 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
         return generateCollectionInitializer().map(args -> args.get()[0]).map(CollectionSetter.class::cast);
     }
 
-    @Test
-    void isApplicableFalse() {
+    @ParameterizedTest
+    @MethodSource
+    void isApplicableFalse(final CollectionSetter collectionSetter) {
+        // Act
+        final boolean isApplicable = simpleCollectionInitializerCodeBlockGeneratorService.isApplicable(collectionSetter);
+        // Assert
+        assertFalse(isApplicable);
+    }
+
+    private static Stream<CollectionSetter> isApplicableFalse() {
+        return Stream.of(
+                collectionSetter(EnumSet.class),
+                collectionSetter(MyList.class));
     }
 
     @Test
@@ -54,6 +68,23 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
         final Executable generateCollectionInitializer = () -> simpleCollectionInitializerCodeBlockGeneratorService.generateCollectionInitializer(null);
         // Assert
         assertThrows(NullPointerException.class, generateCollectionInitializer);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void generateCollectionInitializerCodeGenerationException(final CollectionSetter collectionSetter) {
+        // Act
+        final ThrowableAssert.ThrowingCallable generateCollectionInitializer = () -> simpleCollectionInitializerCodeBlockGeneratorService.generateCollectionInitializer(collectionSetter);
+        // Assert
+        assertThatThrownBy(generateCollectionInitializer)
+                .isInstanceOf(CodeGenerationException.class)
+                .message()
+                .matches("Generation of initializing code blocks for .+ is not supported.")
+                .contains(collectionSetter.getParamType().getName());
+    }
+
+    private static Stream<CollectionSetter> generateCollectionInitializerCodeGenerationException() {
+        return isApplicableFalse();
     }
 
     @ParameterizedTest
@@ -79,23 +110,32 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
                         Arguments.of(
                                 collectionSetter(BlockingDeque.class),
                                 CodeBlock.builder().add("new java.util.concurrent.LinkedBlockingDeque<>()").build()),
-                        Arguments.of(collectionSetter(BlockingQueue.class),
+                        Arguments.of(
+                                collectionSetter(BlockingQueue.class),
                                 CodeBlock.builder().add("new java.util.concurrent.DelayQueue<>()").build()),
-                        Arguments.of(collectionSetter(Deque.class),
+                        Arguments.of(
+                                collectionSetter(Deque.class),
                                 CodeBlock.builder().add("new java.util.ArrayDeque<>()").build()),
-                        Arguments.of(collectionSetter(List.class),
+                        Arguments.of(
+                                collectionSetter(List.class),
                                 CodeBlock.builder().add("new java.util.ArrayList<>()").build()),
-                        Arguments.of(collectionSetter(NavigableSet.class),
+                        Arguments.of(
+                                collectionSetter(NavigableSet.class),
                                 CodeBlock.builder().add("new java.util.TreeSet<>()").build()),
-                        Arguments.of(collectionSetter(Queue.class),
+                        Arguments.of(
+                                collectionSetter(Queue.class),
                                 CodeBlock.builder().add("new java.util.ArrayDeque<>()").build()),
-                        Arguments.of(collectionSetter(Set.class),
+                        Arguments.of(
+                                collectionSetter(Set.class),
                                 CodeBlock.builder().add("new java.util.HashSet<>()").build()),
-                        Arguments.of(collectionSetter(SortedSet.class),
+                        Arguments.of(
+                                collectionSetter(SortedSet.class),
                                 CodeBlock.builder().add("new java.util.TreeSet<>()").build()),
-                        Arguments.of(collectionSetter(TransferQueue.class),
+                        Arguments.of(
+                                collectionSetter(TransferQueue.class),
                                 CodeBlock.builder().add("new java.util.concurrent.LinkedTransferQueue<>()").build()),
-                        Arguments.of(collectionSetter(Collection.class),
+                        Arguments.of(
+                                collectionSetter(Collection.class),
                                 CodeBlock.builder().add("new java.util.ArrayList<>()").build())));
     }
 
@@ -108,5 +148,10 @@ class SimpleCollectionInitializerCodeBlockGeneratorServiceImplTest {
                 .methodName("") //
                 .visibility(Visibility.PRIVATE) //
                 .build();
+    }
+
+    static class MyList<T> extends ArrayList<T> {
+        @Serial
+        private static final long serialVersionUID = 3204706075779867698L;
     }
 }
