@@ -2,24 +2,29 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
+import org.junitpioneer.jupiter.cartesian.ArgumentSets;
+import org.junitpioneer.jupiter.cartesian.CartesianTest;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -30,16 +35,26 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class InnerClassForArrayCodeGeneratorTest {
+class InnerClassForCollectionCodeGeneratorTest {
 
-    @InjectMocks
-    private InnerClassForArrayCodeGenerator generator;
+    private InnerClassForCollectionCodeGenerator generator;
 
     @Mock
     private BuilderClassNameGenerator builderClassNameGenerator;
 
     @Mock
     private SetterService setterService;
+
+    @Mock
+    private CollectionInitializerCodeGenerator initializerGeneratorA;
+
+    @Mock
+    private CollectionInitializerCodeGenerator initializerGeneratorB;
+
+    @BeforeEach
+    void init() {
+        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, setterService, List.of(initializerGeneratorA, initializerGeneratorB));
+    }
 
     @Test
     void testIsApplicableNull() {
@@ -49,47 +64,69 @@ class InnerClassForArrayCodeGeneratorTest {
         final Executable isApplicable = () -> generator.isApplicable(setter);
         // Assert
         assertThrows(NullPointerException.class, isApplicable);
-        verifyNoInteractions(builderClassNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorA, initializerGeneratorB);
     }
 
-    @ParameterizedTest
-    @MethodSource
-    void testIsApplicableTrue(final Setter setter) {
+    @CartesianTest
+    @CartesianTest.MethodFactory("testIsApplicableTrue")
+    void testIsApplicableTrue(final Setter setter, final boolean genAApplicable) {
+        // Arrange
+        if (genAApplicable) {
+            when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
+        } else {
+            when(initializerGeneratorB.isApplicable(any())).thenReturn(true);
+        }
         // Act
         final boolean actual = generator.isApplicable(setter);
         // Assert
         assertTrue(actual);
     }
 
-    private static Stream<Setter> testIsApplicableTrue() {
-        return Stream.of( //
-                ArraySetter.builder() //
-                        .methodName("setFloats") //
-                        .paramName("floats") //
-                        .paramType(float[].class) //
-                        .paramComponentType(float.class) //
-                        .visibility(Visibility.PRIVATE) //
-                        .build(), //
-                ArraySetter.builder() //
-                        .methodName("setStrings") //
-                        .paramName("strings") //
-                        .paramType(String[].class) //
-                        .paramComponentType(String.class) //
-                        .visibility(Visibility.PRIVATE) //
-                        .build());
+    private static ArgumentSets testIsApplicableTrue() {
+        return ArgumentSets
+                .argumentsForFirstParameter(testIsApplicableFalseNoInitializerGeneratorApplicable()) //
+                .argumentsForNextParameter(true, false);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableFalse(final Setter setter) {
+    void testIsApplicableFalseWrongType(final Setter setter) {
+        // Act
+        final boolean actual = generator.isApplicable(setter);
+        // Assert
+        assertFalse(actual);
+        verifyNoInteractions(initializerGeneratorA, initializerGeneratorB);
+    }
+
+    private static Stream<Setter> testIsApplicableFalseWrongType() {
+        return testGenerateCodeGenerationExceptionWrongType().map(args -> args.get()[1]).map(Setter.class::cast);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testIsApplicableFalseNoInitializerGeneratorApplicable(final Setter setter) {
         // Act
         final boolean actual = generator.isApplicable(setter);
         // Assert
         assertFalse(actual);
     }
 
-    private static Stream<Setter> testIsApplicableFalse() {
-        return testGenerateCodeGenerationException().map(args -> args.get()[1]).map(Setter.class::cast);
+    private static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
+        return Stream.of( //
+                CollectionSetter.builder() //
+                        .methodName("setDeque") //
+                        .paramName("deque") //
+                        .paramType(Deque.class) //
+                        .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                        .visibility(Visibility.PRIVATE) //
+                        .build(), //
+                CollectionSetter.builder() //
+                        .methodName("setList") //
+                        .paramName("list") //
+                        .paramType(List.class) //
+                        .paramTypeArg(String.class) //
+                        .visibility(Visibility.PRIVATE) //
+                        .build());
     }
 
     @ParameterizedTest
@@ -99,7 +136,7 @@ class InnerClassForArrayCodeGeneratorTest {
         final Executable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorA, initializerGeneratorB);
     }
 
     private static Stream<Arguments> testGenerateCodeNull() {
@@ -117,29 +154,29 @@ class InnerClassForArrayCodeGeneratorTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        ArraySetter.builder() //
-                                .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                        CollectionSetter.builder() //
+                                .methodName("setDeque") //
+                                .paramName("deque") //
+                                .paramType(Deque.class) //
+                                .paramTypeArg(TypeUtils.wildcardType().build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build()));
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateCodeGenerationException(final BuilderMetadata builderMetadata, final Setter setter) {
+    void testGenerateCodeGenerationExceptionWrongType(final BuilderMetadata builderMetadata, final Setter setter) {
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
-                .hasMessageMatching("Generation of inner array class for .+ is not supported.") //
+                .hasMessageMatching("Generation of inner collection class for .+ is not supported.") //
                 .hasMessageContaining(setter.getParamType().toString());
-        verifyNoInteractions(builderClassNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorB, initializerGeneratorB);
     }
 
-    private static Stream<Arguments> testGenerateCodeGenerationException() {
+    private static Stream<Arguments> testGenerateCodeGenerationExceptionWrongType() {
         return Stream.of( //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -165,11 +202,11 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
-                                .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                        ArraySetter.builder() //
+                                .methodName("setFloats") //
+                                .paramName("floats") //
+                                .paramType(float[].class) //
+                                .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build()), //
                 Arguments.of( //
@@ -193,10 +230,41 @@ class InnerClassForArrayCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expectedGetter, final String expectedInnerClass) {
+    void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final Setter setter) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
+        // Act
+        final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
+        // Assert
+        assertThatThrownBy(generate) //
+                .isInstanceOf(CodeGenerationException.class) //
+                .hasMessageMatching("Could not generate initializer for .+") //
+                .hasMessageContaining(setter.getParamType().toString());
+    }
+
+    private static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
+        return testIsApplicableFalseNoInitializerGeneratorApplicable() //
+                .map(setter -> Arguments.of( //
+                        BuilderMetadata.builder() //
+                                .packageName("ignored") //
+                                .name("Ignored") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(SimpleClass.class) //
+                                        .accessibleNonArgsConstructor(true) //
+                                        .build()) //
+                                .build(), //
+                        setter));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testGenerate(final BuilderMetadata builderMetadata, final CollectionSetter setter, final String expectedGetter, final String expectedInnerClass) {
+        // Arrange
+        when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
+        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
+        when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
+        when(initializerGeneratorA.generateCollectionInitializer(any())).thenReturn(CodeBlock.of("new MockList<>()"));
         // Act
         final CollectionClassSpec actual = generator.generate(builderMetadata, setter);
         // Assert
@@ -205,6 +273,7 @@ class InnerClassForArrayCodeGeneratorTest {
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
         verify(setterService).dropSetterPrefix(setter.getMethodName());
+        verify(initializerGeneratorA).generateCollectionInitializer(setter);
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -219,38 +288,33 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
-                                .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                        CollectionSetter.builder() //
+                                .methodName("setDeque") //
+                                .paramName("deque") //
+                                .paramType(Deque.class) //
+                                .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
                         """
-                                public %1$s.ArrayFloats floats(
+                                public %1$s.CollectionDeque deque(
                                     ) {
-                                  return new %1$s.ArrayFloats();
+                                  return new %1$s.CollectionDeque();
                                 }
                                 """.formatted(mockTypeName), //
                         """
-                                public class ArrayFloats {
-                                  private java.util.List<java.lang.Float> list;
-                                                                
-                                  public %1$s.ArrayFloats add(
-                                      final float item) {
-                                    if (this.list == null) {
-                                      this.list = new java.util.ArrayList<>();
+                                public class CollectionDeque {
+                                  public %1$s.CollectionDeque add(
+                                      final ? item) {
+                                    if (%1$s.this.fieldValue.deque == null) {
+                                      %1$s.this.fieldValue.deque = new MockList<>();
                                     }
-                                    this.list.add(item);
-                                    %1$s.this.callSetterFor.floats = true;
+                                    %1$s.this.fieldValue.deque.add(item);
+                                    %1$s.this.callSetterFor.deque = true;
                                     return this;
                                   }
                                                                 
                                   public %1$s and(
                                       ) {
-                                    if (this.list != null) {
-                                      %1$s.this.fieldValue.floats = list.toArray(new float[0]);
-                                    }
                                     return %1$s.this;
                                   }
                                 }
@@ -264,38 +328,33 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
-                                .methodName("setStrings") //
-                                .paramName("strings") //
-                                .paramType(String[].class) //
-                                .paramComponentType(String.class) //
+                        CollectionSetter.builder() //
+                                .methodName("setList") //
+                                .paramName("list") //
+                                .paramType(List.class) //
+                                .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
                         """
-                                public %1$s.ArrayStrings strings(
+                                public %1$s.CollectionList list(
                                     ) {
-                                  return new %1$s.ArrayStrings();
+                                  return new %1$s.CollectionList();
                                 }
                                 """.formatted(mockTypeName),
                         """
-                                public class ArrayStrings {
-                                  private java.util.List<java.lang.String> list;
-                                                                
-                                  public %1$s.ArrayStrings add(
+                                public class CollectionList {
+                                  public %1$s.CollectionList add(
                                       final java.lang.String item) {
-                                    if (this.list == null) {
-                                      this.list = new java.util.ArrayList<>();
+                                    if (%1$s.this.fieldValue.list == null) {
+                                      %1$s.this.fieldValue.list = new MockList<>();
                                     }
-                                    this.list.add(item);
-                                    %1$s.this.callSetterFor.strings = true;
+                                    %1$s.this.fieldValue.list.add(item);
+                                    %1$s.this.callSetterFor.list = true;
                                     return this;
                                   }
                                                                 
                                   public %1$s and(
                                       ) {
-                                    if (this.list != null) {
-                                      %1$s.this.fieldValue.strings = list.toArray(new java.lang.String[0]);
-                                    }
                                     return %1$s.this;
                                   }
                                 }

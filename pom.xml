@@ -48,6 +48,7 @@
         <dagger.version>2.44.2</dagger.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
+        <junit-pioneer.version>2.0.0</junit-pioneer.version>
         <mockito.version>5.1.1</mockito.version>
         <assertj.version>3.24.2</assertj.version>
         <archunit.version>1.0.1</archunit.version>
@@ -103,6 +104,12 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit-pioneer</groupId>
+                <artifactId>junit-pioneer</artifactId>
+                <version>${junit-pioneer.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
