@@ -16,6 +16,7 @@ import java.util.Objects;
  */
 public class SetterTypeNameGeneratorImpl implements SetterTypeNameGenerator {
 
+    @SuppressWarnings("java:S3252") // false positive for static method call
     @Override
     public TypeName generateTypeNameForParam(final Setter setter) {
         Objects.requireNonNull(setter);
