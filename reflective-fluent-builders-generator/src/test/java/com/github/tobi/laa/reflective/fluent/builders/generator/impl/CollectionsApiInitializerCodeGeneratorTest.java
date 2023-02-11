@@ -172,7 +172,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
     private static Stream<MapSetter> testIsApplicableFalseForMapSetter() {
         return Stream.of(
                 mapSetter(EnumMap.class),
-                mapSetter(SimpleMapInitializerCodeGeneratorImplTest.MyMap.class));
+                mapSetter(MyMap.class));
     }
 
     @Test
