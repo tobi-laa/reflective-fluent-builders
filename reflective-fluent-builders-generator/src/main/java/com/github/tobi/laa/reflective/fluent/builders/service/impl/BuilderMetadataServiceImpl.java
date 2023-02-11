@@ -6,6 +6,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
+import com.google.common.collect.ImmutableSortedSet;
 import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.Constructor;
@@ -72,7 +73,7 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
         final var setters = setterService.gatherAllSetters(clazz) //
                 .stream() //
                 .filter(setter -> isAccessible(clazz, setter.getVisibility()))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         return avoidNameCollisions(setters);
     }
 
