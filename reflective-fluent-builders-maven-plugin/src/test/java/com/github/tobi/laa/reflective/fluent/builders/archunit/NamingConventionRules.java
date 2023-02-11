@@ -31,8 +31,26 @@ class NamingConventionRules {
                     .should().haveSimpleNameEndingWith("ServiceImpl");
 
     @ArchTest
-    static ArchRule getServiceImplementationsShouldNotBeInterfaces =
+    static ArchRule serviceImplementationsShouldNotBeInterfaces =
             classes()
                     .that().resideInAPackage("..service.impl..")
+                    .should().notBeInterfaces();
+
+    @ArchTest
+    static ArchRule generatorsShouldBeSuffixed =
+            classes()
+                    .that().resideInAPackage("..generator.api..")
+                    .should().haveSimpleNameEndingWith("Generator");
+
+    @ArchTest
+    static ArchRule generatorsShouldBeInterfaces =
+            classes()
+                    .that().resideInAPackage("..generators.api..")
+                    .should().beInterfaces();
+
+    @ArchTest
+    static ArchRule generatorImplementationsShouldNotBeInterfaces =
+            classes()
+                    .that().resideInAPackage("..generator.impl..")
                     .should().notBeInterfaces();
 }
