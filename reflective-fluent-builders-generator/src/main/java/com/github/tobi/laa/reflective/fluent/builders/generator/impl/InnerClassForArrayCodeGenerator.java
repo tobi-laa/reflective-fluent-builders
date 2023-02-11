@@ -15,6 +15,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ClassUtils;
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
@@ -68,12 +69,13 @@ public class InnerClassForArrayCodeGenerator implements CollectionClassCodeGener
                 .innerClass(TypeSpec //
                         .classBuilder(className) //
                         .addModifiers(Modifier.PUBLIC) //
-                        .addField(FieldSpec
-                                .builder(
-                                        ParameterizedTypeName.get(List.class, setter.getParamComponentType()),
-                                        "list",
-                                        Modifier.PRIVATE)
-                                .build())
+                        .addField(FieldSpec.builder( //
+                                        ParameterizedTypeName.get( //
+                                                List.class, //
+                                                ClassUtils.primitiveToWrapper((Class<?>) setter.getParamComponentType())), //
+                                        "list", //
+                                        Modifier.PRIVATE) //
+                                .build()) //
                         .addMethod(MethodSpec.methodBuilder("add") //
                                 .addModifiers(Modifier.PUBLIC) //
                                 .addParameter(setter.getParamComponentType(), "item", FINAL) //
