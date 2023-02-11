@@ -45,7 +45,7 @@ class NamingConventionRules {
     @ArchTest
     static ArchRule generatorsShouldBeInterfaces =
             classes()
-                    .that().resideInAPackage("..generators.api..")
+                    .that().resideInAPackage("..generator.api..")
                     .should().beInterfaces();
 
     @ArchTest
