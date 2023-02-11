@@ -3,7 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.model;
 import lombok.Data;
 import lombok.Singular;
 
-import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * <p>
@@ -34,6 +34,6 @@ public class BuilderMetadata {
 
         @lombok.NonNull
         @Singular
-        private final Set<Setter> setters;
+        private final SortedSet<Setter> setters;
     }
 }

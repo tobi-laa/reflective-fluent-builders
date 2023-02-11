@@ -10,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
@@ -49,7 +47,7 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
-                        .setters(gatherAndFilterAccessibleSetters(clazz))
+                        .setters(gatherAndFilterAccessibleSettersAndAvoidNameCollisions(clazz))
                         .build()) //
                 .build();
     }
@@ -70,11 +68,30 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
         return isAccessible(constructor.getDeclaringClass(), constructor.getModifiers());
     }
 
-    private Set<Setter> gatherAndFilterAccessibleSetters(final Class<?> clazz) {
-        return setterService.gatherAllSetters(clazz) //
+    private SortedSet<Setter> gatherAndFilterAccessibleSettersAndAvoidNameCollisions(final Class<?> clazz) {
+        final var setters = setterService.gatherAllSetters(clazz) //
                 .stream() //
                 .filter(setter -> isAccessible(clazz, setter.getVisibility()))
                 .collect(Collectors.toUnmodifiableSet());
+        return avoidNameCollisions(setters);
+    }
+
+    private SortedSet<Setter> avoidNameCollisions(final Set<Setter> setters) {
+        final SortedSet<Setter> noNameCollisions = new TreeSet<>();
+        for (final var setter : setters) {
+            if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(setter.getParamName()::equals)) {
+                noNameCollisions.add(setter);
+            } else {
+                for (int i = 0; true; i++) {
+                    final var paramName = setter.getParamName() + i;
+                    if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(paramName::equals)) {
+                        noNameCollisions.add(setter.withParamName(paramName));
+                        break;
+                    }
+                }
+            }
+        }
+        return noNameCollisions;
     }
 
     @Override

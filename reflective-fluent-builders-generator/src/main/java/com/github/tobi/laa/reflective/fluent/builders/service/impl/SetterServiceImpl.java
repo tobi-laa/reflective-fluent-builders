@@ -4,6 +4,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
+import com.google.common.collect.ImmutableSortedSet;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +14,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -33,7 +33,7 @@ public class SetterServiceImpl implements SetterService {
     private final String setterPrefix;
 
     @Override
-    public Set<Setter> gatherAllSetters(final Class<?> clazz) {
+    public SortedSet<Setter> gatherAllSetters(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
         return classService.collectFullClassHierarchy(clazz) //
                 .stream() //
@@ -41,7 +41,7 @@ public class SetterServiceImpl implements SetterService {
                 .flatMap(Arrays::stream) //
                 .filter(this::isSetter) //
                 .map(this::toSetter) //
-                .collect(Collectors.toSet());
+                .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
     }
 
     private boolean isSetter(final Method method) {

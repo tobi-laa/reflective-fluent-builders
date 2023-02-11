@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
  * Represents a single setter of a class for which a builder is going to be generated.
  * </p>
  */
-public interface Setter {
+public interface Setter extends Comparable<Setter> {
 
     /**
      * <p>
