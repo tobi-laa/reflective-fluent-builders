@@ -175,6 +175,7 @@ class BuilderMetadataServiceImplTest {
                         Set.of(SimpleClass.class),
                         Set.of(SimpleClass.class)), //
                 Arguments.of( //
+                        SimpleClass.class.getPackageName(), //
                         Visibility.PACKAGE_PRIVATE, //
                         Set.of(SimpleClass.class),
                         Set.of(SimpleClass.class)), //
