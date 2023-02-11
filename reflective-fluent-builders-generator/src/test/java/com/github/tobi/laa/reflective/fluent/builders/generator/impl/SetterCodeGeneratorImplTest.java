@@ -45,15 +45,15 @@ class SetterCodeGeneratorImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateFluentSetterNull(final BuilderMetadata builderMetadata, final Setter setter) {
+    void testGenerateNull(final BuilderMetadata builderMetadata, final Setter setter) {
         // Act
-        final Executable generateFluentSetter = () -> generator.generate(builderMetadata, setter);
+        final Executable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
-        assertThrows(NullPointerException.class, generateFluentSetter);
+        assertThrows(NullPointerException.class, generate);
         verifyNoInteractions(builderClassNameGenerator, setterTypeNameGenerator, setterService);
     }
 
-    private static Stream<Arguments> testGenerateFluentSetterNull() {
+    private static Stream<Arguments> testGenerateNull() {
         return Stream.of( //
                 Arguments.of(null, null),
                 Arguments.of( //
@@ -79,7 +79,7 @@ class SetterCodeGeneratorImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateFluentSetter(final BuilderMetadata builderMetadata, final Setter setter, final String expected) {
+    void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expected) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(setterTypeNameGenerator.generateTypeNameForParam(any())).thenReturn(TypeName.get(MockType.class));
@@ -93,7 +93,7 @@ class SetterCodeGeneratorImplTest {
         verify(setterService).dropSetterPrefix(setter.getMethodName());
     }
 
-    private static Stream<Arguments> testGenerateFluentSetter() {
+    private static Stream<Arguments> testGenerate() {
         final var mockTypeName = MockType.class.getName().replace('$', '.');
         final var builderMetadata = BuilderMetadata.builder() //
                 .packageName("ignored") //
