@@ -28,7 +28,8 @@
     </licenses>
     <scm>
         <connection>scm:git:git://github.com/tobi-laa/fluent-builderMetadata-maven-plugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:tobi-laa/fluent-builderMetadata-maven-plugin.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com:tobi-laa/fluent-builderMetadata-maven-plugin.git
+        </developerConnection>
         <url>http://github.com/tobi-laa/fluent-builderMetadata-maven-plugin/tree/master</url>
     </scm>
     <properties>
@@ -107,6 +108,12 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-inline</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>

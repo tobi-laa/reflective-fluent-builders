@@ -8,10 +8,12 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.Sett
 import com.github.tobi.laa.reflective.fluent.builders.generator.service.api.VisibilityService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Abstract;
-import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.*;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Annotation;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Enum;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Interface;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,16 +24,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BuilderMetadataServiceImplTest {
@@ -120,6 +120,21 @@ class BuilderMetadataServiceImplTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build() //
+                ),
+                Arguments.of( //
+                        "builders.<PACKAGE_NAME>", //
+                        "Builder", //
+                        Visibility.PUBLIC, //
+                        Collections.emptySet(), //
+                        SimpleClassNoDefaultConstructor.class, //
+                        BuilderMetadata.builder() //
+                                .packageName("builders.com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
+                                .name("SimpleClassNoDefaultConstructorBuilder") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(SimpleClassNoDefaultConstructor.class) //
+                                        .accessibleNonArgsConstructor(false) //
+                                        .build()) //
+                                .build() //
                 ));
     }
 
@@ -156,6 +171,10 @@ class BuilderMetadataServiceImplTest {
                         Collections.emptySet()), //
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
+                        Visibility.PACKAGE_PRIVATE, //
+                        Set.of(SimpleClass.class),
+                        Set.of(SimpleClass.class)), //
+                Arguments.of( //
                         Visibility.PACKAGE_PRIVATE, //
                         Set.of(SimpleClass.class),
                         Set.of(SimpleClass.class)), //

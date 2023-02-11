@@ -108,6 +108,7 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private boolean isAccessible(final Class<?> clazz, final Visibility visibility) {
         return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
     }
+
     private boolean placeBuildersInSamePackage(final Class<?> clazz) {
         return PACKAGE_PLACEHOLDER.equals(builderPackage) || builderPackage.equals(clazz.getPackageName());
     }

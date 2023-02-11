@@ -1,19 +1,31 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.service.impl;
 
+import com.github.tobi.laa.reflective.fluent.builders.generator.exception.ReflectionException;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import com.google.common.reflect.ClassPath;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 
 class ClassServiceImplTest {
 
@@ -85,6 +97,23 @@ class ClassServiceImplTest {
         assertThrows(NullPointerException.class, collectClassesRecursively);
     }
 
+    @Test
+    void testCollectClassesRecursivelyReflectionException() {
+        try (final MockedStatic<ClassPath> classPath = mockStatic(ClassPath.class)) {
+            // Arrange
+            final var cause = new IOException("Thrown in unit test");
+            classPath.when(() -> ClassPath.from(any())).thenThrow(cause);
+            final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
+            // Act
+            final ThrowableAssert.ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
+            // Assert
+            assertThatThrownBy(collectClassesRecursively)
+                    .isInstanceOf(ReflectionException.class)
+                    .hasMessage("Error while attempting to collect classes recursively.")
+                    .hasCause(cause);
+        }
+    }
+
     @ParameterizedTest
     @MethodSource
     void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
@@ -93,7 +122,15 @@ class ClassServiceImplTest {
         // Act
         final Set<Class<?>> actual = classServiceImpl.collectClassesRecursively(packageName);
         // Assert
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).filteredOn(not(this::isTestClass)).containsExactlyInAnyOrderElementsOf(expected);
+    }
+
+    private boolean isTestClass(final Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .map(Method::getDeclaredAnnotations)
+                .flatMap(Arrays::stream)
+                .map(Annotation::annotationType)
+                .anyMatch(Set.of(Test.class, ParameterizedTest.class)::contains);
     }
 
     private static Stream<Arguments> testCollectClassesRecursively() {
