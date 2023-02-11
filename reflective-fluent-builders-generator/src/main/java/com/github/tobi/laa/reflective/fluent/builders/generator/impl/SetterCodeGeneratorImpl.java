@@ -2,7 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
-import com.github.tobi.laa.reflective.fluent.builders.generator.api.FluentSetterCodeGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterTypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
@@ -15,11 +15,11 @@ import java.util.Objects;
 
 /**
  * <p>
- * Default implementation of {@link FluentSetterCodeGenerator}.
+ * Default implementation of {@link SetterCodeGenerator}.
  * </p>
  */
 @RequiredArgsConstructor
-public class FluentSetterCodeGeneratorImpl implements FluentSetterCodeGenerator {
+public class SetterCodeGeneratorImpl implements SetterCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
@@ -31,7 +31,7 @@ public class FluentSetterCodeGeneratorImpl implements FluentSetterCodeGenerator 
     private final SetterService setterService;
 
     @Override
-    public MethodSpec generateFluentSetter(final BuilderMetadata builderMetadata, final Setter setter) {
+    public MethodSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(setter);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);

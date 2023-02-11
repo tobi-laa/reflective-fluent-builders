@@ -29,10 +29,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FluentSetterCodeGeneratorImplTest {
+class SetterCodeGeneratorImplTest {
 
     @InjectMocks
-    private FluentSetterCodeGeneratorImpl generator;
+    private SetterCodeGeneratorImpl generator;
 
     @Mock
     private BuilderClassNameGenerator builderClassNameGenerator;
@@ -47,7 +47,7 @@ class FluentSetterCodeGeneratorImplTest {
     @MethodSource
     void testGenerateFluentSetterNull(final BuilderMetadata builderMetadata, final Setter setter) {
         // Act
-        final Executable generateFluentSetter = () -> generator.generateFluentSetter(builderMetadata, setter);
+        final Executable generateFluentSetter = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThrows(NullPointerException.class, generateFluentSetter);
         verifyNoInteractions(builderClassNameGenerator, setterTypeNameGenerator, setterService);
@@ -85,7 +85,7 @@ class FluentSetterCodeGeneratorImplTest {
         when(setterTypeNameGenerator.generateTypeNameForParam(any())).thenReturn(TypeName.get(MockType.class));
         when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         // Act
-        final MethodSpec actual = generator.generateFluentSetter(builderMetadata, setter);
+        final MethodSpec actual = generator.generate(builderMetadata, setter);
         // Assert
         assertThat(actual).hasToString(expected);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);

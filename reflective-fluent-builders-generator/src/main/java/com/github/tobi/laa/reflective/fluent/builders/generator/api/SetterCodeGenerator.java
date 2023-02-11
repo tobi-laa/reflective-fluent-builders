@@ -9,7 +9,7 @@ import com.squareup.javapoet.MethodSpec;
  * Generates the {@link MethodSpec} for a single fluent {@link Setter setter}.
  * </p>
  */
-public interface FluentSetterCodeGenerator {
+public interface SetterCodeGenerator {
 
     /**
      * <p>
@@ -20,5 +20,5 @@ public interface FluentSetterCodeGenerator {
      * @param setter          The setter for which to generate said method. Must not be {@code null}.
      * @return The method for the fluent setter for {@code setter}.
      */
-    MethodSpec generateFluentSetter(final BuilderMetadata builderMetadata, final Setter setter);
+    MethodSpec generate(final BuilderMetadata builderMetadata, final Setter setter);
 }
