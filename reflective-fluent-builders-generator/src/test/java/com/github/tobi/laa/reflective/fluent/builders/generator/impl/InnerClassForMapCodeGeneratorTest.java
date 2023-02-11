@@ -2,7 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
-import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializerCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,9 +36,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class InnerClassForCollectionCodeGeneratorTest {
+class InnerClassForMapCodeGeneratorTest {
 
-    private InnerClassForCollectionCodeGenerator generator;
+    private InnerClassForMapCodeGenerator generator;
 
     @Mock
     private BuilderClassNameGenerator builderClassNameGenerator;
@@ -46,14 +47,14 @@ class InnerClassForCollectionCodeGeneratorTest {
     private SetterService setterService;
 
     @Mock
-    private CollectionInitializerCodeGenerator initializerGeneratorA;
+    private MapInitializerCodeGenerator initializerGeneratorA;
 
     @Mock
-    private CollectionInitializerCodeGenerator initializerGeneratorB;
+    private MapInitializerCodeGenerator initializerGeneratorB;
 
     @BeforeEach
     void init() {
-        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, setterService, List.of(initializerGeneratorA, initializerGeneratorB));
+        generator = new InnerClassForMapCodeGenerator(builderClassNameGenerator, setterService, List.of(initializerGeneratorA, initializerGeneratorB));
     }
 
     @Test
@@ -113,18 +114,20 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     private static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
         return Stream.of( //
-                CollectionSetter.builder() //
-                        .methodName("setDeque") //
-                        .paramName("deque") //
-                        .paramType(Deque.class) //
-                        .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                MapSetter.builder() //
+                        .methodName("setMap") //
+                        .paramName("map") //
+                        .paramType(Map.class) //
+                        .keyType(String.class)
+                        .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                         .visibility(Visibility.PRIVATE) //
                         .build(), //
-                CollectionSetter.builder() //
-                        .methodName("setList") //
-                        .paramName("list") //
-                        .paramType(List.class) //
-                        .paramTypeArg(String.class) //
+                MapSetter.builder() //
+                        .methodName("setSortedMap") //
+                        .paramName("sortedMap") //
+                        .paramType(SortedMap.class) //
+                        .keyType(Integer.class) //
+                        .valueType(Object.class) //
                         .visibility(Visibility.PRIVATE) //
                         .build());
     }
@@ -154,11 +157,12 @@ class InnerClassForCollectionCodeGeneratorTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        CollectionSetter.builder() //
-                                .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                        MapSetter.builder() //
+                                .methodName("setMap") //
+                                .paramName("map") //
+                                .paramType(Map.class) //
+                                .keyType(String.class)
+                                .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build()));
     }
@@ -171,7 +175,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         // Assert
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
-                .hasMessageMatching("Generation of inner collection class for .+ is not supported.") //
+                .hasMessageMatching("Generation of inner map class for .+ is not supported.") //
                 .hasMessageContaining(setter.getParamType().toString());
         verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorB, initializerGeneratorB);
     }
@@ -218,12 +222,11 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
-                                .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(Map.class) //
-                                .keyType(String.class) //
-                                .valueType(Object.class) //
+                        CollectionSetter.builder() //
+                                .methodName("setDeque") //
+                                .paramName("deque") //
+                                .paramType(Deque.class) //
+                                .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build()));
     }
@@ -259,12 +262,12 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerate(final BuilderMetadata builderMetadata, final CollectionSetter setter, final String expectedGetter, final String expectedInnerClass) {
+    void testGenerate(final BuilderMetadata builderMetadata, final MapSetter setter, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
-        when(initializerGeneratorA.generateCollectionInitializer(any())).thenReturn(CodeBlock.of("new MockList<>()"));
+        when(initializerGeneratorA.generateMapInitializer(any())).thenReturn(CodeBlock.of("new MockMap<>()"));
         // Act
         final CollectionClassSpec actual = generator.generate(builderMetadata, setter);
         // Assert
@@ -273,7 +276,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
         verify(setterService).dropSetterPrefix(setter.getMethodName());
-        verify(initializerGeneratorA).generateCollectionInitializer(setter);
+        verify(initializerGeneratorA).generateMapInitializer(setter);
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -288,28 +291,29 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
-                                .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                        MapSetter.builder() //
+                                .methodName("setMap") //
+                                .paramName("map") //
+                                .paramType(Map.class) //
+                                .keyType(String.class)
+                                .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
                         """
-                                public %1$s.CollectionDeque deque(
+                                public %1$s.MapMap map(
                                     ) {
-                                  return new %1$s.CollectionDeque();
+                                  return new %1$s.MapMap();
                                 }
                                 """.formatted(mockTypeName), //
                         """
-                                public class CollectionDeque {
-                                  public %1$s.CollectionDeque add(
-                                      final ? item) {
-                                    if (%1$s.this.fieldValue.deque == null) {
-                                      %1$s.this.fieldValue.deque = new MockList<>();
+                                public class MapMap {
+                                  public %1$s.MapMap put(
+                                      final java.lang.String key, final ? value) {
+                                    if (%1$s.this.fieldValue.map == null) {
+                                      %1$s.this.fieldValue.map = new MockMap<>();
                                     }
-                                    %1$s.this.fieldValue.deque.add(item);
-                                    %1$s.this.callSetterFor.deque = true;
+                                    %1$s.this.fieldValue.map.put(key, value);
+                                    %1$s.this.callSetterFor.map = true;
                                     return this;
                                   }
                                                                 
@@ -328,28 +332,29 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
-                                .methodName("setList") //
-                                .paramName("list") //
-                                .paramType(List.class) //
-                                .paramTypeArg(String.class) //
+                        MapSetter.builder() //
+                                .methodName("setSortedMap") //
+                                .paramName("sortedMap") //
+                                .paramType(SortedMap.class) //
+                                .keyType(Integer.class) //
+                                .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
                         """
-                                public %1$s.CollectionList list(
+                                public %1$s.MapSortedMap sortedMap(
                                     ) {
-                                  return new %1$s.CollectionList();
+                                  return new %1$s.MapSortedMap();
                                 }
                                 """.formatted(mockTypeName),
                         """
-                                public class CollectionList {
-                                  public %1$s.CollectionList add(
-                                      final java.lang.String item) {
-                                    if (%1$s.this.fieldValue.list == null) {
-                                      %1$s.this.fieldValue.list = new MockList<>();
+                                public class MapSortedMap {
+                                  public %1$s.MapSortedMap put(
+                                      final java.lang.Integer key, final java.lang.Object value) {
+                                    if (%1$s.this.fieldValue.sortedMap == null) {
+                                      %1$s.this.fieldValue.sortedMap = new MockMap<>();
                                     }
-                                    %1$s.this.fieldValue.list.add(item);
-                                    %1$s.this.callSetterFor.list = true;
+                                    %1$s.this.fieldValue.sortedMap.put(key, value);
+                                    %1$s.this.callSetterFor.sortedMap = true;
                                     return this;
                                   }
                                                                 
