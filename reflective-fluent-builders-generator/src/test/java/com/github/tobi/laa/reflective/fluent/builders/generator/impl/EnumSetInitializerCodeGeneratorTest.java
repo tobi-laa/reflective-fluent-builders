@@ -111,7 +111,7 @@ class EnumSetInitializerCodeGeneratorTest {
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(),
-                        CodeBlock.builder().add("java.util.EnumSet.noneOf(impl.service.com.github.tobi.laa.reflective.fluent.builders.EnumSetInitializerCodeBlockGeneratorServiceImplTest.EnumA.class)").build()),
+                        CodeBlock.builder().add("java.util.EnumSet.noneOf(com.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumSetInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
                         CollectionSetter.builder() //
                                 .paramName("") //
@@ -120,10 +120,10 @@ class EnumSetInitializerCodeGeneratorTest {
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(),
-                        CodeBlock.builder().add("java.util.EnumSet.noneOf(impl.service.com.github.tobi.laa.reflective.fluent.builders.EnumSetInitializerCodeBlockGeneratorServiceImplTest.EnumB.class)").build()));
+                        CodeBlock.builder().add("java.util.EnumSet.noneOf(com.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumSetInitializerCodeGeneratorTest.EnumB.class)").build()));
     }
 
-    private static enum EnumA {}
+    private enum EnumA {}
 
-    private static enum EnumB {}
+    private enum EnumB {}
 }

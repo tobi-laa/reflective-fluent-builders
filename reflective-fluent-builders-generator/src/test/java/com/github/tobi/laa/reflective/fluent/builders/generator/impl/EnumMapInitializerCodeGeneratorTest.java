@@ -113,7 +113,7 @@ class EnumMapInitializerCodeGeneratorTest {
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(),
-                        CodeBlock.builder().add("new java.util.EnumMap<>(impl.service.com.github.tobi.laa.reflective.fluent.builders.EnumMapInitializerCodeBlockGeneratorServiceImplTest.EnumA.class)").build()),
+                        CodeBlock.builder().add("new java.util.EnumMap<>(com.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumMapInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
                         MapSetter.builder() //
                                 .paramName("") //
@@ -123,10 +123,10 @@ class EnumMapInitializerCodeGeneratorTest {
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(),
-                        CodeBlock.builder().add("new java.util.EnumMap<>(impl.service.com.github.tobi.laa.reflective.fluent.builders.EnumMapInitializerCodeBlockGeneratorServiceImplTest.EnumB.class)").build()));
+                        CodeBlock.builder().add("new java.util.EnumMap<>(com.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumMapInitializerCodeGeneratorTest.EnumB.class)").build()));
     }
 
-    private static enum EnumA {}
+    private enum EnumA {}
 
-    private static enum EnumB {}
+    private enum EnumB {}
 }
