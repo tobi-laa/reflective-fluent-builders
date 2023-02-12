@@ -55,7 +55,7 @@ class ClassServiceImpl implements ClassService {
     public Set<Class<?>> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
         try {
-            return ClassPath.from(ClassLoader.getSystemClassLoader()) //
+            return ClassPath.from(getClass().getClassLoader()) //
                     .getTopLevelClassesRecursive(packageName) //
                     .stream() //
                     .map(ClassPath.ClassInfo::load) //
