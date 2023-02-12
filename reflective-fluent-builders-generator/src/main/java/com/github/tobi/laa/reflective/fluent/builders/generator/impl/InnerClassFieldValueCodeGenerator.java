@@ -15,6 +15,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PRIVATE;
@@ -56,7 +57,7 @@ public class InnerClassFieldValueCodeGenerator implements EncapsulatingClassCode
                 .map(setter -> FieldSpec //
                         .builder(setterTypeNameGenerator.generateTypeNameForParam(setter), setter.getParamName()) //
                         .build()) //
-                .toList();
+                .collect(Collectors.toList());
         return EncapsulatingClassSpec.builder() //
                 .field(FieldSpec //
                         .builder(fieldValue, FieldValue.FIELD_NAME, PRIVATE, FINAL) //

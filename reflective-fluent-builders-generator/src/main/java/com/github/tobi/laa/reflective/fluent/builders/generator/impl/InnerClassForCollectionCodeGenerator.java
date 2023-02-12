@@ -49,15 +49,16 @@ public class InnerClassForCollectionCodeGenerator implements CollectionClassCode
     @Override
     public boolean isApplicable(final Setter setter) {
         Objects.requireNonNull(setter);
-        return setter instanceof final CollectionSetter collectionSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(collectionSetter));
+        return setter instanceof CollectionSetter //
+                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) setter));
     }
 
     @Override
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(setter);
-        if (setter instanceof final CollectionSetter collectionSetter) {
+        if (setter instanceof CollectionSetter) {
+            final CollectionSetter collectionSetter = (CollectionSetter) setter;
             return generate(builderMetadata, collectionSetter);
         } else {
             throw new CodeGenerationException("Generation of inner collection class for " + setter + " is not supported.");

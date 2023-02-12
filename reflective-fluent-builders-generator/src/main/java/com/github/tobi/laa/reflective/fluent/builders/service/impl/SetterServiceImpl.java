@@ -90,7 +90,8 @@ public class SetterServiceImpl implements SetterService {
     }
 
     private Type typeArg(final Parameter param, final int num) {
-        if (param.getParameterizedType() instanceof final ParameterizedType parameterizedType) {
+        if (param.getParameterizedType() instanceof ParameterizedType) {
+            final ParameterizedType parameterizedType = (ParameterizedType) param.getParameterizedType();
             return parameterizedType.getActualTypeArguments()[num];
         } else {
             return Object.class;

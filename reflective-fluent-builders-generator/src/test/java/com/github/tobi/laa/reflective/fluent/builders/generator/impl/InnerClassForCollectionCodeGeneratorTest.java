@@ -82,6 +82,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertTrue(actual);
     }
 
+    @SuppressWarnings("unused")
     static ArgumentSets testIsApplicableTrue() {
         return ArgumentSets
                 .argumentsForFirstParameter(testIsApplicableFalseNoInitializerGeneratorApplicable()) //
@@ -295,30 +296,30 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        """
-                                public %1$s.CollectionDeque deque(
-                                    ) {
-                                  return new %1$s.CollectionDeque();
-                                }
-                                """.formatted(mockTypeName), //
-                        """
-                                public class CollectionDeque {
-                                  public %1$s.CollectionDeque add(
-                                      final ? item) {
-                                    if (%1$s.this.fieldValue.deque == null) {
-                                      %1$s.this.fieldValue.deque = new MockList<>();
-                                    }
-                                    %1$s.this.fieldValue.deque.add(item);
-                                    %1$s.this.callSetterFor.deque = true;
-                                    return this;
-                                  }
-                                                                
-                                  public %1$s and(
-                                      ) {
-                                    return %1$s.this;
-                                  }
-                                }
-                                """.formatted(mockTypeName)), //
+                        String.format(
+                                "public %1$s.CollectionDeque deque(\n" +
+                                "    ) {\n" +
+                                "  return new %1$s.CollectionDeque();\n" +
+                                "}\n",
+                                mockTypeName), //
+                        String.format(
+                                "public class CollectionDeque {\n" +
+                                "  public %1$s.CollectionDeque add(\n" +
+                                "      final ? item) {\n" +
+                                "    if (%1$s.this.fieldValue.deque == null) {\n" +
+                                "      %1$s.this.fieldValue.deque = new MockList<>();\n" +
+                                "    }\n" +
+                                "    %1$s.this.fieldValue.deque.add(item);\n" +
+                                "    %1$s.this.callSetterFor.deque = true;\n" +
+                                "    return this;\n" +
+                                "  }\n" +
+                                "\n" +
+                                "  public %1$s and(\n" +
+                                "      ) {\n" +
+                                "    return %1$s.this;\n" +
+                                "  }\n" +
+                                "}\n",
+                                mockTypeName)), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
                                 .packageName("ignored") //
@@ -335,30 +336,30 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        """
-                                public %1$s.CollectionList list(
-                                    ) {
-                                  return new %1$s.CollectionList();
-                                }
-                                """.formatted(mockTypeName),
-                        """
-                                public class CollectionList {
-                                  public %1$s.CollectionList add(
-                                      final java.lang.String item) {
-                                    if (%1$s.this.fieldValue.list == null) {
-                                      %1$s.this.fieldValue.list = new MockList<>();
-                                    }
-                                    %1$s.this.fieldValue.list.add(item);
-                                    %1$s.this.callSetterFor.list = true;
-                                    return this;
-                                  }
-                                                                
-                                  public %1$s and(
-                                      ) {
-                                    return %1$s.this;
-                                  }
-                                }
-                                """.formatted(mockTypeName)));
+                        String.format(
+                                "public %1$s.CollectionList list(\n" +
+                                "    ) {\n" +
+                                "  return new %1$s.CollectionList();\n" +
+                                "}\n",
+                                mockTypeName),
+                        String.format(
+                                "public class CollectionList {\n" +
+                                "  public %1$s.CollectionList add(\n" +
+                                "      final java.lang.String item) {\n" +
+                                "    if (%1$s.this.fieldValue.list == null) {\n" +
+                                "      %1$s.this.fieldValue.list = new MockList<>();\n" +
+                                "    }\n" +
+                                "    %1$s.this.fieldValue.list.add(item);\n" +
+                                "    %1$s.this.callSetterFor.list = true;\n" +
+                                "    return this;\n" +
+                                "  }\n" +
+                                "\n" +
+                                "  public %1$s and(\n" +
+                                "      ) {\n" +
+                                "    return %1$s.this;\n" +
+                                "  }\n" +
+                                "}\n",
+                                mockTypeName)));
     }
 
     private static class MockType {

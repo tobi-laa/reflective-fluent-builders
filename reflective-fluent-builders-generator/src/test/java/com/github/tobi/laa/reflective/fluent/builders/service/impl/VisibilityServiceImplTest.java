@@ -40,45 +40,30 @@ class VisibilityServiceImplTest {
         return SomeMethods.class.getDeclaredMethod(name).getModifiers();
     }
 
-    private class SomeMethods {
+    @SuppressWarnings("unused")
+    private static class SomeMethods {
         private void privateMethod() {
         }
-
-        ;
 
         private static void privateStaticMethod() {
         }
 
-        ;
-
         protected void protectedMethod() {
         }
-
-        ;
 
         protected static void protectedStaticMethod() {
         }
 
-        ;
-
         void packagePrivateMethod() {
         }
-
-        ;
 
         static void packagePrivateStaticMethod() {
         }
 
-        ;
-
         public void publicMethod() {
         }
 
-        ;
-
         public static void publicStaticMethod() {
         }
-
-        ;
     }
 }

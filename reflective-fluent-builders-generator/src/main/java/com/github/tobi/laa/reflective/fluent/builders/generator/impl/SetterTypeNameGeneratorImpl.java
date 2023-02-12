@@ -24,9 +24,11 @@ public class SetterTypeNameGeneratorImpl implements SetterTypeNameGenerator {
     @Override
     public TypeName generateTypeNameForParam(final Setter setter) {
         Objects.requireNonNull(setter);
-        if (setter instanceof CollectionSetter collectionSetter) {
+        if (setter instanceof CollectionSetter) {
+            final CollectionSetter collectionSetter = (CollectionSetter) setter;
             return ParameterizedTypeName.get(collectionSetter.getParamType(), collectionSetter.getParamTypeArg());
-        } else if (setter instanceof MapSetter mapSetter) {
+        } else if (setter instanceof MapSetter) {
+            final MapSetter mapSetter = (MapSetter) setter;
             return ParameterizedTypeName.get(mapSetter.getParamType(), mapSetter.getKeyType(), mapSetter.getValueType());
         } else {
             return TypeName.get(setter.getParamType());

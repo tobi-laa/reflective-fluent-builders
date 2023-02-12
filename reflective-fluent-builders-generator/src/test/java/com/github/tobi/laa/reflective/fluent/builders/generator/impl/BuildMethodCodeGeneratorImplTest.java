@@ -64,18 +64,18 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        """
-                                public %1$s build() {
-                                  final %1$s result = new %1$s();
-                                  if (callSetterFor.anInt) {
-                                    result.fieldValue(setAnInt.anInt);
-                                  }
-                                  if (callSetterFor.floats) {
-                                    result.fieldValue(setFloats.floats);
-                                  }
-                                  return result;
-                                }
-                                """.formatted(SimpleClass.class.getName())),
+                        String.format(
+                                "public %1$s build() {\n" +
+                                "  final %1$s result = new %1$s();\n" +
+                                "  if (callSetterFor.anInt) {\n" +
+                                "    result.fieldValue(setAnInt.anInt);\n" +
+                                "  }\n" +
+                                "  if (callSetterFor.floats) {\n" +
+                                "    result.fieldValue(setFloats.floats);\n" +
+                                "  }\n" +
+                                "  return result;\n" +
+                                "}\n",
+                                SimpleClass.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
                                 .packageName("a.whole.different.pack") //
@@ -100,18 +100,17 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        """
-                                public %1$s build(
-                                    ) {
-                                  final %1$s result = new %1$s();
-                                  if (callSetterFor.list) {
-                                    result.fieldValue(setList.list);
-                                  }
-                                  if (callSetterFor.sortedMap) {
-                                    result.fieldValue(setSortedMap.sortedMap);
-                                  }
-                                  return result;
-                                }
-                                """.formatted(ClassWithHierarchy.class.getName())));
+                        String.format("public %1$s build(\n" +
+                                      "    ) {\n" +
+                                      "  final %1$s result = new %1$s();\n" +
+                                      "  if (callSetterFor.list) {\n" +
+                                      "    result.fieldValue(setList.list);\n" +
+                                      "  }\n" +
+                                      "  if (callSetterFor.sortedMap) {\n" +
+                                      "    result.fieldValue(setSortedMap.sortedMap);\n" +
+                                      "  }\n" +
+                                      "  return result;\n" +
+                                      "}\n",
+                                ClassWithHierarchy.class.getName())));
     }
 }

@@ -112,14 +112,14 @@ class SetterCodeGeneratorImplTest {
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
                                 .build(), //
-                        """
-                                public %1$s anInt(
-                                    final %1$s anInt) {
-                                  fieldValue.anInt = anInt;
-                                  callSetterFor.anInt = true;
-                                  return this;
-                                }
-                                """.formatted(mockTypeName)), //
+                        String.format(
+                                "public %1$s anInt(\n" +
+                                "    final %1$s anInt) {\n" +
+                                "  fieldValue.anInt = anInt;\n" +
+                                "  callSetterFor.anInt = true;\n" +
+                                "  return this;\n" +
+                                "}\n",
+                                mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
                         ArraySetter.builder() //
@@ -129,14 +129,14 @@ class SetterCodeGeneratorImplTest {
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        """
-                                public %1$s floats(
-                                    final %1$s floats) {
-                                  fieldValue.floats = floats;
-                                  callSetterFor.floats = true;
-                                  return this;
-                                }
-                                """.formatted(mockTypeName)), //
+                        String.format(
+                                "public %1$s floats(\n" +
+                                "    final %1$s floats) {\n" +
+                                "  fieldValue.floats = floats;\n" +
+                                "  callSetterFor.floats = true;\n" +
+                                "  return this;\n" +
+                                "}\n",
+                                mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
                         MapSetter.builder() //
@@ -147,14 +147,14 @@ class SetterCodeGeneratorImplTest {
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        """
-                                public %1$s sortedMap(
-                                    final %1$s sortedMap) {
-                                  fieldValue.sortedMap = sortedMap;
-                                  callSetterFor.sortedMap = true;
-                                  return this;
-                                }
-                                """.formatted(mockTypeName)), //
+                        String.format(
+                                "public %1$s sortedMap(\n" +
+                                "    final %1$s sortedMap) {\n" +
+                                "  fieldValue.sortedMap = sortedMap;\n" +
+                                "  callSetterFor.sortedMap = true;\n" +
+                                "  return this;\n" +
+                                "}\n",
+                                mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
                         CollectionSetter.builder() //
@@ -164,14 +164,14 @@ class SetterCodeGeneratorImplTest {
                                 .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        """
-                                public %1$s list(
-                                    final %1$s list) {
-                                  fieldValue.list = list;
-                                  callSetterFor.list = true;
-                                  return this;
-                                }
-                                """.formatted(mockTypeName)));
+                        String.format(
+                                "public %1$s list(\n" +
+                                "    final %1$s list) {\n" +
+                                "  fieldValue.list = list;\n" +
+                                "  callSetterFor.list = true;\n" +
+                                "  return this;\n" +
+                                "}\n",
+                                mockTypeName)));
     }
 
     private static class MockType {

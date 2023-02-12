@@ -54,7 +54,8 @@ public class InnerClassForArrayCodeGenerator implements CollectionClassCodeGener
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(setter);
-        if (setter instanceof final ArraySetter arraySetter) {
+        if (setter instanceof ArraySetter) {
+            final ArraySetter arraySetter = (ArraySetter) setter;
             return generate(builderMetadata, arraySetter);
         } else {
             throw new CodeGenerationException("Generation of inner array class for " + setter + " is not supported.");

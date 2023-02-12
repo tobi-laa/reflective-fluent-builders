@@ -15,6 +15,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PRIVATE;
@@ -54,7 +55,7 @@ public class InnerClassCallSetterForCodeGenerator implements EncapsulatingClassC
                 .map(paramName -> FieldSpec //
                         .builder(boolean.class, paramName) //
                         .build()) //
-                .toList();
+                .collect(Collectors.toList());
         return EncapsulatingClassSpec.builder() //
                 .field(FieldSpec //
                         .builder(callSetterFor, CallSetterFor.FIELD_NAME, PRIVATE, FINAL) //

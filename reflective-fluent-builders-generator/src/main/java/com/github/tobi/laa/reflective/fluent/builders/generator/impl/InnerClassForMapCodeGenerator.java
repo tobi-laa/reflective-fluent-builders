@@ -48,15 +48,16 @@ public class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerat
     @Override
     public boolean isApplicable(final Setter setter) {
         Objects.requireNonNull(setter);
-        return setter instanceof final MapSetter mapSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(mapSetter));
+        return setter instanceof MapSetter //
+                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) setter));
     }
 
     @Override
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(setter);
-        if (setter instanceof final MapSetter mapSetter) {
+        if (setter instanceof MapSetter) {
+            final MapSetter mapSetter = (MapSetter) setter;
             return generate(builderMetadata, mapSetter);
         } else {
             throw new CodeGenerationException("Generation of inner map class for " + setter + " is not supported.");

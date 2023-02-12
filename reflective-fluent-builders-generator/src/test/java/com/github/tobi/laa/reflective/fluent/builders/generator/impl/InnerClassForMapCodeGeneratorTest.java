@@ -83,6 +83,7 @@ class InnerClassForMapCodeGeneratorTest {
         assertTrue(actual);
     }
 
+    @SuppressWarnings("unused")
     static ArgumentSets testIsApplicableTrue() {
         return ArgumentSets
                 .argumentsForFirstParameter(testIsApplicableFalseNoInitializerGeneratorApplicable()) //
@@ -299,30 +300,30 @@ class InnerClassForMapCodeGeneratorTest {
                                 .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        """
-                                public %1$s.MapMap map(
-                                    ) {
-                                  return new %1$s.MapMap();
-                                }
-                                """.formatted(mockTypeName), //
-                        """
-                                public class MapMap {
-                                  public %1$s.MapMap put(
-                                      final java.lang.String key, final ? value) {
-                                    if (%1$s.this.fieldValue.map == null) {
-                                      %1$s.this.fieldValue.map = new MockMap<>();
-                                    }
-                                    %1$s.this.fieldValue.map.put(key, value);
-                                    %1$s.this.callSetterFor.map = true;
-                                    return this;
-                                  }
-                                                                
-                                  public %1$s and(
-                                      ) {
-                                    return %1$s.this;
-                                  }
-                                }
-                                """.formatted(mockTypeName)), //
+                        String.format(
+                                "public %1$s.MapMap map(\n" +
+                                "    ) {\n" +
+                                "  return new %1$s.MapMap();\n" +
+                                "}\n",
+                                mockTypeName), //
+                        String.format(
+                                "public class MapMap {\n" +
+                                "  public %1$s.MapMap put(\n" +
+                                "      final java.lang.String key, final ? value) {\n" +
+                                "    if (%1$s.this.fieldValue.map == null) {\n" +
+                                "      %1$s.this.fieldValue.map = new MockMap<>();\n" +
+                                "    }\n" +
+                                "    %1$s.this.fieldValue.map.put(key, value);\n" +
+                                "    %1$s.this.callSetterFor.map = true;\n" +
+                                "    return this;\n" +
+                                "  }\n" +
+                                "\n" +
+                                "  public %1$s and(\n" +
+                                "      ) {\n" +
+                                "    return %1$s.this;\n" +
+                                "  }\n" +
+                                "}\n",
+                                mockTypeName)), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
                                 .packageName("ignored") //
@@ -340,30 +341,30 @@ class InnerClassForMapCodeGeneratorTest {
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        """
-                                public %1$s.MapSortedMap sortedMap(
-                                    ) {
-                                  return new %1$s.MapSortedMap();
-                                }
-                                """.formatted(mockTypeName),
-                        """
-                                public class MapSortedMap {
-                                  public %1$s.MapSortedMap put(
-                                      final java.lang.Integer key, final java.lang.Object value) {
-                                    if (%1$s.this.fieldValue.sortedMap == null) {
-                                      %1$s.this.fieldValue.sortedMap = new MockMap<>();
-                                    }
-                                    %1$s.this.fieldValue.sortedMap.put(key, value);
-                                    %1$s.this.callSetterFor.sortedMap = true;
-                                    return this;
-                                  }
-                                                                
-                                  public %1$s and(
-                                      ) {
-                                    return %1$s.this;
-                                  }
-                                }
-                                """.formatted(mockTypeName)));
+                        String.format(
+                                "public %1$s.MapSortedMap sortedMap(\n" +
+                                "    ) {\n" +
+                                "  return new %1$s.MapSortedMap();\n" +
+                                "}\n",
+                                mockTypeName),
+                        String.format(
+                                "public class MapSortedMap {\n" +
+                                "  public %1$s.MapSortedMap put(\n" +
+                                "      final java.lang.Integer key, final java.lang.Object value) {\n" +
+                                "    if (%1$s.this.fieldValue.sortedMap == null) {\n" +
+                                "      %1$s.this.fieldValue.sortedMap = new MockMap<>();\n" +
+                                "    }\n" +
+                                "    %1$s.this.fieldValue.sortedMap.put(key, value);\n" +
+                                "    %1$s.this.callSetterFor.sortedMap = true;\n" +
+                                "    return this;\n" +
+                                "  }\n" +
+                                "\n" +
+                                "  public %1$s and(\n" +
+                                "      ) {\n" +
+                                "    return %1$s.this;\n" +
+                                "  }\n" +
+                                "}\n",
+                                mockTypeName)));
     }
 
     private static class MockType {
