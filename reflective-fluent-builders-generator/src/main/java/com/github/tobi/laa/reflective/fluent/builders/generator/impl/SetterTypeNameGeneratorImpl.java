@@ -7,6 +7,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
  * Standard implementation of {@link SetterTypeNameGenerator}.
  * </p>
  */
+@Named
 @Singleton
 public class SetterTypeNameGeneratorImpl implements SetterTypeNameGenerator {
 

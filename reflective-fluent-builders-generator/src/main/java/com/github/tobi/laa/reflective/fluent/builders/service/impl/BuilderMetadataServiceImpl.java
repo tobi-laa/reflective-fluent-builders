@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -27,6 +28,7 @@ import static java.util.function.Predicate.not;
  * Standard implementation of {@link BuilderMetadataService}.
  * </p>
  */
+@Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class BuilderMetadataServiceImpl implements BuilderMetadataService {

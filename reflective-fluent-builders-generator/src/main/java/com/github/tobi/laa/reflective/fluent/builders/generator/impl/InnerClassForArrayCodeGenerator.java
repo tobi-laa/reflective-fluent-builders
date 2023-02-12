@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ClassUtils;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
  * Implementation of {@link CollectionClassCodeGenerator} for generating inner classes for convenient array construction.
  * </p>
  */
+@Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {

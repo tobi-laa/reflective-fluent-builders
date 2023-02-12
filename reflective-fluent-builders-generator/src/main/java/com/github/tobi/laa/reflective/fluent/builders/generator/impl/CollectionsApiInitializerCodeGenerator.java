@@ -8,6 +8,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import com.squareup.javapoet.CodeBlock;
 import com.sun.net.httpserver.Headers;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.print.attribute.standard.PrinterStateReasons;
 import javax.script.SimpleBindings;
@@ -27,6 +28,7 @@ import java.util.jar.Attributes;
  * are supported implicitly as well.
  * </p>
  */
+@Named
 @Singleton
 public class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCodeGenerator, MapInitializerCodeGenerator {
 

@@ -7,6 +7,7 @@ import com.google.common.reflect.ClassPath;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import static java.util.function.Predicate.not;
  * the constructor.
  * </p>
  */
+@Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ClassServiceImpl implements ClassService {

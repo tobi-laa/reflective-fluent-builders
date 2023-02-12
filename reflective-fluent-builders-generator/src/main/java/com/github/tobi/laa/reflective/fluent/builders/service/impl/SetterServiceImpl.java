@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
  * Standard implementation of {@link SetterService}.
  * </p>
  */
+@Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class SetterServiceImpl implements SetterService {

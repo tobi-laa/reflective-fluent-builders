@@ -4,6 +4,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClass
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.ClassName;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
  * Standard implementation of {@link BuilderClassNameGenerator}.
  * </p>
  */
+@Named
 @Singleton
 public class BuilderClassNameGeneratorImpl implements BuilderClassNameGenerator {
 

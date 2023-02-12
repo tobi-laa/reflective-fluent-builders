@@ -3,6 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 import com.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Modifier;
 
@@ -11,6 +12,7 @@ import java.lang.reflect.Modifier;
  * Standard implementation of {@link VisibilityService}.
  * </p>
  */
+@Named
 @Singleton
 public class VisibilityServiceImpl implements VisibilityService {
 

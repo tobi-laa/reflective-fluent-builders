@@ -5,6 +5,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializ
 import com.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import com.squareup.javapoet.CodeBlock;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.EnumMap;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import java.util.Objects;
  * Implementation of {@link MapInitializerCodeGenerator} which covers {@link EnumMap}.
  * </p>
  */
+@Named
 @Singleton
 public class EnumMapInitializerCodeGenerator implements MapInitializerCodeGenerator {
 

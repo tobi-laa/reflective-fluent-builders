@@ -17,6 +17,7 @@ import com.squareup.javapoet.TypeSpec;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.List;
@@ -30,6 +31,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
  * Implementation of {@link CollectionClassCodeGenerator} for generating inner classes for convenient map construction.
  * </p>
  */
+@Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
