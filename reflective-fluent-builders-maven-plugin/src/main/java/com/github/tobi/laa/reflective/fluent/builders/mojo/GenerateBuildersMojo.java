@@ -14,9 +14,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Set;
 
 @Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
@@ -45,7 +45,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     @Setter(onMethod = @__(
             @Parameter(property = "target")))
-    private Path target;
+    private File target;
 
     @lombok.NonNull
     private final StandardBuildersProperties buildersProperties;
@@ -71,7 +71,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         getLog().info("Found " + allClasses.size() + " classes altogether, of which builders can be created for " + buildableClasses.size() + '.');
         getLog().info("Make sure target directory " + target + " exists.");
         try {
-            Files.createDirectories(target);
+            Files.createDirectories(target.toPath());
         } catch (final IOException e) {
             throw new MojoFailureException("Could not create target directory " + target + '.', e);
         }
