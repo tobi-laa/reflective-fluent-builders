@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.*;
@@ -75,7 +76,7 @@ class SetterServiceImplTest {
     }
 
     @Test
-    void gatherAllSettersNull() {
+    void testGatherAllSettersNull() {
         // Act
         final Executable gatherAllSetters = () -> setterService.gatherAllSetters(null);
         // Assert
@@ -84,7 +85,7 @@ class SetterServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void gatherAllSetters(final String setterPrefix, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
+    void testGatherAllSetters(final String setterPrefix, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
@@ -94,34 +95,15 @@ class SetterServiceImplTest {
         // Assert
         assertThat(actual)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
-                        .withEqualsForType((a, b) -> true, WildcardType.class)
-                        .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
+                        .withEqualsForFields(
+                                (a, b) -> ((Type) a).getTypeName().equals(((Type) b).getTypeName()),
+                                "paramTypeArg", "keyType", "valueType")
                         .build())
                 .isEqualTo(expected);
         verify(visibilityService, times(expected.size())).toVisibility(anyInt());
     }
 
-    @Test
-    void gatherAllSettersForClassWithHierarchy() {
-        // Arrange
-        when(properties.getSetterPrefix()).thenReturn("set");
-        when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
-        when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
-        // Act
-        final Set<Setter> actual = setterService.gatherAllSetters(ClassWithHierarchy.class);
-        // Assert
-        assertThat(actual)
-                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
-                        .withEqualsForType((a, b) -> true, WildcardType.class)
-                        .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
-                        .build())
-                .isEqualTo(Stream.of("setOne", "setTwo", "setThree", "setFour", "setFive") //
-                        .map(name -> SimpleSetter.builder().methodName(name).paramName(StringUtils.uncapitalize(name.substring(3))).paramType(int.class).visibility(Visibility.PROTECTED).build()) //
-                        .collect(Collectors.toSet()));
-        verify(visibilityService, times(5)).toVisibility(anyInt());
-    }
-
-    private static Stream<Arguments> gatherAllSetters() {
+    private static Stream<Arguments> testGatherAllSetters() {
         return Stream.of( //
                 Arguments.of("set", SimpleClass.class, Visibility.PUBLIC, //
                         Set.of( //
@@ -143,6 +125,26 @@ class SetterServiceImplTest {
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(Visibility.PRIVATE).build(),
                                 MapSetter.builder().methodName("setMapWildT").paramName("mapWildT").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(typeVariableT()).visibility(Visibility.PRIVATE).build(),
                                 MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(Visibility.PRIVATE).build())));
+    }
+
+    @Test
+    void testGatherAllSettersForClassWithHierarchy() {
+        // Arrange
+        when(properties.getSetterPrefix()).thenReturn("set");
+        when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
+        when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
+        // Act
+        final Set<Setter> actual = setterService.gatherAllSetters(ClassWithHierarchy.class);
+        // Assert
+        assertThat(actual)
+                .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        .withEqualsForType((a, b) -> true, WildcardType.class)
+                        .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
+                        .build())
+                .isEqualTo(Stream.of("setOne", "setTwo", "setThree", "setFour", "setFive") //
+                        .map(name -> SimpleSetter.builder().methodName(name).paramName(StringUtils.uncapitalize(name.substring(3))).paramType(int.class).visibility(Visibility.PROTECTED).build()) //
+                        .collect(Collectors.toSet()));
+        verify(visibilityService, times(5)).toVisibility(anyInt());
     }
 
     private static TypeVariable<?> typeVariableT() {
