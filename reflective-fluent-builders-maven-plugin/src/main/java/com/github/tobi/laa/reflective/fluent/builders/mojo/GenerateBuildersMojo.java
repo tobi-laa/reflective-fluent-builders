@@ -2,6 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private Path target;
 
     @lombok.NonNull
+    private final StandardBuildersProperties buildersProperties;
+
+    @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
 
     @lombok.NonNull
@@ -61,6 +65,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoFailureException {
+        buildersProperties.setBuilderPackage(builderPackage);
+        buildersProperties.setBuilderSuffix(builderSuffix);
+        buildersProperties.setSetterPrefix(setterPrefix);
+        buildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
         log.info("Scan package " + packageToScan + " recursively for classes.");
         final var allClasses = classService.collectClassesRecursively(packageToScan.trim());
         final var buildableClasses = builderMetadataService.filterOutNonBuildableClasses(allClasses);

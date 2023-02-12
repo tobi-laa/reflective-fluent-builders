@@ -1,7 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import com.github.tobi.laa.reflective.fluent.builders.props.impl.BuildersPropertiesImpl;
+import com.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -19,6 +19,6 @@ class BuildersPropertiesProvider implements Provider<BuildersProperties> {
 
     @Override
     public BuildersProperties get() {
-        return new BuildersPropertiesImpl();
+        return new StandardBuildersProperties();
     }
 }

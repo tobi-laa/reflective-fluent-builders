@@ -17,7 +17,7 @@ import java.util.Set;
  */
 @Data
 @NoArgsConstructor
-public class BuildersPropertiesImpl implements BuildersProperties {
+public class StandardBuildersProperties implements BuildersProperties {
 
     @lombok.NonNull
     private String builderPackage = BuilderConstants.PACKAGE_PLACEHOLDER;
@@ -29,11 +29,11 @@ public class BuildersPropertiesImpl implements BuildersProperties {
     private String setterPrefix = "set";
 
     @lombok.NonNull
-    private HierarchyCollection hierarchyCollection = new HierarchyCollectionImpl();
+    private StandardHierarchyCollection hierarchyCollection = new StandardHierarchyCollection();
 
     @Data
     @NoArgsConstructor
-    static class HierarchyCollectionImpl implements HierarchyCollection {
+    public static class StandardHierarchyCollection implements HierarchyCollection {
 
         @lombok.NonNull
         private Set<Class<?>> classesToExclude = Set.of(Object.class);
