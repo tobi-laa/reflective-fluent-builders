@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -60,27 +59,24 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
 
-    @lombok.NonNull
-    private final Log log;
-
     @Override
     public void execute() throws MojoFailureException {
         buildersProperties.setBuilderPackage(builderPackage);
         buildersProperties.setBuilderSuffix(builderSuffix);
         buildersProperties.setSetterPrefix(setterPrefix);
         buildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
-        log.info("Scan package " + packageToScan + " recursively for classes.");
+        getLog().info("Scan package " + packageToScan + " recursively for classes.");
         final var allClasses = classService.collectClassesRecursively(packageToScan.trim());
         final var buildableClasses = builderMetadataService.filterOutNonBuildableClasses(allClasses);
-        log.info("Found " + allClasses.size() + " classes altogether, of which builders can be created for " + buildableClasses.size() + '.');
-        log.info("Make sure target directory " + target + " exists.");
+        getLog().info("Found " + allClasses.size() + " classes altogether, of which builders can be created for " + buildableClasses.size() + '.');
+        getLog().info("Make sure target directory " + target + " exists.");
         try {
             Files.createDirectories(target);
         } catch (final IOException e) {
             throw new MojoFailureException("Could not create target directory " + target + '.', e);
         }
         for (final var clazz : buildableClasses) {
-            log.info("Generate builder for class " + clazz.getName() + '.');
+            getLog().info("Generate builder for class " + clazz.getName() + '.');
             final var metadata = builderMetadataService.collectBuilderMetadata(clazz);
             final var javaFile = javaFileGenerator.generateJavaFile(metadata);
             try {
