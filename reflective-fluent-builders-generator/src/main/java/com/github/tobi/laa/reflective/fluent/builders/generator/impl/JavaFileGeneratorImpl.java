@@ -7,7 +7,6 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-import lombok.RequiredArgsConstructor;
 
 import javax.annotation.processing.Generated;
 import javax.inject.Inject;
@@ -16,8 +15,12 @@ import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
+
+import static com.google.common.collect.ImmutableSortedSet.copyOf;
 
 /**
  * <p>
@@ -26,8 +29,29 @@ import java.util.Set;
  */
 @Singleton
 @Named
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
 class JavaFileGeneratorImpl implements JavaFileGenerator {
+
+    @Inject
+    @SuppressWarnings("unused")
+    JavaFileGeneratorImpl( //
+                           final Clock clock, //
+                           final BuilderClassNameGenerator builderClassNameGenerator, //
+                           final Set<EncapsulatingClassCodeGenerator> encapsulatingClassCodeGenerators, //
+                           final Set<CollectionClassCodeGenerator> collectionClassCodeGenerators, //
+                           final SetterCodeGenerator setterCodeGenerator, //
+                           final BuildMethodCodeGenerator buildMethodCodeGenerator) {
+
+        this.clock = Objects.requireNonNull(clock);
+        this.builderClassNameGenerator = Objects.requireNonNull(builderClassNameGenerator);
+        this.setterCodeGenerator = Objects.requireNonNull(setterCodeGenerator);
+        this.buildMethodCodeGenerator = Objects.requireNonNull(buildMethodCodeGenerator);
+        Objects.requireNonNull(encapsulatingClassCodeGenerators);
+        Objects.requireNonNull(collectionClassCodeGenerators);
+        // to ensure deterministic outputs, sets are sorted on construction
+        final var compareByClassName = Comparator.comparing(o -> o.getClass().getName());
+        this.encapsulatingClassCodeGenerators = copyOf(compareByClassName, encapsulatingClassCodeGenerators);
+        this.collectionClassCodeGenerators = copyOf(compareByClassName, collectionClassCodeGenerators);
+    }
 
     @lombok.NonNull
     private final Clock clock;
@@ -36,10 +60,10 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
     private final BuilderClassNameGenerator builderClassNameGenerator;
 
     @lombok.NonNull
-    private final Set<EncapsulatingClassCodeGenerator> encapsulatingClassCodeGenerators;
+    private final SortedSet<EncapsulatingClassCodeGenerator> encapsulatingClassCodeGenerators;
 
     @lombok.NonNull
-    private final Set<CollectionClassCodeGenerator> collectionClassCodeGenerators;
+    private final SortedSet<CollectionClassCodeGenerator> collectionClassCodeGenerators;
 
     @lombok.NonNull
     private final SetterCodeGenerator setterCodeGenerator;
