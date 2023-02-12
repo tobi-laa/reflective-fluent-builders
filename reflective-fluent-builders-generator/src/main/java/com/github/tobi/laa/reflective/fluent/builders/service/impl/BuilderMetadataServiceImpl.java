@@ -47,7 +47,7 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
         Objects.requireNonNull(clazz);
         return BuilderMetadata.builder() //
                 .packageName(resolveBuilderPackage(clazz)) //
-                .name(clazz.getSimpleName() + properties.builderSuffix()) //
+                .name(clazz.getSimpleName() + properties.getBuilderSuffix()) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
@@ -57,7 +57,7 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private String resolveBuilderPackage(final Class<?> clazz) {
-        return properties.builderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
+        return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
     }
 
     private boolean hasAccessibleNonArgsConstructor(final Class<?> clazz) {
@@ -131,6 +131,6 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean placeBuildersInSamePackage(final Class<?> clazz) {
-        return PACKAGE_PLACEHOLDER.equals(properties.builderPackage()) || properties.builderPackage().equals(clazz.getPackageName());
+        return PACKAGE_PLACEHOLDER.equals(properties.getBuilderPackage()) || properties.getBuilderPackage().equals(clazz.getPackageName());
     }
 }

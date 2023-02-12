@@ -20,7 +20,7 @@ public interface BuildersProperties {
      *
      * @return The package in which to place the generated builders.
      */
-    String builderPackage();
+    String getBuilderPackage();
 
     /**
      * <p>
@@ -30,7 +30,7 @@ public interface BuildersProperties {
      *
      * @return The suffix of the generated builders.
      */
-    String builderSuffix();
+    String getBuilderSuffix();
 
     /**
      * <p>
@@ -40,7 +40,7 @@ public interface BuildersProperties {
      * @return The prefix of setters to use when analyzing classes.
      * @see SetterService
      */
-    String setterPrefix();
+    String getSetterPrefix();
 
     /**
      * <p>
@@ -49,7 +49,7 @@ public interface BuildersProperties {
      *
      * @return Properties relating to hierarchy collection of classes.
      */
-    HierarchyCollection hierarchyCollection();
+    HierarchyCollection getHierarchyCollection();
 
     interface HierarchyCollection {
 
@@ -63,6 +63,6 @@ public interface BuildersProperties {
          * @return Classes to be excluded from the hierarchy collection.
          * @see ClassService#collectFullClassHierarchy(Class)
          */
-        Set<Class<?>> classesToExclude();
+        Set<Class<?>> getClassesToExclude();
     }
 }

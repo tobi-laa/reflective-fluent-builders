@@ -66,8 +66,8 @@ class BuilderMetadataServiceImplTest {
                                     final Visibility constructorVisibility, final SortedSet<Setter> setters,
                                     final Class<?> clazz, final BuilderMetadata expected) {
         // Arrange
-        when(properties.builderPackage()).thenReturn(builderPackage);
-        when(properties.builderSuffix()).thenReturn(builderSuffix);
+        when(properties.getBuilderPackage()).thenReturn(builderPackage);
+        when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(constructorVisibility);
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
         // Act
@@ -162,7 +162,7 @@ class BuilderMetadataServiceImplTest {
     void testFilterOutNonBuildableClasses(final String builderPackage, final Visibility classVisibility,
                                           final Set<Class<?>> classes, final Set<Class<?>> expected) {
         // Arrange
-        lenient().when(properties.builderPackage()).thenReturn(builderPackage);
+        lenient().when(properties.getBuilderPackage()).thenReturn(builderPackage);
         lenient().when(visibilityService.toVisibility(anyInt())).thenReturn(classVisibility);
         // Act
         final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);

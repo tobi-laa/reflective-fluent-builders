@@ -59,7 +59,7 @@ class SetterServiceImplTest {
     @MethodSource
     void testDropSetterPrefix(final String setterPrefix, final String name, final String expected) {
         // Arrange
-        when(properties.setterPrefix()).thenReturn(setterPrefix);
+        when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         // Act
         final String actual = setterService.dropSetterPrefix(name);
         // Assert
@@ -86,7 +86,7 @@ class SetterServiceImplTest {
     @MethodSource
     void gatherAllSetters(final String setterPrefix, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
         // Arrange
-        when(properties.setterPrefix()).thenReturn(setterPrefix);
+        when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
         when(classService.collectFullClassHierarchy(clazz)).thenReturn(Set.of(clazz));
         // Act
@@ -104,7 +104,7 @@ class SetterServiceImplTest {
     @Test
     void gatherAllSettersForClassWithHierarchy() {
         // Arrange
-        when(properties.setterPrefix()).thenReturn("set");
+        when(properties.getSetterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
         when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
         // Act

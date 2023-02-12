@@ -57,8 +57,8 @@ class ClassServiceImplTest {
     void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Class<?>> excludes, final Set<Class<?>> expected) {
         // Arrange
         final var hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
-        when(properties.hierarchyCollection()).thenReturn(hierarchyCollection);
-        when(hierarchyCollection.classesToExclude()).thenReturn(excludes);
+        when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
+        when(hierarchyCollection.getClassesToExclude()).thenReturn(excludes);
         // Act
         final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert

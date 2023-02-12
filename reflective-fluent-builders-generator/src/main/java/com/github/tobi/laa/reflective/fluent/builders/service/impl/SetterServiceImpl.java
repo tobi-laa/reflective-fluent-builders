@@ -51,7 +51,7 @@ public class SetterServiceImpl implements SetterService {
     }
 
     private boolean isSetter(final Method method) {
-        return method.getParameterCount() == 1 && method.getName().startsWith(properties.setterPrefix());
+        return method.getParameterCount() == 1 && method.getName().startsWith(properties.getSetterPrefix());
     }
 
     private Setter toSetter(final Method method) {
@@ -101,10 +101,10 @@ public class SetterServiceImpl implements SetterService {
     @Override
     public String dropSetterPrefix(final String name) {
         Objects.requireNonNull(name);
-        if (StringUtils.isEmpty(properties.setterPrefix()) || name.length() <= properties.setterPrefix().length()) {
+        if (StringUtils.isEmpty(properties.getSetterPrefix()) || name.length() <= properties.getSetterPrefix().length()) {
             return name;
         }
-        final var paramName = name.replaceFirst('^' + Pattern.quote(properties.setterPrefix()), "");
+        final var paramName = name.replaceFirst('^' + Pattern.quote(properties.getSetterPrefix()), "");
         return StringUtils.uncapitalize(paramName);
     }
 }
