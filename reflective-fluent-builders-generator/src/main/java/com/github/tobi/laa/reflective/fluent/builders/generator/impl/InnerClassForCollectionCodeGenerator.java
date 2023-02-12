@@ -16,6 +16,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +31,8 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
  * construction.
  * </p>
  */
-@RequiredArgsConstructor
+@Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerator {
 
     @lombok.NonNull

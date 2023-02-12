@@ -1,10 +1,13 @@
 package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.google.common.reflect.ClassPath;
 import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,36 +26,24 @@ import static java.util.function.Predicate.not;
  * the constructor.
  * </p>
  */
-@RequiredArgsConstructor
+@Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ClassServiceImpl implements ClassService {
 
-    private final Set<Class<?>> classesToExclude;
-
-    /**
-     * <p>
-     * Constructs a new instance of this service.
-     * </p>
-     *
-     * @param classesToExclude Classes to be excluded from the
-     *                         {@link #collectFullClassHierarchy(Class) hierarchy collection}. They will not be added to
-     *                         the result. Furthermore, if a class from {@code excludes} is encountered during ancestor
-     *                         traversal of {@code clazz} it is immediately stopped.
-     */
-    public ClassServiceImpl(final Class<?>... classesToExclude) {
-        this.classesToExclude = Set.of(classesToExclude);
-    }
+    @lombok.NonNull
+    private final BuildersProperties properties;
 
     @Override
     public Set<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
         final Set<Class<?>> classHierarchy = new HashSet<>();
         for (var i = clazz; i != null; i = i.getSuperclass()) {
-            if (classesToExclude.contains(i)) {
+            if (properties.hierarchyCollection().classesToExclude().contains(i)) {
                 break;
             }
             classHierarchy.add(i);
             Arrays.stream(i.getInterfaces()) //
-                    .filter(not(classesToExclude::contains)) //
+                    .filter(not(properties.hierarchyCollection().classesToExclude()::contains)) //
                     .forEach(classHierarchy::add);
         }
         return classHierarchy;

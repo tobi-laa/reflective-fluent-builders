@@ -30,6 +30,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- testing dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

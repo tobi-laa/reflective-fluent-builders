@@ -10,6 +10,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 
@@ -22,7 +24,8 @@ import static javax.lang.model.element.Modifier.PRIVATE;
  * values that will be used for building the resulting object.
  * </p>
  */
-@RequiredArgsConstructor
+@Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class InnerClassFieldValueCodeGenerator implements EncapsulatingClassCodeGenerator {
 
     @lombok.NonNull

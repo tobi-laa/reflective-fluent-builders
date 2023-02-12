@@ -5,6 +5,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIn
 import com.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import com.squareup.javapoet.CodeBlock;
 
+import javax.inject.Singleton;
 import java.util.EnumSet;
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
  * Implementation of {@link CollectionInitializerCodeGenerator} which covers {@link java.util.EnumSet}.
  * </p>
  */
+@Singleton
 public class EnumSetInitializerCodeGenerator implements CollectionInitializerCodeGenerator {
 
     @Override

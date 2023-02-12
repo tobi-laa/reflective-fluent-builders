@@ -3,12 +3,15 @@ package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import com.google.common.collect.ImmutableSortedSet;
 import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -24,7 +27,8 @@ import static java.util.function.Predicate.not;
  * Standard implementation of {@link BuilderMetadataService}.
  * </p>
  */
-@RequiredArgsConstructor
+@Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     @lombok.NonNull
@@ -34,17 +38,14 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private final SetterService setterService;
 
     @lombok.NonNull
-    private final String builderPackage;
-
-    @lombok.NonNull
-    private final String builderSuffix;
+    private final BuildersProperties properties;
 
     @Override
     public BuilderMetadata collectBuilderMetadata(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
         return BuilderMetadata.builder() //
                 .packageName(resolveBuilderPackage(clazz)) //
-                .name(clazz.getSimpleName() + builderSuffix) //
+                .name(clazz.getSimpleName() + properties.builderSuffix()) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
@@ -54,7 +55,7 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private String resolveBuilderPackage(final Class<?> clazz) {
-        return builderPackage.replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
+        return properties.builderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
     }
 
     private boolean hasAccessibleNonArgsConstructor(final Class<?> clazz) {
@@ -128,6 +129,6 @@ public class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean placeBuildersInSamePackage(final Class<?> clazz) {
-        return PACKAGE_PLACEHOLDER.equals(builderPackage) || builderPackage.equals(clazz.getPackageName());
+        return PACKAGE_PLACEHOLDER.equals(properties.builderPackage()) || properties.builderPackage().equals(clazz.getPackageName());
     }
 }

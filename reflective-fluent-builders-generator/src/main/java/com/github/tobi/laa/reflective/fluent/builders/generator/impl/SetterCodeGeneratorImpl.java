@@ -10,6 +10,8 @@ import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.squareup.javapoet.MethodSpec;
 import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 
@@ -18,7 +20,8 @@ import java.util.Objects;
  * Default implementation of {@link SetterCodeGenerator}.
  * </p>
  */
-@RequiredArgsConstructor
+@Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class SetterCodeGeneratorImpl implements SetterCodeGenerator {
 
     @lombok.NonNull

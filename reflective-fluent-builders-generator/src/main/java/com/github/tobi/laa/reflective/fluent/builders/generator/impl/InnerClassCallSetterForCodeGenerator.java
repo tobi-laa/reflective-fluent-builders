@@ -10,6 +10,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 
@@ -22,7 +24,8 @@ import static javax.lang.model.element.Modifier.PRIVATE;
  * to later determine whether the setter on the resulting object should be called.
  * </p>
  */
-@RequiredArgsConstructor
+@Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class InnerClassCallSetterForCodeGenerator implements EncapsulatingClassCodeGenerator {
 
     @lombok.NonNull

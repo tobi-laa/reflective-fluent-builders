@@ -1,6 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
@@ -8,6 +9,8 @@ import com.google.common.collect.ImmutableSortedSet;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
@@ -20,7 +23,8 @@ import java.util.regex.Pattern;
  * Standard implementation of {@link SetterService}.
  * </p>
  */
-@RequiredArgsConstructor
+@Singleton
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class SetterServiceImpl implements SetterService {
 
     @lombok.NonNull
@@ -30,7 +34,7 @@ public class SetterServiceImpl implements SetterService {
     private final ClassService classService;
 
     @lombok.NonNull
-    private final String setterPrefix;
+    private final BuildersProperties properties;
 
     @Override
     public SortedSet<Setter> gatherAllSetters(final Class<?> clazz) {
@@ -45,7 +49,7 @@ public class SetterServiceImpl implements SetterService {
     }
 
     private boolean isSetter(final Method method) {
-        return method.getParameterCount() == 1 && method.getName().startsWith(setterPrefix);
+        return method.getParameterCount() == 1 && method.getName().startsWith(properties.setterPrefix());
     }
 
     private Setter toSetter(final Method method) {
@@ -94,10 +98,10 @@ public class SetterServiceImpl implements SetterService {
     @Override
     public String dropSetterPrefix(final String name) {
         Objects.requireNonNull(name);
-        if (StringUtils.isEmpty(setterPrefix) || name.length() <= setterPrefix.length()) {
+        if (StringUtils.isEmpty(properties.setterPrefix()) || name.length() <= properties.setterPrefix().length()) {
             return name;
         }
-        final var paramName = name.replaceFirst('^' + Pattern.quote(setterPrefix), "");
+        final var paramName = name.replaceFirst('^' + Pattern.quote(properties.setterPrefix()), "");
         return StringUtils.uncapitalize(paramName);
     }
 }

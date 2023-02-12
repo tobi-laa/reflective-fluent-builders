@@ -7,6 +7,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.squareup.javapoet.MethodSpec;
 
+import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
  * Standard implementation of {@link BuildMethodCodeGenerator}.
  * </p>
  */
+@Singleton
 public class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
 
     @Override

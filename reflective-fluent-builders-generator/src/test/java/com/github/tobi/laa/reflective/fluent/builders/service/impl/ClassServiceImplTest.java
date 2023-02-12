@@ -2,20 +2,27 @@ package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import com.google.common.reflect.ClassPath;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -26,13 +33,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ClassServiceImplTest {
+
+    @InjectMocks
+    private ClassServiceImpl classServiceImpl;
+
+    @Mock
+    private BuildersProperties properties;
 
     @Test
     void testCollectFullClassHierarchyNull() {
-        // Arrange
-        final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
         // Act
         final Executable collectFullClassHierarchy = () -> classServiceImpl.collectFullClassHierarchy(null);
         // Assert
@@ -41,9 +54,11 @@ class ClassServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectFullClassHierarchy(final Class<?> clazz, final Class<?>[] excludes, final Set<Class<?>> expected) {
+    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Class<?>> excludes, final Set<Class<?>> expected) {
         // Arrange
-        final ClassServiceImpl classServiceImpl = new ClassServiceImpl(excludes);
+        final var hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
+        when(properties.hierarchyCollection()).thenReturn(hierarchyCollection);
+        when(hierarchyCollection.classesToExclude()).thenReturn(excludes);
         // Act
         final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
@@ -54,7 +69,7 @@ class ClassServiceImplTest {
         return Stream.of( //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        new Class<?>[0], //
+                        Collections.emptySet(), //
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -64,7 +79,7 @@ class ClassServiceImplTest {
                                 Object.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        new Class<?>[]{Object.class}, //
+                        Set.of(Object.class), //
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -73,7 +88,7 @@ class ClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        new Class<?>[]{Object.class, AnInterface.class}, //
+                        Set.of(Object.class, AnInterface.class), //
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -81,7 +96,7 @@ class ClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        new Class<?>[]{FirstSuperClass.class}, //
+                        Set.of(FirstSuperClass.class), //
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
@@ -89,8 +104,6 @@ class ClassServiceImplTest {
 
     @Test
     void testCollectClassesRecursivelyNull() {
-        // Arrange
-        final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
         // Act
         final Executable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively(null);
         // Assert
@@ -103,7 +116,6 @@ class ClassServiceImplTest {
             // Arrange
             final var cause = new IOException("Thrown in unit test");
             classPath.when(() -> ClassPath.from(any())).thenThrow(cause);
-            final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
             // Act
             final ThrowableAssert.ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
             // Assert
@@ -117,8 +129,6 @@ class ClassServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
-        // Arrange
-        final ClassServiceImpl classServiceImpl = new ClassServiceImpl();
         // Act
         final Set<Class<?>> actual = classServiceImpl.collectClassesRecursively(packageName);
         // Assert

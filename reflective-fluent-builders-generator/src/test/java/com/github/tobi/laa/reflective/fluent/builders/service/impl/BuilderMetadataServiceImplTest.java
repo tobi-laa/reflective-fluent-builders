@@ -4,6 +4,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -38,16 +40,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BuilderMetadataServiceImplTest {
 
+    @InjectMocks
+    private BuilderMetadataServiceImpl builderService;
+
     @Mock
     private VisibilityService visibilityService;
 
     @Mock
     private SetterService setterService;
 
+    @Mock
+    private BuildersProperties properties;
+
     @Test
     void testCollectBuilderMetadataNull() {
-        // Arrange
-        final var builderService = new BuilderMetadataServiceImpl(visibilityService, setterService, "", "");
         // Act
         final Executable collectBuilderMetadata = () -> builderService.collectBuilderMetadata(null);
         // Assert
@@ -60,7 +66,8 @@ class BuilderMetadataServiceImplTest {
                                     final Visibility constructorVisibility, final SortedSet<Setter> setters,
                                     final Class<?> clazz, final BuilderMetadata expected) {
         // Arrange
-        final var builderService = new BuilderMetadataServiceImpl(visibilityService, setterService, builderPackage, builderSuffix);
+        when(properties.builderPackage()).thenReturn(builderPackage);
+        when(properties.builderSuffix()).thenReturn(builderSuffix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(constructorVisibility);
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
         // Act
@@ -144,8 +151,6 @@ class BuilderMetadataServiceImplTest {
 
     @Test
     void testFilterOutNonBuildableClassesNull() {
-        // Arrange
-        final var builderService = new BuilderMetadataServiceImpl(visibilityService, setterService, "", "");
         // Act
         final Executable filterOutNonBuildableClasses = () -> builderService.filterOutNonBuildableClasses(null);
         // Assert
@@ -157,7 +162,7 @@ class BuilderMetadataServiceImplTest {
     void testFilterOutNonBuildableClasses(final String builderPackage, final Visibility classVisibility,
                                           final Set<Class<?>> classes, final Set<Class<?>> expected) {
         // Arrange
-        final var builderService = new BuilderMetadataServiceImpl(visibilityService, setterService, builderPackage, "");
+        lenient().when(properties.builderPackage()).thenReturn(builderPackage);
         lenient().when(visibilityService.toVisibility(anyInt())).thenReturn(classVisibility);
         // Act
         final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);

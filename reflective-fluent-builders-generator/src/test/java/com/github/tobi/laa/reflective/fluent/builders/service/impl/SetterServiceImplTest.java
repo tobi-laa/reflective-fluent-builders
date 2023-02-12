@@ -1,6 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -33,16 +35,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SetterServiceImplTest {
 
+    @InjectMocks
+    private SetterServiceImpl setterService;
+
     @Mock
     private VisibilityService visibilityService;
 
     @Mock
     private ClassService classService;
 
+    @Mock
+    private BuildersProperties properties;
+
     @Test
     void testDropSetterPrefixNull() {
-        // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, classService, "");
         // Act
         final Executable dropSetterPrefix = () -> setterService.dropSetterPrefix(null);
         // Assert
@@ -53,7 +59,7 @@ class SetterServiceImplTest {
     @MethodSource
     void testDropSetterPrefix(final String setterPrefix, final String name, final String expected) {
         // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, classService, setterPrefix);
+        when(properties.setterPrefix()).thenReturn(setterPrefix);
         // Act
         final String actual = setterService.dropSetterPrefix(name);
         // Assert
@@ -70,8 +76,6 @@ class SetterServiceImplTest {
 
     @Test
     void gatherAllSettersNull() {
-        // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, classService, "");
         // Act
         final Executable gatherAllSetters = () -> setterService.gatherAllSetters(null);
         // Assert
@@ -82,7 +86,7 @@ class SetterServiceImplTest {
     @MethodSource
     void gatherAllSetters(final String setterPrefix, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
         // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, classService, setterPrefix);
+        when(properties.setterPrefix()).thenReturn(setterPrefix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
         when(classService.collectFullClassHierarchy(clazz)).thenReturn(Set.of(clazz));
         // Act
@@ -100,7 +104,7 @@ class SetterServiceImplTest {
     @Test
     void gatherAllSettersForClassWithHierarchy() {
         // Arrange
-        final var setterService = new SetterServiceImpl(visibilityService, classService, "set");
+        when(properties.setterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
         when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
         // Act

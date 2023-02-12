@@ -7,6 +7,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
+import javax.inject.Singleton;
 import java.util.Objects;
 
 /**
@@ -14,6 +15,7 @@ import java.util.Objects;
  * Standard implementation of {@link SetterTypeNameGenerator}.
  * </p>
  */
+@Singleton
 public class SetterTypeNameGeneratorImpl implements SetterTypeNameGenerator {
 
     @SuppressWarnings("java:S3252") // false positive for static method call
