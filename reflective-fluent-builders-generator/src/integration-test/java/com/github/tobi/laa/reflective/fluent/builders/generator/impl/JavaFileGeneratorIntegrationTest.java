@@ -1,6 +1,5 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
-import com.github.tobi.laa.reflective.fluent.builders.FixedClockModule;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
@@ -25,7 +24,6 @@ class JavaFileGeneratorIntegrationTest {
         final var classloader = getClass().getClassLoader();
         final var injector = Guice.createInjector(
                 new WireModule(
-                        new FixedClockModule(),
                         new SpaceModule(new URLClassSpace(classloader))));
         javaFileGenerator = injector.getInstance(JavaFileGeneratorImpl.class);
     }

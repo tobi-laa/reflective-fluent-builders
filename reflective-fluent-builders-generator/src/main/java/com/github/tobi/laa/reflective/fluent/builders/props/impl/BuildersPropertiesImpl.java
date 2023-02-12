@@ -5,20 +5,19 @@ import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperti
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.Set;
 
 /**
  * <p>
- * Implementation for integration tests.
+ * Simple implementation of {@link BuildersProperties}. As it does <em>not</em> contain
+ * {@link javax.inject.Named JSR-330 annotations} it will not be automatically be picked up by classpath scanning such
+ * as it is performed by Sisu or Spring. If desired, an instance of this class will have to manually be added to the
+ * DI context.
  * </p>
  */
-@Named
-@Singleton
 @Data
 @NoArgsConstructor
-class BuildersPropertiesImpl implements BuildersProperties {
+public class BuildersPropertiesImpl implements BuildersProperties {
 
     @lombok.NonNull
     private String builderPackage = BuilderConstants.PACKAGE_PLACEHOLDER;
