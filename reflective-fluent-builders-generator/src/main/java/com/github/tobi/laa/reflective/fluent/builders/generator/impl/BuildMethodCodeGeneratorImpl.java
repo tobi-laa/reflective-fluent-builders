@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @Named
 @Singleton
-public class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
+class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
 
     @Override
     public MethodSpec generateBuildMethod(final BuilderMetadata builderMetadata) {

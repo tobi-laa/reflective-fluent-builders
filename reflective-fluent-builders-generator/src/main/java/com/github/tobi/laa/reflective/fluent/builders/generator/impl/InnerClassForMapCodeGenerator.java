@@ -34,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
+class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
@@ -49,7 +49,7 @@ public class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerat
     public boolean isApplicable(final Setter setter) {
         Objects.requireNonNull(setter);
         return setter instanceof MapSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) setter));
+               && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) setter));
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 @Named
 @Singleton
-public class BuilderClassNameGeneratorImpl implements BuilderClassNameGenerator {
+class BuilderClassNameGeneratorImpl implements BuilderClassNameGenerator {
 
     @Override
     public ClassName generateClassName(final BuilderMetadata builderMetadata) {

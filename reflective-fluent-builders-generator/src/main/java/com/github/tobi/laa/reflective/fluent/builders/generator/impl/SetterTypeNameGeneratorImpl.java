@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @Named
 @Singleton
-public class SetterTypeNameGeneratorImpl implements SetterTypeNameGenerator {
+class SetterTypeNameGeneratorImpl implements SetterTypeNameGenerator {
 
     @SuppressWarnings("java:S3252") // false positive for static method call
     @Override

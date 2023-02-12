@@ -29,7 +29,7 @@ import static javax.lang.model.element.Modifier.PRIVATE;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class InnerClassCallSetterForCodeGenerator implements EncapsulatingClassCodeGenerator {
+class InnerClassCallSetterForCodeGenerator implements EncapsulatingClassCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;

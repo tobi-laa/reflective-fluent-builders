@@ -27,7 +27,7 @@ import java.util.Set;
 @Singleton
 @Named
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class JavaFileGeneratorImpl implements JavaFileGenerator {
+class JavaFileGeneratorImpl implements JavaFileGenerator {
 
     @lombok.NonNull
     private final Clock clock;

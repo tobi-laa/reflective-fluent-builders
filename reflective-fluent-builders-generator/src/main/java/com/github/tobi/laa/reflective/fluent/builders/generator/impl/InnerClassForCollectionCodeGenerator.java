@@ -35,7 +35,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerator {
+class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
@@ -50,7 +50,7 @@ public class InnerClassForCollectionCodeGenerator implements CollectionClassCode
     public boolean isApplicable(final Setter setter) {
         Objects.requireNonNull(setter);
         return setter instanceof CollectionSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) setter));
+               && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) setter));
     }
 
     @Override

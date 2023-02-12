@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
  */
 @Named
 @Singleton
-public class VisibilityServiceImpl implements VisibilityService {
+class VisibilityServiceImpl implements VisibilityService {
 
     @Override
     public Visibility toVisibility(final int modifiers) {

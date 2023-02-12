@@ -30,7 +30,7 @@ import static java.util.function.Predicate.not;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class ClassServiceImpl implements ClassService {
+class ClassServiceImpl implements ClassService {
 
     @lombok.NonNull
     private final BuildersProperties properties;

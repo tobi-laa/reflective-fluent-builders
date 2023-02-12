@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Named
 @Singleton
-public class EnumSetInitializerCodeGenerator implements CollectionInitializerCodeGenerator {
+class EnumSetInitializerCodeGenerator implements CollectionInitializerCodeGenerator {
 
     @Override
     public boolean isApplicable(final CollectionSetter collectionSetter) {

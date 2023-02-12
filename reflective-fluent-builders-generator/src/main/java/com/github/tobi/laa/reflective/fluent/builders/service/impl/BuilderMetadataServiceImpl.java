@@ -31,7 +31,7 @@ import static java.util.function.Predicate.not;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class BuilderMetadataServiceImpl implements BuilderMetadataService {
+class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     @lombok.NonNull
     private final VisibilityService visibilityService;

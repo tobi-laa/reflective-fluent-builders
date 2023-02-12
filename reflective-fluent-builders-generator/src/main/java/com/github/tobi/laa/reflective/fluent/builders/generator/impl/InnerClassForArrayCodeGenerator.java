@@ -36,7 +36,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
+class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;

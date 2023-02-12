@@ -24,7 +24,7 @@ import java.util.Objects;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class SetterCodeGeneratorImpl implements SetterCodeGenerator {
+class SetterCodeGeneratorImpl implements SetterCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;

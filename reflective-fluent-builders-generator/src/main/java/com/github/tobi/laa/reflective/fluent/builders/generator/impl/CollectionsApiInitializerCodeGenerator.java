@@ -30,7 +30,7 @@ import java.util.jar.Attributes;
  */
 @Named
 @Singleton
-public class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCodeGenerator, MapInitializerCodeGenerator {
+class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCodeGenerator, MapInitializerCodeGenerator {
 
     @SuppressWarnings("rawtypes")
     static final List<Class<? extends Collection>> SUPPORTED_COLLECTIONS = List.of(

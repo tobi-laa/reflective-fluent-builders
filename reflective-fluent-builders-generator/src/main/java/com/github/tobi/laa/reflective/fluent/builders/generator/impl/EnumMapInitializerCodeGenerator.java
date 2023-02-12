@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Named
 @Singleton
-public class EnumMapInitializerCodeGenerator implements MapInitializerCodeGenerator {
+class EnumMapInitializerCodeGenerator implements MapInitializerCodeGenerator {
 
     @Override
     public boolean isApplicable(final MapSetter mapSetter) {
