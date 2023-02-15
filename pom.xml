@@ -37,7 +37,7 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- integration with SonarCloud -->
-        <sonar.organization>tobi-laa</sonar.organization>
+        <sonar.organization>tobias-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!-- versions of external dependencies -->
         <lombok.version>1.18.26</lombok.version>
