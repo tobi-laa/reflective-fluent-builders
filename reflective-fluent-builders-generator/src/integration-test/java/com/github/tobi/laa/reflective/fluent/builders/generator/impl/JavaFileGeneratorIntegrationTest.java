@@ -58,79 +58,87 @@ class JavaFileGeneratorIntegrationTest {
         assertThat(actual).isNotNull();
         assertThat(actual.toString()).isEqualToIgnoringNewLines(
                 "package com.github.tobi.laa.reflective.fluent.builders.test.models.simple;\n" +
-                "\n" +
-                "import java.lang.Float;\n" +
-                "import java.util.ArrayList;\n" +
-                "import java.util.List;\n" +
-                "import javax.annotation.processing.Generated;\n" +
-                "\n" +
-                "@Generated(\n" +
-                "    value = \"com.github.tobi.laa.reflective.fluent.builders.generator.impl.JavaFileGeneratorImpl\",\n" +
-                "    date = \"3333-03-13T00:00Z[UTC]\"\n" +
-                ")\n" +
-                "public class SimpleClassBuilder {\n" +
-                "  private final CallSetterFor callSetterFor = new CallSetterFor();\n" +
-                "\n" +
-                "  private final FieldValue fieldValue = new FieldValue();\n" +
-                "\n" +
-                "  public ArrayFloats floats() {\n" +
-                "    return new ArrayFloats();\n" +
-                "  }\n" +
-                "\n" +
-                "  public SimpleClassBuilder anInt(final int anInt) {\n" +
-                "    fieldValue.anInt = anInt;\n" +
-                "    callSetterFor.anInt = true;\n" +
-                "    return this;\n" +
-                "  }\n" +
-                "\n" +
-                "  public SimpleClassBuilder floats(final float[] floats) {\n" +
-                "    fieldValue.floats = floats;\n" +
-                "    callSetterFor.floats = true;\n" +
-                "    return this;\n" +
-                "  }\n" +
-                "\n" +
-                "  public SimpleClass build() {\n" +
-                "    final SimpleClass result = new SimpleClass();\n" +
-                "    if (callSetterFor.anInt) {\n" +
-                "      result.fieldValue(setAnInt.anInt);\n" +
-                "    }\n" +
-                "    if (callSetterFor.floats) {\n" +
-                "      result.fieldValue(setFloats.floats);\n" +
-                "    }\n" +
-                "    return result;\n" +
-                "  }\n" +
-                "\n" +
-                "  private class CallSetterFor {\n" +
-                "    boolean anInt;\n" +
-                "\n" +
-                "    boolean floats;\n" +
-                "  }\n" +
-                "\n" +
-                "  private class FieldValue {\n" +
-                "    int anInt;\n" +
-                "\n" +
-                "    float[] floats;\n" +
-                "  }\n" +
-                "\n" +
-                "  public class ArrayFloats {\n" +
-                "    private List<Float> list;\n" +
-                "\n" +
-                "    public ArrayFloats add(final float item) {\n" +
-                "      if (this.list == null) {\n" +
-                "        this.list = new ArrayList<>();\n" +
-                "      }\n" +
-                "      this.list.add(item);\n" +
-                "      SimpleClassBuilder.this.callSetterFor.floats = true;\n" +
-                "      return this;\n" +
-                "    }\n" +
-                "\n" +
-                "    public SimpleClassBuilder and() {\n" +
-                "      if (this.list != null) {\n" +
-                "        SimpleClassBuilder.this.fieldValue.floats = list.toArray(new float[0]);\n" +
-                "      }\n" +
-                "      return SimpleClassBuilder.this;\n" +
-                "    }\n" +
-                "  }\n" +
-                "}");
+                        "\n" +
+                        "import java.lang.Float;\n" +
+                        "import java.util.ArrayList;\n" +
+                        "import java.util.List;\n" +
+                        "import javax.annotation.processing.Generated;\n" +
+                        "\n" +
+                        "@Generated(\n" +
+                        "    value = \"com.github.tobi.laa.reflective.fluent.builders.generator.impl.JavaFileGeneratorImpl\",\n" +
+                        "    date = \"3333-03-13T00:00Z[UTC]\"\n" +
+                        ")\n" +
+                        "public class SimpleClassBuilder {\n" +
+                        "  private SimpleClass objectToBuild;\n" +
+                        "\n" +
+                        "  private final CallSetterFor callSetterFor = new CallSetterFor();\n" +
+                        "\n" +
+                        "  private final FieldValue fieldValue = new FieldValue();\n" +
+                        "\n" +
+                        "  private SimpleClassBuilder(final SimpleClass objectToBuild) {\n" +
+                        "    this.objectToBuild = objectToBuild;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public ArrayFloats floats() {\n" +
+                        "    return new ArrayFloats();\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public SimpleClassBuilder anInt(final int anInt) {\n" +
+                        "    fieldValue.anInt = anInt;\n" +
+                        "    callSetterFor.anInt = true;\n" +
+                        "    return this;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public SimpleClassBuilder floats(final float[] floats) {\n" +
+                        "    fieldValue.floats = floats;\n" +
+                        "    callSetterFor.floats = true;\n" +
+                        "    return this;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public SimpleClass build() {\n" +
+                        "    if (objectToBuild == null) {\n" +
+                        "      objectToBuild = new SimpleClass();\n" +
+                        "    }\n" +
+                        "    if (callSetterFor.anInt) {\n" +
+                        "      objectToBuild.fieldValue(setAnInt.anInt);\n" +
+                        "    }\n" +
+                        "    if (callSetterFor.floats) {\n" +
+                        "      objectToBuild.fieldValue(setFloats.floats);\n" +
+                        "    }\n" +
+                        "    return objectToBuild;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  private class CallSetterFor {\n" +
+                        "    boolean anInt;\n" +
+                        "\n" +
+                        "    boolean floats;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  private class FieldValue {\n" +
+                        "    int anInt;\n" +
+                        "\n" +
+                        "    float[] floats;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public class ArrayFloats {\n" +
+                        "    private List<Float> list;\n" +
+                        "\n" +
+                        "    public ArrayFloats add(final float item) {\n" +
+                        "      if (this.list == null) {\n" +
+                        "        this.list = new ArrayList<>();\n" +
+                        "      }\n" +
+                        "      this.list.add(item);\n" +
+                        "      SimpleClassBuilder.this.callSetterFor.floats = true;\n" +
+                        "      return this;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public SimpleClassBuilder and() {\n" +
+                        "      if (this.list != null) {\n" +
+                        "        SimpleClassBuilder.this.fieldValue.floats = list.toArray(new float[0]);\n" +
+                        "      }\n" +
+                        "      return SimpleClassBuilder.this;\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}");
     }
 }
