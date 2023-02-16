@@ -3,18 +3,14 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.*;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
-import javax.annotation.processing.Generated;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
-import java.time.Clock;
-import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
@@ -32,10 +28,10 @@ import static com.google.common.collect.ImmutableSortedSet.copyOf;
 class JavaFileGeneratorImpl implements JavaFileGenerator {
 
     @lombok.NonNull
-    private final Clock clock;
+    private final BuilderClassNameGenerator builderClassNameGenerator;
 
     @lombok.NonNull
-    private final BuilderClassNameGenerator builderClassNameGenerator;
+    private final SortedSet<AnnotationCodeGenerator> annotationCodeGenerators;
 
     @lombok.NonNull
     private final SortedSet<FieldCodeGenerator> fieldCodeGenerators;
@@ -58,8 +54,8 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
     @Inject
     @SuppressWarnings("unused")
     JavaFileGeneratorImpl( //
-                           final Clock clock, //
                            final BuilderClassNameGenerator builderClassNameGenerator, //
+                           final Set<AnnotationCodeGenerator> annotationCodeGenerators, //
                            final Set<FieldCodeGenerator> fieldCodeGenerators, //
                            final Set<MethodCodeGenerator> methodCodeGenerators, //
                            final Set<EncapsulatingClassCodeGenerator> encapsulatingClassCodeGenerators, //
@@ -67,16 +63,17 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
                            final SetterCodeGenerator setterCodeGenerator, //
                            final BuildMethodCodeGenerator buildMethodCodeGenerator) {
 
-        this.clock = Objects.requireNonNull(clock);
         this.builderClassNameGenerator = Objects.requireNonNull(builderClassNameGenerator);
         this.setterCodeGenerator = Objects.requireNonNull(setterCodeGenerator);
         this.buildMethodCodeGenerator = Objects.requireNonNull(buildMethodCodeGenerator);
+        Objects.requireNonNull(annotationCodeGenerators);
         Objects.requireNonNull(fieldCodeGenerators);
         Objects.requireNonNull(methodCodeGenerators);
         Objects.requireNonNull(encapsulatingClassCodeGenerators);
         Objects.requireNonNull(collectionClassCodeGenerators);
         // to ensure deterministic outputs, sets are sorted on construction
         final var compareByClassName = Comparator.comparing(o -> o.getClass().getName());
+        this.annotationCodeGenerators = copyOf(compareByClassName, annotationCodeGenerators);
         this.fieldCodeGenerators = copyOf(compareByClassName, fieldCodeGenerators);
         this.methodCodeGenerators = copyOf(compareByClassName, methodCodeGenerators);
         this.encapsulatingClassCodeGenerators = copyOf(compareByClassName, encapsulatingClassCodeGenerators);
@@ -87,7 +84,8 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
     public JavaFile generateJavaFile(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var builderTypeSpec = generateModifiersAndAnnotations(builderClassName);
+        final var builderTypeSpec = generateTypeSpec(builderClassName);
+        generateAnnotations(builderMetadata, builderTypeSpec);
         generateFields(builderMetadata, builderTypeSpec);
         generateConstructorsAndMethods(builderMetadata, builderTypeSpec);
         generateEncapsulatingClasses(builderMetadata, builderTypeSpec);
@@ -97,13 +95,14 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
         return generateJavaFile(builderClassName, builderTypeSpec);
     }
 
-    private TypeSpec.Builder generateModifiersAndAnnotations(ClassName builderClassName) {
-        return TypeSpec.classBuilder(builderClassName)
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(Generated.class)
-                        .addMember("value", "$S", getClass().getName())
-                        .addMember("date", "$S", ZonedDateTime.now(clock).toString())
-                        .build());
+    private TypeSpec.Builder generateTypeSpec(final ClassName builderClassName) {
+        return TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
+    }
+
+    private void generateAnnotations(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {
+        for (final AnnotationCodeGenerator generator : annotationCodeGenerators) {
+            builderTypeSpec.addAnnotation(generator.generate(builderMetadata));
+        }
     }
 
     private void generateFields(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {

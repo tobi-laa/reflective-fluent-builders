@@ -66,7 +66,7 @@ class JavaFileGeneratorIntegrationTest {
                         "import javax.annotation.processing.Generated;\n" +
                         "\n" +
                         "@Generated(\n" +
-                        "    value = \"com.github.tobi.laa.reflective.fluent.builders.generator.impl.JavaFileGeneratorImpl\",\n" +
+                        "    value = \"com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator\",\n" +
                         "    date = \"3333-03-13T00:00Z[UTC]\"\n" +
                         ")\n" +
                         "public class SimpleClassBuilder {\n" +
