@@ -23,6 +23,13 @@ public final class BuilderConstants {
 
     /**
      * <p>
+     * Name of the field which will hold the object to be built by a builder.
+     * </p>
+     */
+    public static final String OBJECT_TO_BUILD_FIELD_NAME = "objectToBuild";
+
+    /**
+     * <p>
      * Class and field name for the inner class which is added to every generated builder for encapsulating the actual
      * field values to avoid name collisions.
      * </p>

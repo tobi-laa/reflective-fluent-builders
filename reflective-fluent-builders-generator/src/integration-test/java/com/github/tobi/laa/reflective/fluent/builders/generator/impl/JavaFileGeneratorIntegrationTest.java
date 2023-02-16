@@ -62,6 +62,7 @@ class JavaFileGeneratorIntegrationTest {
                         "import java.lang.Float;\n" +
                         "import java.util.ArrayList;\n" +
                         "import java.util.List;\n" +
+                        "import java.util.Objects;\n" +
                         "import javax.annotation.processing.Generated;\n" +
                         "\n" +
                         "@Generated(\n" +
@@ -77,6 +78,15 @@ class JavaFileGeneratorIntegrationTest {
                         "\n" +
                         "  private SimpleClassBuilder(final SimpleClass objectToBuild) {\n" +
                         "    this.objectToBuild = objectToBuild;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public static SimpleClassBuilder newInstance() {\n" +
+                        "    return new SimpleClassBuilder(null);\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public static SimpleClassBuilder from(final SimpleClass objectToModify) {\n" +
+                        "    Objects.requireNonNull(objectToModify);\n" +
+                        "    return new SimpleClassBuilder(objectToModify);\n" +
                         "  }\n" +
                         "\n" +
                         "  public ArrayFloats floats() {\n" +

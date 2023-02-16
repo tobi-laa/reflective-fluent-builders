@@ -3,10 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.*;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 
 import javax.annotation.processing.Generated;
 import javax.inject.Inject;
@@ -20,6 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 
+import static com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.OBJECT_TO_BUILD_FIELD_NAME;
 import static com.google.common.collect.ImmutableSortedSet.copyOf;
 
 /**
@@ -76,6 +74,29 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
         Objects.requireNonNull(builderMetadata);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         final var builderTypeSpec = generateModifiersAndAnnotations(builderClassName);
+        builderTypeSpec.addField(
+                FieldSpec.builder(builderMetadata.getBuiltType().getType(), OBJECT_TO_BUILD_FIELD_NAME, Modifier.PRIVATE)
+                        .build());
+        builderTypeSpec.addMethod(MethodSpec
+                .constructorBuilder()
+                .addModifiers(Modifier.PRIVATE)
+                .addParameter(builderMetadata.getBuiltType().getType(), OBJECT_TO_BUILD_FIELD_NAME, Modifier.FINAL)
+                .addStatement("this.$L = $L", OBJECT_TO_BUILD_FIELD_NAME, OBJECT_TO_BUILD_FIELD_NAME)
+                .build());
+        builderTypeSpec.addMethod(MethodSpec
+                .methodBuilder("newInstance")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(builderClassName)
+                .addStatement("return new $T(null)", builderClassName)
+                .build());
+        builderTypeSpec.addMethod(MethodSpec
+                .methodBuilder("from")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(builderClassName)
+                .addParameter(builderMetadata.getBuiltType().getType(), "objectToModify", Modifier.FINAL)
+                .addStatement("$T.requireNonNull(objectToModify)", Objects.class)
+                .addStatement("return new $T(objectToModify)", builderClassName)
+                .build());
         generateEncapsulatingClasses(builderMetadata, builderTypeSpec);
         generateCollectionClasses(builderMetadata, builderTypeSpec);
         generateSetters(builderMetadata, builderTypeSpec);
