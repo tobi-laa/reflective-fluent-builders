@@ -27,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
@@ -193,5 +194,79 @@ class BuilderMetadataServiceImplTest {
                         Visibility.PACKAGE_PRIVATE, //
                         Set.of(SimpleClass.class),
                         Collections.emptySet()));
+    }
+
+    @Test
+    void testFilterOutEmptyBuildersNull() {
+        // Arrange
+        final Collection<BuilderMetadata> builderMetadata = null;
+        // Act
+        final Executable filterOutEmptyBuilders = () -> builderService.filterOutEmptyBuilders(builderMetadata);
+        // Assert
+        assertThrows(NullPointerException.class, filterOutEmptyBuilders);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testFilterOutEmptyBuilders(final Collection<BuilderMetadata> builderMetadata, final Set<BuilderMetadata> expected) {
+        // Act
+        final Set<BuilderMetadata> actual = builderService.filterOutEmptyBuilders(builderMetadata);
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    private static Stream<Arguments> testFilterOutEmptyBuilders() {
+        return Stream.of( //
+                Arguments.of(Collections.emptySet(), Collections.emptySet()), //
+                Arguments.of(
+                        Collections.singleton( //
+                                BuilderMetadata.builder() //
+                                        .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
+                                        .name("SimpleClassBuilder") //
+                                        .builtType(BuilderMetadata.BuiltType.builder() //
+                                                .type(SimpleClass.class) //
+                                                .accessibleNonArgsConstructor(true) //
+                                                .build()) //
+                                        .build()),
+                        Collections.emptySet()),
+                Arguments.of(
+                        Set.of( //
+                                BuilderMetadata.builder() //
+                                        .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
+                                        .name("SimpleClassBuilder") //
+                                        .builtType(BuilderMetadata.BuiltType.builder() //
+                                                .type(SimpleClass.class) //
+                                                .accessibleNonArgsConstructor(true) //
+                                                .build()) //
+                                        .build(),
+                                BuilderMetadata.builder() //
+                                        .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
+                                        .name("SimpleClassBuilder") //
+                                        .builtType(BuilderMetadata.BuiltType.builder() //
+                                                .type(SimpleClass.class) //
+                                                .accessibleNonArgsConstructor(true) //
+                                                .setter(SimpleSetter.builder() //
+                                                        .methodName("setPub") //
+                                                        .paramName("pub") //
+                                                        .paramType(int.class) //
+                                                        .visibility(Visibility.PUBLIC) //
+                                                        .build())
+                                                .build()) //
+                                        .build()),
+                        Collections.singleton( //
+                                BuilderMetadata.builder() //
+                                        .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
+                                        .name("SimpleClassBuilder") //
+                                        .builtType(BuilderMetadata.BuiltType.builder() //
+                                                .type(SimpleClass.class) //
+                                                .accessibleNonArgsConstructor(true) //
+                                                .setter(SimpleSetter.builder() //
+                                                        .methodName("setPub") //
+                                                        .paramName("pub") //
+                                                        .paramType(int.class) //
+                                                        .visibility(Visibility.PUBLIC) //
+                                                        .build())
+                                                .build()) //
+                                        .build())));
     }
 }

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
@@ -75,6 +76,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
         } catch (final IOException e) {
             throw new MojoFailureException("Could not create target directory " + target + '.', e);
         }
+        final var allMetadata = buildableClasses.stream() //
+                .map(builderMetadataService::collectBuilderMetadata) //
+                .collect(Collectors.toSet());
+        final var noneEmptyMetadata = builderMetadataService.filterOutEmptyBuilders(allMetadata);
         for (final var clazz : buildableClasses) {
             getLog().info("Generate builder for class " + clazz.getName() + '.');
             final var metadata = builderMetadataService.collectBuilderMetadata(clazz);
