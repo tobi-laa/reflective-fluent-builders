@@ -12,6 +12,8 @@ import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 
+import static com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.OBJECT_TO_BUILD_FIELD_NAME;
+
 /**
  * <p>
  * Standard implementation of {@link BuildMethodCodeGenerator}.
@@ -27,15 +29,20 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
         final var clazz = builderMetadata.getBuiltType().getType();
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("build")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(clazz)
-                .addStatement("final $T result = new $T()", clazz, clazz);
+                .returns(clazz);
+        if (builderMetadata.getBuiltType().isAccessibleNonArgsConstructor()) {
+            methodBuilder
+                    .beginControlFlow("if ($L == null)", OBJECT_TO_BUILD_FIELD_NAME)
+                    .addStatement("$L = new $T()", OBJECT_TO_BUILD_FIELD_NAME, clazz)
+                    .endControlFlow();
+        }
         for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
             methodBuilder
                     .beginControlFlow("if ($L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
-                    .addStatement("result.$L($L.$L)", FieldValue.FIELD_NAME, setter.getMethodName(), setter.getParamName())
+                    .addStatement("$L.$L($L.$L)", OBJECT_TO_BUILD_FIELD_NAME, FieldValue.FIELD_NAME, setter.getMethodName(), setter.getParamName())
                     .endControlFlow();
         }
-        methodBuilder.addStatement("return result");
+        methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);
         return methodBuilder.build();
     }
 }

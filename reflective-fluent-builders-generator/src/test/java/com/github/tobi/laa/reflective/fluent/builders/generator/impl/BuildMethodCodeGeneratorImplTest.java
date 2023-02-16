@@ -66,15 +66,17 @@ class BuildMethodCodeGeneratorImplTest {
                                 .build(), //
                         String.format(
                                 "public %1$s build() {\n" +
-                                "  final %1$s result = new %1$s();\n" +
-                                "  if (callSetterFor.anInt) {\n" +
-                                "    result.fieldValue(setAnInt.anInt);\n" +
-                                "  }\n" +
-                                "  if (callSetterFor.floats) {\n" +
-                                "    result.fieldValue(setFloats.floats);\n" +
-                                "  }\n" +
-                                "  return result;\n" +
-                                "}\n",
+                                        "  if (objectToBuild == null) {\n" +
+                                        "    objectToBuild = new %1$s();\n" +
+                                        "  }\n" +
+                                        "  if (callSetterFor.anInt) {\n" +
+                                        "    objectToBuild.fieldValue(setAnInt.anInt);\n" +
+                                        "  }\n" +
+                                        "  if (callSetterFor.floats) {\n" +
+                                        "    objectToBuild.fieldValue(setFloats.floats);\n" +
+                                        "  }\n" +
+                                        "  return objectToBuild;\n" +
+                                        "}\n",
                                 SimpleClass.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
@@ -82,7 +84,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .name("AnotherBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(ClassWithHierarchy.class) //
-                                        .accessibleNonArgsConstructor(true) //
+                                        .accessibleNonArgsConstructor(false) //
                                         .setter(MapSetter.builder() //
                                                 .methodName("setSortedMap") //
                                                 .paramName("sortedMap") //
@@ -101,16 +103,15 @@ class BuildMethodCodeGeneratorImplTest {
                                         .build()) //
                                 .build(), //
                         String.format("public %1$s build(\n" +
-                                      "    ) {\n" +
-                                      "  final %1$s result = new %1$s();\n" +
-                                      "  if (callSetterFor.list) {\n" +
-                                      "    result.fieldValue(setList.list);\n" +
-                                      "  }\n" +
-                                      "  if (callSetterFor.sortedMap) {\n" +
-                                      "    result.fieldValue(setSortedMap.sortedMap);\n" +
-                                      "  }\n" +
-                                      "  return result;\n" +
-                                      "}\n",
+                                        "    ) {\n" +
+                                        "  if (callSetterFor.list) {\n" +
+                                        "    objectToBuild.fieldValue(setList.list);\n" +
+                                        "  }\n" +
+                                        "  if (callSetterFor.sortedMap) {\n" +
+                                        "    objectToBuild.fieldValue(setSortedMap.sortedMap);\n" +
+                                        "  }\n" +
+                                        "  return objectToBuild;\n" +
+                                        "}\n",
                                 ClassWithHierarchy.class.getName())));
     }
 }
