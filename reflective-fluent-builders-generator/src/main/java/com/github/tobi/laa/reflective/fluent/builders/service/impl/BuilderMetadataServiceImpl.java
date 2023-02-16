@@ -133,4 +133,12 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private boolean placeBuildersInSamePackage(final Class<?> clazz) {
         return PACKAGE_PLACEHOLDER.equals(properties.getBuilderPackage()) || properties.getBuilderPackage().equals(clazz.getPackageName());
     }
+
+    @Override
+    public Set<BuilderMetadata> filterOutEmptyBuilders(final Collection<BuilderMetadata> builderMetadata) {
+        Objects.requireNonNull(builderMetadata);
+        return builderMetadata.stream() //
+                .filter(metadata -> !metadata.getBuiltType().getSetters().isEmpty()) //
+                .collect(Collectors.toSet());
+    }
 }

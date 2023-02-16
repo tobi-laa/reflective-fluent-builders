@@ -2,6 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -47,4 +48,17 @@ public interface BuilderMetadataService {
      * {@code null}.
      */
     Set<Class<?>> filterOutNonBuildableClasses(final Set<Class<?>> classes);
+
+    /**
+     * <p>
+     * Filters out all metadata for builders whose generation would yield an empty builder, i.e. those for which no
+     * setters have been detected at all.
+     * </p>
+     *
+     * @param builderMetadata The builder metadata from which to filter out all metadata for builders whose generation
+     *                        would yield an empty builder. Must not be {@code null}.
+     * @return {@code builderMetadata} but without all metadata for builders whose generation would yield an empty
+     * builder. Never {@code null}.
+     */
+    Set<BuilderMetadata> filterOutEmptyBuilders(final Collection<BuilderMetadata> builderMetadata);
 }
