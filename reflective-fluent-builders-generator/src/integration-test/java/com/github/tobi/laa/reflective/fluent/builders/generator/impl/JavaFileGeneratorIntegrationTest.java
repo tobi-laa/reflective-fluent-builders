@@ -84,7 +84,7 @@ class JavaFileGeneratorIntegrationTest {
                         "    return new SimpleClassBuilder(null);\n" +
                         "  }\n" +
                         "\n" +
-                        "  public static SimpleClassBuilder from(final SimpleClass objectToModify) {\n" +
+                        "  public static SimpleClassBuilder thatModifies(final SimpleClass objectToModify) {\n" +
                         "    Objects.requireNonNull(objectToModify);\n" +
                         "    return new SimpleClassBuilder(objectToModify);\n" +
                         "  }\n" +
