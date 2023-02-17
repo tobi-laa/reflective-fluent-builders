@@ -4,9 +4,9 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.AnnotationCo
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import lombok.RequiredArgsConstructor;
 
-import javax.annotation.Generated;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 /**
  * <p>
- * Implementation of {@link AnnotationCodeGenerator} that generates a {@link Generated} annotation.
+ * Implementation of {@link AnnotationCodeGenerator} that generates a {@code Generated} annotation.
  * </p>
  */
 @Singleton
@@ -30,7 +30,7 @@ class GeneratedAnnotationCodeGenerator implements AnnotationCodeGenerator {
     @Override
     public AnnotationSpec generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        return AnnotationSpec.builder(Generated.class)
+        return AnnotationSpec.builder(ClassName.get("javax.annotation", "Generated"))
                 .addMember("value", "$S", JavaFileGenerator.class.getName())
                 .addMember("date", "$S", ZonedDateTime.now(clock).toString())
                 .build();
