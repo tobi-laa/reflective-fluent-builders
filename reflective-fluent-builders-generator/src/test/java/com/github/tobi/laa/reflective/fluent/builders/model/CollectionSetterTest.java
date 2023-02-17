@@ -13,7 +13,7 @@ class CollectionSetterTest {
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var collectionSetter = CollectionSetter.builder()
+        final CollectionSetter collectionSetter = CollectionSetter.builder()
                 .methodName("getSth")
                 .paramType(List.class)
                 .paramName("aName")
@@ -21,7 +21,7 @@ class CollectionSetterTest {
                 .paramTypeArg(Object.class)
                 .build();
         // Act
-        final var withParamName = collectionSetter.withParamName(paramName);
+        final CollectionSetter withParamName = collectionSetter.withParamName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(CollectionSetter.builder()
                 .methodName("getSth")

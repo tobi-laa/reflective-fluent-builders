@@ -11,6 +11,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -50,7 +51,7 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     public boolean isApplicable(final Setter setter) {
         Objects.requireNonNull(setter);
         return setter instanceof CollectionSetter //
-               && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) setter));
+                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) setter));
     }
 
     @Override
@@ -66,8 +67,8 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     }
 
     private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final CollectionSetter setter) {
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Collection" + capitalize(setter.getParamName()));
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final ClassName className = builderClassName.nestedClass("Collection" + capitalize(setter.getParamName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
                         .methodBuilder(setterService.dropSetterPrefix(setter.getMethodName())) //

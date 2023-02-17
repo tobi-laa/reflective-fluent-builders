@@ -7,6 +7,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.model.Collection
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
+import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -53,7 +54,7 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @BeforeEach
     void init() {
-        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, setterService, List.of(initializerGeneratorA, initializerGeneratorB));
+        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, setterService, ImmutableList.of(initializerGeneratorA, initializerGeneratorB));
     }
 
     @Test
@@ -278,7 +279,7 @@ class InnerClassForCollectionCodeGeneratorTest {
     }
 
     private static Stream<Arguments> testGenerate() {
-        final var mockTypeName = MockType.class.getName().replace('$', '.');
+        final String mockTypeName = MockType.class.getName().replace('$', '.');
         return Stream.of( //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -298,27 +299,27 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .build(), //
                         String.format(
                                 "public %1$s.CollectionDeque deque(\n" +
-                                "    ) {\n" +
-                                "  return new %1$s.CollectionDeque();\n" +
-                                "}\n",
+                                        "    ) {\n" +
+                                        "  return new %1$s.CollectionDeque();\n" +
+                                        "}\n",
                                 mockTypeName), //
                         String.format(
                                 "public class CollectionDeque {\n" +
-                                "  public %1$s.CollectionDeque add(\n" +
-                                "      final ? item) {\n" +
-                                "    if (%1$s.this.fieldValue.deque == null) {\n" +
-                                "      %1$s.this.fieldValue.deque = new MockList<>();\n" +
-                                "    }\n" +
-                                "    %1$s.this.fieldValue.deque.add(item);\n" +
-                                "    %1$s.this.callSetterFor.deque = true;\n" +
-                                "    return this;\n" +
-                                "  }\n" +
-                                "\n" +
-                                "  public %1$s and(\n" +
-                                "      ) {\n" +
-                                "    return %1$s.this;\n" +
-                                "  }\n" +
-                                "}\n",
+                                        "  public %1$s.CollectionDeque add(\n" +
+                                        "      final ? item) {\n" +
+                                        "    if (%1$s.this.fieldValue.deque == null) {\n" +
+                                        "      %1$s.this.fieldValue.deque = new MockList<>();\n" +
+                                        "    }\n" +
+                                        "    %1$s.this.fieldValue.deque.add(item);\n" +
+                                        "    %1$s.this.callSetterFor.deque = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -338,27 +339,27 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .build(), //
                         String.format(
                                 "public %1$s.CollectionList list(\n" +
-                                "    ) {\n" +
-                                "  return new %1$s.CollectionList();\n" +
-                                "}\n",
+                                        "    ) {\n" +
+                                        "  return new %1$s.CollectionList();\n" +
+                                        "}\n",
                                 mockTypeName),
                         String.format(
                                 "public class CollectionList {\n" +
-                                "  public %1$s.CollectionList add(\n" +
-                                "      final java.lang.String item) {\n" +
-                                "    if (%1$s.this.fieldValue.list == null) {\n" +
-                                "      %1$s.this.fieldValue.list = new MockList<>();\n" +
-                                "    }\n" +
-                                "    %1$s.this.fieldValue.list.add(item);\n" +
-                                "    %1$s.this.callSetterFor.list = true;\n" +
-                                "    return this;\n" +
-                                "  }\n" +
-                                "\n" +
-                                "  public %1$s and(\n" +
-                                "      ) {\n" +
-                                "    return %1$s.this;\n" +
-                                "  }\n" +
-                                "}\n",
+                                        "  public %1$s.CollectionList add(\n" +
+                                        "      final java.lang.String item) {\n" +
+                                        "    if (%1$s.this.fieldValue.list == null) {\n" +
+                                        "      %1$s.this.fieldValue.list = new MockList<>();\n" +
+                                        "    }\n" +
+                                        "    %1$s.this.fieldValue.list.add(item);\n" +
+                                        "    %1$s.this.callSetterFor.list = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)));
     }
 

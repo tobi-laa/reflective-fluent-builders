@@ -7,6 +7,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.model.Collection
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
+import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -24,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Deque;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.stream.Stream;
@@ -54,7 +54,7 @@ class InnerClassForMapCodeGeneratorTest {
 
     @BeforeEach
     void init() {
-        generator = new InnerClassForMapCodeGenerator(builderClassNameGenerator, setterService, List.of(initializerGeneratorA, initializerGeneratorB));
+        generator = new InnerClassForMapCodeGenerator(builderClassNameGenerator, setterService, ImmutableList.of(initializerGeneratorA, initializerGeneratorB));
     }
 
     @Test
@@ -281,7 +281,7 @@ class InnerClassForMapCodeGeneratorTest {
     }
 
     private static Stream<Arguments> testGenerate() {
-        final var mockTypeName = MockType.class.getName().replace('$', '.');
+        final String mockTypeName = MockType.class.getName().replace('$', '.');
         return Stream.of( //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -302,27 +302,27 @@ class InnerClassForMapCodeGeneratorTest {
                                 .build(), //
                         String.format(
                                 "public %1$s.MapMap map(\n" +
-                                "    ) {\n" +
-                                "  return new %1$s.MapMap();\n" +
-                                "}\n",
+                                        "    ) {\n" +
+                                        "  return new %1$s.MapMap();\n" +
+                                        "}\n",
                                 mockTypeName), //
                         String.format(
                                 "public class MapMap {\n" +
-                                "  public %1$s.MapMap put(\n" +
-                                "      final java.lang.String key, final ? value) {\n" +
-                                "    if (%1$s.this.fieldValue.map == null) {\n" +
-                                "      %1$s.this.fieldValue.map = new MockMap<>();\n" +
-                                "    }\n" +
-                                "    %1$s.this.fieldValue.map.put(key, value);\n" +
-                                "    %1$s.this.callSetterFor.map = true;\n" +
-                                "    return this;\n" +
-                                "  }\n" +
-                                "\n" +
-                                "  public %1$s and(\n" +
-                                "      ) {\n" +
-                                "    return %1$s.this;\n" +
-                                "  }\n" +
-                                "}\n",
+                                        "  public %1$s.MapMap put(\n" +
+                                        "      final java.lang.String key, final ? value) {\n" +
+                                        "    if (%1$s.this.fieldValue.map == null) {\n" +
+                                        "      %1$s.this.fieldValue.map = new MockMap<>();\n" +
+                                        "    }\n" +
+                                        "    %1$s.this.fieldValue.map.put(key, value);\n" +
+                                        "    %1$s.this.callSetterFor.map = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -343,27 +343,27 @@ class InnerClassForMapCodeGeneratorTest {
                                 .build(), //
                         String.format(
                                 "public %1$s.MapSortedMap sortedMap(\n" +
-                                "    ) {\n" +
-                                "  return new %1$s.MapSortedMap();\n" +
-                                "}\n",
+                                        "    ) {\n" +
+                                        "  return new %1$s.MapSortedMap();\n" +
+                                        "}\n",
                                 mockTypeName),
                         String.format(
                                 "public class MapSortedMap {\n" +
-                                "  public %1$s.MapSortedMap put(\n" +
-                                "      final java.lang.Integer key, final java.lang.Object value) {\n" +
-                                "    if (%1$s.this.fieldValue.sortedMap == null) {\n" +
-                                "      %1$s.this.fieldValue.sortedMap = new MockMap<>();\n" +
-                                "    }\n" +
-                                "    %1$s.this.fieldValue.sortedMap.put(key, value);\n" +
-                                "    %1$s.this.callSetterFor.sortedMap = true;\n" +
-                                "    return this;\n" +
-                                "  }\n" +
-                                "\n" +
-                                "  public %1$s and(\n" +
-                                "      ) {\n" +
-                                "    return %1$s.this;\n" +
-                                "  }\n" +
-                                "}\n",
+                                        "  public %1$s.MapSortedMap put(\n" +
+                                        "      final java.lang.Integer key, final java.lang.Object value) {\n" +
+                                        "    if (%1$s.this.fieldValue.sortedMap == null) {\n" +
+                                        "      %1$s.this.fieldValue.sortedMap = new MockMap<>();\n" +
+                                        "    }\n" +
+                                        "    %1$s.this.fieldValue.sortedMap.put(key, value);\n" +
+                                        "    %1$s.this.callSetterFor.sortedMap = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)));
     }
 

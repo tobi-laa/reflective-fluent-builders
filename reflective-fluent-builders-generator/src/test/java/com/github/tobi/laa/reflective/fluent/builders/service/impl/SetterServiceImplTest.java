@@ -8,6 +8,7 @@ import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassW
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
@@ -89,7 +90,7 @@ class SetterServiceImplTest {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
-        when(classService.collectFullClassHierarchy(clazz)).thenReturn(Set.of(clazz));
+        when(classService.collectFullClassHierarchy(clazz)).thenReturn(Collections.singleton(clazz));
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert
@@ -106,17 +107,17 @@ class SetterServiceImplTest {
     private static Stream<Arguments> testGatherAllSetters() {
         return Stream.of( //
                 Arguments.of("set", SimpleClass.class, Visibility.PUBLIC, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("setAnInt").paramName("anInt").paramType(int.class).visibility(Visibility.PUBLIC).build(), //
                                 SimpleSetter.builder().methodName("setAString").paramName("aString").paramType(String.class).visibility(Visibility.PUBLIC).build(), //
                                 SimpleSetter.builder().methodName("setBooleanField").paramName("booleanField").paramType(boolean.class).visibility(Visibility.PUBLIC).build(), //
                                 SimpleSetter.builder().methodName("setSetClass").paramName("setClass").paramType(Class.class).visibility(Visibility.PUBLIC).build())), //
                 Arguments.of("", SimpleClassNoSetPrefix.class, Visibility.PACKAGE_PRIVATE, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("anInt").paramName("anInt").paramType(int.class).visibility(Visibility.PACKAGE_PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("aString").paramName("aString").paramType(String.class).visibility(Visibility.PACKAGE_PRIVATE).build())), //
                 Arguments.of("set", ClassWithCollections.class, Visibility.PRIVATE, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(Collection.class).paramTypeArg(Integer.class).visibility(Visibility.PRIVATE).build(), //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(Visibility.PRIVATE).build(),
                                 CollectionSetter.builder().methodName("setSet").paramName("set").paramType(Set.class).paramTypeArg(List.class).visibility(Visibility.PRIVATE).build(),
@@ -132,7 +133,7 @@ class SetterServiceImplTest {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
-        when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
+        when(classService.collectFullClassHierarchy(any())).thenReturn(ImmutableSet.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(ClassWithHierarchy.class);
         // Assert

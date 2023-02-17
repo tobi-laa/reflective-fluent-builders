@@ -50,8 +50,8 @@
         <sisu.version>0.3.5</sisu.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
-        <junit-pioneer.version>2.0.0</junit-pioneer.version>
-        <mockito.version>5.1.1</mockito.version>
+        <junit-pioneer.version>1.9.1</junit-pioneer.version>
+        <mockito.version>4.11.0</mockito.version>
         <assertj.version>3.24.2</assertj.version>
         <archunit.version>1.0.1</archunit.version>
         <!-- versions of plugins -->
@@ -224,7 +224,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <release>${java.version}</release>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>

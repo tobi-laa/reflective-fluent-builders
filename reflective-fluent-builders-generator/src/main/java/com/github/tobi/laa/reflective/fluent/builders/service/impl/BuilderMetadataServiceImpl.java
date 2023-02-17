@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
 import static com.github.tobi.laa.reflective.fluent.builders.model.Visibility.PACKAGE_PRIVATE;
 import static com.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
-import static java.util.function.Predicate.not;
+import static com.google.common.base.Predicates.not;
 
 /**
  * <p>
@@ -57,7 +57,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private String resolveBuilderPackage(final Class<?> clazz) {
-        return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
+        return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackage().getName());
     }
 
     private boolean hasAccessibleNonArgsConstructor(final Class<?> clazz) {
@@ -73,7 +73,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private SortedSet<Setter> gatherAndFilterAccessibleSettersAndAvoidNameCollisions(final Class<?> clazz) {
-        final var setters = setterService.gatherAllSetters(clazz) //
+        final SortedSet<Setter> setters = setterService.gatherAllSetters(clazz) //
                 .stream() //
                 .filter(setter -> isAccessible(clazz, setter.getVisibility()))
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
@@ -82,12 +82,12 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private SortedSet<Setter> avoidNameCollisions(final Set<Setter> setters) {
         final SortedSet<Setter> noNameCollisions = new TreeSet<>();
-        for (final var setter : setters) {
+        for (final Setter setter : setters) {
             if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(setter.getParamName()::equals)) {
                 noNameCollisions.add(setter);
             } else {
                 for (int i = 0; true; i++) {
-                    final var paramName = setter.getParamName() + i;
+                    final String paramName = setter.getParamName() + i;
                     if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(paramName::equals)) {
                         noNameCollisions.add(setter.withParamName(paramName));
                         break;
@@ -122,7 +122,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers) {
-        final var visibility = visibilityService.toVisibility(modifiers);
+        final Visibility visibility = visibilityService.toVisibility(modifiers);
         return isAccessible(clazz, visibility);
     }
 
@@ -131,7 +131,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean placeBuildersInSamePackage(final Class<?> clazz) {
-        return PACKAGE_PLACEHOLDER.equals(properties.getBuilderPackage()) || properties.getBuilderPackage().equals(clazz.getPackageName());
+        return PACKAGE_PLACEHOLDER.equals(properties.getBuilderPackage()) || properties.getBuilderPackage().equals(clazz.getPackage().getName());
     }
 
     @Override

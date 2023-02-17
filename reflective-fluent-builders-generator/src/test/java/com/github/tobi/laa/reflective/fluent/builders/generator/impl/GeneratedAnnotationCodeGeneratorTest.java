@@ -41,6 +41,6 @@ class GeneratedAnnotationCodeGeneratorTest {
         // Act
         final AnnotationSpec actual = generator.generate(builderMetadata);
         // Assert
-        assertThat(actual).hasToString("@javax.annotation.processing.Generated(value = \"com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator\", date = \"3333-03-13T00:00Z[UTC]\")");
+        assertThat(actual).hasToString("@javax.annotation.Generated(value = \"com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator\", date = \"3333-03-13T00:00Z[UTC]\")");
     }
 }

@@ -3,6 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import lombok.RequiredArgsConstructor;
 
@@ -14,9 +15,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static java.util.function.Predicate.not;
+import static com.google.common.base.Predicates.not;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ class ClassServiceImpl implements ClassService {
     public Set<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
         final Set<Class<?>> classHierarchy = new HashSet<>();
-        for (var i = clazz; i != null; i = i.getSuperclass()) {
+        for (Class<?> i = clazz; i != null; i = i.getSuperclass()) {
             if (properties.getHierarchyCollection().getClassesToExclude().contains(i)) {
                 break;
             }
@@ -59,7 +59,7 @@ class ClassServiceImpl implements ClassService {
                     .getTopLevelClassesRecursive(packageName) //
                     .stream() //
                     .map(ClassPath.ClassInfo::load) //
-                    .collect(Collectors.toUnmodifiableSet());
+                    .collect(ImmutableSet.toImmutableSet());
         } catch (final IOException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }

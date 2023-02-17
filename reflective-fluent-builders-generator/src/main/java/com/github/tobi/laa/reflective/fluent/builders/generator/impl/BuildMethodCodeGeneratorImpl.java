@@ -26,7 +26,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
     @Override
     public MethodSpec generateBuildMethod(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var clazz = builderMetadata.getBuiltType().getType();
+        final Class<?> clazz = builderMetadata.getBuiltType().getType();
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("build")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(clazz);

@@ -11,7 +11,7 @@ class ArraySetterTest {
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var arraySetter = ArraySetter.builder()
+        final ArraySetter arraySetter = ArraySetter.builder()
                 .methodName("getSth")
                 .paramType(Object[].class)
                 .paramName("aName")
@@ -19,7 +19,7 @@ class ArraySetterTest {
                 .paramComponentType(Object.class)
                 .build();
         // Act
-        final var withParamName = arraySetter.withParamName(paramName);
+        final ArraySetter withParamName = arraySetter.withParamName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(ArraySetter.builder()
                 .methodName("getSth")

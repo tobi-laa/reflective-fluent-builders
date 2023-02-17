@@ -5,6 +5,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIn
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializerCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
+import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.CodeBlock;
 import com.sun.net.httpserver.Headers;
 
@@ -33,7 +34,7 @@ import java.util.jar.Attributes;
 class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCodeGenerator, MapInitializerCodeGenerator {
 
     @SuppressWarnings("rawtypes")
-    static final List<Class<? extends Collection>> SUPPORTED_COLLECTIONS = List.of(
+    static final List<Class<? extends Collection>> SUPPORTED_COLLECTIONS = ImmutableList.of(
             ArrayList.class, //
             HashSet.class, //
             TreeSet.class, //
@@ -55,7 +56,7 @@ class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCod
             SynchronousQueue.class);
 
     @SuppressWarnings("rawtypes")
-    static final List<Class<? extends Map>> SUPPORTED_MAPS = List.of( //
+    static final List<Class<? extends Map>> SUPPORTED_MAPS = ImmutableList.of( //
             HashMap.class, //
             LinkedHashMap.class, //
             TreeMap.class, //

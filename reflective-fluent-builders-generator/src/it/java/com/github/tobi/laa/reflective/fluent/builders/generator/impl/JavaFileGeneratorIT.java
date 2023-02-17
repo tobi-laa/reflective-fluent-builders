@@ -7,6 +7,8 @@ import com.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.squareup.javapoet.JavaFile;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
 import org.eclipse.sisu.wire.WireModule;
@@ -21,8 +23,8 @@ class JavaFileGeneratorIT {
 
     @BeforeEach
     void init() {
-        final var classloader = getClass().getClassLoader();
-        final var injector = Guice.createInjector(
+        final ClassLoader classloader = getClass().getClassLoader();
+        final Injector injector = Guice.createInjector(
                 new WireModule(
                         new SpaceModule(new URLClassSpace(classloader))));
         javaFileGenerator = injector.getInstance(JavaFileGeneratorImpl.class);
@@ -31,7 +33,7 @@ class JavaFileGeneratorIT {
     @Test
     void testGenerateJavaFile() {
         // Arrange
-        final var builderMetadata = BuilderMetadata.builder() //
+        final BuilderMetadata builderMetadata = BuilderMetadata.builder() //
                 .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                 .name("SimpleClassBuilder") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
@@ -53,7 +55,7 @@ class JavaFileGeneratorIT {
                         .build()) //
                 .build();
         // Act
-        final var actual = javaFileGenerator.generateJavaFile(builderMetadata);
+        final JavaFile actual = javaFileGenerator.generateJavaFile(builderMetadata);
         // Assert
         assertThat(actual).isNotNull();
         assertThat(actual.toString()).isEqualToIgnoringNewLines(
@@ -63,7 +65,7 @@ class JavaFileGeneratorIT {
                         "import java.util.ArrayList;\n" +
                         "import java.util.List;\n" +
                         "import java.util.Objects;\n" +
-                        "import javax.annotation.processing.Generated;\n" +
+                        "import javax.annotation.Generated;\n" +
                         "\n" +
                         "@Generated(\n" +
                         "    value = \"com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator\",\n" +

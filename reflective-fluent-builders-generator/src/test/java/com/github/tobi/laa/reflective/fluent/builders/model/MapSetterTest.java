@@ -13,7 +13,7 @@ class MapSetterTest {
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var mapSetter = MapSetter.builder()
+        final MapSetter mapSetter = MapSetter.builder()
                 .methodName("getSth")
                 .paramType(Map.class)
                 .paramName("aName")
@@ -22,7 +22,7 @@ class MapSetterTest {
                 .valueType(Object.class)
                 .build();
         // Act
-        final var withParamName = mapSetter.withParamName(paramName);
+        final MapSetter withParamName = mapSetter.withParamName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(MapSetter.builder()
                 .methodName("getSth")

@@ -11,6 +11,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -49,7 +50,7 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
     public boolean isApplicable(final Setter setter) {
         Objects.requireNonNull(setter);
         return setter instanceof MapSetter //
-               && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) setter));
+                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) setter));
     }
 
     @Override
@@ -65,8 +66,8 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
     }
 
     private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final MapSetter setter) {
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Map" + capitalize(setter.getParamName()));
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final ClassName className = builderClassName.nestedClass("Map" + capitalize(setter.getParamName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
                         .methodBuilder(setterService.dropSetterPrefix(setter.getMethodName())) //

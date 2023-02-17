@@ -6,7 +6,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.AnnotationSpec;
 import lombok.RequiredArgsConstructor;
 
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;

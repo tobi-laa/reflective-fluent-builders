@@ -5,6 +5,7 @@ import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperti
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -36,6 +37,6 @@ public class StandardBuildersProperties implements BuildersProperties {
     public static class StandardHierarchyCollection implements HierarchyCollection {
 
         @lombok.NonNull
-        private Set<Class<?>> classesToExclude = Set.of(Object.class);
+        private Set<Class<?>> classesToExclude = Collections.singleton(Object.class);
     }
 }

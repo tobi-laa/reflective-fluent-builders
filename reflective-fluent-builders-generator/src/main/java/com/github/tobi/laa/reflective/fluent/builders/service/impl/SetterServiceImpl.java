@@ -55,7 +55,7 @@ class SetterServiceImpl implements SetterService {
     }
 
     private Setter toSetter(final Method method) {
-        final var param = method.getParameters()[0];
+        final Parameter param = method.getParameters()[0];
         if (param.getType().isArray()) {
             return ArraySetter.builder().paramComponentType(param.getType().getComponentType()) //
                     .methodName(method.getName()) //
@@ -104,7 +104,7 @@ class SetterServiceImpl implements SetterService {
         if (StringUtils.isEmpty(properties.getSetterPrefix()) || name.length() <= properties.getSetterPrefix().length()) {
             return name;
         }
-        final var paramName = name.replaceFirst('^' + Pattern.quote(properties.getSetterPrefix()), "");
+        final String paramName = name.replaceFirst('^' + Pattern.quote(properties.getSetterPrefix()), "");
         return StringUtils.uncapitalize(paramName);
     }
 }

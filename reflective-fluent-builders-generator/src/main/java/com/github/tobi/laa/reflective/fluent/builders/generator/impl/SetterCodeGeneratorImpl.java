@@ -7,6 +7,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterTypeNa
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import lombok.RequiredArgsConstructor;
 
@@ -39,8 +40,8 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
     public MethodSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(setter);
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var name = setterService.dropSetterPrefix(setter.getMethodName());
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final String name = setterService.dropSetterPrefix(setter.getMethodName());
         return MethodSpec.methodBuilder(name)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(builderClassName)

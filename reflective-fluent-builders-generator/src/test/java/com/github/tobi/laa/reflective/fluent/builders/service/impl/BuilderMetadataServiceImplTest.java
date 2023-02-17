@@ -15,6 +15,7 @@ import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Ab
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Annotation;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Enum;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Interface;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -177,22 +178,22 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
                         Visibility.PUBLIC, //
-                        Set.of(Abstract.class, Annotation.class, Enum.class, Interface.class),
+                        ImmutableSet.of(Abstract.class, Annotation.class, Enum.class, Interface.class),
                         Collections.emptySet()), //
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
                         Visibility.PACKAGE_PRIVATE, //
-                        Set.of(SimpleClass.class),
-                        Set.of(SimpleClass.class)), //
+                        Collections.singleton(SimpleClass.class),
+                        Collections.singleton(SimpleClass.class)), //
                 Arguments.of( //
-                        SimpleClass.class.getPackageName(), //
+                        SimpleClass.class.getPackage().getName(), //
                         Visibility.PACKAGE_PRIVATE, //
-                        Set.of(SimpleClass.class),
-                        Set.of(SimpleClass.class)), //
+                        Collections.singleton(SimpleClass.class),
+                        Collections.singleton(SimpleClass.class)), //
                 Arguments.of( //
                         "<PACKAGE_NAME>.builder", //
                         Visibility.PACKAGE_PRIVATE, //
-                        Set.of(SimpleClass.class),
+                        Collections.singleton(SimpleClass.class),
                         Collections.emptySet()));
     }
 
@@ -230,7 +231,7 @@ class BuilderMetadataServiceImplTest {
                                         .build()),
                         Collections.emptySet()),
                 Arguments.of(
-                        Set.of( //
+                        ImmutableSet.of( //
                                 BuilderMetadata.builder() //
                                         .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //

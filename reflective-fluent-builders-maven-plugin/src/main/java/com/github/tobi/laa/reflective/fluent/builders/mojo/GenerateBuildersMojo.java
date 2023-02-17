@@ -2,6 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,28 +26,34 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class GenerateBuildersMojo extends AbstractMojo {
 
-    @Setter(onMethod = @__(
-            @Parameter(property = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER)))
+    @Setter(
+            onMethod_ =
+            @Parameter(property = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER))
     private String builderPackage;
 
-    @Setter(onMethod = @__(
-            @Parameter(property = "builderSuffix", defaultValue = "Builder")))
+    @Setter(
+            onMethod_ =
+            @Parameter(property = "builderSuffix", defaultValue = "Builder"))
     private String builderSuffix;
 
-    @Setter(onMethod = @__(
-            @Parameter(property = "setterPrefix", defaultValue = "set")))
+    @Setter(
+            onMethod_ =
+            @Parameter(property = "setterPrefix", defaultValue = "set"))
     private String setterPrefix;
 
-    @Setter(onMethod = @__(
-            @Parameter(property = "hierarchyCollection.classesToExclude")))
-    private Set<Class<?>> classesToExclude = Set.of(Object.class);
+    @Setter(
+            onMethod_ =
+            @Parameter(property = "hierarchyCollection.classesToExclude"))
+    private Set<Class<?>> classesToExclude = Collections.singleton(Object.class);
 
-    @Setter(onMethod = @__(
-            @Parameter(property = "packageToScan")))
+    @Setter(
+            onMethod_ =
+            @Parameter(property = "packageToScan"))
     private String packageToScan;
 
-    @Setter(onMethod = @__(
-            @Parameter(property = "target")))
+    @Setter(
+            onMethod_ =
+            @Parameter(property = "target"))
     private File target;
 
     @lombok.NonNull
@@ -67,8 +75,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
         buildersProperties.setSetterPrefix(setterPrefix);
         buildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
         getLog().info("Scan package " + packageToScan + " recursively for classes.");
-        final var allClasses = classService.collectClassesRecursively(packageToScan.trim());
-        final var buildableClasses = builderMetadataService.filterOutNonBuildableClasses(allClasses);
+        final Set<Class<?>> allClasses = classService.collectClassesRecursively(packageToScan.trim());
+        final Set<Class<?>> buildableClasses = builderMetadataService.filterOutNonBuildableClasses(allClasses);
         getLog().info("Found " + allClasses.size() + " classes altogether, of which builders can be created for " + buildableClasses.size() + '.');
         getLog().info("Make sure target directory " + target + " exists.");
         try {
@@ -76,14 +84,14 @@ public class GenerateBuildersMojo extends AbstractMojo {
         } catch (final IOException e) {
             throw new MojoFailureException("Could not create target directory " + target + '.', e);
         }
-        final var allMetadata = buildableClasses.stream() //
+        final Set<BuilderMetadata> allMetadata = buildableClasses.stream() //
                 .map(builderMetadataService::collectBuilderMetadata) //
                 .collect(Collectors.toSet());
-        final var noneEmptyMetadata = builderMetadataService.filterOutEmptyBuilders(allMetadata);
-        for (final var clazz : buildableClasses) {
+        final Set<BuilderMetadata> noneEmptyMetadata = builderMetadataService.filterOutEmptyBuilders(allMetadata);
+        for (final Class<?> clazz : buildableClasses) {
             getLog().info("Generate builder for class " + clazz.getName() + '.');
-            final var metadata = builderMetadataService.collectBuilderMetadata(clazz);
-            final var javaFile = javaFileGenerator.generateJavaFile(metadata);
+            final BuilderMetadata metadata = builderMetadataService.collectBuilderMetadata(clazz);
+            final com.squareup.javapoet.JavaFile javaFile = javaFileGenerator.generateJavaFile(metadata);
             try {
                 javaFile.writeTo(target);
             } catch (final IOException e) {

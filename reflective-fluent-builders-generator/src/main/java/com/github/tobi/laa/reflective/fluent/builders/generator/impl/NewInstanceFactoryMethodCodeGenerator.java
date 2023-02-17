@@ -3,6 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.MethodCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +31,7 @@ class NewInstanceFactoryMethodCodeGenerator implements MethodCodeGenerator {
     @Override
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         return Optional.of(MethodSpec.methodBuilder("newInstance")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(builderClassName)

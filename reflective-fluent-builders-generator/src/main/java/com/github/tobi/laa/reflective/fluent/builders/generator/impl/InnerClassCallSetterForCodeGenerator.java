@@ -6,6 +6,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.Encapsulatin
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -47,9 +49,9 @@ class InnerClassCallSetterForCodeGenerator implements EncapsulatingClassCodeGene
     @Override
     public EncapsulatingClassSpec generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var callSetterFor = builderClassName.nestedClass(CallSetterFor.CLASS_NAME);
-        final var fields = builderMetadata.getBuiltType().getSetters() //
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final ClassName callSetterFor = builderClassName.nestedClass(CallSetterFor.CLASS_NAME);
+        final List<FieldSpec> fields = builderMetadata.getBuiltType().getSetters() //
                 .stream() //
                 .map(Setter::getParamName) //
                 .map(paramName -> FieldSpec //

@@ -13,14 +13,14 @@ class SimpleSetterTest {
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var simpleSetter = SimpleSetter.builder()
+        final SimpleSetter simpleSetter = SimpleSetter.builder()
                 .methodName("getSth")
                 .paramType(Map.class)
                 .paramName("aName")
                 .visibility(Visibility.PRIVATE)
                 .build();
         // Act
-        final var withParamName = simpleSetter.withParamName(paramName);
+        final SimpleSetter withParamName = simpleSetter.withParamName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(SimpleSetter.builder()
                 .methodName("getSth")

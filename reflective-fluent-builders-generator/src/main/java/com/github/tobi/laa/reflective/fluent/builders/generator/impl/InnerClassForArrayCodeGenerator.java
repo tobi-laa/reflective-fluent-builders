@@ -10,10 +10,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ClassUtils;
 
@@ -63,8 +60,8 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
     }
 
     private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final ArraySetter setter) {
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Array" + capitalize(setter.getParamName()));
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final ClassName className = builderClassName.nestedClass("Array" + capitalize(setter.getParamName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
                         .methodBuilder(setterService.dropSetterPrefix(setter.getMethodName())) //

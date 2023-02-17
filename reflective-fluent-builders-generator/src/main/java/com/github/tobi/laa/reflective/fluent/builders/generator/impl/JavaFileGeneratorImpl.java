@@ -1,6 +1,8 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.*;
+import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
+import com.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.squareup.javapoet.ClassName;
@@ -72,7 +74,7 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
         Objects.requireNonNull(encapsulatingClassCodeGenerators);
         Objects.requireNonNull(collectionClassCodeGenerators);
         // to ensure deterministic outputs, sets are sorted on construction
-        final var compareByClassName = Comparator.comparing(o -> o.getClass().getName());
+        final Comparator<Object> compareByClassName = Comparator.comparing(o -> o.getClass().getName());
         this.annotationCodeGenerators = copyOf(compareByClassName, annotationCodeGenerators);
         this.fieldCodeGenerators = copyOf(compareByClassName, fieldCodeGenerators);
         this.methodCodeGenerators = copyOf(compareByClassName, methodCodeGenerators);
@@ -83,8 +85,8 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
     @Override
     public JavaFile generateJavaFile(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var builderTypeSpec = generateTypeSpec(builderClassName);
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final TypeSpec.Builder builderTypeSpec = generateTypeSpec(builderClassName);
         generateAnnotations(builderMetadata, builderTypeSpec);
         generateFields(builderMetadata, builderTypeSpec);
         generateConstructorsAndMethods(builderMetadata, builderTypeSpec);
@@ -119,7 +121,7 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
 
     private void generateEncapsulatingClasses(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {
         for (final EncapsulatingClassCodeGenerator generator : encapsulatingClassCodeGenerators) {
-            final var encapsulatingClassSpec = generator.generate(builderMetadata);
+            final EncapsulatingClassSpec encapsulatingClassSpec = generator.generate(builderMetadata);
             builderTypeSpec.addField(encapsulatingClassSpec.getField());
             builderTypeSpec.addType(encapsulatingClassSpec.getInnerClass());
         }
@@ -129,7 +131,7 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
         for (final CollectionClassCodeGenerator generator : collectionClassCodeGenerators) {
             for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
                 if (generator.isApplicable(setter)) {
-                    final var collectionClassSpec = generator.generate(builderMetadata, setter);
+                    final CollectionClassSpec collectionClassSpec = generator.generate(builderMetadata, setter);
                     builderTypeSpec.addMethod(collectionClassSpec.getGetter());
                     builderTypeSpec.addType(collectionClassSpec.getInnerClass());
                 }

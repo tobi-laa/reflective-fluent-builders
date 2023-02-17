@@ -208,7 +208,7 @@ class InnerClassForArrayCodeGeneratorTest {
     }
 
     private static Stream<Arguments> testGenerate() {
-        final var mockTypeName = MockType.class.getName().replace('$', '.');
+        final String mockTypeName = MockType.class.getName().replace('$', '.');
         return Stream.of( //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -228,32 +228,32 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .build(), //
                         String.format(
                                 "public %1$s.ArrayFloats floats(\n" +
-                                "    ) {\n" +
-                                "  return new %1$s.ArrayFloats();\n" +
-                                "}\n",
+                                        "    ) {\n" +
+                                        "  return new %1$s.ArrayFloats();\n" +
+                                        "}\n",
                                 mockTypeName), //
                         String.format(
                                 "public class ArrayFloats {\n" +
-                                "  private java.util.List<java.lang.Float> list;\n" +
-                                "\n" +
-                                "  public %1$s.ArrayFloats add(\n" +
-                                "      final float item) {\n" +
-                                "    if (this.list == null) {\n" +
-                                "      this.list = new java.util.ArrayList<>();\n" +
-                                "    }\n" +
-                                "    this.list.add(item);\n" +
-                                "    %1$s.this.callSetterFor.floats = true;\n" +
-                                "    return this;\n" +
-                                "  }\n" +
-                                "\n" +
-                                "  public %1$s and(\n" +
-                                "      ) {\n" +
-                                "    if (this.list != null) {\n" +
-                                "      %1$s.this.fieldValue.floats = list.toArray(new float[0]);\n" +
-                                "    }\n" +
-                                "    return %1$s.this;\n" +
-                                "  }\n" +
-                                "}\n",
+                                        "  private java.util.List<java.lang.Float> list;\n" +
+                                        "\n" +
+                                        "  public %1$s.ArrayFloats add(\n" +
+                                        "      final float item) {\n" +
+                                        "    if (this.list == null) {\n" +
+                                        "      this.list = new java.util.ArrayList<>();\n" +
+                                        "    }\n" +
+                                        "    this.list.add(item);\n" +
+                                        "    %1$s.this.callSetterFor.floats = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    if (this.list != null) {\n" +
+                                        "      %1$s.this.fieldValue.floats = list.toArray(new float[0]);\n" +
+                                        "    }\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -273,32 +273,32 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .build(), //
                         String.format(
                                 "public %1$s.ArrayStrings strings(\n" +
-                                "    ) {\n" +
-                                "  return new %1$s.ArrayStrings();\n" +
-                                "}\n",
+                                        "    ) {\n" +
+                                        "  return new %1$s.ArrayStrings();\n" +
+                                        "}\n",
                                 mockTypeName),
                         String.format(
                                 "public class ArrayStrings {\n" +
-                                "  private java.util.List<java.lang.String> list;\n" +
-                                "\n" +
-                                "  public %1$s.ArrayStrings add(\n" +
-                                "      final java.lang.String item) {\n" +
-                                "    if (this.list == null) {\n" +
-                                "      this.list = new java.util.ArrayList<>();\n" +
-                                "    }\n" +
-                                "    this.list.add(item);\n" +
-                                "    %1$s.this.callSetterFor.strings = true;\n" +
-                                "    return this;\n" +
-                                "  }\n" +
-                                "\n" +
-                                "  public %1$s and(\n" +
-                                "      ) {\n" +
-                                "    if (this.list != null) {\n" +
-                                "      %1$s.this.fieldValue.strings = list.toArray(new java.lang.String[0]);\n" +
-                                "    }\n" +
-                                "    return %1$s.this;\n" +
-                                "  }\n" +
-                                "}\n",
+                                        "  private java.util.List<java.lang.String> list;\n" +
+                                        "\n" +
+                                        "  public %1$s.ArrayStrings add(\n" +
+                                        "      final java.lang.String item) {\n" +
+                                        "    if (this.list == null) {\n" +
+                                        "      this.list = new java.util.ArrayList<>();\n" +
+                                        "    }\n" +
+                                        "    this.list.add(item);\n" +
+                                        "    %1$s.this.callSetterFor.strings = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    if (this.list != null) {\n" +
+                                        "      %1$s.this.fieldValue.strings = list.toArray(new java.lang.String[0]);\n" +
+                                        "    }\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)));
     }
 

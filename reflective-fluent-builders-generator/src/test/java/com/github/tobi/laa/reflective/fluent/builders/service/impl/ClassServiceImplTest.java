@@ -4,6 +4,7 @@ import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionExcept
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.function.Predicate.not;
+import static com.google.common.base.Predicates.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,7 +57,7 @@ class ClassServiceImplTest {
     @MethodSource
     void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Class<?>> excludes, final Set<Class<?>> expected) {
         // Arrange
-        final var hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
+        final BuildersProperties.HierarchyCollection hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
         when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
         when(hierarchyCollection.getClassesToExclude()).thenReturn(excludes);
         // Act
@@ -70,7 +71,7 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.emptySet(), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
                                 TopLevelSuperClass.class, //
@@ -79,8 +80,8 @@ class ClassServiceImplTest {
                                 Object.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Set.of(Object.class), //
-                        Set.of( //
+                        Collections.singleton(Object.class), //
+                        ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
                                 TopLevelSuperClass.class, //
@@ -88,16 +89,16 @@ class ClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Set.of(Object.class, AnInterface.class), //
-                        Set.of( //
+                        ImmutableSet.of(Object.class, AnInterface.class), //
+                        ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
                                 TopLevelSuperClass.class, //
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Set.of(FirstSuperClass.class), //
-                        Set.of( //
+                        Collections.singleton(FirstSuperClass.class), //
+                        ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
     }
@@ -114,7 +115,7 @@ class ClassServiceImplTest {
     void testCollectClassesRecursivelyReflectionException() {
         try (final MockedStatic<ClassPath> classPath = mockStatic(ClassPath.class)) {
             // Arrange
-            final var cause = new IOException("Thrown in unit test");
+            final IOException cause = new IOException("Thrown in unit test");
             classPath.when(() -> ClassPath.from(any())).thenThrow(cause);
             // Act
             final ThrowableAssert.ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
@@ -140,14 +141,14 @@ class ClassServiceImplTest {
                 .map(Method::getDeclaredAnnotations)
                 .flatMap(Arrays::stream)
                 .map(Annotation::annotationType)
-                .anyMatch(Set.of(Test.class, ParameterizedTest.class)::contains);
+                .anyMatch(ImmutableSet.of(Test.class, ParameterizedTest.class)::contains);
     }
 
     private static Stream<Arguments> testCollectClassesRecursively() {
         return Stream.of( //
                 Arguments.of(
-                        Setter.class.getPackageName(), //
-                        Set.of( //
+                        Setter.class.getPackage().getName(), //
+                        ImmutableSet.of( //
                                 AbstractSetter.class, //
                                 ArraySetter.class, //
                                 BuilderMetadata.class, //
