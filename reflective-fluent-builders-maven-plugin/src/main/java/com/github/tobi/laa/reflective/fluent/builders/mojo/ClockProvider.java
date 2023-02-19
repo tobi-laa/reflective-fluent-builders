@@ -4,6 +4,8 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 
 /**
  * <p>
@@ -17,6 +19,14 @@ class ClockProvider implements Provider<Clock> {
 
     @Override
     public Clock get() {
-        return Clock.systemDefaultZone();
+        if (useFixedClockForIntegrationTests()) {
+            return Clock.fixed(Instant.parse("3333-03-13T00:00:00.00Z"), ZoneId.of("UTC"));
+        } else {
+            return Clock.systemDefaultZone();
+        }
+    }
+
+    private boolean useFixedClockForIntegrationTests() {
+        return Boolean.parseBoolean(System.getenv("useFixedClockForIntegrationTests"));
     }
 }
