@@ -1,5 +1,8 @@
 package com.github.tobi.laa.reflective.fluent.builders.archunit;
 
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.AnInterface;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.AnotherInterface;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Interface;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
@@ -14,11 +17,23 @@ class InterfaceRules {
 
     @ArchTest
     private final ArchRule interfacesShouldNotHaveNamesEndingWithTheWordInterface =
-            noClasses().that().areInterfaces().should().haveNameMatching(".*Interface");
+            noClasses()
+                    .that().areInterfaces()
+                    // exclusion for test models
+                    .and().areNotAssignableTo(Interface.class)
+                    .and().areNotAssignableTo(AnInterface.class)
+                    .and().areNotAssignableTo(AnotherInterface.class)
+                    .should().haveNameMatching(".*Interface");
 
     @ArchTest
     private final ArchRule interfacesShouldNotHaveSimpleClassNamesContainingTheWordInterface =
-            noClasses().that().areInterfaces().should().haveSimpleNameContaining("Interface");
+            noClasses()
+                    .that().areInterfaces()
+                    // exclusion for test models
+                    .and().areNotAssignableTo(Interface.class)
+                    .and().areNotAssignableTo(AnInterface.class)
+                    .and().areNotAssignableTo(AnotherInterface.class)
+                    .should().haveSimpleNameContaining("Interface");
 
     @ArchTest
     private final ArchRule interfacesMustNotBePlacedInImplementationPackages =
