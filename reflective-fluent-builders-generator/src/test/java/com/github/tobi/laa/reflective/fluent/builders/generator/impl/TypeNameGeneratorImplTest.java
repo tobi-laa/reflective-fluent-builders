@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.lang.reflect.Type;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +19,12 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class SetterTypeNameGeneratorImplTest {
+class TypeNameGeneratorImplTest {
 
-    private final SetterTypeNameGeneratorImpl generator = new SetterTypeNameGeneratorImpl();
+    private final TypeNameGeneratorImpl generator = new TypeNameGeneratorImpl();
 
     @Test
-    void testGenerateTypeNameForParamNull() {
+    void testGenerateTypeNameForParamSetterNull() {
         // Arrange
         final Setter setter = null;
         // Act
@@ -34,14 +35,14 @@ class SetterTypeNameGeneratorImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateTypeNameForParam(final Setter setter, final String expected) {
+    void testGenerateTypeNameForParamSetter(final Setter setter, final String expected) {
         // Act
         final TypeName actual = generator.generateTypeNameForParam(setter);
         // Assert
         assertThat(actual).hasToString(expected);
     }
 
-    private static Stream<Arguments> testGenerateTypeNameForParam() {
+    private static Stream<Arguments> testGenerateTypeNameForParamSetter() {
         return Stream.of(
                 Arguments.of(
                         SimpleSetter.builder() //
@@ -62,7 +63,7 @@ class SetterTypeNameGeneratorImplTest {
                                         .build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        "java.util.Deque<?>"
+                        "java.util.Deque<java.lang.Object>"
                 ),
                 Arguments.of(
                         CollectionSetter.builder() //
@@ -116,7 +117,33 @@ class SetterTypeNameGeneratorImplTest {
                                         .build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .build(), //
-                        "java.util.SortedMap<java.lang.String, ?>"
+                        "java.util.SortedMap<java.lang.String, java.lang.Object>"
                 ));
+    }
+
+    @Test
+    void testGenerateTypeNameForParamTypeNull() {
+        // Arrange
+        final Type type = null;
+        // Act
+        final Executable generateTypeNameForParam = () -> generator.generateTypeNameForParam(type);
+        // Assert
+        assertThrows(NullPointerException.class, generateTypeNameForParam);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testGenerateTypeNameForParamType(final Type type, final String expected) {
+        // Act
+        final TypeName actual = generator.generateTypeNameForParam(type);
+        // Assert
+        assertThat(actual).hasToString(expected);
+    }
+
+    private static Stream<Arguments> testGenerateTypeNameForParamType() {
+        return Stream.of(
+                Arguments.of(int.class, "int"),
+                Arguments.of(String.class, "java.lang.String"),
+                Arguments.of(TypeUtils.wildcardType().build(), "java.lang.Object"));
     }
 }
