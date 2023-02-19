@@ -74,7 +74,7 @@ class GenerateBuildersMojoIT {
     private Consumer<MavenProjectResult> containsExpectedBuilders(final Package buildersPackage) {
         return result -> {
             for (final Path expectedBuilderRelativeToRoot : expectedBuildersForPackageRelativeToRoot(buildersPackage)) {
-                final var actualBuilder = result.getTargetBaseDirectory()
+                final var actualBuilder = result.getTargetProjectDirectory()
                         .resolve("generated-sources")
                         .resolve("builders")
                         .resolve(expectedBuilderRelativeToRoot);
@@ -102,7 +102,7 @@ class GenerateBuildersMojoIT {
     private Condition<MavenProjectResult> hasEmptyDirectory(final Path subdirectory) {
         return new Condition<>(
                 result -> {
-                    final var directory = result.getTargetBaseDirectory().resolve(subdirectory);
+                    final var directory = result.getTargetProjectDirectory().resolve(subdirectory);
                     return findFilesRecursively(directory).isEmpty();
                 },
                 "Expected subdirectory {} in target base directory to be empty.",
