@@ -6,6 +6,7 @@ import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -84,7 +85,7 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
     public JavaFile generateJavaFile(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var builderTypeSpec = generateTypeSpec(builderClassName);
+        final var builderTypeSpec = generateTypeSpec(builderMetadata, builderClassName);
         generateAnnotations(builderMetadata, builderTypeSpec);
         generateFields(builderMetadata, builderTypeSpec);
         generateConstructorsAndMethods(builderMetadata, builderTypeSpec);
@@ -95,8 +96,12 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
         return generateJavaFile(builderClassName, builderTypeSpec);
     }
 
-    private TypeSpec.Builder generateTypeSpec(final ClassName builderClassName) {
-        return TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
+    private TypeSpec.Builder generateTypeSpec(final BuilderMetadata builderMetadata, final ClassName builderClassName) {
+        final var builder = TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
+        for (final var typeParam : builderMetadata.getBuiltType().getType().getTypeParameters()) {
+            builder.addTypeVariable(TypeVariableName.get(typeParam));
+        }
+        return builder;
     }
 
     private void generateAnnotations(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {
