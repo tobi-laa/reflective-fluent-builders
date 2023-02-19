@@ -70,10 +70,10 @@ class BuildMethodCodeGeneratorImplTest {
                                         "    objectToBuild = new %1$s();\n" +
                                         "  }\n" +
                                         "  if (callSetterFor.anInt) {\n" +
-                                        "    objectToBuild.fieldValue(setAnInt.anInt);\n" +
+                                        "    objectToBuild.setAnInt(fieldValue.anInt);\n" +
                                         "  }\n" +
                                         "  if (callSetterFor.floats) {\n" +
-                                        "    objectToBuild.fieldValue(setFloats.floats);\n" +
+                                        "    objectToBuild.setFloats(fieldValue.floats);\n" +
                                         "  }\n" +
                                         "  return objectToBuild;\n" +
                                         "}\n",
@@ -105,10 +105,10 @@ class BuildMethodCodeGeneratorImplTest {
                         String.format("public %1$s build(\n" +
                                         "    ) {\n" +
                                         "  if (callSetterFor.list) {\n" +
-                                        "    objectToBuild.fieldValue(setList.list);\n" +
+                                        "    objectToBuild.setList(fieldValue.list);\n" +
                                         "  }\n" +
                                         "  if (callSetterFor.sortedMap) {\n" +
-                                        "    objectToBuild.fieldValue(setSortedMap.sortedMap);\n" +
+                                        "    objectToBuild.setSortedMap(fieldValue.sortedMap);\n" +
                                         "  }\n" +
                                         "  return objectToBuild;\n" +
                                         "}\n",
