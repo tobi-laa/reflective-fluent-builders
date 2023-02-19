@@ -2,7 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
-import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterTypeNameGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -45,7 +45,7 @@ class InnerClassFieldValueCodeGeneratorTest {
     private BuilderClassNameGenerator builderClassNameGenerator;
 
     @Mock
-    private SetterTypeNameGenerator setterTypeNameGenerator;
+    private TypeNameGenerator typeNameGenerator;
 
     @Test
     void testGenerateNull() {
@@ -55,7 +55,7 @@ class InnerClassFieldValueCodeGeneratorTest {
         final Executable generate = () -> generator.generate(builderMetadata);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, setterTypeNameGenerator);
+        verifyNoInteractions(builderClassNameGenerator, typeNameGenerator);
     }
 
     @ParameterizedTest
@@ -63,7 +63,7 @@ class InnerClassFieldValueCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final EncapsulatingClassSpec expected) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(setterTypeNameGenerator.generateTypeNameForParam(any())).thenReturn(TypeName.get(MockType.class));
+        when(typeNameGenerator.generateTypeNameForParam(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
         // Act
         final EncapsulatingClassSpec actual = generator.generate(builderMetadata);
         // Assert
@@ -71,7 +71,7 @@ class InnerClassFieldValueCodeGeneratorTest {
         assertThat(actual.getField()).hasToString(expected.getField().toString());
         assertThat(actual.getInnerClass()).hasToString(expected.getInnerClass().toString());
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        builderMetadata.getBuiltType().getSetters().forEach(verify(setterTypeNameGenerator)::generateTypeNameForParam);
+        builderMetadata.getBuiltType().getSetters().forEach(verify(typeNameGenerator)::generateTypeNameForParam);
     }
 
     private static Stream<Arguments> testGenerate() {

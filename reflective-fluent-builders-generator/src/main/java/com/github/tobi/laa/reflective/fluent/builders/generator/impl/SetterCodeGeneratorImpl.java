@@ -3,7 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
-import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterTypeNameGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
@@ -30,7 +30,7 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
     private final BuilderClassNameGenerator builderClassNameGenerator;
 
     @lombok.NonNull
-    private final SetterTypeNameGenerator setterTypeNameGenerator;
+    private final TypeNameGenerator typeNameGenerator;
 
     @lombok.NonNull
     private final SetterService setterService;
@@ -44,7 +44,7 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
         return MethodSpec.methodBuilder(name)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(builderClassName)
-                .addParameter(setterTypeNameGenerator.generateTypeNameForParam(setter), setter.getParamName(), Modifier.FINAL)
+                .addParameter(typeNameGenerator.generateTypeNameForParam(setter), setter.getParamName(), Modifier.FINAL)
                 .addStatement("$L.$L = $L", BuilderConstants.FieldValue.FIELD_NAME, setter.getParamName(), setter.getParamName())
                 .addStatement("$L.$L = $L", BuilderConstants.CallSetterFor.FIELD_NAME, setter.getParamName(), true)
                 .addStatement("return this")
