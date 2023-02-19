@@ -97,7 +97,10 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
                                 .addModifiers(Modifier.PUBLIC) //
                                 .returns(builderClassName) //
                                 .beginControlFlow("if (this.list != null)") //
-                                .addStatement("$T.this.$L.$L = list.toArray(new $T[0])", builderClassName, FieldValue.FIELD_NAME, setter.getParamName(), setter.getParamComponentType()) //
+                                .addStatement("$T.this.$L.$L = new $T[this.list.size()]", builderClassName, FieldValue.FIELD_NAME, setter.getParamName(), setter.getParamComponentType()) //
+                                .beginControlFlow("for (int i = 0; i < this.list.size(); i++)")
+                                .addStatement("$T.this.$L.$L[i] = this.list.get(i)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName()) //
+                                .endControlFlow()
                                 .endControlFlow()
                                 .addStatement("return $T.this", builderClassName) //
                                 .build()) //
