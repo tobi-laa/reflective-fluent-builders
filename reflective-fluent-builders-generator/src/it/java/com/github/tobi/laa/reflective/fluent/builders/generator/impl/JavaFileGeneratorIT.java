@@ -110,10 +110,10 @@ class JavaFileGeneratorIT {
                         "      objectToBuild = new SimpleClass();\n" +
                         "    }\n" +
                         "    if (callSetterFor.anInt) {\n" +
-                        "      objectToBuild.fieldValue(setAnInt.anInt);\n" +
+                        "      objectToBuild.setAnInt(fieldValue.anInt);\n" +
                         "    }\n" +
                         "    if (callSetterFor.floats) {\n" +
-                        "      objectToBuild.fieldValue(setFloats.floats);\n" +
+                        "      objectToBuild.setFloats(fieldValue.floats);\n" +
                         "    }\n" +
                         "    return objectToBuild;\n" +
                         "  }\n" +
@@ -144,7 +144,10 @@ class JavaFileGeneratorIT {
                         "\n" +
                         "    public SimpleClassBuilder and() {\n" +
                         "      if (this.list != null) {\n" +
-                        "        SimpleClassBuilder.this.fieldValue.floats = list.toArray(new float[0]);\n" +
+                        "        SimpleClassBuilder.this.fieldValue.floats = new float[this.list.size()];\n" +
+                        "        for (int i = 0; i < this.list.size(); i++) {\n" +
+                        "          SimpleClassBuilder.this.fieldValue.floats[i] = this.list.get(i);\n" +
+                        "        }\n" +
                         "      }\n" +
                         "      return SimpleClassBuilder.this;\n" +
                         "    }\n" +
