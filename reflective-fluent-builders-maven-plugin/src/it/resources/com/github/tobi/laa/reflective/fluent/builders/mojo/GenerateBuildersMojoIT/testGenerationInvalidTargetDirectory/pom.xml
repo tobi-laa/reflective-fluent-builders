@@ -8,13 +8,6 @@
     </parent>
     <artifactId>reflective-fluent-builders-it</artifactId>
     <description>Integration test for the maven plugin</description>
-    <dependencies>
-        <dependency>
-            <groupId>com.github.tobi-laa</groupId>
-            <artifactId>reflective-fluent-builders-test-models</artifactId>
-            <version>@project.version@</version>
-        </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -30,15 +23,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.simple</packageToScan>
+                    <packageToScan>does.not.matter</packageToScan>
+                    <target>\${project.basedir}/pom.xml</target>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.github.tobi-laa</groupId>
-                        <artifactId>reflective-fluent-builders-test-models</artifactId>
-                        <version>@project.version@</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

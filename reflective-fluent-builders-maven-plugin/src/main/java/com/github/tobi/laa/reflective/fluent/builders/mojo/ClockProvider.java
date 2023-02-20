@@ -26,7 +26,7 @@ class ClockProvider implements Provider<Clock> {
         }
     }
 
-    private boolean useFixedClockForIntegrationTests() {
+    boolean useFixedClockForIntegrationTests() {
         return Boolean.parseBoolean(System.getenv("useFixedClockForIntegrationTests"));
     }
 }

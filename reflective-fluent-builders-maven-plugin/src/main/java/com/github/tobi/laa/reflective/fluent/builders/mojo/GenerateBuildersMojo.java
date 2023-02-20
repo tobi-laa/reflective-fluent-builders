@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private Set<Class<?>> classesToExclude = Set.of(Object.class);
 
     @Setter(onMethod_ =
-    @Parameter(property = "packageToScan"))
+    @Parameter(required = true, property = "packageToScan"))
     private String packageToScan;
 
     @Setter(onMethod_ =
@@ -81,6 +82,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     public void execute() throws MojoFailureException {
         mapMavenParamsToProps();
         final var buildableClasses = collectBuildableClasses();
+        setDefaultTargetDirectoryIfNecessary();
         createTargetDirectory();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(buildableClasses);
         generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
@@ -110,6 +112,20 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return buildableClasses;
     }
 
+    private void setDefaultTargetDirectoryIfNecessary() {
+        if (target == null && isTestPhase()) {
+            target = Paths.get(mavenProject.getBuild().getDirectory()) //
+                    .resolve("generated-test-sources") //
+                    .resolve("builders") //
+                    .toFile();
+        } else if (target == null) {
+            target = Paths.get(mavenProject.getBuild().getDirectory())
+                    .resolve("generated-sources") //
+                    .resolve("builders") //
+                    .toFile();
+        }
+    }
+
     private void createTargetDirectory() throws MojoFailureException {
         getLog().info("Make sure target directory " + target + " exists.");
         try {
@@ -134,7 +150,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private void generateAndWriteBuildersToTarget(Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
         for (final var metadata : nonEmptyBuilderMetadata) {
-            getLog().info("Generate builder for class " + metadata.getBuiltType().getType().getName() + '.');
+            getLog().info("Generate builder for class " + metadata.getBuiltType().getType().getName());
             final var javaFile = javaFileGenerator.generateJavaFile(metadata);
             try {
                 javaFile.writeTo(target);
@@ -147,7 +163,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private void addCompileSourceRoot() {
         if (addCompileSourceRoot) {
             final var path = target.getPath();
-            if (StringUtils.containsIgnoreCase(mojoExecution.getLifecyclePhase(), "test")) {
+            if (isTestPhase()) {
                 getLog().debug("Add " + path + " as test source folder.");
                 mavenProject.addTestCompileSourceRoot(target.getPath());
             } else {
@@ -155,5 +171,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
                 mavenProject.addCompileSourceRoot(target.getPath());
             }
         }
+    }
+
+    private boolean isTestPhase() {
+        return StringUtils.containsIgnoreCase(mojoExecution.getLifecyclePhase(), "test");
     }
 }

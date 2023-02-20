@@ -31,6 +31,8 @@
                 </executions>
                 <configuration>
                     <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.simple</packageToScan>
+                    <target>\${project.build.directory}/generated-sources/builders</target>
+                    <addCompileSourceRoot>false</addCompileSourceRoot>
                 </configuration>
                 <dependencies>
                     <dependency>

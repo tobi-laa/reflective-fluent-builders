@@ -39,9 +39,7 @@ public abstract class AbstractSetter implements Setter {
         } else {
             return Stream.<Supplier<Integer>>of( //
                             () -> compare(paramName, other.getParamName(), naturalOrder()), //
-                            () -> compare(getParamType().getTypeName(), other.getParamType().getTypeName(), naturalOrder()), //
-                            () -> compare(visibility, other.getVisibility(), naturalOrder()), //
-                            () -> compare(methodName, other.getMethodName(), naturalOrder())) //
+                            () -> compare(getParamType().getTypeName(), other.getParamType().getTypeName(), naturalOrder()))
                     .map(Supplier::get) //
                     .filter(i -> i != 0) //
                     .findFirst() //

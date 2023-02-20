@@ -31,7 +31,6 @@
                 </executions>
                 <configuration>
                     <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.complex</packageToScan>
-                    <target>\${project.build.directory}/generated-sources/builders</target>
                 </configuration>
                 <dependencies>
                     <dependency>
