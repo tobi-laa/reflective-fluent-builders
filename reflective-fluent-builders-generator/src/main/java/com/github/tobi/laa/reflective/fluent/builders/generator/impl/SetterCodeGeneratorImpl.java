@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 @Named
 @Singleton
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class SetterCodeGeneratorImpl implements SetterCodeGenerator {
 
     @lombok.NonNull
