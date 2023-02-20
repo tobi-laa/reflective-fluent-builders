@@ -26,10 +26,6 @@ public abstract class AbstractSetter implements Setter {
     private final String methodName;
 
     @lombok.NonNull
-    @EqualsAndHashCode.Include
-    private final Class<?> paramType;
-
-    @lombok.NonNull
     private final String paramName;
 
     @lombok.NonNull
@@ -43,7 +39,7 @@ public abstract class AbstractSetter implements Setter {
         } else {
             return Stream.<Supplier<Integer>>of( //
                             () -> compare(paramName, other.getParamName(), naturalOrder()), //
-                            () -> compare(paramType.getTypeName(), other.getParamType().getTypeName(), naturalOrder()), //
+                            () -> compare(getParamType().getTypeName(), other.getParamType().getTypeName(), naturalOrder()), //
                             () -> compare(visibility, other.getVisibility(), naturalOrder()), //
                             () -> compare(methodName, other.getMethodName(), naturalOrder())) //
                     .map(Supplier::get) //

@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.lang.reflect.Type;
+
 /**
  * <p>
  * A simple setter, meaning the field being set by it is no array, {@link java.util.Collection collection} or
@@ -16,6 +18,10 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class SimpleSetter extends AbstractSetter {
+    
+    @lombok.NonNull
+    @EqualsAndHashCode.Include
+    private final Type paramType;
 
     @Override
     public SimpleSetter withParamName(final String paramName) {
