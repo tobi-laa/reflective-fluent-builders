@@ -82,13 +82,14 @@ class BuilderMetadataServiceImplTest {
         final Setter packagePrivateSetter = SimpleSetter.builder().methodName("setPack").paramName("pack").paramType(char.class).visibility(Visibility.PACKAGE_PRIVATE).build();
         final Setter protectedSetter = SimpleSetter.builder().methodName("setProt").paramName("prot").paramType(Object.class).visibility(Visibility.PROTECTED).build();
         final Setter publicSetter = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(int.class).visibility(Visibility.PUBLIC).build();
-        final Setter setterNameCollision = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).build();
+        final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).build();
+        final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).build();
         return Stream.of( //
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
                         "Builder", //
                         Visibility.PACKAGE_PRIVATE, //
-                        ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter, setterNameCollision), //
+                        ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter, setterNameCollision1, setterNameCollision2), //
                         SimpleClass.class, //
                         BuilderMetadata.builder() //
                                 .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
@@ -98,7 +99,8 @@ class BuilderMetadataServiceImplTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(packagePrivateSetter) //
                                         .setter(publicSetter) //
-                                        .setter(setterNameCollision.withParamName("pub0")) //
+                                        .setter(setterNameCollision1.withParamName("pub0")) //
+                                        .setter(setterNameCollision2.withParamName("pub1")) //
                                         .build()) //
                                 .build() //
                 ), //
