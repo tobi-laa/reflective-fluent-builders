@@ -161,6 +161,31 @@ class GenerateBuildersMojoIT {
                 .satisfies(containsExpectedBuilders(Simple.class.getPackage(), true));
     }
 
+    @MavenTest
+    void testGenerationBuilderFileCannotBeWritten(final MavenExecutionResult result) {
+        assertThat(result).isFailure();
+        final var srcMainJava = result.getMavenProjectResult().getTargetProjectDirectory() //
+                .resolve("src").resolve("main").resolve("java") //
+                .toAbsolutePath() //
+                .toString();
+        assertThat(result) //
+                .out() //
+                .info() //
+                .contains( //
+                        "Scan package com.github.tobi.laa.reflective.fluent.builders.test.models.simple recursively for classes.", //
+                        "Found 5 buildable classes.", //
+                        "Make sure target directory " + srcMainJava + " exists.");
+        assertThat(result) //
+                .out() //
+                .error() //
+                .anySatisfy(s -> Assertions.assertThat(s) //
+                        .containsSubsequence( //
+                                "Failed to execute goal com.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
+                                "generate-builders (default) on project", //
+                                "Could not create file for builder for " + SimpleClass.class.getName(), //
+                                "SimpleClassBuilder.java: Is a directory -> [Help 1]"));
+    }
+
     private Consumer<MavenProjectResult> containsExpectedBuilders(final Package buildersPackage, final boolean test) {
         return result -> {
             for (final Path expectedBuilderRelativeToRoot : expectedBuildersForPackageRelativeToRoot(buildersPackage)) {
