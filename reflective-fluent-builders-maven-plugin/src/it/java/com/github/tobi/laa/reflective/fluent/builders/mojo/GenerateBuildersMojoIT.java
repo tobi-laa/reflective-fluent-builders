@@ -33,7 +33,7 @@ import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 @MavenJupiterExtension
 class GenerateBuildersMojoIT {
 
-    private final Path expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders");
+    static final Path EXPECTED_BUILDERS_ROOT_DIR = Paths.get("src", "it", "resources", "expected-builders");
 
     @MavenTest
     void testGenerationForPackageComplex(final MavenExecutionResult result) {
@@ -190,7 +190,7 @@ class GenerateBuildersMojoIT {
         return result -> {
             for (final Path expectedBuilderRelativeToRoot : expectedBuildersForPackageRelativeToRoot(buildersPackage)) {
                 final var actualBuilder = getGeneratedBuildersDirectory(result, test).resolve(expectedBuilderRelativeToRoot);
-                final var expectedBuilder = expectedBuildersRootDir.resolve(expectedBuilderRelativeToRoot);
+                final var expectedBuilder = EXPECTED_BUILDERS_ROOT_DIR.resolve(expectedBuilderRelativeToRoot);
                 Assertions.assertThat(actualBuilder) //
                         .exists() //
                         .content() //
@@ -206,10 +206,10 @@ class GenerateBuildersMojoIT {
 
     @SneakyThrows
     private List<Path> expectedBuildersForPackageRelativeToRoot(final Package pack) {
-        final var expectedBuildersDir = expectedBuildersRootDir.resolve(
+        final var expectedBuildersDir = EXPECTED_BUILDERS_ROOT_DIR.resolve(
                 pack.getName().replace(".", FileSystems.getDefault().getSeparator()));
         return findFilesRecursively(expectedBuildersDir).stream() //
-                .map(expectedBuildersRootDir::relativize) //
+                .map(EXPECTED_BUILDERS_ROOT_DIR::relativize) //
                 .collect(Collectors.toList());
     }
 
