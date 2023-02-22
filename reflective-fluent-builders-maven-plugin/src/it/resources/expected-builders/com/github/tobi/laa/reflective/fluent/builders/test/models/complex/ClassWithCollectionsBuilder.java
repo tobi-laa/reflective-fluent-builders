@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",

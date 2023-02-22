@@ -3,7 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.test.models.simple;
 import java.lang.Class;
 import java.lang.String;
 import java.util.Objects;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
