@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 
@@ -59,9 +60,21 @@ class ClassServiceImpl implements ClassService {
                     .getTopLevelClassesRecursive(packageName) //
                     .stream() //
                     .map(ClassPath.ClassInfo::load) //
+                    .flatMap(clazz -> Stream.concat(
+                            Stream.of(clazz),
+                            collectStaticInnerClassesRecursively(clazz).stream()))
                     .collect(Collectors.toUnmodifiableSet());
         } catch (final IOException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
+    }
+
+    private Set<Class<?>> collectStaticInnerClassesRecursively(final Class<?> clazz) {
+        final Set<Class<?>> innerStaticClasses = new HashSet<>();
+        for (final Class<?> innerClass : clazz.getDeclaredClasses()) {
+            innerStaticClasses.add(innerClass);
+            innerStaticClasses.addAll(collectStaticInnerClassesRecursively(innerClass));
+        }
+        return innerStaticClasses;
     }
 }
