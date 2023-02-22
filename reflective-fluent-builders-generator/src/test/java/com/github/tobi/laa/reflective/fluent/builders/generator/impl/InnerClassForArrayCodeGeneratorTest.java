@@ -249,7 +249,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    if (this.list != null) {\n" +
-                                        "      %1$s.this.fieldValue.floats = list.toArray(new float[0]);\n" +
+                                        "      %1$s.this.fieldValue.floats = new float[this.list.size()];\n" +
+                                        "      for (int i = 0; i < this.list.size(); i++) {\n" +
+                                        "        %1$s.this.fieldValue.floats[i] = this.list.get(i);\n" +
+                                        "      }\n" +
                                         "    }\n" +
                                         "    return %1$s.this;\n" +
                                         "  }\n" +
@@ -294,7 +297,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    if (this.list != null) {\n" +
-                                        "      %1$s.this.fieldValue.strings = list.toArray(new java.lang.String[0]);\n" +
+                                        "      %1$s.this.fieldValue.strings = new java.lang.String[this.list.size()];\n" +
+                                        "      for (int i = 0; i < this.list.size(); i++) {\n" +
+                                        "        %1$s.this.fieldValue.strings[i] = this.list.get(i);\n" +
+                                        "      }\n" +
                                         "    }\n" +
                                         "    return %1$s.this;\n" +
                                         "  }\n" +

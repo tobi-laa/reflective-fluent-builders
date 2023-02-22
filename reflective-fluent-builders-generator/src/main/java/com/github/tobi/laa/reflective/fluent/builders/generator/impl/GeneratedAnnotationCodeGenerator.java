@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 @Singleton
 @Named
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class GeneratedAnnotationCodeGenerator implements AnnotationCodeGenerator {
 
     @lombok.NonNull

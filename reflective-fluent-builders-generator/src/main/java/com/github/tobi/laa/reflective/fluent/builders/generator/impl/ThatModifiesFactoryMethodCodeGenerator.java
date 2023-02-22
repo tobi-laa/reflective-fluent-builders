@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 @Named
 @Singleton
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class ThatModifiesFactoryMethodCodeGenerator implements MethodCodeGenerator {
 
     @lombok.NonNull

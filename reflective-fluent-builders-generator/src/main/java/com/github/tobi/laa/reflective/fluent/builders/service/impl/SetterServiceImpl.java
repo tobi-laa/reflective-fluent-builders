@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 @Named
 @Singleton
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class SetterServiceImpl implements SetterService {
 
     @lombok.NonNull

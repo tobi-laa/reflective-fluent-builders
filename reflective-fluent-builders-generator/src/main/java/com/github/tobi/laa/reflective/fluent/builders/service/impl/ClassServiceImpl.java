@@ -29,7 +29,7 @@ import static com.google.common.base.Predicates.not;
  */
 @Named
 @Singleton
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class ClassServiceImpl implements ClassService {
 
     @lombok.NonNull

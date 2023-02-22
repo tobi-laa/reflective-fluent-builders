@@ -18,6 +18,10 @@ import java.lang.reflect.Type;
 @ToString(callSuper = true)
 public class CollectionSetter extends AbstractSetter {
 
+    @lombok.NonNull
+    @EqualsAndHashCode.Include
+    private final Class<?> paramType;
+
     /**
      * <p>
      * The type of the elements within the collection being set by the setter method's single parameter, for

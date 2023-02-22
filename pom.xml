@@ -36,6 +36,7 @@
         <!-- general properties -->
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <it.resources.directory>src/it/resources</it.resources.directory>
         <!-- integration with SonarCloud -->
         <sonar.organization>tobias-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -54,6 +55,7 @@
         <mockito.version>4.11.0</mockito.version>
         <assertj.version>3.24.2</assertj.version>
         <archunit.version>1.0.1</archunit.version>
+        <itf-jupiter-extension.version>0.12.0</itf-jupiter-extension.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
@@ -62,6 +64,8 @@
         <maven-surefire-plugin.version>3.0.0-M9</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M9</maven-failsafe-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+        <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
+        <maven-core.version>3.9.0</maven-core.version>
     </properties>
     <modules>
         <module>reflective-fluent-builders-test-models</module>
@@ -85,6 +89,11 @@
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-annotations</artifactId>
                 <version>${maven-plugin-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${maven-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup</groupId>
@@ -153,6 +162,18 @@
                 <version>${archunit.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.soebes.itf.jupiter.extension</groupId>
+                <artifactId>itf-jupiter-extension</artifactId>
+                <version>${itf-jupiter-extension.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.soebes.itf.jupiter.extension</groupId>
+                <artifactId>itf-assertj</artifactId>
+                <version>${itf-jupiter-extension.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -187,6 +208,14 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                    <configuration>
+                        <escapeString>\</escapeString>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>${build-helper-maven-plugin.version}</version>
@@ -212,7 +241,8 @@
                             <configuration>
                                 <resources>
                                     <resource>
-                                        <directory>src/it/resources</directory>
+                                        <filtering>true</filtering>
+                                        <directory>${it.resources.directory}</directory>
                                     </resource>
                                 </resources>
                             </configuration>
@@ -250,27 +280,39 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco-maven-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.soebes.itf.jupiter.extension</groupId>
+                    <artifactId>itf-maven-plugin</artifactId>
+                    <version>${itf-jupiter-extension.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

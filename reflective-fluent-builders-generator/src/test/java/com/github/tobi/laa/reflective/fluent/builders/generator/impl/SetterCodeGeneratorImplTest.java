@@ -1,7 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
-import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterTypeNameGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -38,7 +38,7 @@ class SetterCodeGeneratorImplTest {
     private BuilderClassNameGenerator builderClassNameGenerator;
 
     @Mock
-    private SetterTypeNameGenerator setterTypeNameGenerator;
+    private TypeNameGenerator typeNameGenerator;
 
     @Mock
     private SetterService setterService;
@@ -50,7 +50,7 @@ class SetterCodeGeneratorImplTest {
         final Executable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, setterTypeNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator, typeNameGenerator, setterService);
     }
 
     private static Stream<Arguments> testGenerateNull() {
@@ -82,14 +82,14 @@ class SetterCodeGeneratorImplTest {
     void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expected) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(setterTypeNameGenerator.generateTypeNameForParam(any())).thenReturn(TypeName.get(MockType.class));
+        when(typeNameGenerator.generateTypeNameForParam(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
         when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         // Act
         final MethodSpec actual = generator.generate(builderMetadata, setter);
         // Assert
         assertThat(actual).hasToString(expected);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(setterTypeNameGenerator).generateTypeNameForParam(setter);
+        verify(typeNameGenerator).generateTypeNameForParam(setter);
         verify(setterService).dropSetterPrefix(setter.getMethodName());
     }
 

@@ -3,6 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
@@ -10,6 +11,7 @@ import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleC
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.TypeName;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,7 @@ import org.junitpioneer.jupiter.cartesian.CartesianTest;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Type;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +47,9 @@ class InnerClassForCollectionCodeGeneratorTest {
     private BuilderClassNameGenerator builderClassNameGenerator;
 
     @Mock
+    private TypeNameGenerator typeNameGenerator;
+
+    @Mock
     private SetterService setterService;
 
     @Mock
@@ -54,7 +60,7 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @BeforeEach
     void init() {
-        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, setterService, ImmutableList.of(initializerGeneratorA, initializerGeneratorB));
+        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, typeNameGenerator, setterService, ImmutableList.of(initializerGeneratorA, initializerGeneratorB));
     }
 
     @Test
@@ -235,6 +241,7 @@ class InnerClassForCollectionCodeGeneratorTest {
     void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final Setter setter) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
+        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
@@ -264,6 +271,7 @@ class InnerClassForCollectionCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final CollectionSetter setter, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
+        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateCollectionInitializer(any())).thenReturn(CodeBlock.of("new MockList<>()"));
@@ -274,6 +282,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
+        verify(typeNameGenerator).generateTypeNameForParam(setter.getParamTypeArg());
         verify(setterService).dropSetterPrefix(setter.getMethodName());
         verify(initializerGeneratorA).generateCollectionInitializer(setter);
     }

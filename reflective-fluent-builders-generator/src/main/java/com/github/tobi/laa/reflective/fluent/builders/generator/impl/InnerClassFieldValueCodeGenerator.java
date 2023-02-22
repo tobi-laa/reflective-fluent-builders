@@ -3,7 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.EncapsulatingClassCodeGenerator;
-import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterTypeNameGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.ClassName;
@@ -30,14 +30,14 @@ import static javax.lang.model.element.Modifier.PRIVATE;
  */
 @Named
 @Singleton
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class InnerClassFieldValueCodeGenerator implements EncapsulatingClassCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
 
     @lombok.NonNull
-    private final SetterTypeNameGenerator setterTypeNameGenerator;
+    private final TypeNameGenerator typeNameGenerator;
 
     /**
      * <p>
@@ -57,7 +57,7 @@ class InnerClassFieldValueCodeGenerator implements EncapsulatingClassCodeGenerat
         final List<FieldSpec> fields = builderMetadata.getBuiltType().getSetters() //
                 .stream() //
                 .map(setter -> FieldSpec //
-                        .builder(setterTypeNameGenerator.generateTypeNameForParam(setter), setter.getParamName()) //
+                        .builder(typeNameGenerator.generateTypeNameForParam(setter), setter.getParamName()) //
                         .build()) //
                 .collect(Collectors.toList());
         return EncapsulatingClassSpec.builder() //

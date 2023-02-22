@@ -6,6 +6,7 @@ import com.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationEx
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionClassCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializerCodeGenerator;
+import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
@@ -34,11 +35,14 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
  */
 @Named
 @Singleton
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
+
+    @lombok.NonNull
+    private final TypeNameGenerator typeNameGenerator;
 
     @lombok.NonNull
     private final SetterService setterService;
@@ -80,8 +84,8 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
                         .addModifiers(Modifier.PUBLIC) //
                         .addMethod(MethodSpec.methodBuilder("put") //
                                 .addModifiers(Modifier.PUBLIC) //
-                                .addParameter(setter.getKeyType(), "key", FINAL) //
-                                .addParameter(setter.getValueType(), "value", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getKeyType()), "key", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getValueType()), "value", FINAL) //
                                 .returns(className) //
                                 .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName()) //
                                 .addStatement(CodeBlock.builder()

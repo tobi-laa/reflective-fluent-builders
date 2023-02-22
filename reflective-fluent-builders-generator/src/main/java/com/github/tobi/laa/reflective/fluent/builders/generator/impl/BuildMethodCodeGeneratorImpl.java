@@ -39,7 +39,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
         for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
             methodBuilder
                     .beginControlFlow("if ($L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
-                    .addStatement("$L.$L($L.$L)", OBJECT_TO_BUILD_FIELD_NAME, FieldValue.FIELD_NAME, setter.getMethodName(), setter.getParamName())
+                    .addStatement("$L.$L($L.$L)", OBJECT_TO_BUILD_FIELD_NAME, setter.getMethodName(), FieldValue.FIELD_NAME, setter.getParamName())
                     .endControlFlow();
         }
         methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);

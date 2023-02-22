@@ -8,11 +8,13 @@ import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
+import java.lang.reflect.TypeVariable;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
@@ -86,7 +88,7 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
     public JavaFile generateJavaFile(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final TypeSpec.Builder builderTypeSpec = generateTypeSpec(builderClassName);
+        final TypeSpec.Builder builderTypeSpec = generateTypeSpec(builderMetadata, builderClassName);
         generateAnnotations(builderMetadata, builderTypeSpec);
         generateFields(builderMetadata, builderTypeSpec);
         generateConstructorsAndMethods(builderMetadata, builderTypeSpec);
@@ -97,8 +99,12 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
         return generateJavaFile(builderClassName, builderTypeSpec);
     }
 
-    private TypeSpec.Builder generateTypeSpec(final ClassName builderClassName) {
-        return TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
+    private TypeSpec.Builder generateTypeSpec(final BuilderMetadata builderMetadata, final ClassName builderClassName) {
+        final TypeSpec.Builder builder = TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
+        for (final TypeVariable<? extends Class<?>> typeParam : builderMetadata.getBuiltType().getType().getTypeParameters()) {
+            builder.addTypeVariable(TypeVariableName.get(typeParam));
+        }
+        return builder;
     }
 
     private void generateAnnotations(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {

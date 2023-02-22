@@ -121,10 +121,12 @@ class SetterServiceImplTest {
                                 CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(Collection.class).paramTypeArg(Integer.class).visibility(Visibility.PRIVATE).build(), //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(Visibility.PRIVATE).build(),
                                 CollectionSetter.builder().methodName("setSet").paramName("set").paramType(Set.class).paramTypeArg(List.class).visibility(Visibility.PRIVATE).build(),
-                                CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(Deque.class).paramTypeArg(TypeUtils.wildcardType().build()).visibility(Visibility.PRIVATE).build(),
+                                CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(Deque.class).paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()).visibility(Visibility.PRIVATE).build(),
+                                CollectionSetter.builder().methodName("setSortedSetWild").paramName("sortedSetWild").paramType(SortedSet.class).paramTypeArg(TypeUtils.wildcardType().build()).visibility(Visibility.PRIVATE).build(),
                                 ArraySetter.builder().methodName("setFloats").paramName("floats").paramType(float[].class).paramComponentType(float.class).visibility(Visibility.PRIVATE).build(),
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(Visibility.PRIVATE).build(),
-                                MapSetter.builder().methodName("setMapWildT").paramName("mapWildT").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(typeVariableT()).visibility(Visibility.PRIVATE).build(),
+                                MapSetter.builder().methodName("setMapTU").paramName("mapTU").paramType(Map.class).keyType(typeVariableT()).valueType(typeVariableU()).visibility(Visibility.PRIVATE).build(),
+                                MapSetter.builder().methodName("setMapWildObj").paramName("mapWildObj").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(Object.class).visibility(Visibility.PRIVATE).build(),
                                 MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(Visibility.PRIVATE).build())));
     }
 
@@ -150,5 +152,9 @@ class SetterServiceImplTest {
 
     private static TypeVariable<?> typeVariableT() {
         return ClassWithCollections.class.getTypeParameters()[0];
+    }
+
+    private static TypeVariable<?> typeVariableU() {
+        return ClassWithCollections.class.getTypeParameters()[1];
     }
 }

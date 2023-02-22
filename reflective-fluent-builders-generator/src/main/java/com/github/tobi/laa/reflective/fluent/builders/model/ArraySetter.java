@@ -18,6 +18,10 @@ import java.lang.reflect.Type;
 @ToString(callSuper = true)
 public class ArraySetter extends AbstractSetter {
 
+    @lombok.NonNull
+    @EqualsAndHashCode.Include
+    private final Type paramType;
+
     /**
      * <p>
      * The type of the elements within the array being set by the setter method's single parameter, for instance
