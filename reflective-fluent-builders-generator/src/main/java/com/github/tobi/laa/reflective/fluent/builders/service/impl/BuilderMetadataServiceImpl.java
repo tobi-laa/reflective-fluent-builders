@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import static com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
 import static com.github.tobi.laa.reflective.fluent.builders.model.Visibility.PACKAGE_PRIVATE;
 import static com.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.function.Predicate.not;
 
 /**
@@ -108,7 +109,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .filter(not(Class::isAnonymousClass)) //
                 .filter(not(Class::isEnum)) //
                 .filter(not(Class::isPrimitive)) //
-                .filter(not(Class::isMemberClass)) //
+                .filter(not(clazz -> clazz.isMemberClass() && !isStatic(clazz.getModifiers()))) //
                 .filter(this::isAccessible) //
                 .collect(Collectors.toSet());
     }

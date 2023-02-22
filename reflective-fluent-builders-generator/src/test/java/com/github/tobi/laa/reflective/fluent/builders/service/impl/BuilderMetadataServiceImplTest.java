@@ -8,6 +8,7 @@ import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperti
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
@@ -195,7 +196,12 @@ class BuilderMetadataServiceImplTest {
                         "<PACKAGE_NAME>.builder", //
                         Visibility.PACKAGE_PRIVATE, //
                         Set.of(SimpleClass.class),
-                        Collections.emptySet()));
+                        Collections.emptySet()),
+                Arguments.of( //
+                        "<PACKAGE_NAME>", //
+                        Visibility.PUBLIC, //
+                        Set.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class),
+                        Set.of(TopLevelClass.NestedPublicLevelOne.class)));
     }
 
     @Test
