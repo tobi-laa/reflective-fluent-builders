@@ -33,27 +33,6 @@ public class TopLevelClassBuilder {
     return this;
   }
 
-  public TopLevelClassBuilder nestedPackagePrivate(
-      final TopLevelClass.NestedPackagePrivateLevelOne nestedPackagePrivate) {
-    fieldValue.nestedPackagePrivate = nestedPackagePrivate;
-    callSetterFor.nestedPackagePrivate = true;
-    return this;
-  }
-
-  public TopLevelClassBuilder nestedPrivate(
-      final TopLevelClass.NestedPrivateLevelOne nestedPrivate) {
-    fieldValue.nestedPrivate = nestedPrivate;
-    callSetterFor.nestedPrivate = true;
-    return this;
-  }
-
-  public TopLevelClassBuilder nestedProtected(
-      final TopLevelClass.NestedProtectedLevelOne nestedProtected) {
-    fieldValue.nestedProtected = nestedProtected;
-    callSetterFor.nestedProtected = true;
-    return this;
-  }
-
   public TopLevelClassBuilder nestedPublic(final TopLevelClass.NestedPublicLevelOne nestedPublic) {
     fieldValue.nestedPublic = nestedPublic;
     callSetterFor.nestedPublic = true;
@@ -67,15 +46,6 @@ public class TopLevelClassBuilder {
     if (callSetterFor.nestedNonStatic) {
       objectToBuild.setNestedNonStatic(fieldValue.nestedNonStatic);
     }
-    if (callSetterFor.nestedPackagePrivate) {
-      objectToBuild.setNestedPackagePrivate(fieldValue.nestedPackagePrivate);
-    }
-    if (callSetterFor.nestedPrivate) {
-      objectToBuild.setNestedPrivate(fieldValue.nestedPrivate);
-    }
-    if (callSetterFor.nestedProtected) {
-      objectToBuild.setNestedProtected(fieldValue.nestedProtected);
-    }
     if (callSetterFor.nestedPublic) {
       objectToBuild.setNestedPublic(fieldValue.nestedPublic);
     }
@@ -85,23 +55,11 @@ public class TopLevelClassBuilder {
   private class CallSetterFor {
     boolean nestedNonStatic;
 
-    boolean nestedPackagePrivate;
-
-    boolean nestedPrivate;
-
-    boolean nestedProtected;
-
     boolean nestedPublic;
   }
 
   private class FieldValue {
     TopLevelClass.NestedNonStatic nestedNonStatic;
-
-    TopLevelClass.NestedPackagePrivateLevelOne nestedPackagePrivate;
-
-    TopLevelClass.NestedPrivateLevelOne nestedPrivate;
-
-    TopLevelClass.NestedProtectedLevelOne nestedProtected;
 
     TopLevelClass.NestedPublicLevelOne nestedPublic;
   }

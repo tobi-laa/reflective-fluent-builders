@@ -32,4 +32,16 @@ public interface SetterService {
      * unchanged.
      */
     String dropSetterPrefix(final String name);
+
+    /**
+     * <p>
+     * Drop the configured getter prefix (for instance {@code get}) from {@code name}.
+     * </p>
+     *
+     * @param name The (method) name from which to drop the configured getter prefix. Must not be {@code null}.
+     * @return {@code name} with the configured getter prefix stripped from it. If {@code name} does not start with said
+     * prefix or solely consists of it and would thus be empty after stripping it, {@code name} will be returned
+     * unchanged.
+     */
+    String dropGetterPrefix(final String name);
 }

@@ -5,6 +5,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClass
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.squareup.javapoet.MethodSpec;
@@ -40,12 +41,17 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(setter);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var name = setterService.dropSetterPrefix(setter.getMethodName());
+        final String name;
+        if (setter instanceof CollectionGetAndAdder) {
+            name = setterService.dropGetterPrefix(setter.getMethodName());
+        } else {
+            name = setterService.dropSetterPrefix(setter.getMethodName());
+        }
         return MethodSpec.methodBuilder(name)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(builderClassName)
                 .addParameter(typeNameGenerator.generateTypeNameForParam(setter), setter.getParamName(), Modifier.FINAL)
-                .addStatement("$L.$L = $L", BuilderConstants.FieldValue.FIELD_NAME, setter.getParamName(), setter.getParamName())
+                .addStatement("$1L.$2L = $2L", BuilderConstants.FieldValue.FIELD_NAME, setter.getParamName())
                 .addStatement("$L.$L = $L", BuilderConstants.CallSetterFor.FIELD_NAME, setter.getParamName(), true)
                 .addStatement("return this")
                 .build();

@@ -2,6 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.squareup.javapoet.MethodSpec;
 import org.junit.jupiter.api.Test;
@@ -112,6 +113,29 @@ class BuildMethodCodeGeneratorImplTest {
                                         "  }\n" +
                                         "  return objectToBuild;\n" +
                                         "}\n",
-                                ClassWithHierarchy.class.getName())));
+                                ClassWithHierarchy.class.getName())),
+                Arguments.of(
+                        BuilderMetadata.builder() //
+                                .packageName(PetJaxb.class.getPackageName()) //
+                                .name("PetJaxbBuilder") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(PetJaxb.class) //
+                                        .accessibleNonArgsConstructor(false) //
+                                        .setter(CollectionGetAndAdder.builder() //
+                                                .methodName("getSiblings") //
+                                                .paramName("siblings") //
+                                                .paramType(List.class) //
+                                                .paramTypeArg(PetJaxb.class) //
+                                                .visibility(Visibility.PRIVATE) //
+                                                .build()) //
+                                        .build()) //
+                                .build(), //
+                        String.format("public %1$s build() {\n" +
+                                        "  if (callSetterFor.siblings && fieldValue.siblings != null) {\n" +
+                                        "    fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);\n" +
+                                        "  }\n" +
+                                        "  return objectToBuild;\n" +
+                                        "}\n",
+                                PetJaxb.class.getName())));
     }
 }

@@ -15,6 +15,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +77,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private SortedSet<Setter> gatherAndFilterAccessibleSettersAndAvoidNameCollisions(final Class<?> clazz) {
         final var setters = setterService.gatherAllSetters(clazz) //
                 .stream() //
-                .filter(setter -> isAccessible(clazz, setter.getVisibility()))
+                .filter(setter -> isAccessible(clazz, setter.getVisibility()) && isAccessibleParamType(setter.getParamType()))
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         return avoidNameCollisions(setters);
     }
@@ -120,6 +121,12 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private boolean isAccessible(final Class<?> clazz) {
         return isAccessible(clazz, clazz.getModifiers());
+    }
+
+    private boolean isAccessibleParamType(final Type type) {
+        final var clazz = (Class<?>) type;
+        final var visibility = visibilityService.toVisibility(clazz.getModifiers());
+        return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && properties.getBuilderPackage().equals(clazz.getPackageName());
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers) {

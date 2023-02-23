@@ -119,7 +119,7 @@ class GenerateBuildersMojoIT {
                 .out() //
                 .debug() //
                 .contains( //
-                        "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection(classesToExclude=[]))", //
+                        "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, getterPrefix=get, getAndAddEnabled=false, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection(classesToExclude=[class java.lang.Object]))", //
                         "The following classes can be built:", //
                         "- " + SimpleClassNoSetPrefix.class.getName(), //
                         "- " + SimpleClassNoDefaultConstructor.class.getName(), //

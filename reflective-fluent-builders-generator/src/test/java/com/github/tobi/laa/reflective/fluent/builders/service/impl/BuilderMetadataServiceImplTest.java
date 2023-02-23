@@ -65,12 +65,13 @@ class BuilderMetadataServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix,
-                                    final Visibility constructorVisibility, final SortedSet<Setter> setters,
-                                    final Class<?> clazz, final BuilderMetadata expected) {
+                                    final Visibility constructorVisibility, final Visibility paramTypeVisibility,
+                                    final SortedSet<Setter> setters, final Class<?> clazz,
+                                    final BuilderMetadata expected) {
         // Arrange
         when(properties.getBuilderPackage()).thenReturn(builderPackage);
         when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
-        when(visibilityService.toVisibility(anyInt())).thenReturn(constructorVisibility);
+        when(visibilityService.toVisibility(anyInt())).thenReturn(constructorVisibility, paramTypeVisibility);
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
         // Act
         final BuilderMetadata actual = builderService.collectBuilderMetadata(clazz);
@@ -90,6 +91,7 @@ class BuilderMetadataServiceImplTest {
                         "<PACKAGE_NAME>", //
                         "Builder", //
                         Visibility.PACKAGE_PRIVATE, //
+                        Visibility.PUBLIC, //
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter, setterNameCollision1, setterNameCollision2), //
                         SimpleClass.class, //
                         BuilderMetadata.builder() //
@@ -109,6 +111,7 @@ class BuilderMetadataServiceImplTest {
                         "<PACKAGE_NAME>.builder", //
                         "", //
                         Visibility.PACKAGE_PRIVATE, //
+                        Visibility.PUBLIC, //
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter), //
                         ClassWithCollections.class, //
                         BuilderMetadata.builder() //
@@ -125,6 +128,7 @@ class BuilderMetadataServiceImplTest {
                         "the.builder.package", //
                         "MyBuilderSuffix", //
                         Visibility.PUBLIC, //
+                        Visibility.PUBLIC, //
                         ImmutableSortedSet.of(privateSetter, protectedSetter), //
                         SimpleClassNoSetPrefix.class, //
                         BuilderMetadata.builder() //
@@ -139,6 +143,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "builders.<PACKAGE_NAME>", //
                         "Builder", //
+                        Visibility.PUBLIC, //
                         Visibility.PUBLIC, //
                         Collections.emptySortedSet(), //
                         SimpleClassNoDefaultConstructor.class, //
