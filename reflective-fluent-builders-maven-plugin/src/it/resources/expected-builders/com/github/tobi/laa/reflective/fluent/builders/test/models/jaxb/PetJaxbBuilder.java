@@ -1,6 +1,8 @@
 package com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb;
 
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -28,6 +30,10 @@ public class PetJaxbBuilder {
     return new PetJaxbBuilder(objectToModify);
   }
 
+  public CollectionSiblings siblings() {
+    return new CollectionSiblings();
+  }
+
   public PetJaxbBuilder fullName(final String fullName) {
     fieldValue.fullName = fullName;
     callSetterFor.fullName = true;
@@ -37,6 +43,12 @@ public class PetJaxbBuilder {
   public PetJaxbBuilder owner(final PersonJaxb owner) {
     fieldValue.owner = owner;
     callSetterFor.owner = true;
+    return this;
+  }
+
+  public PetJaxbBuilder siblings(final List<PetJaxb> siblings) {
+    fieldValue.siblings = siblings;
+    callSetterFor.siblings = true;
     return this;
   }
 
@@ -56,6 +68,9 @@ public class PetJaxbBuilder {
     if (callSetterFor.owner) {
       objectToBuild.setOwner(fieldValue.owner);
     }
+    if (callSetterFor.siblings && fieldValue.siblings != null) {
+      fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);
+    }
     if (callSetterFor.weight) {
       objectToBuild.setWeight(fieldValue.weight);
     }
@@ -67,6 +82,8 @@ public class PetJaxbBuilder {
 
     boolean owner;
 
+    boolean siblings;
+
     boolean weight;
   }
 
@@ -75,6 +92,23 @@ public class PetJaxbBuilder {
 
     PersonJaxb owner;
 
+    List<PetJaxb> siblings;
+
     float weight;
+  }
+
+  public class CollectionSiblings {
+    public CollectionSiblings add(final PetJaxb item) {
+      if (PetJaxbBuilder.this.fieldValue.siblings == null) {
+        PetJaxbBuilder.this.fieldValue.siblings = new ArrayList<>();
+      }
+      PetJaxbBuilder.this.fieldValue.siblings.add(item);
+      PetJaxbBuilder.this.callSetterFor.siblings = true;
+      return this;
+    }
+
+    public PetJaxbBuilder and() {
+      return PetJaxbBuilder.this;
+    }
   }
 }
