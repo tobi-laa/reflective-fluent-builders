@@ -18,6 +18,9 @@ on:
       - opened
       - synchronize
       - reopened
+    branches:
+      - main
+      - java17
 
 jobs:
   build:
