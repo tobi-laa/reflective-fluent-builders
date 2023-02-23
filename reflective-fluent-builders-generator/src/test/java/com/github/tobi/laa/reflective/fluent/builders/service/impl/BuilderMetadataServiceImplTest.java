@@ -19,6 +19,7 @@ import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.In
 import com.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
 import com.google.common.collect.ImmutableSortedSet;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -66,13 +67,12 @@ class BuilderMetadataServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix,
-                                    final Visibility constructorVisibility, final Visibility paramTypeVisibility,
-                                    final SortedSet<Setter> setters, final Class<?> clazz,
-                                    final BuilderMetadata expected) {
+                                    final Visibility[] visibility, final SortedSet<Setter> setters,
+                                    final Class<?> clazz, final BuilderMetadata expected) {
         // Arrange
         when(properties.getBuilderPackage()).thenReturn(builderPackage);
         when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
-        when(visibilityService.toVisibility(anyInt())).thenReturn(constructorVisibility, paramTypeVisibility);
+        when(visibilityService.toVisibility(anyInt())).thenReturn(visibility[0], ArrayUtils.remove(visibility, 0));
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
         // Act
         final BuilderMetadata actual = builderService.collectBuilderMetadata(clazz);
@@ -93,8 +93,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
                         "Builder", //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Visibility.PUBLIC, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter, setterNameCollision1, setterNameCollision2), //
                         SimpleClass.class, //
                         BuilderMetadata.builder() //
@@ -112,8 +111,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>.builder", //
                         "", //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Visibility.PUBLIC, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter), //
                         ClassWithCollections.class, //
                         BuilderMetadata.builder() //
@@ -128,8 +126,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>.builder", //
                         "", //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Visibility.PUBLIC, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
@@ -149,8 +146,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
                         "", //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Visibility.PUBLIC, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
@@ -174,8 +170,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "com.github.tobi.laa.reflective.fluent.builders.test.models.visibility", //
                         "", //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Visibility.PUBLIC, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
@@ -199,8 +194,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "the.builder.package", //
                         "MyBuilderSuffix", //
-                        Visibility.PUBLIC, //
-                        Visibility.PUBLIC, //
+                        new Visibility[]{Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
                         ImmutableSortedSet.of(privateSetter, protectedSetter), //
                         SimpleClassNoSetPrefix.class, //
                         BuilderMetadata.builder() //
@@ -214,8 +208,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "builders.<PACKAGE_NAME>", //
                         "Builder", //
-                        Visibility.PUBLIC, //
-                        Visibility.PUBLIC, //
+                        new Visibility[]{Visibility.PUBLIC}, //
                         Collections.emptySortedSet(), //
                         SimpleClassNoDefaultConstructor.class, //
                         BuilderMetadata.builder() //
