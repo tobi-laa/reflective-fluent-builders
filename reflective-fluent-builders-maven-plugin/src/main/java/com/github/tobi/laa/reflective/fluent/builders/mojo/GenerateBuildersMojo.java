@@ -3,6 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.mojo;
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
@@ -75,7 +76,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private MojoExecution mojoExecution;
 
     @lombok.NonNull
-    private final StandardBuildersProperties buildersProperties;
+    private final BuildersProperties buildersProperties;
 
     @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
@@ -98,12 +99,13 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void mapMavenParamsToProps() {
-        buildersProperties.setBuilderPackage(builderPackage);
-        buildersProperties.setBuilderSuffix(builderSuffix);
-        buildersProperties.setSetterPrefix(setterPrefix);
-        buildersProperties.setGetterPrefix(getterPrefix);
-        buildersProperties.setGetAndAddEnabled(getAndAddEnabled);
-        buildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
+        final StandardBuildersProperties standardBuildersProperties = (StandardBuildersProperties) buildersProperties;
+        standardBuildersProperties.setBuilderPackage(builderPackage);
+        standardBuildersProperties.setBuilderSuffix(builderSuffix);
+        standardBuildersProperties.setSetterPrefix(setterPrefix);
+        standardBuildersProperties.setGetterPrefix(getterPrefix);
+        standardBuildersProperties.setGetAndAddEnabled(getAndAddEnabled);
+        standardBuildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
         getLog().debug("Properties are: " + buildersProperties);
     }
 

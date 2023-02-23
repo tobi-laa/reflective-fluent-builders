@@ -17,10 +17,8 @@ import javax.inject.Singleton;
 @SuppressWarnings("unused")
 class BuildersPropertiesProvider implements Provider<BuildersProperties> {
 
-    private final BuildersProperties props = new StandardBuildersProperties();
-
     @Override
     public BuildersProperties get() {
-        return props;
+        return new StandardBuildersProperties();
     }
 }
