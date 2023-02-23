@@ -4,7 +4,6 @@ import com.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationEx
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
-import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.squareup.javapoet.ClassName;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -38,9 +37,6 @@ class InnerClassForArrayCodeGeneratorTest {
     @Mock
     private BuilderClassNameGenerator builderClassNameGenerator;
 
-    @Mock
-    private SetterService setterService;
-
     @Test
     void testIsApplicableNull() {
         // Arrange
@@ -49,7 +45,7 @@ class InnerClassForArrayCodeGeneratorTest {
         final Executable isApplicable = () -> generator.isApplicable(setter);
         // Assert
         assertThrows(NullPointerException.class, isApplicable);
-        verifyNoInteractions(builderClassNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator);
     }
 
     @ParameterizedTest
@@ -99,7 +95,7 @@ class InnerClassForArrayCodeGeneratorTest {
         final Executable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator);
     }
 
     private static Stream<Arguments> testGenerateCodeNull() {
@@ -136,7 +132,7 @@ class InnerClassForArrayCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Generation of inner array class for .+ is not supported.") //
                 .hasMessageContaining(setter.getParamType().toString());
-        verifyNoInteractions(builderClassNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator);
     }
 
     private static Stream<Arguments> testGenerateCodeGenerationException() {
@@ -196,7 +192,6 @@ class InnerClassForArrayCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         // Act
         final CollectionClassSpec actual = generator.generate(builderMetadata, setter);
         // Assert
@@ -204,7 +199,6 @@ class InnerClassForArrayCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(setterService).dropSetterPrefix(setter.getMethodName());
     }
 
     private static Stream<Arguments> testGenerate() {

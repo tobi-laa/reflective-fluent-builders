@@ -31,6 +31,7 @@
                 </executions>
                 <configuration>
                     <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.complex</packageToScan>
+                    <getAndAddEnabled>true</getAndAddEnabled>
                 </configuration>
                 <dependencies>
                     <dependency>

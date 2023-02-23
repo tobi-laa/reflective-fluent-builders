@@ -46,7 +46,7 @@ public class GetAndAddBuilder {
     return new CollectionListNoSetter();
   }
 
-  public CollectionListSetterWrongType0 listSetterWrongType() {
+  public CollectionListSetterWrongType0 listSetterWrongType0() {
     return new CollectionListSetterWrongType0();
   }
 

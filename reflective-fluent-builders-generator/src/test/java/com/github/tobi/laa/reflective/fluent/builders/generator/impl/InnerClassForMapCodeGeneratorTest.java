@@ -6,7 +6,6 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializ
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
-import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -50,9 +49,6 @@ class InnerClassForMapCodeGeneratorTest {
     private TypeNameGenerator typeNameGenerator;
 
     @Mock
-    private SetterService setterService;
-
-    @Mock
     private MapInitializerCodeGenerator initializerGeneratorA;
 
     @Mock
@@ -60,7 +56,7 @@ class InnerClassForMapCodeGeneratorTest {
 
     @BeforeEach
     void init() {
-        generator = new InnerClassForMapCodeGenerator(builderClassNameGenerator, typeNameGenerator, setterService, List.of(initializerGeneratorA, initializerGeneratorB));
+        generator = new InnerClassForMapCodeGenerator(builderClassNameGenerator, typeNameGenerator, List.of(initializerGeneratorA, initializerGeneratorB));
     }
 
     @Test
@@ -71,7 +67,7 @@ class InnerClassForMapCodeGeneratorTest {
         final Executable isApplicable = () -> generator.isApplicable(setter);
         // Assert
         assertThrows(NullPointerException.class, isApplicable);
-        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorA, initializerGeneratorB);
+        verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
     }
 
     @CartesianTest
@@ -146,7 +142,7 @@ class InnerClassForMapCodeGeneratorTest {
         final Executable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorA, initializerGeneratorB);
+        verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
     }
 
     private static Stream<Arguments> testGenerateCodeNull() {
@@ -184,7 +180,7 @@ class InnerClassForMapCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Generation of inner map class for .+ is not supported.") //
                 .hasMessageContaining(setter.getParamType().toString());
-        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorB, initializerGeneratorB);
+        verifyNoInteractions(builderClassNameGenerator, initializerGeneratorB, initializerGeneratorB);
     }
 
     private static Stream<Arguments> testGenerateCodeGenerationExceptionWrongType() {
@@ -244,7 +240,6 @@ class InnerClassForMapCodeGeneratorTest {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
-        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
@@ -274,7 +269,6 @@ class InnerClassForMapCodeGeneratorTest {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
-        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateMapInitializer(any())).thenReturn(CodeBlock.of("new MockMap<>()"));
         // Act
@@ -286,7 +280,6 @@ class InnerClassForMapCodeGeneratorTest {
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
         verify(typeNameGenerator).generateTypeNameForParam(setter.getKeyType());
         verify(typeNameGenerator).generateTypeNameForParam(setter.getValueType());
-        verify(setterService).dropSetterPrefix(setter.getMethodName());
         verify(initializerGeneratorA).generateMapInitializer(setter);
     }
 

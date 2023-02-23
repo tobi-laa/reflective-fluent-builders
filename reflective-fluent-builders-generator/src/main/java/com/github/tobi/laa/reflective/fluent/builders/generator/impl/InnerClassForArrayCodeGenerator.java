@@ -9,7 +9,6 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.model.Collection
 import com.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -41,9 +40,6 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
 
-    @lombok.NonNull
-    private final SetterService setterService;
-
     @Override
     public boolean isApplicable(final Setter setter) {
         Objects.requireNonNull(setter);
@@ -67,7 +63,7 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
         final var className = builderClassName.nestedClass("Array" + capitalize(setter.getParamName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setterService.dropSetterPrefix(setter.getMethodName())) //
+                        .methodBuilder(setter.getParamName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
