@@ -11,4 +11,10 @@ public class PackagePrivateConstructor {
     private int intField;
 
     private PackagePrivate packagePrivate;
+
+    private PrivateClass privateClass;
+
+    private static class PrivateClass {
+        // no content
+    }
 }

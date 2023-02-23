@@ -5,6 +5,7 @@ import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperti
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PersonJaxb;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
@@ -148,7 +149,7 @@ class SetterServiceImplTest {
                         Set.of( //
                                 SimpleSetter.builder().methodName("anInt").paramName("anInt").paramType(int.class).visibility(Visibility.PACKAGE_PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("aString").paramName("aString").paramType(String.class).visibility(Visibility.PACKAGE_PRIVATE).build())), //
-                Arguments.of("set", "get", true, ClassWithCollections.class, Visibility.PRIVATE, //
+                Arguments.of("set", "get", false, ClassWithCollections.class, Visibility.PRIVATE, //
                         Set.of( //
                                 CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(Collection.class).paramTypeArg(Integer.class).visibility(Visibility.PRIVATE).build(), //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(Visibility.PRIVATE).build(), //
@@ -175,7 +176,14 @@ class SetterServiceImplTest {
                         Set.of( //
                                 SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(Visibility.PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(Visibility.PRIVATE).build(), //
-                                SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())));
+                                SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())), //
+                Arguments.of("set", "get", true, GetAndAdd.class, Visibility.PUBLIC, //
+                        Set.of( //
+                                CollectionSetter.builder().methodName("setListGetterAndSetter").paramName("listGetterAndSetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                CollectionGetAndAdder.builder().methodName("getListNoSetter").paramName("listNoSetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                CollectionSetter.builder().methodName("setListNoGetter").paramName("listNoGetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                CollectionGetAndAdder.builder().methodName("getListSetterWrongType").paramName("listSetterWrongType").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                ArraySetter.builder().methodName("setListSetterWrongType").paramName("listSetterWrongType").paramType(String[].class).paramComponentType(String.class).visibility(Visibility.PUBLIC).build())));
     }
 
     @Test

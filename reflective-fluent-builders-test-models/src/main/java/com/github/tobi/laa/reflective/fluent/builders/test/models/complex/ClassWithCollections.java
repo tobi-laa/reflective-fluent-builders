@@ -1,7 +1,5 @@
 package com.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
-import lombok.Getter;
-
 import java.util.*;
 
 @lombok.Setter
@@ -9,7 +7,6 @@ public class ClassWithCollections<T, U> {
 
     private Collection<Integer> ints;
 
-    @Getter
     private List list;
 
     private java.util.Set<List> set;
