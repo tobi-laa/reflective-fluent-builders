@@ -6,4 +6,8 @@ Add a meaningful description of the changes introduced by this pull request. Ide
 - [ ] All public methods, classes and interfaces have meaningful Javadoc.
 - [ ] Further documentation has been added to `README.md` where applicable.
 - [ ] Tests have been added covering the changes being made. Depending on the change this might entail unit tests, integration tests or both.
+- [ ] Run the following command to regenerate IT samples and verify that the changes introduced are as expected:
+   ```
+   mvn clean verify -Pgenerate-expected-builders-for-it
+   ```
 - [ ] Build pipeline passes.
