@@ -49,6 +49,7 @@
         <jsr-330.version>1</jsr-330.version>
         <guice.version>5.1.0</guice.version>
         <sisu.version>0.3.5</sisu.version>
+        <jakarta.xml.bind-api.version>4.0.0</jakarta.xml.bind-api.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <junit-pioneer.version>2.0.0</junit-pioneer.version>
@@ -66,6 +67,7 @@
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
         <maven-core.version>3.9.0</maven-core.version>
+        <jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
     </properties>
     <modules>
         <module>reflective-fluent-builders-test-models</module>
@@ -124,6 +126,11 @@
                 <groupId>org.eclipse.sisu</groupId>
                 <artifactId>org.eclipse.sisu.inject</artifactId>
                 <version>${sisu.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api.version}</version>
             </dependency>
             <!-- testing dependencies -->
             <dependency>
@@ -283,6 +290,11 @@
                     <groupId>com.soebes.itf.jupiter.extension</groupId>
                     <artifactId>itf-maven-plugin</artifactId>
                     <version>${itf-jupiter-extension.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxb2-maven-plugin</artifactId>
+                    <version>${jaxb2-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

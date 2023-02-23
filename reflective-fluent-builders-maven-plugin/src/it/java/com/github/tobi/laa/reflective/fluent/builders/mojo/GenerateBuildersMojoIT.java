@@ -2,6 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.full.Full;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.Jaxb;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.Nested;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -88,6 +89,15 @@ class GenerateBuildersMojoIT {
                 .project() //
                 .hasTarget() //
                 .satisfies(containsExpectedBuilders(Nested.class.getPackage(), false));
+    }
+
+    @MavenTest
+    void testGenerationForPackageJaxb(final MavenExecutionResult result) {
+        assertThat(result) //
+                .isSuccessful() //
+                .project() //
+                .hasTarget() //
+                .satisfies(containsExpectedBuilders(Jaxb.class.getPackage(), false));
     }
 
     @MavenTest
