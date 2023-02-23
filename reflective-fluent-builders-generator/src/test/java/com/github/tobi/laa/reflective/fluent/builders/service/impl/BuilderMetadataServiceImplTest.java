@@ -16,6 +16,7 @@ import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Ab
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Annotation;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Enum;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Interface;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
 import com.google.common.collect.ImmutableSortedSet;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -79,6 +80,7 @@ class BuilderMetadataServiceImplTest {
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
+    @SneakyThrows
     private static Stream<Arguments> testCollectBuilderMetadata() {
         final Setter privateSetter = SimpleSetter.builder().methodName("setPriv").paramName("priv").paramType(int.class).visibility(Visibility.PRIVATE).build();
         final Setter packagePrivateSetter = SimpleSetter.builder().methodName("setPack").paramName("pack").paramType(char.class).visibility(Visibility.PACKAGE_PRIVATE).build();
@@ -86,6 +88,7 @@ class BuilderMetadataServiceImplTest {
         final Setter publicSetter = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(int.class).visibility(Visibility.PUBLIC).build();
         final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).build();
         final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).build();
+        final var packagePrivate = Class.forName("com.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
         return Stream.of( //
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
@@ -105,8 +108,7 @@ class BuilderMetadataServiceImplTest {
                                         .setter(setterNameCollision1.withParamName("pub0")) //
                                         .setter(setterNameCollision2.withParamName("pub1")) //
                                         .build()) //
-                                .build() //
-                ), //
+                                .build()), //
                 Arguments.of( //
                         "<PACKAGE_NAME>.builder", //
                         "", //
@@ -122,8 +124,53 @@ class BuilderMetadataServiceImplTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(publicSetter) //
                                         .build()) //
-                                .build() //
-                ), //
+                                .build()), //
+                Arguments.of( //
+                        "<PACKAGE_NAME>.builder", //
+                        "", //
+                        Visibility.PACKAGE_PRIVATE, //
+                        Visibility.PUBLIC, //
+                        ImmutableSortedSet.of(
+                                publicSetter, //
+                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
+                                        .paramType(packagePrivate)
+                                        .visibility(Visibility.PUBLIC)
+                                        .build()), //
+                        PackagePrivateConstructor.class, //
+                        BuilderMetadata.builder() //
+                                .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.visibility.builder") //
+                                .name("PackagePrivateConstructor") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(PackagePrivateConstructor.class) //
+                                        .accessibleNonArgsConstructor(false) //
+                                        .setter(publicSetter) //
+                                        .build()) //
+                                .build()), //
+                Arguments.of( //
+                        "<PACKAGE_NAME>", //
+                        "", //
+                        Visibility.PACKAGE_PRIVATE, //
+                        Visibility.PUBLIC, //
+                        ImmutableSortedSet.of(
+                                publicSetter, //
+                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
+                                        .paramType(packagePrivate)
+                                        .visibility(Visibility.PUBLIC)
+                                        .build()), //
+                        PackagePrivateConstructor.class, //
+                        BuilderMetadata.builder() //
+                                .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
+                                .name("PackagePrivateConstructor") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(PackagePrivateConstructor.class) //
+                                        .accessibleNonArgsConstructor(false) //
+                                        .setter(publicSetter) //
+                                        .setter(SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
+                                                .paramType(packagePrivate) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .build()) //
+                                        .build()) //
+                                .build()), //
                 Arguments.of( //
                         "the.builder.package", //
                         "MyBuilderSuffix", //
@@ -138,8 +185,7 @@ class BuilderMetadataServiceImplTest {
                                         .type(SimpleClassNoSetPrefix.class) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
-                                .build() //
-                ),
+                                .build()), //
                 Arguments.of( //
                         "builders.<PACKAGE_NAME>", //
                         "Builder", //
@@ -154,8 +200,8 @@ class BuilderMetadataServiceImplTest {
                                         .type(SimpleClassNoDefaultConstructor.class) //
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
-                                .build() //
-                ));
+                                .build()) //
+        );
     }
 
     @Test

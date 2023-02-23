@@ -9,4 +9,6 @@ import lombok.Setter;
 public class PackagePrivateConstructor {
 
     private int intField;
+
+    private PackagePrivate packagePrivate;
 }

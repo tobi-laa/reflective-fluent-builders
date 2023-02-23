@@ -34,18 +34,31 @@ public class PackagePrivateConstructorBuilder {
     return this;
   }
 
+  public PackagePrivateConstructorBuilder packagePrivate(final PackagePrivate packagePrivate) {
+    fieldValue.packagePrivate = packagePrivate;
+    callSetterFor.packagePrivate = true;
+    return this;
+  }
+
   public PackagePrivateConstructor build() {
     if (callSetterFor.intField) {
       objectToBuild.setIntField(fieldValue.intField);
+    }
+    if (callSetterFor.packagePrivate) {
+      objectToBuild.setPackagePrivate(fieldValue.packagePrivate);
     }
     return objectToBuild;
   }
 
   private class CallSetterFor {
     boolean intField;
+
+    boolean packagePrivate;
   }
 
   private class FieldValue {
     int intField;
+
+    PackagePrivate packagePrivate;
   }
 }
