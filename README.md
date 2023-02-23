@@ -17,5 +17,5 @@ If you have full control of the sources for which you want to generate fluent bu
 If however one of these conditions applies to your situation, this maven plugin might be useful to you:
 - You want to generate builders for classes from a **third-party library**
 - You cannot use the alternatives mentioned above due to **technical debt**, **constraints of your employer** or the like
-- You want to generate builders for **generated sources** such as `JAXB` classes generated from an `XML`
-- You want to generate builder for your classes in **test scope only**
+- You want to generate builders for **generated sources** such as `JAXB`-annotated classes generated from an `XML` schema
+- You want to generate builders for your classes in **test scope only**
