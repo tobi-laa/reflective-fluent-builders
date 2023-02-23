@@ -172,6 +172,31 @@ class BuilderMetadataServiceImplTest {
                                         .build()) //
                                 .build()), //
                 Arguments.of( //
+                        "com.github.tobi.laa.reflective.fluent.builders.test.models.visibility", //
+                        "", //
+                        Visibility.PACKAGE_PRIVATE, //
+                        Visibility.PUBLIC, //
+                        ImmutableSortedSet.of(
+                                publicSetter, //
+                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
+                                        .paramType(packagePrivate)
+                                        .visibility(Visibility.PUBLIC)
+                                        .build()), //
+                        PackagePrivateConstructor.class, //
+                        BuilderMetadata.builder() //
+                                .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
+                                .name("PackagePrivateConstructor") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(PackagePrivateConstructor.class) //
+                                        .accessibleNonArgsConstructor(false) //
+                                        .setter(publicSetter) //
+                                        .setter(SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
+                                                .paramType(packagePrivate) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .build()) //
+                                        .build()) //
+                                .build()), //
+                Arguments.of( //
                         "the.builder.package", //
                         "MyBuilderSuffix", //
                         Visibility.PUBLIC, //
