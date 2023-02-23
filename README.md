@@ -11,7 +11,8 @@ The artifact of the corresponding maven plugin is `reflective-fluent-builders-ma
 # Use cases and preferable alternatives
 If you have full control of the sources for which you want to generate fluent builders, this project is probably not the best choice available. You might want to look at these well-maintained and stable alternatives:
 - 🌶️ [Project Lombok](https://projectlombok.org/ "Project Lombok")'s [@Builder](https://projectlombok.org/features/Builder "@Builder") feature.
-- [Immutables.org](https://immutables.github.io/)
+- [Immutables](https://immutables.github.io/)
+- [@Free**Builder**](https://freebuilder.inferred.org/)
 
 If however one of these conditions applies to your situation, this maven plugin might be useful to you:
 - You want to generate builders for classes from a **third-party library**
