@@ -271,7 +271,11 @@ class InnerClassForCollectionCodeGeneratorTest {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
-        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
+        if (setter instanceof CollectionGetAndAdder) {
+            when(setterService.dropGetterPrefix(any())).thenReturn(setter.getParamName());
+        } else {
+            when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
+        }
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateCollectionInitializer(any())).thenReturn(CodeBlock.of("new MockList<>()"));
         // Act
@@ -282,7 +286,11 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
         verify(typeNameGenerator).generateTypeNameForParam(setter.getParamTypeArg());
-        verify(setterService).dropSetterPrefix(setter.getMethodName());
+        if (setter instanceof CollectionGetAndAdder) {
+            verify(setterService).dropGetterPrefix(setter.getMethodName());
+        } else {
+            verify(setterService).dropSetterPrefix(setter.getMethodName());
+        }
         verify(initializerGeneratorA).generateCollectionInitializer(setter);
     }
 
@@ -338,8 +346,8 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
-                                .methodName("setList") //
+                        CollectionGetAndAdder.builder() //
+                                .methodName("getList") //
                                 .paramName("list") //
                                 .paramType(List.class) //
                                 .paramTypeArg(String.class) //

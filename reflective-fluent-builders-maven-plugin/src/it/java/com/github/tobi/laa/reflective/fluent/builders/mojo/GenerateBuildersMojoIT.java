@@ -2,6 +2,8 @@ package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.full.Full;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.Jaxb;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.Nested;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
@@ -33,7 +35,7 @@ import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 @MavenJupiterExtension
 class GenerateBuildersMojoIT {
 
-    private final Path expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders");
+    static final Path EXPECTED_BUILDERS_ROOT_DIR = Paths.get("src", "it", "resources", "expected-builders");
 
     @MavenTest
     void testGenerationForPackageComplex(final MavenExecutionResult result) {
@@ -81,6 +83,24 @@ class GenerateBuildersMojoIT {
     }
 
     @MavenTest
+    void testGenerationForPackageNested(final MavenExecutionResult result) {
+        assertThat(result) //
+                .isSuccessful() //
+                .project() //
+                .hasTarget() //
+                .satisfies(containsExpectedBuilders(Nested.class.getPackage(), false));
+    }
+
+    @MavenTest
+    void testGenerationForPackageJaxb(final MavenExecutionResult result) {
+        assertThat(result) //
+                .isSuccessful() //
+                .project() //
+                .hasTarget() //
+                .satisfies(containsExpectedBuilders(Jaxb.class.getPackage(), false));
+    }
+
+    @MavenTest
     @MavenDebug
     void testGenerationForPackageSimpleWithDebugLogging(final MavenExecutionResult result) {
         assertThat(result).isSuccessful();
@@ -99,7 +119,7 @@ class GenerateBuildersMojoIT {
                 .out() //
                 .debug() //
                 .contains( //
-                        "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection(classesToExclude=[]))", //
+                        "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, getterPrefix=get, getAndAddEnabled=false, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection(classesToExclude=[class java.lang.Object]))", //
                         "The following classes can be built:", //
                         "- " + SimpleClassNoSetPrefix.class.getName(), //
                         "- " + SimpleClassNoDefaultConstructor.class.getName(), //
@@ -190,7 +210,7 @@ class GenerateBuildersMojoIT {
         return result -> {
             for (final Path expectedBuilderRelativeToRoot : expectedBuildersForPackageRelativeToRoot(buildersPackage)) {
                 final var actualBuilder = getGeneratedBuildersDirectory(result, test).resolve(expectedBuilderRelativeToRoot);
-                final var expectedBuilder = expectedBuildersRootDir.resolve(expectedBuilderRelativeToRoot);
+                final var expectedBuilder = EXPECTED_BUILDERS_ROOT_DIR.resolve(expectedBuilderRelativeToRoot);
                 Assertions.assertThat(actualBuilder) //
                         .exists() //
                         .content() //
@@ -206,10 +226,10 @@ class GenerateBuildersMojoIT {
 
     @SneakyThrows
     private List<Path> expectedBuildersForPackageRelativeToRoot(final Package pack) {
-        final var expectedBuildersDir = expectedBuildersRootDir.resolve(
+        final var expectedBuildersDir = EXPECTED_BUILDERS_ROOT_DIR.resolve(
                 pack.getName().replace(".", FileSystems.getDefault().getSeparator()));
         return findFilesRecursively(expectedBuildersDir).stream() //
-                .map(expectedBuildersRootDir::relativize) //
+                .map(EXPECTED_BUILDERS_ROOT_DIR::relativize) //
                 .collect(Collectors.toList());
     }
 

@@ -44,6 +44,28 @@ public interface BuildersProperties {
 
     /**
      * <p>
+     * The prefix of getters to use when analyzing classes.
+     * </p>
+     *
+     * @return The prefix of getters to use when analyzing classes.
+     * @see SetterService
+     */
+    String getGetterPrefix();
+
+    /**
+     * <p>
+     * If this is set to {@code true}, it is assumed that getters of collections without a corresponding setter will
+     * lazily initialize the underlying collection. The generated builders will use a get-and-add paradigm where
+     * necessary to construct a collection.
+     * </p>
+     *
+     * @return Whether to support using a get-and-add paradigm in generated builders.
+     * @see SetterService
+     */
+    boolean isGetAndAddEnabled();
+
+    /**
+     * <p>
      * Properties relating to hierarchy collection of classes.
      * </p>
      *

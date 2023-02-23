@@ -1,10 +1,18 @@
 package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
-import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.Nested;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
 import com.google.common.reflect.ClassPath;
+import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -143,19 +151,29 @@ class ClassServiceImplTest {
                 .anyMatch(Set.of(Test.class, ParameterizedTest.class)::contains);
     }
 
+    @SneakyThrows
     private static Stream<Arguments> testCollectClassesRecursively() {
         return Stream.of( //
                 Arguments.of(
-                        Setter.class.getPackageName(), //
+                        Simple.class.getPackageName(), //
                         Set.of( //
-                                AbstractSetter.class, //
-                                ArraySetter.class, //
-                                BuilderMetadata.class, //
-                                CollectionSetter.class, //
-                                MapSetter.class, //
-                                Setter.class, //
-                                SimpleSetter.class, //
-                                Visibility.class)) //
-        );
+                                Child.class, //
+                                Parent.class, //
+                                Simple.class, //
+                                SimpleClass.class, //
+                                SimpleClassNoDefaultConstructor.class, //
+                                SimpleClassNoSetPrefix.class)),
+                Arguments.of(
+                        Nested.class.getPackageName(), //
+                        Set.of( //
+                                Nested.class, //
+                                TopLevelClass.class, //
+                                TopLevelClass.NestedPublicLevelOne.class, //
+                                Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne"), //
+                                Class.forName(TopLevelClass.class.getName() + "$NestedPackagePrivateLevelOne"), //
+                                Class.forName(TopLevelClass.class.getName() + "$NestedPrivateLevelOne"), //
+                                TopLevelClass.NestedNonStatic.class, //
+                                TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.class, //
+                                TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree.class)));
     }
 }

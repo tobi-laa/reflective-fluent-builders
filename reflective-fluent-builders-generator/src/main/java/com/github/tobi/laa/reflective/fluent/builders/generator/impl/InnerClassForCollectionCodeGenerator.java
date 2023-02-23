@@ -9,6 +9,7 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIn
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
 import com.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
@@ -72,9 +73,15 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final CollectionSetter setter) {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         final var className = builderClassName.nestedClass("Collection" + capitalize(setter.getParamName()));
+        final String methodName;
+        if (setter instanceof CollectionGetAndAdder) {
+            methodName = setterService.dropGetterPrefix(setter.getMethodName());
+        } else {
+            methodName = setterService.dropSetterPrefix(setter.getMethodName());
+        }
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setterService.dropSetterPrefix(setter.getMethodName())) //
+                        .methodBuilder(methodName) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //

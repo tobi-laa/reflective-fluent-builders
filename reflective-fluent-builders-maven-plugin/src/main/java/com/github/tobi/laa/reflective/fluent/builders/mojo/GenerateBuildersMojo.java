@@ -3,6 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.mojo;
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
@@ -31,31 +32,39 @@ import java.util.stream.Collectors;
 public class GenerateBuildersMojo extends AbstractMojo {
 
     @Setter(onMethod_ =
-    @Parameter(property = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER))
+    @Parameter(name = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER))
     private String builderPackage;
 
     @Setter(onMethod_ =
-    @Parameter(property = "builderSuffix", defaultValue = "Builder"))
+    @Parameter(name = "builderSuffix", defaultValue = "Builder"))
     private String builderSuffix;
 
     @Setter(onMethod_ =
-    @Parameter(property = "setterPrefix", defaultValue = "set"))
+    @Parameter(name = "setterPrefix", defaultValue = "set"))
     private String setterPrefix;
 
     @Setter(onMethod_ =
-    @Parameter(property = "hierarchyCollection.classesToExclude"))
+    @Parameter(name = "getterPrefix", defaultValue = "get"))
+    private String getterPrefix;
+
+    @Setter(onMethod_ =
+    @Parameter(name = "getAndAddEnabled", defaultValue = "false"))
+    private boolean getAndAddEnabled;
+
+    @Setter(onMethod_ =
+    @Parameter(name = "hierarchyCollection.classesToExclude"))
     private Set<Class<?>> classesToExclude = Set.of(Object.class);
 
     @Setter(onMethod_ =
-    @Parameter(required = true, property = "packageToScan"))
+    @Parameter(required = true, name = "packageToScan"))
     private String packageToScan;
 
     @Setter(onMethod_ =
-    @Parameter(property = "target"))
+    @Parameter(name = "target"))
     private File target;
 
     @Setter(onMethod_ =
-    @Parameter(property = "addCompileSourceRoot", defaultValue = "true"))
+    @Parameter(name = "addCompileSourceRoot", defaultValue = "true"))
     private boolean addCompileSourceRoot;
 
     @Setter(onMethod_ =
@@ -67,7 +76,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private MojoExecution mojoExecution;
 
     @lombok.NonNull
-    private final StandardBuildersProperties buildersProperties;
+    private final BuildersProperties buildersProperties;
 
     @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
@@ -90,10 +99,13 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void mapMavenParamsToProps() {
-        buildersProperties.setBuilderPackage(builderPackage);
-        buildersProperties.setBuilderSuffix(builderSuffix);
-        buildersProperties.setSetterPrefix(setterPrefix);
-        buildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
+        final StandardBuildersProperties standardBuildersProperties = (StandardBuildersProperties) buildersProperties;
+        standardBuildersProperties.setBuilderPackage(builderPackage);
+        standardBuildersProperties.setBuilderSuffix(builderSuffix);
+        standardBuildersProperties.setSetterPrefix(setterPrefix);
+        standardBuildersProperties.setGetterPrefix(getterPrefix);
+        standardBuildersProperties.setGetAndAddEnabled(getAndAddEnabled);
+        standardBuildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
         getLog().debug("Properties are: " + buildersProperties);
     }
 

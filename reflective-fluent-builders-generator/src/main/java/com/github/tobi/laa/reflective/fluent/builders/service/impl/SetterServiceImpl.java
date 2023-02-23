@@ -18,6 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,17 +42,41 @@ class SetterServiceImpl implements SetterService {
     @Override
     public SortedSet<Setter> gatherAllSetters(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
-        return classService.collectFullClassHierarchy(clazz) //
+        final var methods = classService.collectFullClassHierarchy(clazz) //
                 .stream() //
                 .map(Class::getDeclaredMethods) //
                 .flatMap(Arrays::stream) //
+                .collect(Collectors.toList());
+        final var setters = methods.stream() //
                 .filter(this::isSetter) //
                 .map(this::toSetter) //
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
+        if (properties.isGetAndAddEnabled()) {
+            final var getAndAdders = methods.stream() //
+                    .filter(this::isCollectionGetter) //
+                    .filter(method -> noCorrespondingSetter(method, setters)) //
+                    .map(this::toGetAndAdder) //
+                    .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
+            return ImmutableSortedSet.<Setter>naturalOrder().addAll(setters).addAll(getAndAdders).build();
+        } else {
+            return setters;
+        }
     }
 
     private boolean isSetter(final Method method) {
         return method.getParameterCount() == 1 && method.getName().startsWith(properties.getSetterPrefix());
+    }
+
+    private boolean isCollectionGetter(final Method method) {
+        return method.getParameterCount() == 0 && //
+                method.getName().startsWith(properties.getGetterPrefix()) && //
+                Collection.class.isAssignableFrom(method.getReturnType());
+    }
+
+    private boolean noCorrespondingSetter(final Method method, final Set<Setter> setters) {
+        return setters.stream()
+                .noneMatch(setter -> setter.getParamType() == method.getReturnType() &&
+                        setter.getParamName().equals(dropGetterPrefix(method.getName())));
     }
 
     private Setter toSetter(final Method method) {
@@ -61,14 +86,14 @@ class SetterServiceImpl implements SetterService {
                     .methodName(method.getName()) //
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
+                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
             return CollectionSetter.builder().paramTypeArg(typeArg(param, 0)) //
                     .methodName(method.getName()) //
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
+                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
             return MapSetter.builder() //
@@ -77,21 +102,35 @@ class SetterServiceImpl implements SetterService {
                     .methodName(method.getName()) //
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
+                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .build();
         } else {
             return SimpleSetter.builder() //
                     .methodName(method.getName()) //
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(param.getModifiers())) //
+                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .build();
         }
     }
 
+    private CollectionGetAndAdder toGetAndAdder(final Method method) {
+        final var returnType = method.getGenericReturnType();
+        return CollectionGetAndAdder.builder().paramTypeArg(typeArg(returnType, 0)) //
+                .methodName(method.getName()) //
+                .paramType(method.getReturnType()) //
+                .paramName(dropGetterPrefix(method.getName())) //
+                .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                .build();
+    }
+
     private Type typeArg(final Parameter param, final int num) {
-        if (param.getParameterizedType() instanceof ParameterizedType) {
-            final ParameterizedType parameterizedType = (ParameterizedType) param.getParameterizedType();
+        return typeArg(param.getParameterizedType(), num);
+    }
+
+    private Type typeArg(final Type type, final int num) {
+        if (type instanceof ParameterizedType) {
+            final ParameterizedType parameterizedType = (ParameterizedType) type;
             return parameterizedType.getActualTypeArguments()[num];
         } else {
             return Object.class;
@@ -101,10 +140,20 @@ class SetterServiceImpl implements SetterService {
     @Override
     public String dropSetterPrefix(final String name) {
         Objects.requireNonNull(name);
-        if (StringUtils.isEmpty(properties.getSetterPrefix()) || name.length() <= properties.getSetterPrefix().length()) {
+        return dropMethodPrefix(properties.getSetterPrefix(), name);
+    }
+
+    @Override
+    public String dropGetterPrefix(final String name) {
+        Objects.requireNonNull(name);
+        return dropMethodPrefix(properties.getGetterPrefix(), name);
+    }
+
+    private String dropMethodPrefix(final String prefix, final String name) {
+        if (StringUtils.isEmpty(prefix) || name.length() <= prefix.length()) {
             return name;
         }
-        final var paramName = name.replaceFirst('^' + Pattern.quote(properties.getSetterPrefix()), "");
+        final var paramName = name.replaceFirst('^' + Pattern.quote(prefix), "");
         return StringUtils.uncapitalize(paramName);
     }
 }

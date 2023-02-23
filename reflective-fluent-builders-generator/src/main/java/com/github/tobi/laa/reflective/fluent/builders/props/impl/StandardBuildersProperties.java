@@ -29,6 +29,11 @@ public class StandardBuildersProperties implements BuildersProperties {
     private String setterPrefix = "set";
 
     @lombok.NonNull
+    private String getterPrefix = "get";
+
+    private boolean getAndAddEnabled = false;
+
+    @lombok.NonNull
     private StandardHierarchyCollection hierarchyCollection = new StandardHierarchyCollection();
 
     @Data

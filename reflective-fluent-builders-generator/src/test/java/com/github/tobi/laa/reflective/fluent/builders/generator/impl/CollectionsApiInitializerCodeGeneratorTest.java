@@ -1,6 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
+import com.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
 import com.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Visibility;
@@ -58,7 +59,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
     private static Stream<CollectionSetter> testIsApplicableFalseForCollectionSetter() {
         return Stream.of(
                 collectionSetter(EnumSet.class),
-                collectionSetter(MyList.class));
+                collectionGetAndAdder(MyList.class));
     }
 
     @Test
@@ -128,13 +129,13 @@ class CollectionsApiInitializerCodeGeneratorTest {
                                 collectionSetter(Set.class),
                                 CodeBlock.builder().add("new java.util.HashSet<>()").build()),
                         Arguments.of(
-                                collectionSetter(SortedSet.class),
+                                collectionGetAndAdder(SortedSet.class),
                                 CodeBlock.builder().add("new java.util.TreeSet<>()").build()),
                         Arguments.of(
-                                collectionSetter(TransferQueue.class),
+                                collectionGetAndAdder(TransferQueue.class),
                                 CodeBlock.builder().add("new java.util.concurrent.LinkedTransferQueue<>()").build()),
                         Arguments.of(
-                                collectionSetter(Collection.class),
+                                collectionGetAndAdder(Collection.class),
                                 CodeBlock.builder().add("new java.util.ArrayList<>()").build())));
     }
 
@@ -254,6 +255,16 @@ class CollectionsApiInitializerCodeGeneratorTest {
 
     private static CollectionSetter collectionSetter(final Class<?> type) {
         return CollectionSetter.builder() //
+                .paramName("") //
+                .paramType(type) //
+                .paramTypeArg(Object.class) //
+                .methodName("") //
+                .visibility(Visibility.PRIVATE) //
+                .build();
+    }
+
+    private static CollectionGetAndAdder collectionGetAndAdder(final Class<?> type) {
+        return CollectionGetAndAdder.builder() //
                 .paramName("") //
                 .paramType(type) //
                 .paramTypeArg(Object.class) //

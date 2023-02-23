@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+
+    <xs:element name="personJaxb" type="personJaxb"/>
+
+    <xs:element name="petJaxb" type="petJaxb"/>
+
+    <xs:complexType name="personJaxb">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="names" type="xs:string"/>
+            <xs:element name="age" type="xs:int"/>
+            <xs:element name="married" type="xs:boolean"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="pets" type="petJaxb"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="attributes" type="xs:anyType"/>
+            <xs:element name="relations">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" name="key" type="xs:string"/>
+                                    <xs:element minOccurs="0" name="value" type="personJaxb"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="petJaxb">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="fullName" type="xs:string"/>
+            <xs:element name="weight" type="xs:float"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="siblings" type="petJaxb"/>
+            <xs:element minOccurs="0" name="owner" type="personJaxb"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
