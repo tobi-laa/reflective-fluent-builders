@@ -77,7 +77,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private SortedSet<Setter> gatherAndFilterAccessibleSettersAndAvoidNameCollisions(final Class<?> clazz) {
         final var setters = setterService.gatherAllSetters(clazz) //
                 .stream() //
-                .filter(setter -> isAccessible(clazz, setter.getVisibility()) && isAccessibleParamType(clazz, setter.getParamType()))
+                .filter(setter -> isAccessible(clazz, setter.getVisibility()) && isAccessibleParamType(setter.getParamType()))
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         return avoidNameCollisions(setters);
     }
@@ -123,13 +123,10 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
         return isAccessible(clazz, clazz.getModifiers());
     }
 
-    private boolean isAccessibleParamType(final Class<?> clazz, final Type paramType) {
-        final var paramTypeClass = (Class<?>) paramType;
-        final var visibility = visibilityService.toVisibility(paramTypeClass.getModifiers());
-        return visibility == PUBLIC ||
-                visibility == PACKAGE_PRIVATE &&
-                        (properties.getBuilderPackage().equals(paramTypeClass.getPackageName()) ||
-                                clazz.getPackage() == paramTypeClass.getPackage() && placeBuildersInSamePackage(clazz));
+    private boolean isAccessibleParamType(final Type paramType) {
+        final var clazz = (Class<?>) paramType;
+        final var visibility = visibilityService.toVisibility(clazz.getModifiers());
+        return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers) {

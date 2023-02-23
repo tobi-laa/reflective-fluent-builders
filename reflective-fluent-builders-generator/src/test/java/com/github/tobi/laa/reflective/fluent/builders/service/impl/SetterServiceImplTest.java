@@ -148,7 +148,7 @@ class SetterServiceImplTest {
                         Set.of( //
                                 SimpleSetter.builder().methodName("anInt").paramName("anInt").paramType(int.class).visibility(Visibility.PACKAGE_PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("aString").paramName("aString").paramType(String.class).visibility(Visibility.PACKAGE_PRIVATE).build())), //
-                Arguments.of("set", null, false, ClassWithCollections.class, Visibility.PRIVATE, //
+                Arguments.of("set", "get", true, ClassWithCollections.class, Visibility.PRIVATE, //
                         Set.of( //
                                 CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(Collection.class).paramTypeArg(Integer.class).visibility(Visibility.PRIVATE).build(), //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(Visibility.PRIVATE).build(), //
