@@ -47,8 +47,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private String getterPrefix;
 
     @Setter(onMethod_ =
-    @Parameter(name = "collectionGetAndAddEnabled", defaultValue = "false"))
-    private boolean collectionGetAndAddEnabled;
+    @Parameter(name = "getAndAddEnabled", defaultValue = "false"))
+    private boolean getAndAddEnabled;
 
     @Setter(onMethod_ =
     @Parameter(name = "hierarchyCollection.classesToExclude"))
@@ -102,7 +102,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         buildersProperties.setBuilderSuffix(builderSuffix);
         buildersProperties.setSetterPrefix(setterPrefix);
         buildersProperties.setGetterPrefix(getterPrefix);
-        buildersProperties.setGetAndAddEnabled(collectionGetAndAddEnabled);
+        buildersProperties.setGetAndAddEnabled(getAndAddEnabled);
         buildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
         getLog().debug("Properties are: " + buildersProperties);
     }
