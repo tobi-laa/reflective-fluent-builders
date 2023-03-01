@@ -170,7 +170,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "com.github.tobi.laa.reflective.fluent.builders.test.models.visibility", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PRIVATE, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
@@ -184,7 +184,6 @@ class BuilderMetadataServiceImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(PackagePrivateConstructor.class) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .setter(publicSetter) //
                                         .setter(SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
                                                 .paramType(packagePrivate) //
                                                 .visibility(Visibility.PUBLIC) //
