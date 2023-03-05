@@ -160,7 +160,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private Class<?> classForName(final String className) throws MojoExecutionException {
         try {
-            return Class.forName(className);
+            return Class.forName(className.trim());
         } catch (final ClassNotFoundException e) {
             throw new MojoExecutionException(e);
         }

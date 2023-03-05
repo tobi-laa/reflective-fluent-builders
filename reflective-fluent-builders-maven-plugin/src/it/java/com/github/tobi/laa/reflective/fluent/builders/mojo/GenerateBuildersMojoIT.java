@@ -207,16 +207,53 @@ class GenerateBuildersMojoIT {
                                 "SimpleClassBuilder.java: Is a directory -> [Help 1]"));
     }
 
+    @MavenTest
+    @MavenDebug
+    void testGenerationForSimpleClassOnly(final MavenExecutionResult result) {
+        assertThat(result) //
+                .isSuccessful() //
+                .project() //
+                .hasTarget() //
+                .satisfies(
+                        containsExpectedBuilder(
+                                EXPECTED_BUILDERS_ROOT_DIR.resolve(SimpleClass.class.getName().replace(".", FileSystems.getDefault().getSeparator())),
+                                false));
+        assertThat(result) //
+                .out() //
+                .debug() //
+                .contains("Add class " + SimpleClass.class.getName() + '.');
+    }
+
+    @MavenTest
+    void testGenerationClassNotFound(final MavenExecutionResult result) {
+        assertThat(result) //
+                .isFailure() //
+                .out() //
+                .error() //
+                .anySatisfy(s -> Assertions.assertThat(s) //
+                        .containsSubsequence( //
+                                "Failed to execute goal com.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
+                                "generate-builders (default) on project", //
+                                ClassNotFoundException.class.getName(), //
+                                "does.not.exist -> [Help 1]"));
+    }
+
     private Consumer<MavenProjectResult> containsExpectedBuilders(final Package buildersPackage, final boolean test) {
         return result -> {
             for (final Path expectedBuilderRelativeToRoot : expectedBuildersForPackageRelativeToRoot(buildersPackage)) {
-                final var actualBuilder = getGeneratedBuildersDirectory(result, test).resolve(expectedBuilderRelativeToRoot);
-                final var expectedBuilder = EXPECTED_BUILDERS_ROOT_DIR.resolve(expectedBuilderRelativeToRoot);
-                Assertions.assertThat(actualBuilder) //
-                        .exists() //
-                        .content() //
-                        .isEqualToIgnoringNewLines(contentOf(expectedBuilder));
+                containsExpectedBuilder(expectedBuilderRelativeToRoot, test).accept(result);
             }
+        };
+    }
+
+    private Consumer<MavenProjectResult> containsExpectedBuilder(final Path expectedBuilderRelativeToRoot, final boolean test) {
+        return result -> {
+            final var actualBuilder = getGeneratedBuildersDirectory(result, test).resolve(expectedBuilderRelativeToRoot);
+            final var expectedBuilder = EXPECTED_BUILDERS_ROOT_DIR.resolve(expectedBuilderRelativeToRoot);
+            Assertions.assertThat(actualBuilder) //
+                    .exists() //
+                    .content() //
+                    .isEqualToIgnoringNewLines(contentOf(expectedBuilder));
         };
     }
 
