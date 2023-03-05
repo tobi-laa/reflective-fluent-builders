@@ -41,15 +41,19 @@ class ClassServiceImpl implements ClassService {
         Objects.requireNonNull(clazz);
         final Set<Class<?>> classHierarchy = new HashSet<>();
         for (var i = clazz; i != null; i = i.getSuperclass()) {
-            if (properties.getHierarchyCollection().getClassesToExclude().contains(i)) {
+            if (excludeFromHierarchyCollection(i)) {
                 break;
             }
             classHierarchy.add(i);
             Arrays.stream(i.getInterfaces()) //
-                    .filter(not(properties.getHierarchyCollection().getClassesToExclude()::contains)) //
+                    .filter(not(this::excludeFromHierarchyCollection)) //
                     .forEach(classHierarchy::add);
         }
         return classHierarchy;
+    }
+
+    private boolean excludeFromHierarchyCollection(final Class<?> clazz) {
+        return properties.getHierarchyCollection().getExcludes().stream().anyMatch(p -> p.test(clazz));
     }
 
     @Override

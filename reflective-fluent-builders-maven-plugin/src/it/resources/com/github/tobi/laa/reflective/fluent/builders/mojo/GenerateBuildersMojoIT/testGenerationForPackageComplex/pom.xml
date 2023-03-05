@@ -30,7 +30,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.complex</packageToScan>
+                    <includes>
+                        <include>
+                            <packageName>
+                                com.github.tobi.laa.reflective.fluent.builders.test.models.complex
+                            </packageName>
+                        </include>
+                    </includes>
                     <getAndAddEnabled>true</getAndAddEnabled>
                 </configuration>
                 <dependencies>

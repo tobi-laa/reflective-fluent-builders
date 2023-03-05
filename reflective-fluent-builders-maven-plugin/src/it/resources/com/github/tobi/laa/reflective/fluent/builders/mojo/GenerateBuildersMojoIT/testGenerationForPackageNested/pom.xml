@@ -30,7 +30,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.nested</packageToScan>
+                    <includes>
+                        <include>
+                            <packageName>
+                                com.github.tobi.laa.reflective.fluent.builders.test.models.nested
+                            </packageName>
+                        </include>
+                    </includes>
                 </configuration>
                 <dependencies>
                     <dependency>

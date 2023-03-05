@@ -1,6 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 
 import java.util.Collection;
 import java.util.Set;
@@ -48,6 +49,17 @@ public interface BuilderMetadataService {
      * {@code null}.
      */
     Set<Class<?>> filterOutNonBuildableClasses(final Set<Class<?>> classes);
+
+    /**
+     * <p>
+     * Filters out the configured excludes, i.e. the classes for which no builders should be generated.
+     * </p>
+     *
+     * @param classes The classes from which to filter out all configured excludes. Must not be {@code null}.
+     * @return {@code classes} but without all configured excludes. Never {@code null}.
+     * @see BuildersProperties#getExcludes()
+     */
+    Set<Class<?>> filterOutConfiguredExcludes(final Set<Class<?>> classes);
 
     /**
      * <p>

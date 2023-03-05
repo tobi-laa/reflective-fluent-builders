@@ -8,6 +8,8 @@ import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperti
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
@@ -34,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -270,6 +273,50 @@ class BuilderMetadataServiceImplTest {
                         Visibility.PUBLIC, //
                         Set.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class),
                         Set.of(TopLevelClass.NestedPublicLevelOne.class)));
+    }
+
+    @Test
+    void testFilterOutConfiguredExcludesNull() {
+        // Act
+        final Executable filterOutConfiguredExcludes = () -> builderService.filterOutConfiguredExcludes(null);
+        // Assert
+        assertThrows(NullPointerException.class, filterOutConfiguredExcludes);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testFilterOutConfiguredExcludes(final Set<Predicate<Class<?>>> excludes, final Set<Class<?>> classes, final Set<Class<?>> expected) {
+        // Arrange
+        lenient().when(properties.getExcludes()).thenReturn(excludes);
+        // Act
+        final Set<Class<?>> actual = builderService.filterOutConfiguredExcludes(classes);
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    @SneakyThrows
+    private static Stream<Arguments> testFilterOutConfiguredExcludes() {
+        return Stream.of( //
+                Arguments.of( //
+                        Collections.emptySet(), //
+                        Collections.emptySet(), //
+                        Collections.emptySet()), //
+                Arguments.of( //
+                        Collections.emptySet(), //
+                        Set.of(SimpleClass.class), //
+                        Set.of(SimpleClass.class)), //
+                Arguments.of( //
+                        Set.<Predicate<Class<?>>>of(cl -> cl.getPackageName().equals(Complex.class.getPackageName())), //
+                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
+                        Set.of(SimpleClass.class)), //
+                Arguments.of( //
+                        Set.<Predicate<Class<?>>>of(SimpleClass.class::equals), //
+                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
+                        Set.of(ClassWithCollections.class, ClassWithGenerics.class)), //
+                Arguments.of( //
+                        Set.<Predicate<Class<?>>>of(cl -> cl.getName().endsWith("Generics")), //
+                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
+                        Set.of(SimpleClass.class, ClassWithCollections.class)));
     }
 
     @Test

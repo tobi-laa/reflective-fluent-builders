@@ -30,7 +30,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.visibility</packageToScan>
+                    <includes>
+                        <include>
+                            <packageName>
+                                com.github.tobi.laa.reflective.fluent.builders.test.models.visibility
+                            </packageName>
+                        </include>
+                    </includes>
                     <target>\${project.build.directory}/generated-sources/builders</target>
                 </configuration>
                 <dependencies>

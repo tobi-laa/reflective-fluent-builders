@@ -23,7 +23,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageToScan>does.not.matter</packageToScan>
+                    <includes>
+                        <include>
+                            <packageName>
+                                does.not.matter
+                            </packageName>
+                        </include>
+                    </includes>
                     <target>\${project.basedir}/pom.xml</target>
                 </configuration>
             </plugin>

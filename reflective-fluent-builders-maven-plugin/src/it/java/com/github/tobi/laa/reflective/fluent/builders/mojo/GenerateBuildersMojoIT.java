@@ -110,7 +110,7 @@ class GenerateBuildersMojoIT {
                 .info() //
                 .contains( //
                         "Scan package " + Simple.class.getPackage().getName() + " recursively for classes.", //
-                        "Found 5 buildable classes.", //
+                        "Found 5 classes for which to generate builders.", //
                         "Make sure target directory " + targetDirectory + " exists.", //
                         "Generate builder for class " + Child.class.getName(), //
                         "Generate builder for class " + SimpleClass.class.getName(), //
@@ -119,8 +119,8 @@ class GenerateBuildersMojoIT {
                 .out() //
                 .debug() //
                 .contains( //
-                        "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, getterPrefix=get, getAndAddEnabled=false, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection(classesToExclude=[class java.lang.Object]))", //
-                        "The following classes can be built:", //
+                        "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, getterPrefix=get, getAndAddEnabled=false, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection())", //
+                        "Builders will be generated for the following classes:", //
                         "- " + SimpleClassNoSetPrefix.class.getName(), //
                         "- " + SimpleClassNoDefaultConstructor.class.getName(), //
                         "- " + Child.class.getName(), //
@@ -131,6 +131,7 @@ class GenerateBuildersMojoIT {
                         "Builders for the following classes would be empty and will thus be skipped:", //
                         "- " + SimpleClassNoDefaultConstructor.class.getName(), //
                         "- " + SimpleClassNoSetPrefix.class.getName(), //
+                        "The following classes have been configured to be excluded:", //
                         "Add " + targetDirectory + " as source folder.");
     }
 
@@ -146,7 +147,7 @@ class GenerateBuildersMojoIT {
                 .info() //
                 .contains( //
                         "Scan package does.not.matter recursively for classes.", //
-                        "Found 0 buildable classes.", //
+                        "Found 0 classes for which to generate builders.", //
                         "Make sure target directory " + pomXml + " exists.");
         assertThat(result) //
                 .out() //
@@ -193,7 +194,7 @@ class GenerateBuildersMojoIT {
                 .info() //
                 .contains( //
                         "Scan package com.github.tobi.laa.reflective.fluent.builders.test.models.simple recursively for classes.", //
-                        "Found 5 buildable classes.", //
+                        "Found 5 classes for which to generate builders.", //
                         "Make sure target directory " + srcMainJava + " exists.");
         assertThat(result) //
                 .out() //

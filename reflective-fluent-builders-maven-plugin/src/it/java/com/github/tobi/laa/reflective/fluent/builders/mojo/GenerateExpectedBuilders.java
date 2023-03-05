@@ -30,20 +30,22 @@ class GenerateExpectedBuilders {
     @BeforeAll
     @SneakyThrows
     static void deleteExpectedBuilders() {
-        Files.walkFileTree(EXPECTED_BUILDERS_ROOT_DIR, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return super.visitFile(file, attrs);
-            }
+        if (Files.exists(EXPECTED_BUILDERS_ROOT_DIR)) {
+            Files.walkFileTree(EXPECTED_BUILDERS_ROOT_DIR, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return super.visitFile(file, attrs);
+                }
 
-            @Override
-            public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
-                final FileVisitResult result = super.postVisitDirectory(dir, exc);
-                Files.delete(dir);
-                return result;
-            }
-        });
+                @Override
+                public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+                    final FileVisitResult result = super.postVisitDirectory(dir, exc);
+                    Files.delete(dir);
+                    return result;
+                }
+            });
+        }
     }
 
     @MavenTest

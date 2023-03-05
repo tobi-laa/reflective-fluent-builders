@@ -8,11 +8,14 @@ import com.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuilder
 import com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.google.common.collect.Sets;
+import jakarta.validation.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -24,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,12 +56,20 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private boolean getAndAddEnabled;
 
     @Setter(onMethod_ =
-    @Parameter(name = "hierarchyCollection.classesToExclude"))
-    private Set<Class<?>> classesToExclude = Set.of(Object.class);
+    @Parameter(name = "hierarchyCollection.excludes"))
+    @Valid
+    private Set<Exclude> hierarchyCollectionExcludes;
 
     @Setter(onMethod_ =
-    @Parameter(required = true, name = "packageToScan"))
-    private String packageToScan;
+    @Parameter(required = true, name = "includes"))
+    @NotEmpty(message = "At least one <include> has to be specified.")
+    @Valid
+    private Set<Include> includes;
+
+    @Setter(onMethod_ =
+    @Parameter(name = "excludes"))
+    @Valid
+    private Set<Exclude> excludes;
 
     @Setter(onMethod_ =
     @Parameter(name = "target"))
@@ -88,40 +100,86 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final BuilderMetadataService builderMetadataService;
 
     @Override
-    public void execute() throws MojoFailureException {
+    public void execute() throws MojoFailureException, MojoExecutionException {
+        validateParams();
         mapMavenParamsToProps();
-        final var buildableClasses = collectBuildableClasses();
+        final var classes = collectAndFilterClasses();
         setDefaultTargetDirectoryIfNecessary();
         createTargetDirectory();
-        final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(buildableClasses);
+        final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
         generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
         addCompileSourceRoot();
     }
 
+    private void validateParams() throws MojoExecutionException {
+        try (final ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            final Validator validator = factory.getValidator();
+            final var violations = validator.validate(this);
+            if (!violations.isEmpty()) {
+                throw new MojoExecutionException("Parameter validation failed.\n" + violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining("\n")));
+            }
+        }
+    }
+
     private void mapMavenParamsToProps() {
-        final StandardBuildersProperties standardBuildersProperties = (StandardBuildersProperties) buildersProperties;
+        final var standardBuildersProperties = (StandardBuildersProperties) buildersProperties;
         standardBuildersProperties.setBuilderPackage(builderPackage);
         standardBuildersProperties.setBuilderSuffix(builderSuffix);
         standardBuildersProperties.setSetterPrefix(setterPrefix);
         standardBuildersProperties.setGetterPrefix(getterPrefix);
         standardBuildersProperties.setGetAndAddEnabled(getAndAddEnabled);
-        standardBuildersProperties.getHierarchyCollection().setClassesToExclude(classesToExclude);
+        if (excludes != null) {
+            standardBuildersProperties.setExcludes(hierarchyCollectionExcludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
+        }
+        if (hierarchyCollectionExcludes != null) {
+            standardBuildersProperties.getHierarchyCollection().setExcludes(hierarchyCollectionExcludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
+        }
         getLog().debug("Properties are: " + buildersProperties);
     }
 
-    private Set<Class<?>> collectBuildableClasses() {
-        getLog().info("Scan package " + packageToScan + " recursively for classes.");
-        final var allClasses = classService.collectClassesRecursively(packageToScan.trim());
-        final var buildableClasses = builderMetadataService.filterOutNonBuildableClasses(allClasses);
+    private Set<Class<?>> collectAndFilterClasses() throws MojoExecutionException {
+        final var allClasses = collectClasses();
+        final var filteredClasses = filterClasses(allClasses);
+        getLog().info("Found " + filteredClasses.size() + " classes for which to generate builders.");
+        return filteredClasses;
+    }
+
+    private Set<Class<?>> collectClasses() throws MojoExecutionException {
+        final var allClasses = new HashSet<Class<?>>();
+        for (final var include : includes) {
+            if (include.getPackageName() != null) {
+                getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
+                allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
+            } else {
+                getLog().info("Add class " + include.getClassName() + '.');
+                allClasses.add(classForName(include.getClassName()));
+            }
+        }
+        return allClasses;
+    }
+
+    private Class<?> classForName(final String className) throws MojoExecutionException {
+        try {
+            return Class.forName(className);
+        } catch (final ClassNotFoundException e) {
+            throw new MojoExecutionException(e);
+        }
+    }
+
+    private Set<Class<?>> filterClasses(final Set<Class<?>> classes) {
+        final var buildableClasses = builderMetadataService.filterOutNonBuildableClasses(classes);
+        final var filteredClasses = builderMetadataService.filterOutConfiguredExcludes(buildableClasses);
         if (getLog().isDebugEnabled()) {
-            getLog().debug("The following classes can be built:");
-            buildableClasses.forEach(c -> getLog().debug("- " + c.getName()));
-            final var nonBuildableClasses = Sets.difference(allClasses, buildableClasses);
+            getLog().debug("Builders will be generated for the following classes:");
+            filteredClasses.forEach(c -> getLog().debug("- " + c.getName()));
+            final var nonBuildableClasses = Sets.difference(classes, buildableClasses);
             getLog().debug("The following classes cannot be built:");
             nonBuildableClasses.forEach(c -> getLog().debug("- " + c.getName()));
+            final var excludedClasses = Sets.difference(buildableClasses, filteredClasses);
+            getLog().debug("The following classes have been configured to be excluded:");
+            excludedClasses.forEach(c -> getLog().debug("- " + c.getName()));
         }
-        getLog().info("Found " + buildableClasses.size() + " buildable classes.");
-        return buildableClasses;
+        return filteredClasses;
     }
 
     private void setDefaultTargetDirectoryIfNecessary() {

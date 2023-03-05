@@ -30,8 +30,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable
-                    </packageToScan>
+                    <includes>
+                        <include>
+                            <packageName>
+                                com.github.tobi.laa.reflective.fluent.builders.test.models.unbuiladble
+                            </packageName>
+                        </include>
+                    </includes>
                     <target>\${project.build.directory}/generated-sources/builders</target>
                 </configuration>
                 <dependencies>

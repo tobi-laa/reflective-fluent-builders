@@ -30,7 +30,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageToScan>com.github.tobi.laa.reflective.fluent.builders.test.models</packageToScan>
+                    <includes>
+                        <include>
+                            <packageName>
+                                com.github.tobi.laa.reflective.fluent.builders.test.models
+                            </packageName>
+                        </include>
+                    </includes>
                     <target>${project.basedir}/${it.resources.directory}/expected-builders</target>
                     <addCompileSourceRoot>false</addCompileSourceRoot>
                     <getAndAddEnabled>true</getAndAddEnabled>
