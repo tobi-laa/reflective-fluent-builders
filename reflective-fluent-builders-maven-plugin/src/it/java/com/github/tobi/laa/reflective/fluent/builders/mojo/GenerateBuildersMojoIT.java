@@ -216,7 +216,7 @@ class GenerateBuildersMojoIT {
                 .hasTarget() //
                 .satisfies(
                         containsExpectedBuilder(
-                                EXPECTED_BUILDERS_ROOT_DIR.resolve(SimpleClass.class.getName().replace(".", FileSystems.getDefault().getSeparator())),
+                                EXPECTED_BUILDERS_ROOT_DIR.resolve(SimpleClass.class.getName().replace(".", FileSystems.getDefault().getSeparator()) + ".java"),
                                 false));
         assertThat(result) //
                 .out() //
