@@ -50,6 +50,10 @@
         <guice.version>5.1.0</guice.version>
         <sisu.version>0.3.5</sisu.version>
         <jakarta.xml.bind-api.version>4.0.0</jakarta.xml.bind-api.version>
+        <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+        <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
+        <jakarta.el-api.version>5.0.1</jakarta.el-api.version>
+        <jakarta.el.version>5.0.0-M1</jakarta.el.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <junit-pioneer.version>2.0.0</junit-pioneer.version>
@@ -131,6 +135,26 @@
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta.xml.bind-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>${jakarta.el-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.el</artifactId>
+                <version>${jakarta.el.version}</version>
             </dependency>
             <!-- testing dependencies -->
             <dependency>
