@@ -2,7 +2,6 @@ package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.soebes.itf.jupiter.extension.MavenDebug;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
-import com.soebes.itf.jupiter.extension.MavenRepository;
 import com.soebes.itf.jupiter.extension.MavenTest;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import lombok.SneakyThrows;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import java.nio.file.Files;
 
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.EXPECTED_BUILDERS_ROOT_DIR;
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.MAVEN_SHARED_LOCAL_CACHE;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
 /**
@@ -22,7 +20,6 @@ import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
  */
 @SuppressWarnings("all")
 @MavenJupiterExtension
-@MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
 class GenerateExpectedBuilders {
 
     @BeforeAll

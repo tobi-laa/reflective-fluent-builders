@@ -3,7 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
-import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.Nested;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -165,9 +165,9 @@ class ClassServiceImplTest {
                                 SimpleClassNoDefaultConstructor.class, //
                                 SimpleClassNoSetPrefix.class)),
                 Arguments.of(
-                        Nested.class.getPackageName(), //
+                        NestedMarker.class.getPackageName(), //
                         Set.of( //
-                                Nested.class, //
+                                NestedMarker.class, //
                                 TopLevelClass.class, //
                                 TopLevelClass.NestedPublicLevelOne.class, //
                                 Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne"), //

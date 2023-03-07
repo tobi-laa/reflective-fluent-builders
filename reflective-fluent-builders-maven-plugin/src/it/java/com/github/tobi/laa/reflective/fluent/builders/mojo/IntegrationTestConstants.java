@@ -27,5 +27,5 @@ class IntegrationTestConstants {
      *
      * @see com.soebes.itf.jupiter.extension.MavenRepository#value()
      */
-    static final String MAVEN_SHARED_LOCAL_CACHE = "../sharedMavenCache/.m2/repository";
+    static final String MAVEN_SHARED_LOCAL_CACHE = "../../sharedMavenCache/.m2/repository";
 }
