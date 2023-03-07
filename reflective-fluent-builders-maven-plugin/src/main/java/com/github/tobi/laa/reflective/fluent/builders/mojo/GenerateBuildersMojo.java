@@ -129,7 +129,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         standardBuildersProperties.setGetterPrefix(getterPrefix);
         standardBuildersProperties.setGetAndAddEnabled(getAndAddEnabled);
         if (excludes != null) {
-            standardBuildersProperties.setExcludes(hierarchyCollectionExcludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
+            standardBuildersProperties.setExcludes(excludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
         }
         if (hierarchyCollectionExcludes != null) {
             standardBuildersProperties.getHierarchyCollection().setExcludes(hierarchyCollectionExcludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
