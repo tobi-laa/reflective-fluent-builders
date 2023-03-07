@@ -11,13 +11,10 @@ import org.assertj.core.description.TextDescription;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.EXPECTED_BUILDERS_ROOT_DIR;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.EXPECTED_DEFAULT_BUILDERS_ROOT_DIR;
 
 /**
  * <p>
@@ -50,40 +47,68 @@ class ContainsBuildersCondition extends Condition<MavenProjectResult> {
         this.buildersInTestSources = buildersInTestSources;
     }
 
-    @SneakyThrows
     public boolean matches(final MavenProjectResult result) {
         final Path actualBuildersDir = actualBuildersDir(result);
         final List<Path> expectedBuilderFiles = expectedBuilderFiles();
-        final List<Description> descriptions = new ArrayList<>();
-        boolean matches = true;
-        for (final Path expectedBuilderFile : expectedBuilderFiles) {
-            final Path actualBuilderFile = actualBuildersDir.resolve(EXPECTED_BUILDERS_ROOT_DIR.relativize(expectedBuilderFile));
-            if (Files.notExists(actualBuilderFile)) {
-                matches = false;
-                descriptions.add(new TextDescription("builder file %s, but it does not exist.", actualBuilderFile));
-            } else {
-                final List<AbstractDelta<String>> deltas =
-                        DiffUtils.diff(Files.readAllLines(expectedBuilderFile), //
-                                        Files.readAllLines(actualBuilderFile)) //
-                                .getDeltas();
-                if (!deltas.isEmpty()) {
-                    matches = false;
-                    descriptions.add(
-                            new JoinDescription(
-                                    String.format(
-                                            "builder file %s that matches expected builder file %s, but the following differences were found:",
-                                            actualBuilderFile,
-                                            expectedBuilderFile),
-                                    "",
-                                    deltas.stream() //
-                                            .map(AbstractDelta::toString) //
-                                            .map(TextDescription::new) //
-                                            .collect(Collectors.toList())));
-                }
-            }
-        }
+        final List<Description> descriptions = checkBuildersAndGenerateFailMessages(actualBuildersDir, expectedBuilderFiles);
         describedAs(new JoinDescription("", "", descriptions));
-        return matches;
+        return descriptions.isEmpty();
+    }
+
+    private List<Description> checkBuildersAndGenerateFailMessages( //
+                                                                    final Path actualBuildersDir, //
+                                                                    final List<Path> expectedBuilderFiles) {
+        final List<Description> descriptions = new ArrayList<>();
+        for (final Path expectedBuilderFile : expectedBuilderFiles) {
+            checkBuilderAndGenerateFailMessage(actualBuildersDir, expectedBuilderFile)
+                    .ifPresent(descriptions::add);
+        }
+        return descriptions;
+    }
+
+    private Optional<Description> checkBuilderAndGenerateFailMessage( //
+                                                                      final Path actualBuildersDir, //
+                                                                      final Path expectedBuilderFile) {
+
+        final Path actualBuilderFile = resolveActualBuilderFile(actualBuildersDir, expectedBuilderFile);
+        return checkBuilderExistsAndGenerateFailMessage(actualBuilderFile) //
+                .or(() -> compareBuildersAndGenerateFailMessage(actualBuilderFile, expectedBuilderFile));
+    }
+
+    private Path resolveActualBuilderFile(final Path actualBuildersDir, final Path expectedBuilderFile) {
+        return actualBuildersDir.resolve(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR.relativize(expectedBuilderFile));
+    }
+
+    private Optional<Description> checkBuilderExistsAndGenerateFailMessage(final Path actualBuilderFile) {
+        if (Files.notExists(actualBuilderFile)) {
+            return Optional.of(new TextDescription("builder file %s, but it does not exist.", actualBuilderFile));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @SneakyThrows
+    private Optional<Description> compareBuildersAndGenerateFailMessage( //
+                                                                         final Path actualBuilderFile, //
+                                                                         final Path expectedBuilderFile) {
+        final List<AbstractDelta<String>> deltas =
+                DiffUtils.diff(Files.readAllLines(expectedBuilderFile), //
+                                Files.readAllLines(actualBuilderFile)) //
+                        .getDeltas();
+        if (!deltas.isEmpty()) {
+            return Optional.of(new JoinDescription(
+                    String.format(
+                            "builder file %s that matches expected builder file %s, but the following differences were found:",
+                            actualBuilderFile,
+                            expectedBuilderFile),
+                    "",
+                    deltas.stream() //
+                            .map(AbstractDelta::toString) //
+                            .map(TextDescription::new) //
+                            .collect(Collectors.toList())));
+        } else {
+            return Optional.empty();
+        }
     }
 
     private Path actualBuildersDir(final MavenProjectResult result) {
@@ -96,10 +121,10 @@ class ContainsBuildersCondition extends Condition<MavenProjectResult> {
 
     private List<Path> expectedBuilderFiles() {
         if (builderPackage != null) {
-            return fileHelper.findJavaFiles(EXPECTED_BUILDERS_ROOT_DIR, builderPackage);
+            return fileHelper.findJavaFiles(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR, builderPackage);
         } else {
             return Collections.singletonList(
-                    fileHelper.resolveJavaFile(EXPECTED_BUILDERS_ROOT_DIR, builderClass));
+                    fileHelper.resolveJavaFile(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR, builderClass));
         }
     }
 
