@@ -1,12 +1,12 @@
-package com.github.tobi.laa.reflective.fluent.builders.generator.impl;
+package com.github.tobi.laa.reflective.fluent.builders.generator.api;
 
-import com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
 import com.google.inject.Guice;
+import lombok.SneakyThrows;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
 import org.eclipse.sisu.wire.WireModule;
@@ -22,12 +22,13 @@ class JavaFileGeneratorIT {
     private JavaFileGenerator javaFileGenerator;
 
     @BeforeEach
+    @SneakyThrows
     void init() {
         final var classloader = getClass().getClassLoader();
         final var injector = Guice.createInjector(
                 new WireModule(
                         new SpaceModule(new URLClassSpace(classloader))));
-        javaFileGenerator = injector.getInstance(JavaFileGeneratorImpl.class);
+        javaFileGenerator = (JavaFileGenerator) injector.getInstance(Class.forName("com.github.tobi.laa.reflective.fluent.builders.generator.impl.JavaFileGeneratorImpl"));
     }
 
     @Test
