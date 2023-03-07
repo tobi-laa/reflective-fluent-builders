@@ -48,6 +48,7 @@
                             <classRegex>SimpleClassNoSetPrefix</classRegex>
                         </exclude>
                     </excludes>
+                    <hierarchyCollection/>
                     <target>\${project.build.directory}/generated-sources/builders</target>
                 </configuration>
                 <dependencies>
