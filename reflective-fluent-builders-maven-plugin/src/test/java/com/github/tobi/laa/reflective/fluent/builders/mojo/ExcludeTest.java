@@ -35,8 +35,9 @@ class ExcludeTest {
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert
-        assertThat(predicate).accepts(SimpleClass.class, SimpleClassNoSetPrefix.class);
-        assertThat(predicate).rejects(ClassWithCollections.class);
+        assertThat(predicate)
+                .accepts(SimpleClass.class, SimpleClassNoSetPrefix.class)
+                .rejects(ClassWithCollections.class);
     }
 
     @Test
@@ -46,8 +47,9 @@ class ExcludeTest {
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert
-        assertThat(predicate).accepts(SimpleClass.class, SimpleClassNoSetPrefix.class, ClassWithCollections.class);
-        assertThat(predicate).rejects(Pet.class);
+        assertThat(predicate)
+                .accepts(SimpleClass.class, SimpleClassNoSetPrefix.class, ClassWithCollections.class)
+                .rejects(Pet.class);
     }
 
     @Test
@@ -57,8 +59,9 @@ class ExcludeTest {
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert
-        assertThat(predicate).accepts(SimpleClass.class);
-        assertThat(predicate).rejects(SimpleClassNoSetPrefix.class, ClassWithCollections.class, Pet.class);
+        assertThat(predicate)
+                .accepts(SimpleClass.class)
+                .rejects(SimpleClassNoSetPrefix.class, ClassWithCollections.class, Pet.class);
     }
 
     @Test
@@ -68,7 +71,8 @@ class ExcludeTest {
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert
-        assertThat(predicate).accepts(SimpleClass.class, SimpleClassNoSetPrefix.class, ClassWithCollections.class);
-        assertThat(predicate).rejects(Pet.class, ClassWithGenerics.class);
+        assertThat(predicate)
+                .accepts(SimpleClass.class, SimpleClassNoSetPrefix.class, ClassWithCollections.class)
+                .rejects(Pet.class, ClassWithGenerics.class);
     }
 }
