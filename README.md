@@ -3,7 +3,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tobias-laa_reflective-fluent-builders&metric=coverage)](https://sonarcloud.io/summary/new_code?id=tobias-laa_reflective-fluent-builders)
 
 # Reflective Fluent Builders
-This project provides a generator and a maven plugin for generating fluent builders for existing classes with the help reflection.
+This project provides a generator and a maven plugin for generating fluent builders for existing classes with the help of reflection.
 This can be useful in cases where it is not possible (or very hard) to change the sources of said classes to generate builders directly.
 
 The artifact of the corresponding maven plugin is `reflective-fluent-builders-maven-plugin`.
