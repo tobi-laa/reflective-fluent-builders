@@ -1,0 +1,9 @@
+package com.github.tobi.laa.reflective.fluent.builders.test.models.nested;
+
+/**
+ * <p>
+ * Marker interface for retrieving the package.
+ * </p>
+ */
+public interface NestedMarker {
+}

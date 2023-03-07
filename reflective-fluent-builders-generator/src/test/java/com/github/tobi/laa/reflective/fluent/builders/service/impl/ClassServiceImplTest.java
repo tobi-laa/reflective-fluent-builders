@@ -3,7 +3,7 @@ package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
-import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.Nested;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
@@ -62,11 +63,11 @@ class ClassServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Class<?>> excludes, final Set<Class<?>> expected) {
+    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final Set<Class<?>> expected) {
         // Arrange
         final var hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
         when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
-        when(hierarchyCollection.getClassesToExclude()).thenReturn(excludes);
+        when(hierarchyCollection.getExcludes()).thenReturn(excludes);
         // Act
         final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
@@ -87,7 +88,7 @@ class ClassServiceImplTest {
                                 Object.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Set.of(Object.class), //
+                        Set.<Predicate<Class<?>>>of(Object.class::equals), //
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -96,7 +97,7 @@ class ClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Set.of(Object.class, AnInterface.class), //
+                        Set.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -104,7 +105,7 @@ class ClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Set.of(FirstSuperClass.class), //
+                        Set.<Predicate<Class<?>>>of(FirstSuperClass.class::equals), //
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
@@ -164,9 +165,9 @@ class ClassServiceImplTest {
                                 SimpleClassNoDefaultConstructor.class, //
                                 SimpleClassNoSetPrefix.class)),
                 Arguments.of(
-                        Nested.class.getPackageName(), //
+                        NestedMarker.class.getPackageName(), //
                         Set.of( //
-                                Nested.class, //
+                                NestedMarker.class, //
                                 TopLevelClass.class, //
                                 TopLevelClass.NestedPublicLevelOne.class, //
                                 Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne"), //

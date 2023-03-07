@@ -115,6 +115,16 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Set<Class<?>> filterOutConfiguredExcludes(final Set<Class<?>> classes) {
+        Objects.requireNonNull(classes);
+        return classes.stream().filter(not(this::exclude)).collect(Collectors.toSet());
+    }
+
+    private boolean exclude(final Class<?> clazz) {
+        return properties.getExcludes().stream().anyMatch(p -> p.test(clazz));
+    }
+
     private boolean isAbstract(final Class<?> clazz) {
         return Modifier.isAbstract(clazz.getModifiers());
     }
