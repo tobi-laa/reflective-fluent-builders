@@ -13,29 +13,25 @@ import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarc
 import com.github.tobi.laa.reflective.fluent.builders.test.models.visibility.Visibility;
 import com.soebes.itf.jupiter.extension.MavenDebug;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
+import com.soebes.itf.jupiter.extension.MavenRepository;
 import com.soebes.itf.jupiter.extension.MavenTest;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
-import com.soebes.itf.jupiter.maven.MavenProjectResult;
-import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
 
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.nio.file.Paths;
 
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.MAVEN_SHARED_LOCAL_CACHE;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetContainsExpectedBuildersCondition.expectedBuilder;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetContainsExpectedBuildersCondition.expectedBuilders;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetHasDirCondition.emptyDirInTarget;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetHasDirCondition.nonEmptyDirInTarget;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
 @MavenJupiterExtension
+@MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
 class GenerateBuildersMojoIT {
 
-    static final Path EXPECTED_BUILDERS_ROOT_DIR = Paths.get("src", "it", "resources", "expected-builders");
+    private final ProjectResultHelper projectResultHelper = new ProjectResultHelper();
 
     @MavenTest
     void testGenerationForPackageComplex(final MavenExecutionResult result) {
@@ -43,7 +39,7 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(containsExpectedBuilders(Complex.class.getPackage(), false));
+                .has(expectedBuilders(Complex.class.getPackage(), false));
     }
 
     @MavenTest
@@ -52,7 +48,7 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(containsExpectedBuilders(Full.class.getPackage(), false));
+                .has(expectedBuilders(Full.class.getPackage(), false));
     }
 
     @MavenTest
@@ -61,7 +57,7 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(containsExpectedBuilders(Simple.class.getPackage(), false));
+                .has(expectedBuilders(Simple.class.getPackage(), false));
     }
 
     @MavenTest
@@ -70,7 +66,7 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(hasEmptyDirectory(Paths.get("generated-sources", "builders")));
+                .has(emptyDirInTarget(Paths.get("generated-sources", "builders")));
     }
 
     @MavenTest
@@ -79,7 +75,7 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(containsExpectedBuilders(Visibility.class.getPackage(), false));
+                .has(expectedBuilders(Visibility.class.getPackage(), false));
     }
 
     @MavenTest
@@ -88,7 +84,7 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(containsExpectedBuilders(Nested.class.getPackage(), false));
+                .has(expectedBuilders(Nested.class.getPackage(), false));
     }
 
     @MavenTest
@@ -97,14 +93,14 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(containsExpectedBuilders(Jaxb.class.getPackage(), false));
+                .has(expectedBuilders(Jaxb.class.getPackage(), false));
     }
 
     @MavenTest
     @MavenDebug
     void testGenerationForPackageSimpleWithDebugLogging(final MavenExecutionResult result) {
         assertThat(result).isSuccessful();
-        final var targetDirectory = getGeneratedBuildersDirectory(result.getMavenProjectResult(), false);
+        final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
         assertThat(result) //
                 .out() //
                 .info() //
@@ -167,7 +163,7 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(hasEmptyDirectory(Paths.get("classes")));
+                .has(emptyDirInTarget(Paths.get("classes")));
     }
 
     @MavenTest
@@ -177,9 +173,9 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(hasEmptyDirectory(Paths.get("classes"))) //
-                .satisfies(hasNonEmptyDirectory(Paths.get("test-classes"))) //
-                .satisfies(containsExpectedBuilders(Simple.class.getPackage(), true));
+                .has(emptyDirInTarget(Paths.get("classes"))) //
+                .has(nonEmptyDirInTarget(Paths.get("test-classes"))) //
+                .has(expectedBuilders(Simple.class.getPackage(), true));
     }
 
     @MavenTest
@@ -214,13 +210,10 @@ class GenerateBuildersMojoIT {
                 .isSuccessful() //
                 .project() //
                 .hasTarget() //
-                .satisfies(
-                        containsExpectedBuilder(
-                                EXPECTED_BUILDERS_ROOT_DIR.resolve(SimpleClass.class.getName().replace(".", FileSystems.getDefault().getSeparator()) + ".java"),
-                                false));
+                .has(expectedBuilder(SimpleClass.class.getName() + "Builder", false));
         assertThat(result) //
                 .out() //
-                .debug() //
+                .info() //
                 .contains("Add class " + SimpleClass.class.getName() + '.');
     }
 
@@ -236,85 +229,5 @@ class GenerateBuildersMojoIT {
                                 "generate-builders (default) on project", //
                                 ClassNotFoundException.class.getName(), //
                                 "does.not.exist -> [Help 1]"));
-    }
-
-    private Consumer<MavenProjectResult> containsExpectedBuilders(final Package buildersPackage, final boolean test) {
-        return result -> {
-            for (final Path expectedBuilderRelativeToRoot : expectedBuildersForPackageRelativeToRoot(buildersPackage)) {
-                containsExpectedBuilder(expectedBuilderRelativeToRoot, test).accept(result);
-            }
-        };
-    }
-
-    private Consumer<MavenProjectResult> containsExpectedBuilder(final Path expectedBuilderRelativeToRoot, final boolean test) {
-        return result -> {
-            final var actualBuilder = getGeneratedBuildersDirectory(result, test).resolve(expectedBuilderRelativeToRoot);
-            final var expectedBuilder = EXPECTED_BUILDERS_ROOT_DIR.resolve(expectedBuilderRelativeToRoot);
-            Assertions.assertThat(actualBuilder) //
-                    .exists() //
-                    .content() //
-                    .isEqualToIgnoringNewLines(contentOf(expectedBuilder));
-        };
-    }
-
-    @SneakyThrows
-    private String contentOf(final Path file) {
-        return Files.readString(file);
-    }
-
-    @SneakyThrows
-    private List<Path> expectedBuildersForPackageRelativeToRoot(final Package pack) {
-        final var expectedBuildersDir = EXPECTED_BUILDERS_ROOT_DIR.resolve(
-                pack.getName().replace(".", FileSystems.getDefault().getSeparator()));
-        return findFilesRecursively(expectedBuildersDir).stream() //
-                .map(EXPECTED_BUILDERS_ROOT_DIR::relativize) //
-                .collect(Collectors.toList());
-    }
-
-    private Condition<MavenProjectResult> hasEmptyDirectory(final Path subdirectory) {
-        return new Condition<>(
-                hasDirectoryWithFiles(subdirectory, List::isEmpty),
-                "Expected subdirectory %s in target base directory to be empty.",
-                subdirectory
-        );
-    }
-
-    private Condition<MavenProjectResult> hasNonEmptyDirectory(final Path subdirectory) {
-        return new Condition<>(
-                hasDirectoryWithFiles(subdirectory, Predicate.not(List::isEmpty)),
-                "Expected subdirectory %s in target base directory to not be empty.",
-                subdirectory
-        );
-    }
-
-    private Predicate<MavenProjectResult> hasDirectoryWithFiles(final Path subdirectory, final Predicate<List<Path>> filesPredicate) {
-        return result -> {
-            final var directory = result.getTargetProjectDirectory().resolve("target").resolve(subdirectory);
-            return filesPredicate.test(findFilesRecursively(directory));
-        };
-    }
-
-    @SneakyThrows
-    private List<Path> findFilesRecursively(final Path directory) {
-        if (Files.notExists(directory)) {
-            return Collections.emptyList();
-        } else {
-            final var files = new ArrayList<Path>();
-            Files.walkFileTree(directory, new SimpleFileVisitor<>() {
-                @Override
-                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                    files.add(file);
-                    return super.visitFile(file, attrs);
-                }
-            });
-            return files;
-        }
-    }
-
-    private Path getGeneratedBuildersDirectory(final MavenProjectResult result, final boolean test) {
-        return result.getTargetProjectDirectory() //
-                .resolve("target") //
-                .resolve(test ? "generated-test-sources" : "generated-sources") //
-                .resolve("builders");
     }
 }
