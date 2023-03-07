@@ -1,6 +1,7 @@
 package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.full.Full;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.Jaxb;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
@@ -21,12 +22,12 @@ import org.junit.jupiter.api.Nested;
 
 import java.nio.file.Paths;
 
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.HasNoBuilderCondition.noBuilder;
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.MAVEN_SHARED_LOCAL_CACHE;
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.ContainsBuildersCondition.expectedBuilder;
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.ContainsBuildersCondition.expectedBuilders;
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.HasDirCondition.emptyDirInTarget;
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.HasDirCondition.nonEmptyDirInTarget;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.HasNoBuilderCondition.noBuilder;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.MAVEN_SHARED_LOCAL_CACHE;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
 @MavenJupiterExtension
@@ -192,6 +193,17 @@ class GenerateBuildersMojoIT {
                     .has(noBuilder(SimpleClassNoSetPrefix.class.getName() + "Builder")) //
                     .has(noBuilder(Child.class.getName() + "Builder")) //
                     .has(noBuilder(Parent.class.getName() + "Builder"));
+        }
+
+        @MavenTest
+        void packageComplexCustomHierarchyCollectionExcludes(final MavenExecutionResult result) {
+            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "default-config");
+            final var builderClass = ClassWithHierarchy.class.getName() + "Builder";
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(expectedBuilder(builderClass, false, expectedBuildersRootDir));
         }
     }
 

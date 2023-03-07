@@ -33,18 +33,28 @@ class ContainsBuildersCondition extends Condition<MavenProjectResult> {
 
     private final boolean buildersInTestSources;
 
-    private ContainsBuildersCondition(final String builderClass, final boolean buildersInTestSources) {
+    private final Path expectedBuildersRootDir;
+
+    private ContainsBuildersCondition( //
+                                       final String builderClass, //
+                                       final boolean buildersInTestSources, //
+                                       final Path expectedBuildersRootDir) {
         super();
         this.builderClass = Objects.requireNonNull(builderClass);
         this.builderPackage = null;
         this.buildersInTestSources = buildersInTestSources;
+        this.expectedBuildersRootDir = Objects.requireNonNull(expectedBuildersRootDir);
     }
 
-    private ContainsBuildersCondition(final Package builderPackage, final boolean buildersInTestSources) {
+    private ContainsBuildersCondition( //
+                                       final Package builderPackage, //
+                                       final boolean buildersInTestSources, //
+                                       final Path expectedBuildersRootDir) {
         super();
         this.builderClass = null;
         this.builderPackage = Objects.requireNonNull(builderPackage);
         this.buildersInTestSources = buildersInTestSources;
+        this.expectedBuildersRootDir = Objects.requireNonNull(expectedBuildersRootDir);
     }
 
     public boolean matches(final MavenProjectResult result) {
@@ -76,7 +86,7 @@ class ContainsBuildersCondition extends Condition<MavenProjectResult> {
     }
 
     private Path resolveActualBuilderFile(final Path actualBuildersDir, final Path expectedBuilderFile) {
-        return actualBuildersDir.resolve(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR.relativize(expectedBuilderFile));
+        return actualBuildersDir.resolve(expectedBuildersRootDir.relativize(expectedBuilderFile));
     }
 
     private Optional<Description> checkBuilderExistsAndGenerateFailMessage(final Path actualBuilderFile) {
@@ -121,19 +131,32 @@ class ContainsBuildersCondition extends Condition<MavenProjectResult> {
 
     private List<Path> expectedBuilderFiles() {
         if (builderPackage != null) {
-            return fileHelper.findJavaFiles(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR, builderPackage);
+            return fileHelper.findJavaFiles(expectedBuildersRootDir, builderPackage);
         } else {
             return Collections.singletonList(
-                    fileHelper.resolveJavaFile(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR, builderClass));
+                    fileHelper.resolveJavaFile(expectedBuildersRootDir, builderClass));
         }
     }
 
+    static ContainsBuildersCondition expectedBuilder( //
+                                                      final String builderClass, //
+                                                      final boolean buildersInTestSources, //
+                                                      final Path expectedBuildersRootDir) {
+        return new ContainsBuildersCondition(builderClass, buildersInTestSources, expectedBuildersRootDir);
+    }
+
     static ContainsBuildersCondition expectedBuilder(final String builderClass, final boolean buildersInTestSources) {
-        return new ContainsBuildersCondition(builderClass, buildersInTestSources);
+        return expectedBuilder(builderClass, buildersInTestSources, EXPECTED_DEFAULT_BUILDERS_ROOT_DIR);
+    }
+
+    static ContainsBuildersCondition expectedBuilders( //
+                                                       final Package builderPackage, //
+                                                       final boolean buildersInTestSources, //
+                                                       final Path expectedBuildersRootDir) {
+        return new ContainsBuildersCondition(builderPackage, buildersInTestSources, expectedBuildersRootDir);
     }
 
     static ContainsBuildersCondition expectedBuilders(final Package builderPackage, final boolean buildersInTestSources) {
-        return new ContainsBuildersCondition(builderPackage, buildersInTestSources);
-
+        return expectedBuilders(builderPackage, buildersInTestSources, EXPECTED_DEFAULT_BUILDERS_ROOT_DIR);
     }
 }
