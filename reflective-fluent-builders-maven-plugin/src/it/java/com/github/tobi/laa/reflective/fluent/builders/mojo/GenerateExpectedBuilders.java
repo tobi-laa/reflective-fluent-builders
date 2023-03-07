@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 import java.nio.file.Files;
 
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.EXPECTED_BUILDERS_ROOT_DIR;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.EXPECTED_DEFAULT_BUILDERS_ROOT_DIR;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
 /**
@@ -25,8 +25,8 @@ class GenerateExpectedBuilders {
     @BeforeAll
     @SneakyThrows
     static void deleteExpectedBuilders() {
-        if (Files.exists(EXPECTED_BUILDERS_ROOT_DIR)) {
-            Files.walkFileTree(EXPECTED_BUILDERS_ROOT_DIR, new DeletingFileVisitor());
+        if (Files.exists(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR)) {
+            Files.walkFileTree(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR, new DeletingFileVisitor());
         }
     }
 

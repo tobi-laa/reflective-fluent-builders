@@ -14,10 +14,11 @@ class IntegrationTestConstants {
     /**
      * <p>
      * The directory containing the expected builder Java files, i.e. the files against which to compare the results
-     * when doing assertions in integration tests.
+     * when doing assertions in integration tests. These are builders that are generated with the default configuration,
+     * i.e. without custom excludes, getter/setter prefixes and so forth.
      * </p>
      */
-    static final Path EXPECTED_BUILDERS_ROOT_DIR = Paths.get("src", "it", "resources", "expected-builders");
+    static final Path EXPECTED_DEFAULT_BUILDERS_ROOT_DIR = Paths.get("src", "it", "resources", "expected-builders", "default-config");
 
     /**
      * <p>
