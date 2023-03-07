@@ -24,7 +24,7 @@ import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTes
  * For checking that all the expected builders (i.e. the java files) are contained within the project target dir.
  * </p>
  */
-class TargetContainsExpectedBuildersCondition extends Condition<MavenProjectResult> {
+class ContainsBuildersCondition extends Condition<MavenProjectResult> {
 
     private final FileHelper fileHelper = new FileHelper();
 
@@ -36,14 +36,14 @@ class TargetContainsExpectedBuildersCondition extends Condition<MavenProjectResu
 
     private final boolean buildersInTestSources;
 
-    private TargetContainsExpectedBuildersCondition(final String builderClass, final boolean buildersInTestSources) {
+    private ContainsBuildersCondition(final String builderClass, final boolean buildersInTestSources) {
         super();
         this.builderClass = Objects.requireNonNull(builderClass);
         this.builderPackage = null;
         this.buildersInTestSources = buildersInTestSources;
     }
 
-    private TargetContainsExpectedBuildersCondition(final Package builderPackage, final boolean buildersInTestSources) {
+    private ContainsBuildersCondition(final Package builderPackage, final boolean buildersInTestSources) {
         super();
         this.builderClass = null;
         this.builderPackage = Objects.requireNonNull(builderPackage);
@@ -103,12 +103,12 @@ class TargetContainsExpectedBuildersCondition extends Condition<MavenProjectResu
         }
     }
 
-    static TargetContainsExpectedBuildersCondition expectedBuilder(final String builderClass, final boolean buildersInTestSources) {
-        return new TargetContainsExpectedBuildersCondition(builderClass, buildersInTestSources);
+    static ContainsBuildersCondition expectedBuilder(final String builderClass, final boolean buildersInTestSources) {
+        return new ContainsBuildersCondition(builderClass, buildersInTestSources);
     }
 
-    static TargetContainsExpectedBuildersCondition expectedBuilders(final Package builderPackage, final boolean buildersInTestSources) {
-        return new TargetContainsExpectedBuildersCondition(builderPackage, buildersInTestSources);
+    static ContainsBuildersCondition expectedBuilders(final Package builderPackage, final boolean buildersInTestSources) {
+        return new ContainsBuildersCondition(builderPackage, buildersInTestSources);
 
     }
 }

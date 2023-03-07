@@ -14,7 +14,7 @@ import java.util.function.Predicate;
  * For performing assertions on project target dir that are easier to read.
  * </p>
  */
-class TargetHasDirCondition extends Condition<MavenProjectResult> {
+class HasDirCondition extends Condition<MavenProjectResult> {
 
     private final FileHelper fileHelper = new FileHelper();
 
@@ -22,11 +22,11 @@ class TargetHasDirCondition extends Condition<MavenProjectResult> {
 
     private final Predicate<List<Path>> predicate;
 
-    private TargetHasDirCondition( //
-                                   final Path dir, //
-                                   final Predicate<List<Path>> predicate, //
-                                   final String description, //
-                                   final Object... args) {
+    private HasDirCondition( //
+                             final Path dir, //
+                             final Predicate<List<Path>> predicate, //
+                             final String description, //
+                             final Object... args) {
         super(new TextDescription(description, args));
         this.dir = Objects.requireNonNull(dir);
         this.predicate = Objects.requireNonNull(predicate);
@@ -38,7 +38,7 @@ class TargetHasDirCondition extends Condition<MavenProjectResult> {
     }
 
     static Condition<MavenProjectResult> emptyDirInTarget(final Path dir) {
-        return new TargetHasDirCondition(
+        return new HasDirCondition(
                 dir,
                 List::isEmpty,
                 "empty subdirectory %s in target base directory",
@@ -46,7 +46,7 @@ class TargetHasDirCondition extends Condition<MavenProjectResult> {
     }
 
     static Condition<MavenProjectResult> nonEmptyDirInTarget(final Path dir) {
-        return new TargetHasDirCondition(
+        return new HasDirCondition(
                 dir,
                 Predicate.not(List::isEmpty),
                 "non-empty subdirectory %s in target base directory",

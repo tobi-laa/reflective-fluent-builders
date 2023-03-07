@@ -23,10 +23,10 @@ import java.nio.file.Paths;
 
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.HasNoBuilderCondition.noBuilder;
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.MAVEN_SHARED_LOCAL_CACHE;
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetContainsExpectedBuildersCondition.expectedBuilder;
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetContainsExpectedBuildersCondition.expectedBuilders;
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetHasDirCondition.emptyDirInTarget;
-import static com.github.tobi.laa.reflective.fluent.builders.mojo.TargetHasDirCondition.nonEmptyDirInTarget;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.ContainsBuildersCondition.expectedBuilder;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.ContainsBuildersCondition.expectedBuilders;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.HasDirCondition.emptyDirInTarget;
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.HasDirCondition.nonEmptyDirInTarget;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
 @MavenJupiterExtension
