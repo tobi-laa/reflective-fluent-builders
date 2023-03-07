@@ -197,13 +197,98 @@ class GenerateBuildersMojoIT {
 
         @MavenTest
         void packageComplexCustomHierarchyCollectionExcludes(final MavenExecutionResult result) {
-            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "default-config");
+            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "custom-hierarchy-collection-excludes");
             final var builderClass = ClassWithHierarchy.class.getName() + "Builder";
             assertThat(result) //
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
                     .has(expectedBuilder(builderClass, false, expectedBuildersRootDir));
+        }
+    }
+
+    @Nested
+    @MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
+    class WithCustomInvalidConfig {
+
+        @MavenTest
+        void noIncludes(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .anySatisfy(s -> Assertions.assertThat(s) //
+                            .containsSubsequence( //
+                                    "Failed to execute goal com.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
+                                    "generate-builders (default) on project", //
+                                    "The parameters 'includes' for goal", //
+                                    "are missing or invalid -> [Help 1]"));
+        }
+
+        @MavenTest
+        void includeNoFieldSpecified(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "Invalid <include> tag. Exactly one of the fields packageName or className needs to be initialized.", //
+                            "-> [Help 1]");
+        }
+
+        @MavenTest
+        void includeAllFieldsSpecified(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "Invalid <include> tag. Exactly one of the fields packageName or className needs to be initialized.", //
+                            "-> [Help 1]");
+        }
+
+        @MavenTest
+        void excludeNoFieldSpecified(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "Invalid <exclude> tag. Exactly one of the fields packageName, packageRegex, className or classRegex needs to be initialized.", //
+                            "-> [Help 1]");
+        }
+
+        @MavenTest
+        void excludeTwoFieldsSpecified(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "Invalid <exclude> tag. Exactly one of the fields packageName, packageRegex, className or classRegex needs to be initialized.", //
+                            "-> [Help 1]");
+        }
+
+        @MavenTest
+        void hierarchyCollectionExcludeNoFieldSpecified(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "Invalid <exclude> tag. Exactly one of the fields packageName, packageRegex, className or classRegex needs to be initialized.", //
+                            "-> [Help 1]");
+        }
+
+        @MavenTest
+        void hierarchyCollectionExcludeTwoFieldsSpecified(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "Invalid <exclude> tag. Exactly one of the fields packageName, packageRegex, className or classRegex needs to be initialized.", //
+                            "-> [Help 1]");
         }
     }
 

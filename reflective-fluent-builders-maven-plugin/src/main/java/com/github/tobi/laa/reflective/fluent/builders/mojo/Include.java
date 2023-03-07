@@ -1,10 +1,9 @@
 package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
-import jakarta.validation.Valid;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * <p>
@@ -13,11 +12,12 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
-@Valid
-public class Include {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@ValidInclude
+public class Include extends AbstractIncludeExclude {
 
-    private String packageName;
-
-    private String className;
+    Include(final String packageName, final String className) {
+        super(packageName, className);
+    }
 }

@@ -1,6 +1,5 @@
 package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
-import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,8 +17,8 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Valid
-public class Exclude extends Include {
+@ValidExclude
+public class Exclude extends AbstractIncludeExclude {
 
     private String packageRegex;
 

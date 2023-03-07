@@ -56,9 +56,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private boolean getAndAddEnabled;
 
     @Setter(onMethod_ =
-    @Parameter(name = "hierarchyCollection.excludes"))
+    @Parameter(name = "hierarchyCollection"))
     @Valid
-    private Set<Exclude> hierarchyCollectionExcludes;
+    private HierarchyCollection hierarchyCollection;
 
     @Setter(onMethod_ =
     @Parameter(required = true, name = "includes"))
@@ -131,8 +131,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
         if (excludes != null) {
             standardBuildersProperties.setExcludes(excludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
         }
-        if (hierarchyCollectionExcludes != null) {
-            standardBuildersProperties.getHierarchyCollection().setExcludes(hierarchyCollectionExcludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
+        if (hierarchyCollection != null && hierarchyCollection.getExcludes() != null) {
+            standardBuildersProperties.getHierarchyCollection().setExcludes(hierarchyCollection.getExcludes().stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
         }
         getLog().debug("Properties are: " + buildersProperties);
     }

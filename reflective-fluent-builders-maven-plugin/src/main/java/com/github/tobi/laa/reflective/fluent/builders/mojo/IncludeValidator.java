@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * Validator implementation for {@link ValidInclude}.
  * </p>
  */
-class IncludeValidator implements ConstraintValidator<ValidInclude, Include> {
+public class IncludeValidator implements ConstraintValidator<ValidInclude, Include> {
 
     @Override
     public boolean isValid(final Include include, final ConstraintValidatorContext context) {

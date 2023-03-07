@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * Validator implementation for {@link ValidExclude}.
  * </p>
  */
-class ExcludeValidator implements ConstraintValidator<ValidExclude, Exclude> {
+public class ExcludeValidator implements ConstraintValidator<ValidExclude, Exclude> {
 
     @Override
     public boolean isValid(final Exclude exclude, final ConstraintValidatorContext context) {
