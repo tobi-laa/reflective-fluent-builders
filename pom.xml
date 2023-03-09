@@ -57,7 +57,7 @@
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <junit-pioneer.version>2.0.0</junit-pioneer.version>
-        <mockito.version>5.1.1</mockito.version>
+        <mockito.version>5.2.0</mockito.version>
         <assertj.version>3.24.2</assertj.version>
         <archunit.version>1.0.1</archunit.version>
         <itf-jupiter-extension.version>0.12.0</itf-jupiter-extension.version>
