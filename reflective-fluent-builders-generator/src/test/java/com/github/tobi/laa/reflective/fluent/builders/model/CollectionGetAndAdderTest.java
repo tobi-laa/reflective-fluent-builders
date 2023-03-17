@@ -13,7 +13,7 @@ class CollectionGetAndAdderTest {
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var collectionGetAndAdder = CollectionGetAndAdder.builder()
+        final CollectionGetAndAdder collectionGetAndAdder = CollectionGetAndAdder.builder()
                 .methodName("getSth")
                 .paramType(List.class)
                 .paramName("aName")
@@ -21,7 +21,7 @@ class CollectionGetAndAdderTest {
                 .paramTypeArg(Object.class)
                 .build();
         // Act
-        final var withParamName = collectionGetAndAdder.withParamName(paramName);
+        final CollectionGetAndAdder withParamName = collectionGetAndAdder.withParamName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(CollectionGetAndAdder.builder()
                 .methodName("getSth")

@@ -2,7 +2,9 @@ package com.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithBuilderExisting;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import lombok.SneakyThrows;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
@@ -21,8 +23,8 @@ class BuilderMetadataServiceIT {
     @BeforeEach
     @SneakyThrows
     void init() {
-        final var classloader = getClass().getClassLoader();
-        final var injector = Guice.createInjector(
+        final ClassLoader classloader = getClass().getClassLoader();
+        final Injector injector = Guice.createInjector(
                 new WireModule(
                         new SpaceModule(new URLClassSpace(classloader))));
         builderMetadataService = (BuilderMetadataService) injector.getInstance(Class.forName("com.github.tobi.laa.reflective.fluent.builders.service.impl.BuilderMetadataServiceImpl"));
@@ -31,7 +33,7 @@ class BuilderMetadataServiceIT {
     @Test
     void testFilterOutConfiguredExcludesWithDefaultConfig() {
         // Act
-        final var filteredClasses = builderMetadataService.filterOutConfiguredExcludes(Set.of( //
+        final Set<Class<?>> filteredClasses = builderMetadataService.filterOutConfiguredExcludes(ImmutableSet.of( //
                 SimpleClass.class, //
                 ClassWithBuilderExisting.class, //
                 ClassWithBuilderExisting.ClassWithBuilderExistingBuilder.class, //

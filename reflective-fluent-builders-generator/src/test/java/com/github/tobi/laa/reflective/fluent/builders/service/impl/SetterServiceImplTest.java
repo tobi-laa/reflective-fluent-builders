@@ -163,23 +163,23 @@ class SetterServiceImplTest {
                                 MapSetter.builder().methodName("setMapWildObj").paramName("mapWildObj").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(Object.class).visibility(Visibility.PRIVATE).build(), //
                                 MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(Visibility.PRIVATE).build())), //
                 Arguments.of("set", "get", false, PetJaxb.class, Visibility.PRIVATE, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(Visibility.PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(Visibility.PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())),
                 Arguments.of("set", "get", true, PetJaxb.class, Visibility.PRIVATE, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(Visibility.PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(Visibility.PRIVATE).build(), //
                                 CollectionGetAndAdder.builder().methodName("getSiblings").paramName("siblings").paramType(List.class).paramTypeArg(PetJaxb.class).visibility(Visibility.PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())),
                 Arguments.of("set", "myPrefix", true, PetJaxb.class, Visibility.PRIVATE, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(Visibility.PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(Visibility.PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())), //
                 Arguments.of("set", "get", true, GetAndAdd.class, Visibility.PUBLIC, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 CollectionSetter.builder().methodName("setListGetterAndSetter").paramName("listGetterAndSetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
                                 CollectionGetAndAdder.builder().methodName("getListNoSetter").paramName("listNoSetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
                                 CollectionSetter.builder().methodName("setListNoGetter").paramName("listNoGetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //

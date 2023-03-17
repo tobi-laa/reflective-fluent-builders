@@ -42,17 +42,17 @@ class SetterServiceImpl implements SetterService {
     @Override
     public SortedSet<Setter> gatherAllSetters(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
-        final var methods = classService.collectFullClassHierarchy(clazz) //
+        final List<Method> methods = classService.collectFullClassHierarchy(clazz) //
                 .stream() //
                 .map(Class::getDeclaredMethods) //
                 .flatMap(Arrays::stream) //
                 .collect(Collectors.toList());
-        final var setters = methods.stream() //
+        final ImmutableSortedSet<Setter> setters = methods.stream() //
                 .filter(this::isSetter) //
                 .map(this::toSetter) //
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         if (properties.isGetAndAddEnabled()) {
-            final var getAndAdders = methods.stream() //
+            final ImmutableSortedSet<CollectionGetAndAdder> getAndAdders = methods.stream() //
                     .filter(this::isCollectionGetter) //
                     .filter(method -> noCorrespondingSetter(method, setters)) //
                     .map(this::toGetAndAdder) //
@@ -115,7 +115,7 @@ class SetterServiceImpl implements SetterService {
     }
 
     private CollectionGetAndAdder toGetAndAdder(final Method method) {
-        final var returnType = method.getGenericReturnType();
+        final Type returnType = method.getGenericReturnType();
         return CollectionGetAndAdder.builder().paramTypeArg(typeArg(returnType, 0)) //
                 .methodName(method.getName()) //
                 .paramType(method.getReturnType()) //

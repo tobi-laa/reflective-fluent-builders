@@ -32,9 +32,9 @@ public class Exclude extends AbstractIncludeExclude {
 
     Predicate<Class<?>> toPredicate() {
         if (getPackageName() != null) {
-            return c -> c.getPackageName().equals(getPackageName());
+            return c -> c.getPackage().getName().equals(getPackageName());
         } else if (packageRegex != null) {
-            return c -> Pattern.compile(packageRegex).matcher(c.getPackageName()).find();
+            return c -> Pattern.compile(packageRegex).matcher(c.getPackage().getName()).find();
         } else if (getClassName() != null) {
             return c -> c.getName().equals(getClassName());
         } else if (classRegex != null) {

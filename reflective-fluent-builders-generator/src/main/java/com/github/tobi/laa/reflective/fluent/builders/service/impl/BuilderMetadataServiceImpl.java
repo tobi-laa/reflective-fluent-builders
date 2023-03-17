@@ -134,8 +134,8 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean isAccessibleParamType(final Type paramType) {
-        final var clazz = (Class<?>) paramType;
-        final var visibility = visibilityService.toVisibility(clazz.getModifiers());
+        final Class<?> clazz = (Class<?>) paramType;
+        final Visibility visibility = visibilityService.toVisibility(clazz.getModifiers());
         return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
     }
 

@@ -5,6 +5,7 @@ import org.assertj.core.api.Condition;
 import org.assertj.core.description.TextDescription;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -25,8 +26,8 @@ class HasNoBuilderCondition extends Condition<MavenProjectResult> {
     }
 
     public boolean matches(final MavenProjectResult result) {
-        final var buildersDir = projectResultHelper.getGeneratedSourcesDir(result).resolve("builders");
-        final var builderFile = fileHelper.resolveJavaFile(buildersDir, builderClass);
+        final Path buildersDir = projectResultHelper.getGeneratedSourcesDir(result).resolve("builders");
+        final Path builderFile = fileHelper.resolveJavaFile(buildersDir, builderClass);
         describedAs(new TextDescription("no builder %s in target base directory, but file exists", builderFile));
         return Files.notExists(builderFile);
     }

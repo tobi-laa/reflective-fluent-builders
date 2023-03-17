@@ -116,7 +116,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 ClassWithHierarchy.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
-                                .packageName(PetJaxb.class.getPackageName()) //
+                                .packageName(PetJaxb.class.getPackage().getName()) //
                                 .name("PetJaxbBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(PetJaxb.class) //

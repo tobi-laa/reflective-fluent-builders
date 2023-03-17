@@ -20,7 +20,7 @@ class FileHelper {
         if (Files.notExists(directory)) {
             return Collections.emptyList();
         } else {
-            final var visitor = new CollectingFileVisitor();
+            final CollectingFileVisitor visitor = new CollectingFileVisitor();
             Files.walkFileTree(directory, visitor);
             return visitor.getFiles();
         }

@@ -5,7 +5,7 @@ import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "com.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",

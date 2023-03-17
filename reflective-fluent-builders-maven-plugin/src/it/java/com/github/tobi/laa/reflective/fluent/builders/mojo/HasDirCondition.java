@@ -1,5 +1,6 @@
 package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import com.google.common.base.Predicates;
 import com.soebes.itf.jupiter.maven.MavenProjectResult;
 import org.assertj.core.api.Condition;
 import org.assertj.core.description.TextDescription;
@@ -33,7 +34,7 @@ class HasDirCondition extends Condition<MavenProjectResult> {
     }
 
     public boolean matches(final MavenProjectResult result) {
-        final var dirInTarget = result.getTargetProjectDirectory().resolve("target").resolve(dir);
+        final Path dirInTarget = result.getTargetProjectDirectory().resolve("target").resolve(dir);
         return predicate.test(fileHelper.findFilesRecursively(dirInTarget));
     }
 
@@ -48,7 +49,7 @@ class HasDirCondition extends Condition<MavenProjectResult> {
     static Condition<MavenProjectResult> nonEmptyDirInTarget(final Path dir) {
         return new HasDirCondition(
                 dir,
-                Predicate.not(List::isEmpty),
+                Predicates.not(List::isEmpty),
                 "non-empty subdirectory %s in target base directory",
                 dir);
     }

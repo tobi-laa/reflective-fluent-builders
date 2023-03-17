@@ -20,6 +20,7 @@ import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.github.tobi.laa.reflective.fluent.builders.mojo.ContainsBuildersCondition.expectedBuilder;
@@ -111,7 +112,7 @@ class GenerateBuildersMojoIT {
         @MavenDebug
         void packageSimpleWithDebugLogging(final MavenExecutionResult result) {
             assertThat(result).isSuccessful();
-            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            final Path targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
                     .info() //
@@ -197,8 +198,8 @@ class GenerateBuildersMojoIT {
 
         @MavenTest
         void packageComplexCustomHierarchyCollectionExcludes(final MavenExecutionResult result) {
-            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "custom-hierarchy-collection-excludes");
-            final var builderClass = ClassWithHierarchy.class.getName() + "Builder";
+            final Path expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "custom-hierarchy-collection-excludes");
+            final String builderClass = ClassWithHierarchy.class.getName() + "Builder";
             assertThat(result) //
                     .isSuccessful() //
                     .project() //
@@ -299,7 +300,7 @@ class GenerateBuildersMojoIT {
         @MavenTest
         void invalidTargetDirectory(final MavenExecutionResult result) {
             assertThat(result).isFailure();
-            final var pomXml = result.getMavenProjectResult().getTargetProjectDirectory() //
+            final String pomXml = result.getMavenProjectResult().getTargetProjectDirectory() //
                     .resolve("pom.xml") //
                     .toAbsolutePath() //
                     .toString();
@@ -325,7 +326,7 @@ class GenerateBuildersMojoIT {
         @MavenTest
         void builderFileCannotBeWritten(final MavenExecutionResult result) {
             assertThat(result).isFailure();
-            final var srcMainJava = result.getMavenProjectResult().getTargetProjectDirectory() //
+            final String srcMainJava = result.getMavenProjectResult().getTargetProjectDirectory() //
                     .resolve("src").resolve("main").resolve("java") //
                     .toAbsolutePath() //
                     .toString();

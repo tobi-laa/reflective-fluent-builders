@@ -2,6 +2,7 @@ package com.github.tobi.laa.reflective.fluent.builders.props.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import com.google.common.collect.ImmutableSet;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -38,7 +39,7 @@ public class StandardBuildersProperties implements BuildersProperties {
 
     @lombok.NonNull
     @ToString.Exclude
-    private Set<Predicate<Class<?>>> excludes = Set.of( //
+    private Set<Predicate<Class<?>>> excludes = ImmutableSet.of( //
             clazz -> clazz.getSimpleName().endsWith("Builder"), //
             clazz -> clazz.getSimpleName().endsWith("BuilderImpl"));
 

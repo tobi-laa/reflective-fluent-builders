@@ -19,7 +19,7 @@ class ExcludeTest {
     @Test
     void testToPredicateIllegalStateException() {
         // Arrange
-        final var exclude = new Exclude(null, null, null, null);
+        final Exclude exclude = new Exclude(null, null, null, null);
         // Act
         final ThrowingCallable toPredicate = exclude::toPredicate;
         // Assert
@@ -31,7 +31,7 @@ class ExcludeTest {
     @Test
     void testToPredicateForExcludeWithPackageName() {
         // Arrange
-        final var exclude = new Exclude(Simple.class.getPackageName(), null, null, null);
+        final Exclude exclude = new Exclude(Simple.class.getPackage().getName(), null, null, null);
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert
@@ -43,7 +43,7 @@ class ExcludeTest {
     @Test
     void testToPredicateForExcludeWithPackageRegex() {
         // Arrange
-        final var exclude = new Exclude(null, "test\\.models\\.(simple|complex)", null, null);
+        final Exclude exclude = new Exclude(null, "test\\.models\\.(simple|complex)", null, null);
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert
@@ -55,7 +55,7 @@ class ExcludeTest {
     @Test
     void testToPredicateForExcludeWithClassName() {
         // Arrange
-        final var exclude = new Exclude(null, null, SimpleClass.class.getName(), null);
+        final Exclude exclude = new Exclude(null, null, SimpleClass.class.getName(), null);
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert
@@ -67,7 +67,7 @@ class ExcludeTest {
     @Test
     void testToPredicateForExcludeWithClassRegex() {
         // Arrange
-        final var exclude = new Exclude(null, null, null, "test\\.models\\..*(SimpleClass|WithCollections)");
+        final Exclude exclude = new Exclude(null, null, null, "test\\.models\\..*(SimpleClass|WithCollections)");
         // Act
         final Predicate<Class<?>> predicate = exclude.toPredicate();
         // Assert

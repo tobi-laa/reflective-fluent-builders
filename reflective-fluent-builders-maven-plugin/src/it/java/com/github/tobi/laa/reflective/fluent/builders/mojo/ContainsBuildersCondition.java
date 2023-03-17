@@ -81,8 +81,12 @@ class ContainsBuildersCondition extends Condition<MavenProjectResult> {
                                                                       final Path expectedBuilderFile) {
 
         final Path actualBuilderFile = resolveActualBuilderFile(actualBuildersDir, expectedBuilderFile);
-        return checkBuilderExistsAndGenerateFailMessage(actualBuilderFile) //
-                .or(() -> compareBuildersAndGenerateFailMessage(actualBuilderFile, expectedBuilderFile));
+        final Optional<Description> description = checkBuilderExistsAndGenerateFailMessage(actualBuilderFile);
+        if (description.isPresent()) {
+            return description;
+        } else {
+            return compareBuildersAndGenerateFailMessage(actualBuilderFile, expectedBuilderFile);
+        }
     }
 
     private Path resolveActualBuilderFile(final Path actualBuildersDir, final Path expectedBuilderFile) {

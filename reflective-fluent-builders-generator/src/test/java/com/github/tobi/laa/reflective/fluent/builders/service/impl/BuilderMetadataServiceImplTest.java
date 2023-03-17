@@ -92,7 +92,7 @@ class BuilderMetadataServiceImplTest {
         final Setter publicSetter = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(int.class).visibility(Visibility.PUBLIC).build();
         final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).build();
         final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).build();
-        final var packagePrivate = Class.forName("com.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
+        final Class<?> packagePrivate = Class.forName("com.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
         return Stream.of( //
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
@@ -272,8 +272,8 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
                         Visibility.PUBLIC, //
-                        Set.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class),
-                        Set.of(TopLevelClass.NestedPublicLevelOne.class)));
+                        ImmutableSet.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class),
+                        ImmutableSet.of(TopLevelClass.NestedPublicLevelOne.class)));
     }
 
     @Test
@@ -304,20 +304,20 @@ class BuilderMetadataServiceImplTest {
                         Collections.emptySet()), //
                 Arguments.of( //
                         Collections.emptySet(), //
-                        Set.of(SimpleClass.class), //
-                        Set.of(SimpleClass.class)), //
+                        ImmutableSet.of(SimpleClass.class), //
+                        ImmutableSet.of(SimpleClass.class)), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(cl -> cl.getPackageName().equals(Complex.class.getPackageName())), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
-                        Set.of(SimpleClass.class)), //
+                        ImmutableSet.<Predicate<Class<?>>>of(cl -> cl.getPackage().getName().equals(Complex.class.getPackage().getName())), //
+                        ImmutableSet.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
+                        ImmutableSet.of(SimpleClass.class)), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(SimpleClass.class::equals), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
-                        Set.of(ClassWithCollections.class, ClassWithGenerics.class)), //
+                        ImmutableSet.<Predicate<Class<?>>>of(SimpleClass.class::equals), //
+                        ImmutableSet.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
+                        ImmutableSet.of(ClassWithCollections.class, ClassWithGenerics.class)), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(cl -> cl.getName().endsWith("Generics")), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class)));
+                        ImmutableSet.<Predicate<Class<?>>>of(cl -> cl.getName().endsWith("Generics")), //
+                        ImmutableSet.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
+                        ImmutableSet.of(SimpleClass.class, ClassWithCollections.class)));
     }
 
     @Test
