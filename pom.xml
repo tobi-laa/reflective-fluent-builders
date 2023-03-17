@@ -49,6 +49,7 @@
         <jsr-330.version>1</jsr-330.version>
         <guice.version>5.1.0</guice.version>
         <sisu.version>0.3.5</sisu.version>
+        <jakarta.xml.bind-api.version>2.3.3</jakarta.xml.bind-api.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
         <jakarta.el-api.version>4.0.0</jakarta.el-api.version>
@@ -130,6 +131,11 @@
                 <groupId>org.eclipse.sisu</groupId>
                 <artifactId>org.eclipse.sisu.inject</artifactId>
                 <version>${sisu.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.validation</groupId>
