@@ -1,11 +1,19 @@
 package com.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
-import com.github.tobi.laa.reflective.fluent.builders.model.*;
 import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
+import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +33,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Predicates.not;
@@ -55,11 +64,11 @@ class ClassServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Class<?>> excludes, final Set<Class<?>> expected) {
+    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final Set<Class<?>> expected) {
         // Arrange
         final BuildersProperties.HierarchyCollection hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
         when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
-        when(hierarchyCollection.getClassesToExclude()).thenReturn(excludes);
+        when(hierarchyCollection.getExcludes()).thenReturn(excludes);
         // Act
         final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
@@ -80,7 +89,7 @@ class ClassServiceImplTest {
                                 Object.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Collections.singleton(Object.class), //
+                        Collections.<Predicate<Class<?>>>singleton(Object.class::equals), //
                         ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -89,7 +98,7 @@ class ClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        ImmutableSet.of(Object.class, AnInterface.class), //
+                        ImmutableSet.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
                         ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -97,7 +106,7 @@ class ClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
-                        Collections.singleton(FirstSuperClass.class), //
+                        Collections.<Predicate<Class<?>>>singleton(FirstSuperClass.class::equals), //
                         ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
@@ -144,19 +153,29 @@ class ClassServiceImplTest {
                 .anyMatch(ImmutableSet.of(Test.class, ParameterizedTest.class)::contains);
     }
 
+    @SneakyThrows
     private static Stream<Arguments> testCollectClassesRecursively() {
         return Stream.of( //
                 Arguments.of(
-                        Setter.class.getPackage().getName(), //
+                        Simple.class.getPackage().getName(), //
                         ImmutableSet.of( //
-                                AbstractSetter.class, //
-                                ArraySetter.class, //
-                                BuilderMetadata.class, //
-                                CollectionSetter.class, //
-                                MapSetter.class, //
-                                Setter.class, //
-                                SimpleSetter.class, //
-                                Visibility.class)) //
-        );
+                                Child.class, //
+                                Parent.class, //
+                                Simple.class, //
+                                SimpleClass.class, //
+                                SimpleClassNoDefaultConstructor.class, //
+                                SimpleClassNoSetPrefix.class)),
+                Arguments.of(
+                        NestedMarker.class.getPackage().getName(), //
+                        ImmutableSet.of( //
+                                NestedMarker.class, //
+                                TopLevelClass.class, //
+                                TopLevelClass.NestedPublicLevelOne.class, //
+                                Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne"), //
+                                Class.forName(TopLevelClass.class.getName() + "$NestedPackagePrivateLevelOne"), //
+                                Class.forName(TopLevelClass.class.getName() + "$NestedPrivateLevelOne"), //
+                                TopLevelClass.NestedNonStatic.class, //
+                                TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.class, //
+                                TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree.class)));
     }
 }

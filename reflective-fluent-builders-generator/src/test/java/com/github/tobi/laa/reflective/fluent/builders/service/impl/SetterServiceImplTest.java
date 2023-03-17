@@ -5,7 +5,10 @@ import com.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperti
 import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PersonJaxb;
+import com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
 import com.google.common.collect.ImmutableSet;
@@ -77,6 +80,33 @@ class SetterServiceImplTest {
     }
 
     @Test
+    void testDropGetterPrefixNull() {
+        // Act
+        final Executable dropGetterPrefix = () -> setterService.dropGetterPrefix(null);
+        // Assert
+        assertThrows(NullPointerException.class, dropGetterPrefix);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testDropGetterPrefix(final String getterPrefix, final String name, final String expected) {
+        // Arrange
+        when(properties.getGetterPrefix()).thenReturn(getterPrefix);
+        // Act
+        final String actual = setterService.dropGetterPrefix(name);
+        // Assert
+        assertEquals(expected, actual);
+    }
+
+    private static Stream<Arguments> testDropGetterPrefix() {
+        return Stream.of( //
+                Arguments.of("get", "get", "get"), //
+                Arguments.of("get", "getAge", "age"), //
+                Arguments.of("get", "withAge", "withAge"), //
+                Arguments.of("get", "getGetAge", "getAge"));
+    }
+
+    @Test
     void testGatherAllSettersNull() {
         // Act
         final Executable gatherAllSetters = () -> setterService.gatherAllSetters(null);
@@ -86,9 +116,13 @@ class SetterServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGatherAllSetters(final String setterPrefix, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
+    void testGatherAllSetters(final String setterPrefix, final String getterPrefix, final boolean getAndAddEnabled, final Class<?> clazz, final Visibility mockVisibility, final Set<Setter> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn(setterPrefix);
+        when(properties.isGetAndAddEnabled()).thenReturn(getAndAddEnabled);
+        if (getAndAddEnabled) {
+            when(properties.getGetterPrefix()).thenReturn(getterPrefix);
+        }
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
         when(classService.collectFullClassHierarchy(clazz)).thenReturn(Collections.singleton(clazz));
         // Act
@@ -106,28 +140,51 @@ class SetterServiceImplTest {
 
     private static Stream<Arguments> testGatherAllSetters() {
         return Stream.of( //
-                Arguments.of("set", SimpleClass.class, Visibility.PUBLIC, //
+                Arguments.of("set", null, false, SimpleClass.class, Visibility.PUBLIC, //
                         ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("setAnInt").paramName("anInt").paramType(int.class).visibility(Visibility.PUBLIC).build(), //
                                 SimpleSetter.builder().methodName("setAString").paramName("aString").paramType(String.class).visibility(Visibility.PUBLIC).build(), //
                                 SimpleSetter.builder().methodName("setBooleanField").paramName("booleanField").paramType(boolean.class).visibility(Visibility.PUBLIC).build(), //
                                 SimpleSetter.builder().methodName("setSetClass").paramName("setClass").paramType(Class.class).visibility(Visibility.PUBLIC).build())), //
-                Arguments.of("", SimpleClassNoSetPrefix.class, Visibility.PACKAGE_PRIVATE, //
+                Arguments.of("", null, false, SimpleClassNoSetPrefix.class, Visibility.PACKAGE_PRIVATE, //
                         ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("anInt").paramName("anInt").paramType(int.class).visibility(Visibility.PACKAGE_PRIVATE).build(), //
                                 SimpleSetter.builder().methodName("aString").paramName("aString").paramType(String.class).visibility(Visibility.PACKAGE_PRIVATE).build())), //
-                Arguments.of("set", ClassWithCollections.class, Visibility.PRIVATE, //
+                Arguments.of("set", "get", false, ClassWithCollections.class, Visibility.PRIVATE, //
                         ImmutableSet.of( //
                                 CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(Collection.class).paramTypeArg(Integer.class).visibility(Visibility.PRIVATE).build(), //
-                                CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(Visibility.PRIVATE).build(),
-                                CollectionSetter.builder().methodName("setSet").paramName("set").paramType(Set.class).paramTypeArg(List.class).visibility(Visibility.PRIVATE).build(),
-                                CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(Deque.class).paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()).visibility(Visibility.PRIVATE).build(),
-                                CollectionSetter.builder().methodName("setSortedSetWild").paramName("sortedSetWild").paramType(SortedSet.class).paramTypeArg(TypeUtils.wildcardType().build()).visibility(Visibility.PRIVATE).build(),
-                                ArraySetter.builder().methodName("setFloats").paramName("floats").paramType(float[].class).paramComponentType(float.class).visibility(Visibility.PRIVATE).build(),
-                                MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(Visibility.PRIVATE).build(),
-                                MapSetter.builder().methodName("setMapTU").paramName("mapTU").paramType(Map.class).keyType(typeVariableT()).valueType(typeVariableU()).visibility(Visibility.PRIVATE).build(),
-                                MapSetter.builder().methodName("setMapWildObj").paramName("mapWildObj").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(Object.class).visibility(Visibility.PRIVATE).build(),
-                                MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(Visibility.PRIVATE).build())));
+                                CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(Visibility.PRIVATE).build(), //
+                                CollectionSetter.builder().methodName("setSet").paramName("set").paramType(Set.class).paramTypeArg(List.class).visibility(Visibility.PRIVATE).build(), //
+                                CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(Deque.class).paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()).visibility(Visibility.PRIVATE).build(), //
+                                CollectionSetter.builder().methodName("setSortedSetWild").paramName("sortedSetWild").paramType(SortedSet.class).paramTypeArg(TypeUtils.wildcardType().build()).visibility(Visibility.PRIVATE).build(), //
+                                ArraySetter.builder().methodName("setFloats").paramName("floats").paramType(float[].class).paramComponentType(float.class).visibility(Visibility.PRIVATE).build(), //
+                                MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(Visibility.PRIVATE).build(), //
+                                MapSetter.builder().methodName("setMapTU").paramName("mapTU").paramType(Map.class).keyType(typeVariableT()).valueType(typeVariableU()).visibility(Visibility.PRIVATE).build(), //
+                                MapSetter.builder().methodName("setMapWildObj").paramName("mapWildObj").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(Object.class).visibility(Visibility.PRIVATE).build(), //
+                                MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(Visibility.PRIVATE).build())), //
+                Arguments.of("set", "get", false, PetJaxb.class, Visibility.PRIVATE, //
+                        Set.of( //
+                                SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(Visibility.PRIVATE).build(), //
+                                SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(Visibility.PRIVATE).build(), //
+                                SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())),
+                Arguments.of("set", "get", true, PetJaxb.class, Visibility.PRIVATE, //
+                        Set.of( //
+                                SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(Visibility.PRIVATE).build(), //
+                                SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(Visibility.PRIVATE).build(), //
+                                CollectionGetAndAdder.builder().methodName("getSiblings").paramName("siblings").paramType(List.class).paramTypeArg(PetJaxb.class).visibility(Visibility.PRIVATE).build(), //
+                                SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())),
+                Arguments.of("set", "myPrefix", true, PetJaxb.class, Visibility.PRIVATE, //
+                        Set.of( //
+                                SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(Visibility.PRIVATE).build(), //
+                                SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(Visibility.PRIVATE).build(), //
+                                SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(Visibility.PRIVATE).build())), //
+                Arguments.of("set", "get", true, GetAndAdd.class, Visibility.PUBLIC, //
+                        Set.of( //
+                                CollectionSetter.builder().methodName("setListGetterAndSetter").paramName("listGetterAndSetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                CollectionGetAndAdder.builder().methodName("getListNoSetter").paramName("listNoSetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                CollectionSetter.builder().methodName("setListNoGetter").paramName("listNoGetter").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                CollectionGetAndAdder.builder().methodName("getListSetterWrongType").paramName("listSetterWrongType").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PUBLIC).build(), //
+                                ArraySetter.builder().methodName("setListSetterWrongType").paramName("listSetterWrongType").paramType(String[].class).paramComponentType(String.class).visibility(Visibility.PUBLIC).build())));
     }
 
     @Test

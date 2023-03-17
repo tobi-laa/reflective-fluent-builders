@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Predicates.not;
 
@@ -40,15 +41,19 @@ class ClassServiceImpl implements ClassService {
         Objects.requireNonNull(clazz);
         final Set<Class<?>> classHierarchy = new HashSet<>();
         for (Class<?> i = clazz; i != null; i = i.getSuperclass()) {
-            if (properties.getHierarchyCollection().getClassesToExclude().contains(i)) {
+            if (excludeFromHierarchyCollection(i)) {
                 break;
             }
             classHierarchy.add(i);
             Arrays.stream(i.getInterfaces()) //
-                    .filter(not(properties.getHierarchyCollection().getClassesToExclude()::contains)) //
+                    .filter(not(this::excludeFromHierarchyCollection)) //
                     .forEach(classHierarchy::add);
         }
         return classHierarchy;
+    }
+
+    private boolean excludeFromHierarchyCollection(final Class<?> clazz) {
+        return properties.getHierarchyCollection().getExcludes().stream().anyMatch(p -> p.test(clazz));
     }
 
     @Override
@@ -59,9 +64,21 @@ class ClassServiceImpl implements ClassService {
                     .getTopLevelClassesRecursive(packageName) //
                     .stream() //
                     .map(ClassPath.ClassInfo::load) //
+                    .flatMap(clazz -> Stream.concat(
+                            Stream.of(clazz),
+                            collectStaticInnerClassesRecursively(clazz).stream()))
                     .collect(ImmutableSet.toImmutableSet());
         } catch (final IOException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
+    }
+
+    private Set<Class<?>> collectStaticInnerClassesRecursively(final Class<?> clazz) {
+        final Set<Class<?>> innerStaticClasses = new HashSet<>();
+        for (final Class<?> innerClass : clazz.getDeclaredClasses()) {
+            innerStaticClasses.add(innerClass);
+            innerStaticClasses.addAll(collectStaticInnerClassesRecursively(innerClass));
+        }
+        return innerStaticClasses;
     }
 }

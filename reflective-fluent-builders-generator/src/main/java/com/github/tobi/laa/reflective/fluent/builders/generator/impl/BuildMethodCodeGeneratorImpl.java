@@ -4,6 +4,7 @@ import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants
 import com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodCodeGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import com.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import com.squareup.javapoet.MethodSpec;
 
@@ -37,10 +38,30 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                     .endControlFlow();
         }
         for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
-            methodBuilder
-                    .beginControlFlow("if ($L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
-                    .addStatement("$L.$L($L.$L)", OBJECT_TO_BUILD_FIELD_NAME, setter.getMethodName(), FieldValue.FIELD_NAME, setter.getParamName())
-                    .endControlFlow();
+            if (setter instanceof CollectionGetAndAdder) {
+                methodBuilder
+                        .beginControlFlow(
+                                "if ($1L.$3L && $2L.$3L != null)",
+                                CallSetterFor.FIELD_NAME,
+                                FieldValue.FIELD_NAME,
+                                setter.getParamName())
+                        .addStatement(
+                                "$L.$L.forEach($L.$L()::add)",
+                                FieldValue.FIELD_NAME,
+                                setter.getParamName(),
+                                OBJECT_TO_BUILD_FIELD_NAME,
+                                setter.getMethodName());
+            } else {
+                methodBuilder
+                        .beginControlFlow("if ($L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
+                        .addStatement(
+                                "$L.$L($L.$L)",
+                                OBJECT_TO_BUILD_FIELD_NAME,
+                                setter.getMethodName(),
+                                FieldValue.FIELD_NAME,
+                                setter.getParamName());
+            }
+            methodBuilder.endControlFlow();
         }
         methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);
         return methodBuilder.build();

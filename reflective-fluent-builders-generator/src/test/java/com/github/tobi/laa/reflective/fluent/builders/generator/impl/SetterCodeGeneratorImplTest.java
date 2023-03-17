@@ -83,14 +83,22 @@ class SetterCodeGeneratorImplTest {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeNameForParam(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
-        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
+        if (setter instanceof CollectionGetAndAdder) {
+            when(setterService.dropGetterPrefix(any())).thenReturn(setter.getParamName());
+        } else {
+            when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
+        }
         // Act
         final MethodSpec actual = generator.generate(builderMetadata, setter);
         // Assert
         assertThat(actual).hasToString(expected);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
         verify(typeNameGenerator).generateTypeNameForParam(setter);
-        verify(setterService).dropSetterPrefix(setter.getMethodName());
+        if (setter instanceof CollectionGetAndAdder) {
+            verify(setterService).dropGetterPrefix(setter.getMethodName());
+        } else {
+            verify(setterService).dropSetterPrefix(setter.getMethodName());
+        }
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -159,6 +167,23 @@ class SetterCodeGeneratorImplTest {
                         builderMetadata, //
                         CollectionSetter.builder() //
                                 .methodName("setList") //
+                                .paramName("list") //
+                                .paramType(List.class) //
+                                .paramTypeArg(String.class) //
+                                .visibility(Visibility.PRIVATE) //
+                                .build(), //
+                        String.format(
+                                "public %1$s list(\n" +
+                                        "    final %1$s list) {\n" +
+                                        "  fieldValue.list = list;\n" +
+                                        "  callSetterFor.list = true;\n" +
+                                        "  return this;\n" +
+                                        "}\n",
+                                mockTypeName)), //
+                Arguments.of( //
+                        builderMetadata, //
+                        CollectionGetAndAdder.builder() //
+                                .methodName("getList") //
                                 .paramName("list") //
                                 .paramType(List.class) //
                                 .paramTypeArg(String.class) //

@@ -15,6 +15,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ import static com.github.tobi.laa.reflective.fluent.builders.constants.BuilderCo
 import static com.github.tobi.laa.reflective.fluent.builders.model.Visibility.PACKAGE_PRIVATE;
 import static com.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
 import static com.google.common.base.Predicates.not;
+import static java.lang.reflect.Modifier.isStatic;
 
 /**
  * <p>
@@ -75,7 +77,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private SortedSet<Setter> gatherAndFilterAccessibleSettersAndAvoidNameCollisions(final Class<?> clazz) {
         final SortedSet<Setter> setters = setterService.gatherAllSetters(clazz) //
                 .stream() //
-                .filter(setter -> isAccessible(clazz, setter.getVisibility()))
+                .filter(setter -> isAccessible(clazz, setter.getVisibility()) && isAccessibleParamType(setter.getParamType()))
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         return avoidNameCollisions(setters);
     }
@@ -108,9 +110,19 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .filter(not(Class::isAnonymousClass)) //
                 .filter(not(Class::isEnum)) //
                 .filter(not(Class::isPrimitive)) //
-                .filter(not(Class::isMemberClass)) //
+                .filter(not(clazz -> clazz.isMemberClass() && !isStatic(clazz.getModifiers()))) //
                 .filter(this::isAccessible) //
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Class<?>> filterOutConfiguredExcludes(final Set<Class<?>> classes) {
+        Objects.requireNonNull(classes);
+        return classes.stream().filter(not(this::exclude)).collect(Collectors.toSet());
+    }
+
+    private boolean exclude(final Class<?> clazz) {
+        return properties.getExcludes().stream().anyMatch(p -> p.test(clazz));
     }
 
     private boolean isAbstract(final Class<?> clazz) {
@@ -119,6 +131,12 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private boolean isAccessible(final Class<?> clazz) {
         return isAccessible(clazz, clazz.getModifiers());
+    }
+
+    private boolean isAccessibleParamType(final Type paramType) {
+        final var clazz = (Class<?>) paramType;
+        final var visibility = visibilityService.toVisibility(clazz.getModifiers());
+        return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers) {

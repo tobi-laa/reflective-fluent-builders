@@ -1,9 +1,15 @@
 package com.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import com.soebes.itf.jupiter.extension.MavenDebug;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
 import com.soebes.itf.jupiter.extension.MavenTest;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 
+import java.nio.file.Files;
+
+import static com.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.EXPECTED_DEFAULT_BUILDERS_ROOT_DIR;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
 /**
@@ -16,7 +22,16 @@ import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 @MavenJupiterExtension
 class GenerateExpectedBuilders {
 
+    @BeforeAll
+    @SneakyThrows
+    static void deleteExpectedBuilders() {
+        if (Files.exists(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR)) {
+            Files.walkFileTree(EXPECTED_DEFAULT_BUILDERS_ROOT_DIR, new DeletingFileVisitor());
+        }
+    }
+
     @MavenTest
+    @MavenDebug
     void generateExpectedBuilders(final MavenExecutionResult result) {
         assertThat(result).isSuccessful().project().hasTarget();
     }

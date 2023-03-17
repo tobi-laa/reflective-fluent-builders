@@ -11,7 +11,6 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.model.Collection
 import com.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import com.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
@@ -45,9 +44,6 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
     private final TypeNameGenerator typeNameGenerator;
 
     @lombok.NonNull
-    private final SetterService setterService;
-
-    @lombok.NonNull
     private final List<MapInitializerCodeGenerator> initializerGenerators;
 
     @Override
@@ -74,7 +70,7 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
         final ClassName className = builderClassName.nestedClass("Map" + capitalize(setter.getParamName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setterService.dropSetterPrefix(setter.getMethodName())) //
+                        .methodBuilder(setter.getParamName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //

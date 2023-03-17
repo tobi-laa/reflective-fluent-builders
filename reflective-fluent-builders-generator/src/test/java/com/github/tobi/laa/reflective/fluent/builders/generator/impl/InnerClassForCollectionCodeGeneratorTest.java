@@ -6,7 +6,6 @@ import com.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIn
 import com.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import com.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import com.github.tobi.laa.reflective.fluent.builders.model.*;
-import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import com.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.ClassName;
@@ -50,9 +49,6 @@ class InnerClassForCollectionCodeGeneratorTest {
     private TypeNameGenerator typeNameGenerator;
 
     @Mock
-    private SetterService setterService;
-
-    @Mock
     private CollectionInitializerCodeGenerator initializerGeneratorA;
 
     @Mock
@@ -60,7 +56,7 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @BeforeEach
     void init() {
-        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, typeNameGenerator, setterService, ImmutableList.of(initializerGeneratorA, initializerGeneratorB));
+        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, typeNameGenerator, ImmutableList.of(initializerGeneratorA, initializerGeneratorB));
     }
 
     @Test
@@ -71,7 +67,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         final Executable isApplicable = () -> generator.isApplicable(setter);
         // Assert
         assertThrows(NullPointerException.class, isApplicable);
-        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorA, initializerGeneratorB);
+        verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
     }
 
     @CartesianTest
@@ -144,7 +140,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         final Executable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorA, initializerGeneratorB);
+        verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
     }
 
     private static Stream<Arguments> testGenerateCodeNull() {
@@ -181,7 +177,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Generation of inner collection class for .+ is not supported.") //
                 .hasMessageContaining(setter.getParamType().toString());
-        verifyNoInteractions(builderClassNameGenerator, setterService, initializerGeneratorB, initializerGeneratorB);
+        verifyNoInteractions(builderClassNameGenerator, initializerGeneratorB, initializerGeneratorB);
     }
 
     private static Stream<Arguments> testGenerateCodeGenerationExceptionWrongType() {
@@ -242,7 +238,6 @@ class InnerClassForCollectionCodeGeneratorTest {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
-        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
@@ -272,7 +267,6 @@ class InnerClassForCollectionCodeGeneratorTest {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
-        when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateCollectionInitializer(any())).thenReturn(CodeBlock.of("new MockList<>()"));
         // Act
@@ -283,7 +277,6 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
         verify(typeNameGenerator).generateTypeNameForParam(setter.getParamTypeArg());
-        verify(setterService).dropSetterPrefix(setter.getMethodName());
         verify(initializerGeneratorA).generateCollectionInitializer(setter);
     }
 
@@ -339,8 +332,8 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
-                                .methodName("setList") //
+                        CollectionGetAndAdder.builder() //
+                                .methodName("getList") //
                                 .paramName("list") //
                                 .paramType(List.class) //
                                 .paramTypeArg(String.class) //

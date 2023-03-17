@@ -4,6 +4,7 @@ import com.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import com.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * <p>
@@ -44,10 +45,42 @@ public interface BuildersProperties {
 
     /**
      * <p>
+     * The prefix of getters to use when analyzing classes.
+     * </p>
+     *
+     * @return The prefix of getters to use when analyzing classes.
+     * @see SetterService
+     */
+    String getGetterPrefix();
+
+    /**
+     * <p>
+     * If this is set to {@code true}, it is assumed that getters of collections without a corresponding setter will
+     * lazily initialize the underlying collection. The generated builders will use a get-and-add paradigm where
+     * necessary to construct a collection.
+     * </p>
+     *
+     * @return Whether to support using a get-and-add paradigm in generated builders.
+     * @see SetterService
+     */
+    boolean isGetAndAddEnabled();
+
+    /**
+     * <p>
+     * Specifies classes to be excluded when generating builders.
+     * </p>
+     *
+     * @return Predicates denoting classes to be excluded when generating builders. Never {@code null}.
+     * @see com.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService#filterOutConfiguredExcludes(Set)
+     */
+    Set<Predicate<Class<?>>> getExcludes();
+
+    /**
+     * <p>
      * Properties relating to hierarchy collection of classes.
      * </p>
      *
-     * @return Properties relating to hierarchy collection of classes.
+     * @return Properties relating to hierarchy collection of classes. Never {@code null}.
      */
     HierarchyCollection getHierarchyCollection();
 
@@ -55,14 +88,14 @@ public interface BuildersProperties {
 
         /**
          * <p>
-         * Classes to be excluded from the hierarchy collection. They will not be added to the result. Furthermore, if
-         * a class from {@code excludes} is encountered during ancestor traversal of {@code clazz} it is immediately
-         * stopped.
+         * Specifies classes to be excluded from the hierarchy collection. They will not be added to the result.
+         * Furthermore, if a class from {@code excludes} is encountered during ancestor traversal of the starting class
+         * it is immediately stopped.
          * </p>
          *
-         * @return Classes to be excluded from the hierarchy collection.
+         * @return Predicates denoting classes to be excluded from the hierarchy collection. Never {@code null}.
          * @see ClassService#collectFullClassHierarchy(Class)
          */
-        Set<Class<?>> getClassesToExclude();
+        Set<Predicate<Class<?>>> getExcludes();
     }
 }
