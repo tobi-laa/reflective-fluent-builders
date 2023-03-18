@@ -71,7 +71,7 @@
         <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
-        <maven-core.version>3.9.0</maven-core.version>
+        <maven-core.version>3.9.1</maven-core.version>
         <jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
     </properties>
     <modules>
