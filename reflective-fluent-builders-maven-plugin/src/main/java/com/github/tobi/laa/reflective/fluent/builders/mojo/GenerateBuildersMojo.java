@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * <p>
  * A maven plugin for generating fluent builders for existing classes with the help of reflection. This can be useful in
  * cases where it is not possible (or very hard) to change the sources of said classes to generate builders directly.
- * </p>>
+ * </p>
  */
 @Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
