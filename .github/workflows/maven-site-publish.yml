@@ -28,8 +28,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
+      - name: Set git user.name
+        run: git config --global user.name github-actions
+      - name: Set git user.email
+        run: git config --global user.email github-actions@github.com
       - name: Create and publish Maven Site
-        run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          mvn compile site site:stage scm-publish:publish-scm --file pom.xml
+        run: mvn compile site site:stage scm-publish:publish-scm --file pom.xml
