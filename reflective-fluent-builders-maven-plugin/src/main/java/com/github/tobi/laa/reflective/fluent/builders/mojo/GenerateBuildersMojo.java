@@ -31,54 +31,43 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * A maven plugin for generating fluent builders for existing classes with the help of reflection. This can be useful in
+ * cases where it is not possible (or very hard) to change the sources of said classes to generate builders directly.
+ * </p>>
+ */
 @Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GenerateBuildersMojo extends AbstractMojo {
 
-    @Setter(onMethod_ =
-    @Parameter(name = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER))
+    // not using Lombok to generate setters for parameters as Javadoc can not be properly extracted by
+    // maven-plugin-report-plugin
     private String builderPackage;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "builderSuffix", defaultValue = "Builder"))
     private String builderSuffix;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "setterPrefix", defaultValue = "set"))
     private String setterPrefix;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "getterPrefix", defaultValue = "get"))
     private String getterPrefix;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "getAndAddEnabled", defaultValue = "false"))
     private boolean getAndAddEnabled;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "hierarchyCollection"))
     @Valid
     private HierarchyCollection hierarchyCollection;
 
-    @Setter(onMethod_ =
-    @Parameter(required = true, name = "includes"))
     @NotEmpty(message = "At least one <include> has to be specified.")
     @Valid
     private Set<Include> includes;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "excludes"))
     @Valid
     private Set<Exclude> excludes;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "target"))
     private File target;
 
-    @Setter(onMethod_ =
-    @Parameter(name = "addCompileSourceRoot", defaultValue = "true"))
     private boolean addCompileSourceRoot;
 
+    // for read-only parameters, no documentation is provided and thus Lombok can be used
     @Setter(onMethod_ =
     @Parameter(readonly = true, required = true, defaultValue = "${project}"))
     private MavenProject mavenProject;
@@ -245,5 +234,242 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private boolean isTestPhase() {
         return StringUtils.containsIgnoreCase(mojoExecution.getLifecyclePhase(), "test");
+    }
+
+
+    /**
+     * <p>
+     * The package in which to place the generated builders.
+     * </p>
+     * <p>
+     * Relative paths can be specified with the help of
+     * {@code <PACKAGE_NAME>}.
+     * As {@code <PACKAGE_NAME>}
+     * is also the default value, builders will be placed within the same package as the classes built by them if
+     * nothing else is specified.
+     * </p>
+     *
+     * @param builderPackage The package in which to place the generated builders.
+     * @since 1.0.0
+     */
+    @Parameter(name = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER)
+    public void setBuilderPackage(final String builderPackage) {
+        this.builderPackage = builderPackage;
+    }
+
+    /**
+     * <p>
+     * The suffix to append to builder classes. The default value is {@code Builder}, meaning a builder for a class
+     * named {@code Person} would be named {@code PersonBuilder}.
+     * </p>
+     *
+     * @param builderSuffix The suffix to append to builder classes.
+     * @since 1.0.0
+     */
+    @Parameter(name = "builderSuffix", defaultValue = "Builder")
+    public void setBuilderSuffix(final String builderSuffix) {
+        this.builderSuffix = builderSuffix;
+    }
+
+    /**
+     * <p>
+     * The prefix used for identifying setter methods via reflection when analyzing classes.
+     * The default value is {@code set}.
+     * </p>
+     *
+     * @param setterPrefix The prefix used for identifying setter methods via reflection when analyzing classes.
+     * @since 1.0.0
+     */
+    @Parameter(name = "setterPrefix", defaultValue = "set")
+    public void setSetterPrefix(final String setterPrefix) {
+        this.setterPrefix = setterPrefix;
+    }
+
+    /**
+     * <p>
+     * The prefix used for identifying getter methods via reflection when analyzing classes.
+     * The default value is {@code get}.
+     * </p>
+     *
+     * @param getterPrefix The prefix used for identifying getter methods via reflection when analyzing classes.
+     * @since 1.0.0
+     */
+    @Parameter(name = "getterPrefix", defaultValue = "get")
+    public void setGetterPrefix(final String getterPrefix) {
+        this.getterPrefix = getterPrefix;
+    }
+
+    /**
+     * <p>
+     * If this is set to {@code true}, it is assumed that getters of collections without a corresponding setter will
+     * lazily initialize the underlying collection. The generated builders will use a get-and-add paradigm where
+     * necessary to construct a collection.
+     * </p>
+     *
+     * @param getAndAddEnabled Whether to support using a get-and-add paradigm in generated builders.
+     * @since 1.0.0
+     */
+    @Parameter(name = "getAndAddEnabled", defaultValue = "false")
+    public void setGetAndAddEnabled(final boolean getAndAddEnabled) {
+        this.getAndAddEnabled = getAndAddEnabled;
+    }
+
+    /**
+     * <p>
+     * Properties relating to hierarchy collection of classes.
+     * </p>
+     * <ul>
+     *     <li>
+     *         <p><em>{@code hierarchyCollection.excludes}</em></p>
+     *         <p>
+     *             Specifies classes to be excluded from the hierarchy collection.
+     *             They will not be added to the result. Furthermore, if a class from {@code excludes} is encountered
+     *             during ancestor traversal of the starting class it is immediately stopped.
+     *         </p>
+     *         <p>
+     *             A single {@code <exclude>..</exclude>} can be specified in the following ways:
+     *             <ul>
+     *                 <li>
+     *                     <pre>
+     * {@code <exclude>
+     *     <className>fully.qualified.ClassName</className>
+     * </exclude>}</pre>
+     *                 </li>
+     *                 <li>
+     *                     <pre>
+     * {@code <exclude>
+     *     <classRegex>regex.for.Class[A-Z]+</className>
+     * </exclude>}</pre>
+     *                 </li>
+     *                 <li>
+     *                     <pre>
+     * {@code <exclude>
+     *     <packageName>fully.qualified.package.name</packageName>
+     * </exclude>}</pre>
+     *                 </li>
+     *                 <li>
+     *                     <pre>
+     * {@code <exclude>
+     *     <packageRegex>regex.for.packages.[a-z]+</packageRegex>
+     * </exclude>}</pre>
+     *                 </li>
+     *             </ul>
+     *         </p>
+     *     </li>
+     * </ul>
+     *
+     * @param hierarchyCollection Properties relating to hierarchy collection of classes.
+     * @since 1.0.0
+     */
+    @Parameter(name = "hierarchyCollection")
+    public void setHierarchyCollection(final HierarchyCollection hierarchyCollection) {
+        this.hierarchyCollection = hierarchyCollection;
+    }
+
+    /**
+     * <p>
+     * Specifies the classes for which to generate builders.
+     * </p>
+     * <p>
+     * A single {@code <include>..</include>} can be specified in the following ways:
+     * <ul>
+     *     <li>
+     *         <pre>
+     * {@code <include>
+     *     <className>fully.qualified.ClassName</className>
+     * </include>}</pre>
+     *      </li>
+     *      <li>
+     *          <pre>
+     * {@code <include>
+     *     <packageName>fully.qualified.package.name</packageName>
+     * </include>}</pre>
+     *      </li>
+     * </ul>
+     * </p>
+     *
+     * @param includes Specifies the classes for which to generate builders.
+     * @since 1.0.0
+     */
+    @Parameter(required = true, name = "includes")
+    public void setIncludes(final Set<Include> includes) {
+        this.includes = includes;
+    }
+
+    /**
+     * <p>
+     * Specifies classes to be excluded when generating builders.
+     * </p>
+     * <p>
+     * A single {@code <exclude>..</exclude>} can be specified in the following ways:
+     *     <ul>
+     *         <li>
+     *             <pre>
+     * {@code <exclude>
+     *     <className>fully.qualified.ClassName</className>
+     * </exclude>}</pre>
+     *          </li>
+     *          <li>
+     *              <pre>
+     * {@code <exclude>
+     *     <classRegex>regex.for.Class[A-Z]+</className>
+     * </exclude>}</pre>
+     *          </li>
+     *          <li>
+     *              <pre>
+     * {@code <exclude>
+     *     <packageName>fully.qualified.package.name</packageName>
+     * </exclude>}</pre>
+     *          </li>
+     *          <li>
+     *              <pre>
+     * {@code <exclude>
+     *     <packageRegex>regex.for.packages.[a-z]+</packageRegex>
+     * </exclude>}</pre>
+     *          </li>
+     *     </ul>
+     * </p>
+     *
+     * @param excludes Specifies classes to be excluded when generating builders.
+     * @since 1.0.0
+     */
+    @Parameter(name = "excludes")
+    public void setExcludes(final Set<Exclude> excludes) {
+        this.excludes = excludes;
+    }
+
+    /**
+     * <p>
+     * The target directory in which to place the generated builders.
+     * </p>
+     * <p>
+     * If not specified, the default value is dependent on the {@link LifecyclePhase}.For any test-related phase, the
+     * default target directory will be the following:<br>
+     * <code>${project.build.directory}/generated-test-sources/builders</code><br>
+     * For any other phase, the default target directory will be:<br>
+     * <code>${project.build.directory}/generated-sources/builders</code>
+     * </p>
+     *
+     * @param target The target directory in which to place the generated builders.
+     * @since 1.0.0
+     */
+    @Parameter(name = "target")
+    public void setTarget(final File target) {
+        this.target = target;
+    }
+
+    /**
+     * <p>
+     * Specifies whether to add {@link #setTarget(File) target} as a source folder to this project. As this is what most
+     * projects will want, the default is {@code true}.
+     * </p>
+     *
+     * @param addCompileSourceRoot Specifies whether to add {@link #setTarget(File) target} as a source folder to this
+     *                             project.
+     * @since 1.0.0
+     */
+    @Parameter(name = "addCompileSourceRoot", defaultValue = "true")
+    public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
+        this.addCompileSourceRoot = addCompileSourceRoot;
     }
 }

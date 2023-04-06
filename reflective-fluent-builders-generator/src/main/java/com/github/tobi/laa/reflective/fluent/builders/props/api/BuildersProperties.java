@@ -15,8 +15,14 @@ public interface BuildersProperties {
 
     /**
      * <p>
-     * The package in which to place the generated builders. Relative paths can be specified with the help of
+     * The package in which to place the generated builders.
+     * </p>
+     * <p>
+     * Relative paths can be specified with the help of
      * {@link com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants#PACKAGE_PLACEHOLDER}.
+     * As {@link com.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants#PACKAGE_PLACEHOLDER}
+     * is also the default value, builders will be placed within the same package as the classes built by them if
+     * nothing else is specified.
      * </p>
      *
      * @return The package in which to place the generated builders.
@@ -25,30 +31,32 @@ public interface BuildersProperties {
 
     /**
      * <p>
-     * The suffix of the generated builders. If the suffix is set to {@code Builder}, a builder class for
-     * {@code MyClass} would thus be named {@code MyClassBuilder}.
+     * The suffix to append to builder classes. The default value is {@code Builder}, meaning a builder for a class
+     * named {@code Person} would be named {@code PersonBuilder}.
      * </p>
      *
-     * @return The suffix of the generated builders.
+     * @return The suffix to append to builder classes.
      */
     String getBuilderSuffix();
 
     /**
      * <p>
-     * The prefix of setters to use when analyzing classes.
+     * The prefix used for identifying setter methods via reflection when analyzing classes.
+     * The default value is {@code set}.
      * </p>
      *
-     * @return The prefix of setters to use when analyzing classes.
+     * @return The prefix used for identifying setter methods via reflection when analyzing classes.
      * @see SetterService
      */
     String getSetterPrefix();
 
     /**
      * <p>
-     * The prefix of getters to use when analyzing classes.
+     * The prefix used for identifying getter methods via reflection when analyzing classes.
+     * The default value is {@code get}.
      * </p>
      *
-     * @return The prefix of getters to use when analyzing classes.
+     * @return The prefix used for identifying getter methods via reflection when analyzing classes.
      * @see SetterService
      */
     String getGetterPrefix();
