@@ -36,6 +36,12 @@
         <url>https://github.com/tobias-laa/reflective-fluent-builders/issues</url>
     </issueManagement>
     <inceptionYear>2022</inceptionYear>
+    <distributionManagement>
+        <site>
+            <id>github</id>
+            <url>${project.scm.developerConnection}</url>
+        </site>
+    </distributionManagement>
     <properties>
         <!-- general properties -->
         <java.version>11</java.version>
@@ -80,6 +86,7 @@
         <maven-site-plugin.version>4.0.0-M6</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.4.2</maven-project-info-reports-plugin.version>
         <maven-plugin-report-plugin.version>3.8.1</maven-plugin-report-plugin.version>
+        <maven-scm-publish-plugin.version>3.2.1</maven-scm-publish-plugin.version>
     </properties>
     <modules>
         <module>reflective-fluent-builders-test-models</module>
@@ -330,6 +337,11 @@
                     <version>${maven-project-info-reports-plugin.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>${maven-scm-publish-plugin.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.eclipse.sisu</groupId>
                     <artifactId>sisu-maven-plugin</artifactId>
                     <version>${sisu.version}</version>
@@ -351,6 +363,16 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <configuration>
+                    <pubScmUrl>${project.scm.developerConnection}</pubScmUrl>
+                    <scmBranch>gh-pages</scmBranch>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     <profiles>
         <profile>
