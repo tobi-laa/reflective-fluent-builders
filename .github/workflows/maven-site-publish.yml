@@ -29,4 +29,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Create and publish Maven Site
-        run: mvn compile site site:stage scm-publish:publish-scm --file pom.xml
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          mvn compile site site:stage scm-publish:publish-scm --file pom.xml
