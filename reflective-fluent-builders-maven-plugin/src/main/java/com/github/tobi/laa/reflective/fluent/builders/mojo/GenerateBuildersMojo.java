@@ -460,8 +460,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     /**
      * <p>
-     * Specifies whether to add {@link #setTarget(File) target} as a source folder to this project. As this is what most
-     * projects will want, the default is {@code true}.
+     * Specifies whether to add {@link #setTarget(File) target} as a source folder to this project. As this is the
+     * behaviour that most projects will want, the default is {@code true}.
      * </p>
      *
      * @param addCompileSourceRoot Specifies whether to add {@link #setTarget(File) target} as a source folder to this
