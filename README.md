@@ -19,3 +19,8 @@ If however one of these conditions applies to your situation, this maven plugin 
 - You cannot use the alternatives mentioned above due to **technical debt**, **constraints of your employer** or the like
 - You want to generate builders for **generated sources** such as `JAXB`-annotated classes generated from an `XML` schema
 - You want to generate builders for your classes in **test scope only**
+
+# Maven Plugin usage
+TODO add short description and a few examples
+
+Full documentation of the maven plugin and its parameters can be found [here](https://tobias-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/reflective-fluent-builders-maven-plugin/plugin-info.html).
