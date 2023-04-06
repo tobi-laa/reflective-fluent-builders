@@ -30,6 +30,6 @@ jobs:
           cache: 'maven'
       - name: Create and publish Maven Site
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
           mvn compile site site:stage scm-publish:publish-scm --file pom.xml
