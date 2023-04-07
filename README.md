@@ -23,4 +23,5 @@ If however one of these conditions applies to your situation, this maven plugin 
 # Maven Plugin usage
 TODO add short description and a few examples
 
-Full documentation of the maven plugin and its parameters can be found [here](https://tobias-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/reflective-fluent-builders-maven-plugin/plugin-info.html).
+Full documentation of the maven plugin and its parameters can be found
+[here](https://tobias-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/plugin-info.html).
