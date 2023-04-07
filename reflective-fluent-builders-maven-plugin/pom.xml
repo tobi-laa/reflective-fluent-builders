@@ -4,11 +4,14 @@
     <parent>
         <groupId>com.github.tobi-laa</groupId>
         <artifactId>reflective-fluent-builders</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <description>A Maven plugin for generating fluent builders for existing classes via reflection.</description>
+    <properties>
+        <site.deploy.directory>${project.basedir}/../target/gh-pages</site.deploy.directory>
+    </properties>
     <dependencies>
         <!-- modules -->
         <dependency>
@@ -196,4 +199,19 @@
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-report-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

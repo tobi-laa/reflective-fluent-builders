@@ -4,7 +4,7 @@
     <groupId>com.github.tobi-laa</groupId>
     <artifactId>reflective-fluent-builders</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
         Provides the possibility of generating fluent builders for existing classes via reflection.
@@ -15,7 +15,7 @@
             <id>tobi-laa</id>
             <name>Tobias Laatsch</name>
             <email>tobias.laatsch@posteo.de</email>
-            <organizationUrl>https://github.com/tobi-laa</organizationUrl>
+            <organizationUrl>https://github.com/tobias-laa</organizationUrl>
         </developer>
     </developers>
     <licenses>
@@ -27,22 +27,34 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git://github.com/tobi-laa/fluent-builderMetadata-maven-plugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:tobi-laa/fluent-builderMetadata-maven-plugin.git
-        </developerConnection>
-        <url>http://github.com/tobi-laa/fluent-builderMetadata-maven-plugin/tree/master</url>
+        <connection>scm:git:git@github.com:tobias-laa/reflective-fluent-builders.git</connection>
+        <developerConnection>scm:git:git@github.com:tobias-laa/reflective-fluent-builders.git</developerConnection>
+        <url>https://github.com/tobias-laa/reflective-fluent-builders/tree/master</url>
     </scm>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/tobias-laa/reflective-fluent-builders/issues</url>
+    </issueManagement>
+    <inceptionYear>2022</inceptionYear>
+    <distributionManagement>
+        <!-- site will be deployed to a local output directory, which will then be deployed via GitHub Actions -->
+        <site>
+            <id>Site folder for GitHub Pages</id>
+            <url>file:${site.deploy.directory}</url>
+        </site>
+    </distributionManagement>
     <properties>
         <!-- general properties -->
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <it.resources.directory>src/it/resources</it.resources.directory>
+        <site.deploy.directory>${project.basedir}/target/gh-pages</site.deploy.directory>
         <!-- integration with SonarCloud -->
         <sonar.organization>tobias-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!-- versions of external dependencies -->
         <lombok.version>1.18.26</lombok.version>
-        <maven-plugin-api.version>3.9.0</maven-plugin-api.version>
+        <maven-plugin-api.version>3.9.1</maven-plugin-api.version>
         <javapoet.version>1.13.0</javapoet.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.1-jre</guava.version>
@@ -70,10 +82,14 @@
         <maven-plugin-annotations.version>3.8.1</maven-plugin-annotations.version>
         <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
-        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-        <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
-        <maven-core.version>3.9.0</maven-core.version>
+        <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-core.version>3.9.1</maven-core.version>
         <jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>
+        <maven-site-plugin.version>4.0.0-M6</maven-site-plugin.version>
+        <maven-project-info-reports-plugin.version>3.4.2</maven-project-info-reports-plugin.version>
+        <maven-plugin-report-plugin.version>3.8.1</maven-plugin-report-plugin.version>
+        <maven-scm-publish-plugin.version>3.2.1</maven-scm-publish-plugin.version>
     </properties>
     <modules>
         <module>reflective-fluent-builders-test-models</module>
@@ -313,6 +329,21 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven-plugin-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-report-plugin</artifactId>
+                    <version>${maven-plugin-report-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>${maven-project-info-reports-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.sisu</groupId>
