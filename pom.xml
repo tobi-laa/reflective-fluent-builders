@@ -40,7 +40,7 @@
         <!-- site will be deployed to a local output directory, which will then be deployed via GitHub Actions -->
         <site>
             <id>Site folder for GitHub Pages</id>
-            <url>file:${project.build.directory}/gh-pages</url>
+            <url>file:${site.deploy.directory}</url>
         </site>
     </distributionManagement>
     <properties>
@@ -48,6 +48,7 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <it.resources.directory>src/it/resources</it.resources.directory>
+        <site.deploy.directory>${project.basedir}/target/gh-pages</site.deploy.directory>
         <!-- integration with SonarCloud -->
         <sonar.organization>tobias-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>

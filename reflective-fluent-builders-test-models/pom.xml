@@ -16,6 +16,8 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <!-- for the same reason it should also not be scanned by sonar -->
         <sonar.skip>true</sonar.skip>
+        <!-- for now, however, a site is still generated -->
+        <site.deploy.directory>${project.basedir}/../target/gh-pages</site.deploy.directory>
     </properties>
     <dependencies>
         <!-- external dependencies -->

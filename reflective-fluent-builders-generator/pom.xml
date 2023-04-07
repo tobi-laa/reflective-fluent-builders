@@ -11,6 +11,9 @@
     <description>Provides a set of services that can be used for generating fluent builders for existing classes via
         reflection
     </description>
+    <properties>
+        <site.deploy.directory>${project.basedir}/../target/gh-pages</site.deploy.directory>
+    </properties>
     <dependencies>
         <!-- external dependencies -->
         <dependency>
