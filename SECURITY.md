@@ -12,5 +12,6 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-Please open a GitHub Issue describing the vulnerability.
-If you have the means and the will to, feel free to open a pull request addressing it.
+Please send a [mail](mailto:tobias.laatsch@posteo.de) describing the vulnerarbility.
+If you have the means and will to, feel free to prepare a branch containing the 
+security update within you _local_ repository and get in touch about having it merged.
