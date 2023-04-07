@@ -37,9 +37,10 @@
     </issueManagement>
     <inceptionYear>2022</inceptionYear>
     <distributionManagement>
+        <!-- site will be deployed to a local output directory, which will then be deployed via GitHub Actions -->
         <site>
-            <id>github</id>
-            <url>${project.scm.developerConnection}</url>
+            <id>Site folder for GitHub Pages</id>
+            <url>file:${project.build.directory}/gh-pages</url>
         </site>
     </distributionManagement>
     <properties>
@@ -337,11 +338,6 @@
                     <version>${maven-project-info-reports-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-scm-publish-plugin</artifactId>
-                    <version>${maven-scm-publish-plugin.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>org.eclipse.sisu</groupId>
                     <artifactId>sisu-maven-plugin</artifactId>
                     <version>${sisu.version}</version>
@@ -363,16 +359,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-scm-publish-plugin</artifactId>
-                <configuration>
-                    <pubScmUrl>${project.scm.developerConnection}</pubScmUrl>
-                    <scmBranch>gh-pages</scmBranch>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
     <profiles>
         <profile>
