@@ -46,7 +46,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageName>com.github.tobi.laa.reflective.fluent.builders.test.models.jaxb</packageName>
+                    <packageName>io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb</packageName>
                     <sources>
                         <source>${project.basedir}/src/main/resources/xsd</source>
                     </sources>
