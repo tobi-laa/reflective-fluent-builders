@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.github.tobi-laa</groupId>
+        <groupId>io.github.tobi-laa</groupId>
         <artifactId>reflective-fluent-builders</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -15,7 +15,7 @@
     <dependencies>
         <!-- modules -->
         <dependency>
-            <groupId>com.github.tobi-laa</groupId>
+            <groupId>io.github.tobi-laa</groupId>
             <artifactId>reflective-fluent-builders-generator</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -90,7 +90,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.tobi-laa</groupId>
+            <groupId>io.github.tobi-laa</groupId>
             <artifactId>reflective-fluent-builders-test-models</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.github.tobi-laa</groupId>
+        <groupId>io.github.tobi-laa</groupId>
         <artifactId>reflective-fluent-builders</artifactId>
         <version>@project.version@</version>
     </parent>
@@ -10,7 +10,7 @@
     <description>Integration test for the maven plugin</description>
     <dependencies>
         <dependency>
-            <groupId>com.github.tobi-laa</groupId>
+            <groupId>io.github.tobi-laa</groupId>
             <artifactId>reflective-fluent-builders-test-models</artifactId>
             <version>@project.version@</version>
         </dependency>
@@ -18,7 +18,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.github.tobi-laa</groupId>
+                <groupId>io.github.tobi-laa</groupId>
                 <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
                 <version>@project.version@</version>
                 <executions>
@@ -53,7 +53,7 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.github.tobi-laa</groupId>
+                        <groupId>io.github.tobi-laa</groupId>
                         <artifactId>reflective-fluent-builders-test-models</artifactId>
                         <version>@project.version@</version>
                     </dependency>

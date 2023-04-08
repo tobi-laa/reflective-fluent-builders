@@ -219,7 +219,7 @@ class GenerateBuildersMojoIT {
                     .error() //
                     .anySatisfy(s -> Assertions.assertThat(s) //
                             .containsSubsequence( //
-                                    "Failed to execute goal com.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
+                                    "Failed to execute goal io.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
                                     "generate-builders (default) on project", //
                                     "The parameters 'includes' for goal", //
                                     "are missing or invalid -> [Help 1]"));
@@ -315,7 +315,7 @@ class GenerateBuildersMojoIT {
                     .error() //
                     .anySatisfy(s -> Assertions.assertThat(s) //
                             .containsSubsequence( //
-                                    "Failed to execute goal com.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
+                                    "Failed to execute goal io.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
                                     "generate-builders (default) on project", //
                                     "Could not create target directory", //
                                     pomXml, //
@@ -341,7 +341,7 @@ class GenerateBuildersMojoIT {
                     .error() //
                     .anySatisfy(s -> Assertions.assertThat(s) //
                             .containsSubsequence( //
-                                    "Failed to execute goal com.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
+                                    "Failed to execute goal io.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
                                     "generate-builders (default) on project", //
                                     "Could not create file for builder for " + SimpleClass.class.getName(), //
                                     "SimpleClassBuilder.java: Is a directory -> [Help 1]"));
@@ -355,7 +355,7 @@ class GenerateBuildersMojoIT {
                     .error() //
                     .anySatisfy(s -> Assertions.assertThat(s) //
                             .containsSubsequence( //
-                                    "Failed to execute goal com.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
+                                    "Failed to execute goal io.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
                                     "generate-builders (default) on project", //
                                     ClassNotFoundException.class.getName(), //
                                     "does.not.exist -> [Help 1]"));
