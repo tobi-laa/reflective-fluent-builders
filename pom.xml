@@ -9,7 +9,7 @@
     <description>
         Provides the possibility of generating fluent builders for existing classes via reflection.
     </description>
-    <url>https://github.com/tobi-laa/fluent-builderMetadata-maven-plugin</url>
+    <url>https://github.com/tobias-laa/reflective-fluent-builders.git</url>
     <developers>
         <developer>
             <id>tobi-laa</id>
