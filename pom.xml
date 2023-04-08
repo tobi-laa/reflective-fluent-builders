@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.github.tobi-laa</groupId>
+    <groupId>io.github.tobi-laa</groupId>
     <artifactId>reflective-fluent-builders</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-java8-SNAPSHOT</version>
@@ -9,7 +9,7 @@
     <description>
         Provides the possibility of generating fluent builders for existing classes via reflection.
     </description>
-    <url>https://github.com/tobi-laa/fluent-builderMetadata-maven-plugin</url>
+    <url>https://github.com/tobias-laa/reflective-fluent-builders.git</url>
     <developers>
         <developer>
             <id>tobi-laa</id>
