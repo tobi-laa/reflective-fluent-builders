@@ -493,6 +493,11 @@
                         </executions>
                         <configuration>
                             <skip>${release.skip}</skip>
+                            <!-- Prevent gpg from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
                         </configuration>
                     </plugin>
                     <plugin>
