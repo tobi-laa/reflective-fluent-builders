@@ -2,8 +2,8 @@ name: Create Maven Site and publish to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
