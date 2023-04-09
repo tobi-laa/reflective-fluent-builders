@@ -376,6 +376,7 @@
                     <configuration>
                         <projectVersionPolicyId>SemVerVersionPolicy</projectVersionPolicyId>
                         <tagNameFormat>@{project.version}</tagNameFormat>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
                 <plugin>
