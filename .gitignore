@@ -60,3 +60,4 @@ build/
 ### maven-release-plugin
 release.properties
 pom.xml.releaseBackup
+pom.xml.next
