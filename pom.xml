@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.tobi-laa</groupId>
     <artifactId>reflective-fluent-builders</artifactId>
@@ -78,7 +79,7 @@
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <junit-pioneer.version>2.0.0</junit-pioneer.version>
-        <mockito.version>5.2.0</mockito.version>
+        <mockito.version>5.3.0</mockito.version>
         <assertj.version>3.24.2</assertj.version>
         <archunit.version>1.0.1</archunit.version>
         <itf-jupiter-extension.version>0.12.0</itf-jupiter-extension.version>
@@ -204,12 +205,6 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
