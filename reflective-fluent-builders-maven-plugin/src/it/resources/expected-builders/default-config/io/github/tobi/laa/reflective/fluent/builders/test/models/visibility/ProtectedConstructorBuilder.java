@@ -18,10 +18,6 @@ public class ProtectedConstructorBuilder {
     this.objectToBuild = objectToBuild;
   }
 
-  public static ProtectedConstructorBuilder newInstance() {
-    return new ProtectedConstructorBuilder(null);
-  }
-
   public static ProtectedConstructorBuilder thatModifies(
       final ProtectedConstructor objectToModify) {
     Objects.requireNonNull(objectToModify);
