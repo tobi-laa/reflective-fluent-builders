@@ -1,8 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
@@ -13,7 +13,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleCl
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
 import lombok.SneakyThrows;
-import org.assertj.core.api.ThrowableAssert;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -29,8 +29,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -126,7 +128,7 @@ class ClassServiceImplTest {
             final var cause = new IOException("Thrown in unit test");
             classPath.when(() -> ClassPath.from(any())).thenThrow(cause);
             // Act
-            final ThrowableAssert.ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
+            final ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
             // Assert
             assertThatThrownBy(collectClassesRecursively)
                     .isInstanceOf(ReflectionException.class)
@@ -176,5 +178,47 @@ class ClassServiceImplTest {
                                 TopLevelClass.NestedNonStatic.class, //
                                 TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.class, //
                                 TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree.class)));
+    }
+
+    @Test
+    void testDetermineClassLocationNull() {
+        // Arrange
+        final Class<?> clazz = null;
+        // Act
+        final Executable determineClassLocation = () -> classServiceImpl.determineClassLocation(clazz);
+        // Assert
+        assertThrows(NullPointerException.class, determineClassLocation);
+    }
+
+    @Test
+    void testDetermineClassLocationCodeSourceNull() {
+        // Arrange
+        final var clazz = String.class;
+        // Act
+        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
+        // Assert
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void testDetermineClassLocationFromJar() {
+        // Arrange
+        final var clazz = Test.class;
+        // Act
+        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
+        // Assert
+        assertThat(actual).isPresent();
+        assertThat(actual.get()).isRegularFile().hasExtension("jar");
+    }
+
+    @Test
+    void testDetermineClassLocationFromClassFile() {
+        // Arrange
+        final var clazz = getClass();
+        // Act
+        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
+        // Assert
+        assertThat(actual).isPresent();
+        assertThat(actual.get()).isRegularFile().hasExtension("class");
     }
 }

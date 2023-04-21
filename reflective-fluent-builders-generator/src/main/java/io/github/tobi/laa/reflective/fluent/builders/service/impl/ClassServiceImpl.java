@@ -1,19 +1,22 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import com.google.common.reflect.ClassPath;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.CodeSource;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,5 +83,35 @@ class ClassServiceImpl implements ClassService {
             innerStaticClasses.addAll(collectStaticInnerClassesRecursively(innerClass));
         }
         return innerStaticClasses;
+    }
+
+    @Override
+    public Optional<Path> determineClassLocation(final Class<?> clazz) {
+        Objects.requireNonNull(clazz);
+        return Optional.ofNullable(getCodeSource(clazz)) //
+                .map(this::getLocationAsPath) //
+                .map(path -> resolveClassFileIfNecessary(path, clazz));
+    }
+
+    private CodeSource getCodeSource(final Class<?> clazz) {
+        return clazz.getProtectionDomain().getCodeSource();
+    }
+
+    @SneakyThrows(URISyntaxException.class) // should never occur
+    private Path getLocationAsPath(final CodeSource codeSource) {
+        return Paths.get(codeSource.getLocation().toURI());
+    }
+
+    private Path resolveClassFileIfNecessary(final Path path, final Class<?> clazz) {
+        if (Files.isDirectory(path)) {
+            Path classFile = path;
+            for (final String subdir : clazz.getPackageName().split("\\.")) {
+                classFile = classFile.resolve(subdir);
+            }
+            classFile = classFile.resolve(clazz.getSimpleName() + ".class");
+            return classFile;
+        } else {
+            return path;
+        }
     }
 }
