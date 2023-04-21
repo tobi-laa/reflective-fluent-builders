@@ -1,9 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MethodCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import com.squareup.javapoet.MethodSpec;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -31,10 +31,14 @@ class NewInstanceFactoryMethodCodeGenerator implements MethodCodeGenerator {
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        return Optional.of(MethodSpec.methodBuilder("newInstance")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(builderClassName)
-                .addStatement("return new $T(null)", builderClassName)
-                .build());
+        if (builderMetadata.getBuiltType().isAccessibleNonArgsConstructor()) {
+            return Optional.of(MethodSpec.methodBuilder("newInstance")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .returns(builderClassName)
+                    .addStatement("return new $T(null)", builderClassName)
+                    .build());
+        } else {
+            return Optional.empty();
+        }
     }
 }
