@@ -49,3 +49,26 @@ The project can be built from the root directory using:
 ```
 mvn clean install
 ```
+
+## Releases
+
+Releases are automatically built and published to Maven Central once a tag following the semantic versioning pattern is
+pushed (i.e. `v1.0.0`). For the `java8` branch, a suffix should be appended to the tag, yielding something like
+`v1.0.0-java8`. The artifact version should correspond to the aforementioned tag, meaning tags such as `v1.0.0` or
+`v1.0.0-java8` should only be applied if the artifact version within the project's `pom.xml` files is `1.0.0` or
+`1.0.0-java8`, respectively.
+
+To simplify the release process, the
+[Maven Release Plugin](https://maven.apache.org/maven-release/maven-release-plugin/)
+can be used like this:
+
+```
+mvn release:prepare release:clean -B
+```
+
+For the `java8` branch, the versioning scheme does not seem to be understood correctly. Thus, the command from above
+should contain the release version, tag and following development version explicitly:
+
+```
+mvn release:prepare release:clean -B -DreleaseVersion=1.0.0-java8 -DdevelopmentVersion=1.1.0-java8-SNAPSHOT -Dtag=v1.0.0-java8
+```
