@@ -91,7 +91,7 @@
         <maven-plugin-annotations.version>3.8.2</maven-plugin-annotations.version>
         <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
-        <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-core.version>3.9.1</maven-core.version>
         <jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
