@@ -77,7 +77,7 @@
         <jakarta.el-api.version>5.0.1</jakarta.el-api.version>
         <jakarta.el.version>5.0.0-M1</jakarta.el.version>
         <!-- versions of testing dependencies -->
-        <junit-jupiter.version>5.9.2</junit-jupiter.version>
+        <junit-jupiter.version>5.9.3</junit-jupiter.version>
         <junit-pioneer.version>2.0.1</junit-pioneer.version>
         <mockito.version>5.3.1</mockito.version>
         <assertj.version>3.24.2</assertj.version>
