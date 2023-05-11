@@ -86,7 +86,7 @@
         <java-diff-utils.version>4.12</java-diff-utils.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
         <maven-plugin-plugin.version>3.8.2</maven-plugin-plugin.version>
         <maven-plugin-annotations.version>3.8.2</maven-plugin-annotations.version>
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
