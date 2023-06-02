@@ -592,6 +592,26 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * {@link org.apache.maven.artifact.Artifact#SCOPE_TEST test}
      * is included by default as well.
      * </p>
+     * <p>
+     * If more control is desired, an empty {@code <scopesToInclude/>} element can be provided and the desired
+     * dependencies to included can be explicitly provided as a dependency of this plugin:
+     * </p>
+     * <pre>
+     * {@code <plugin>
+     *     <groupId>io.github.tobi-laa</groupId>
+     *     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+     *     <version>1.0.0</version>
+     *     <executions>
+     *         <!-- omitted for brevity -->
+     *     </executions>
+     *     <dependencies>
+     *         <dependency>
+     *             <groupId>com.bar.foo</groupId>
+     *             <artifactId>dependency-to-include</artifactId>
+     *             <version>1.2.3</version>
+     *         </dependency>
+     *     </dependencies>
+     * </plugin>}</pre>
      *
      * @param scopesToInclude The scopes of the dependencies of the maven project within which this mojo is
      *                        executed which should be included when collecting classes.
