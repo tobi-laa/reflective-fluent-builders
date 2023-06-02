@@ -107,6 +107,7 @@ class GenerateBuildersMojoIT {
         void packageSimpleWithDebugLogging(final MavenExecutionResult result) {
             assertThat(result).isSuccessful();
             final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            final var outputDirectory = projectResultHelper.getOutputDirectory(result.getMavenProjectResult());
             assertThat(result) //
                     .out() //
                     .info() //
@@ -117,11 +118,24 @@ class GenerateBuildersMojoIT {
                             "Generate builder for class " + Child.class.getName(), //
                             "Generate builder for class " + SimpleClass.class.getName(), //
                             "Generate builder for class " + Parent.class.getName());
+            final var reflectiveFluentBuildersTestModels = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
+                    "io.github.tobi-laa", //
+                    "reflective-fluent-builders-test-models", //
+                    System.getProperty("project.version"));
+            final var jakartaXmlBindApi = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
+                    "jakarta.xml.bind", //
+                    "jakarta.xml.bind-api", //
+                    System.getProperty("jakarta.xml.bind-api.version"));
             assertThat(result) //
                     .out() //
                     .debug() //
                     .contains( //
                             "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, getterPrefix=get, getAndAddEnabled=false, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection())", //
+                            "Add " + outputDirectory + " to ClassLoader.", //
+                            "Add " + reflectiveFluentBuildersTestModels + " to ClassLoader.", //
+                            "Add " + jakartaXmlBindApi + " to ClassLoader.", //
+                            "Add /home/tobi/IdeaProjects/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/target/maven-it/io/github/tobi/laa/reflective/fluent/builders/mojo/GenerateBuildersMojoIT/WithDebugLogging/../../sharedMavenCache/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/4.0.0/jakarta.xml.bind-api-4.0.0.jar to ClassLoader.", //
+                            "Add /home/tobi/IdeaProjects/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/target/maven-it/io/github/tobi/laa/reflective/fluent/builders/mojo/GenerateBuildersMojoIT/WithDebugLogging/../../sharedMavenCache/.m2/repository/jakarta/activation/jakarta.activation-api/2.1.0/jakarta.activation-api-2.1.0.jar to ClassLoader.", //
                             "Builders will be generated for the following classes:", //
                             "- " + SimpleClassNoSetPrefix.class.getName(), //
                             "- " + SimpleClassNoDefaultConstructor.class.getName(), //

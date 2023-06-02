@@ -116,7 +116,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
             createTargetDirectory();
             nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
         } catch (final IOException e) {
-            throw new MojoExecutionException(e);
+            throw new MojoExecutionException("Error while attempting to close ClassLoader.", e);
         } finally {
             setThreadClassLoader(oldClassLoader);
         }
@@ -212,10 +212,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private Stream<URL> getOutputDirectoryUrls() throws MojoExecutionException {
         final List<URL> outputDirectoryUrls = new ArrayList<>();
-        getLog().debug("Add " + mavenProject.getBuild().getOutputDirectory() + " to ClassLoader.");
+        logAddingToClassLoader(mavenProject.getBuild().getOutputDirectory());
         outputDirectoryUrls.add(toUrl(new File(mavenProject.getBuild().getOutputDirectory())));
         if (isTestPhase()) {
-            getLog().debug("Add " + mavenProject.getBuild().getTestOutputDirectory() + " to ClassLoader.");
+            logAddingToClassLoader(mavenProject.getBuild().getTestOutputDirectory());
             outputDirectoryUrls.add(toUrl(new File(mavenProject.getBuild().getTestOutputDirectory())));
         }
         return outputDirectoryUrls.stream();
@@ -225,11 +225,15 @@ public class GenerateBuildersMojo extends AbstractMojo {
         final List<URL> urlsOfArtifacts = new ArrayList<>();
         for (final var artifact : mavenProject.getArtifacts()) {
             if (scopesToInclude.contains(artifact.getScope())) {
-                getLog().debug("Add " + artifact.getFile() + " to ClassLoader.");
+                logAddingToClassLoader(artifact.getFile());
                 urlsOfArtifacts.add(toUrl(artifact.getFile()));
             }
         }
         return urlsOfArtifacts.stream();
+    }
+
+    private void logAddingToClassLoader(final Object resource) {
+        getLog().debug("Add " + resource + " to ClassLoader.");
     }
 
     private URL toUrl(final File file) throws MojoExecutionException {
