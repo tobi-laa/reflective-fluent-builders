@@ -29,7 +29,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.security.CodeSource;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -222,5 +225,19 @@ class ClassServiceImplTest {
         // Assert
         assertThat(actual).isPresent();
         assertThat(actual.get()).isRegularFile().hasExtension("class");
+    }
+
+    @Test
+    @SneakyThrows
+    void testGetLocationAsPathURISyntaxException() {
+        // Arrange
+        final var codeSource = Mockito.mock(CodeSource.class);
+        final var url = Mockito.mock(URL.class);
+        when(codeSource.getLocation()).thenReturn(url);
+        when(url.toURI()).thenThrow(new URISyntaxException("mock", "Thrown in unit test."));
+        // Act
+        final Executable getLocationAsPath = () -> classServiceImpl.getLocationAsPath(codeSource);
+        // Assert
+        assertThrows(URISyntaxException.class, getLocationAsPath);
     }
 }
