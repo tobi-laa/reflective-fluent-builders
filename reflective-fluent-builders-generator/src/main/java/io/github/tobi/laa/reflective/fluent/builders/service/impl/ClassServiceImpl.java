@@ -60,11 +60,10 @@ class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public Set<Class<?>> collectClassesRecursively(final String packageName, final ClassLoader classLoader) {
+    public Set<Class<?>> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
-        Objects.requireNonNull(classLoader);
         try {
-            return ClassPath.from(classLoader) //
+            return ClassPath.from(Thread.currentThread().getContextClassLoader()) //
                     .getTopLevelClassesRecursive(packageName) //
                     .stream() //
                     .map(ClassPath.ClassInfo::load) //

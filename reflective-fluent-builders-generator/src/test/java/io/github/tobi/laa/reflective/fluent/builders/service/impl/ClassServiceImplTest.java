@@ -113,31 +113,24 @@ class ClassServiceImplTest {
                                 AnInterface.class)));
     }
 
-    @ParameterizedTest
-    @MethodSource
-    void testCollectClassesRecursivelyNull(final String packageName, final ClassLoader classLoader) {
+    @Test
+    void testCollectClassesRecursivelyNull() {
+        // Arrange
+        final String packageName = null;
         // Act
-        final Executable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively(packageName, classLoader);
+        final Executable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively(packageName);
         // Assert
         assertThrows(NullPointerException.class, collectClassesRecursively);
-    }
-
-    private static Stream<Arguments> testCollectClassesRecursivelyNull() {
-        return Stream.of( //
-                Arguments.of("", null), //
-                Arguments.of(null, ClassServiceImplTest.class.getClassLoader()), //
-                Arguments.of(null, null));
     }
 
     @Test
     void testCollectClassesRecursivelyReflectionException() {
         try (final MockedStatic<ClassPath> classPath = mockStatic(ClassPath.class)) {
             // Arrange
-            final var classLoader = getClass().getClassLoader();
             final var cause = new IOException("Thrown in unit test");
             classPath.when(() -> ClassPath.from(any())).thenThrow(cause);
             // Act
-            final ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("", classLoader);
+            final ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
             // Assert
             assertThatThrownBy(collectClassesRecursively)
                     .isInstanceOf(ReflectionException.class)
@@ -149,10 +142,8 @@ class ClassServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
-        // Arrange
-        final var classLoader = getClass().getClassLoader();
         // Act
-        final Set<Class<?>> actual = classServiceImpl.collectClassesRecursively(packageName, classLoader);
+        final Set<Class<?>> actual = classServiceImpl.collectClassesRecursively(packageName);
         // Assert
         assertThat(actual).filteredOn(not(this::isTestClass)).containsExactlyInAnyOrderElementsOf(expected);
     }

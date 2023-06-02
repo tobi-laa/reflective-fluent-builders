@@ -21,6 +21,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.build.BuildContext;
 
@@ -45,7 +46,7 @@ import static org.apache.maven.artifact.Artifact.*;
  * cases where it is not possible (or very hard) to change the sources of said classes to generate builders directly.
  * </p>
  */
-@Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GenerateBuildersMojo extends AbstractMojo {
 
@@ -106,15 +107,32 @@ public class GenerateBuildersMojo extends AbstractMojo {
     public void execute() throws MojoFailureException, MojoExecutionException {
         validateParams();
         mapMavenParamsToProps();
-        final var classes = collectAndFilterClasses();
         setDefaultsIfNecessary();
-        createTargetDirectory();
-        final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
+        final var oldClassLoader = getThreadClassLoader();
+        final Set<BuilderMetadata> nonEmptyBuilderMetadata;
+        try (final var classLoader = constructClassLoader()) {
+            setThreadClassLoader(classLoader);
+            final var classes = collectAndFilterClasses();
+            createTargetDirectory();
+            nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
+        } catch (final IOException e) {
+            throw new MojoExecutionException(e);
+        } finally {
+            setThreadClassLoader(oldClassLoader);
+        }
         if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
             generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
             addCompileSourceRoot();
             refreshBuildContext(nonEmptyBuilderMetadata);
         }
+    }
+
+    private ClassLoader getThreadClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    private void setThreadClassLoader(final ClassLoader classLoader) {
+        Thread.currentThread().setContextClassLoader(classLoader);
     }
 
     private void validateParams() throws MojoExecutionException {
@@ -143,6 +161,26 @@ public class GenerateBuildersMojo extends AbstractMojo {
         getLog().debug("Properties are: " + buildersProperties);
     }
 
+    private void setDefaultsIfNecessary() {
+        if (target == null && isTestPhase()) {
+            target = Paths.get(mavenProject.getBuild().getDirectory()) //
+                    .resolve("generated-test-sources") //
+                    .resolve("builders") //
+                    .toFile();
+        } else if (target == null) {
+            target = Paths.get(mavenProject.getBuild().getDirectory())
+                    .resolve("generated-sources") //
+                    .resolve("builders") //
+                    .toFile();
+        }
+        //
+        if (scopesToInclude == null && isTestPhase()) {
+            scopesToInclude = Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM, SCOPE_TEST);
+        } else if (scopesToInclude == null) {
+            scopesToInclude = Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM);
+        }
+    }
+
     private Set<Class<?>> collectAndFilterClasses() throws MojoExecutionException {
         final var allClasses = collectClasses();
         final var filteredClasses = filterClasses(allClasses);
@@ -152,18 +190,14 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private Set<Class<?>> collectClasses() throws MojoExecutionException {
         final var allClasses = new HashSet<Class<?>>();
-        try (final var classLoader = constructClassLoader()) {
-            for (final var include : includes) {
-                if (include.getPackageName() != null) {
-                    getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
-                    allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim(), classLoader));
-                } else {
-                    getLog().info("Add class " + include.getClassName() + '.');
-                    allClasses.add(classForName(include.getClassName()));
-                }
+        for (final var include : includes) {
+            if (include.getPackageName() != null) {
+                getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
+                allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
+            } else {
+                getLog().info("Add class " + include.getClassName() + '.');
+                allClasses.add(loadClass(include.getClassName()));
             }
-        } catch (final IOException e) {
-            throw new MojoExecutionException(e);
         }
         return allClasses;
     }
@@ -173,7 +207,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
                         getOutputDirectoryUrls(), //
                         getUrlsOfArtifactsInScopesToInclude()) //
                 .toArray(URL[]::new);
-        return new URLClassLoader(classUrls, Thread.currentThread().getContextClassLoader());
+        return new URLClassLoader(classUrls, getThreadClassLoader());
     }
 
     private Stream<URL> getOutputDirectoryUrls() throws MojoExecutionException {
@@ -206,9 +240,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
         }
     }
 
-    private Class<?> classForName(final String className) throws MojoExecutionException {
+    private Class<?> loadClass(final String className) throws MojoExecutionException {
         try {
-            return Class.forName(className.trim());
+            return getThreadClassLoader().loadClass(className.trim());
         } catch (final ClassNotFoundException e) {
             throw new MojoExecutionException(e);
         }
@@ -228,26 +262,6 @@ public class GenerateBuildersMojo extends AbstractMojo {
             excludedClasses.forEach(c -> getLog().debug("- " + c.getName()));
         }
         return filteredClasses;
-    }
-
-    private void setDefaultsIfNecessary() {
-        if (target == null && isTestPhase()) {
-            target = Paths.get(mavenProject.getBuild().getDirectory()) //
-                    .resolve("generated-test-sources") //
-                    .resolve("builders") //
-                    .toFile();
-        } else if (target == null) {
-            target = Paths.get(mavenProject.getBuild().getDirectory())
-                    .resolve("generated-sources") //
-                    .resolve("builders") //
-                    .toFile();
-        }
-        //
-        if (scopesToInclude == null && isTestPhase()) {
-            scopesToInclude = Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM, SCOPE_TEST);
-        } else if (scopesToInclude == null) {
-            scopesToInclude = Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM);
-        }
     }
 
     private void createTargetDirectory() throws MojoFailureException {
