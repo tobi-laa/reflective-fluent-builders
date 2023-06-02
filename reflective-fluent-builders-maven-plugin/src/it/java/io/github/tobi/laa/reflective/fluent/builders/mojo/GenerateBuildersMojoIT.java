@@ -134,8 +134,6 @@ class GenerateBuildersMojoIT {
                             "Add " + outputDirectory + " to ClassLoader.", //
                             "Add " + reflectiveFluentBuildersTestModels + " to ClassLoader.", //
                             "Add " + jakartaXmlBindApi + " to ClassLoader.", //
-                            "Add /home/tobi/IdeaProjects/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/target/maven-it/io/github/tobi/laa/reflective/fluent/builders/mojo/GenerateBuildersMojoIT/WithDebugLogging/../../sharedMavenCache/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/4.0.0/jakarta.xml.bind-api-4.0.0.jar to ClassLoader.", //
-                            "Add /home/tobi/IdeaProjects/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/target/maven-it/io/github/tobi/laa/reflective/fluent/builders/mojo/GenerateBuildersMojoIT/WithDebugLogging/../../sharedMavenCache/.m2/repository/jakarta/activation/jakarta.activation-api/2.1.0/jakarta.activation-api-2.1.0.jar to ClassLoader.", //
                             "Builders will be generated for the following classes:", //
                             "- " + SimpleClassNoSetPrefix.class.getName(), //
                             "- " + SimpleClassNoDefaultConstructor.class.getName(), //
