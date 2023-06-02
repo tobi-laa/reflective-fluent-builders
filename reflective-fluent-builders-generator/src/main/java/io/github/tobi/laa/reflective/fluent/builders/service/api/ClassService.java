@@ -31,12 +31,13 @@ public interface ClassService {
      * </p>
      *
      * @param packageName The package from which to start class collection. Must not be {@code null}.
+     * @param classLoader The ClassLoader to use when collecting classes. Must not be {@code null}.
      * @return All classes within the package {@code pack} and all its sub-packages.
      * @throws ReflectionException If an error occurs while
      *                             accessing classes in
      *                             {@code packageName}.
      */
-    Set<Class<?>> collectClassesRecursively(final String packageName);
+    Set<Class<?>> collectClassesRecursively(final String packageName, final ClassLoader classLoader);
 
     /**
      * <p>

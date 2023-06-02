@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import com.google.common.collect.Sets;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
@@ -7,11 +8,11 @@ import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersPropertie
 import io.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import com.google.common.collect.Sets;
 import jakarta.validation.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -21,15 +22,22 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.build.BuildContext;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.apache.maven.artifact.Artifact.*;
 
 /**
  * <p>
@@ -67,6 +75,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private boolean addCompileSourceRoot;
 
+    private Set<String> scopesToInclude;
+
     // for read-only parameters, no documentation is provided and thus Lombok can be used
     @Setter(onMethod_ =
     @Parameter(readonly = true, required = true, defaultValue = "${project}"))
@@ -88,16 +98,23 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
 
+    @lombok.NonNull
+    private final BuildContext buildContext;
+
     @Override
+    @SneakyThrows
     public void execute() throws MojoFailureException, MojoExecutionException {
         validateParams();
         mapMavenParamsToProps();
         final var classes = collectAndFilterClasses();
-        setDefaultTargetDirectoryIfNecessary();
+        setDefaultsIfNecessary();
         createTargetDirectory();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
-        generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
-        addCompileSourceRoot();
+        if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
+            generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
+            addCompileSourceRoot();
+            refreshBuildContext(nonEmptyBuilderMetadata);
+        }
     }
 
     private void validateParams() throws MojoExecutionException {
@@ -135,16 +152,58 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private Set<Class<?>> collectClasses() throws MojoExecutionException {
         final var allClasses = new HashSet<Class<?>>();
-        for (final var include : includes) {
-            if (include.getPackageName() != null) {
-                getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
-                allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
-            } else {
-                getLog().info("Add class " + include.getClassName() + '.');
-                allClasses.add(classForName(include.getClassName()));
+        try (final var classLoader = constructClassLoader()) {
+            for (final var include : includes) {
+                if (include.getPackageName() != null) {
+                    getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
+                    allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim(), classLoader));
+                } else {
+                    getLog().info("Add class " + include.getClassName() + '.');
+                    allClasses.add(classForName(include.getClassName()));
+                }
             }
+        } catch (final IOException e) {
+            throw new MojoExecutionException(e);
         }
         return allClasses;
+    }
+
+    private URLClassLoader constructClassLoader() throws MojoExecutionException {
+        final var classUrls = Stream.concat( //
+                        getOutputDirectoryUrls(), //
+                        getUrlsOfArtifactsInScopesToInclude()) //
+                .toArray(URL[]::new);
+        return new URLClassLoader(classUrls, Thread.currentThread().getContextClassLoader());
+    }
+
+    private Stream<URL> getOutputDirectoryUrls() throws MojoExecutionException {
+        final List<URL> outputDirectoryUrls = new ArrayList<>();
+        getLog().debug("Add " + mavenProject.getBuild().getOutputDirectory() + " to ClassLoader.");
+        outputDirectoryUrls.add(toUrl(new File(mavenProject.getBuild().getOutputDirectory())));
+        if (isTestPhase()) {
+            getLog().debug("Add " + mavenProject.getBuild().getTestOutputDirectory() + " to ClassLoader.");
+            outputDirectoryUrls.add(toUrl(new File(mavenProject.getBuild().getTestOutputDirectory())));
+        }
+        return outputDirectoryUrls.stream();
+    }
+
+    private Stream<URL> getUrlsOfArtifactsInScopesToInclude() throws MojoExecutionException {
+        final List<URL> urlsOfArtifacts = new ArrayList<>();
+        for (final var artifact : mavenProject.getArtifacts()) {
+            if (scopesToInclude.contains(artifact.getScope())) {
+                getLog().debug("Add " + artifact.getFile() + " to ClassLoader.");
+                urlsOfArtifacts.add(toUrl(artifact.getFile()));
+            }
+        }
+        return urlsOfArtifacts.stream();
+    }
+
+    private URL toUrl(final File file) throws MojoExecutionException {
+        try {
+            return file.toURI().toURL();
+        } catch (final MalformedURLException e) {
+            throw new MojoExecutionException("Error while attempting to convert file " + file + " to URL.", e);
+        }
     }
 
     private Class<?> classForName(final String className) throws MojoExecutionException {
@@ -171,7 +230,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return filteredClasses;
     }
 
-    private void setDefaultTargetDirectoryIfNecessary() {
+    private void setDefaultsIfNecessary() {
         if (target == null && isTestPhase()) {
             target = Paths.get(mavenProject.getBuild().getDirectory()) //
                     .resolve("generated-test-sources") //
@@ -182,6 +241,12 @@ public class GenerateBuildersMojo extends AbstractMojo {
                     .resolve("generated-sources") //
                     .resolve("builders") //
                     .toFile();
+        }
+        //
+        if (scopesToInclude == null && isTestPhase()) {
+            scopesToInclude = Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM, SCOPE_TEST);
+        } else if (scopesToInclude == null) {
+            scopesToInclude = Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM);
         }
     }
 
@@ -205,6 +270,39 @@ public class GenerateBuildersMojo extends AbstractMojo {
             emptyMetadata.forEach(m -> getLog().debug("- " + m.getBuiltType().getType().getName()));
         }
         return nonEmptyMetadata;
+    }
+
+    private boolean isGenerationNecessary(final Set<BuilderMetadata> builderMetadata) {
+        return !buildContext.isIncremental() || //
+                !allBuilderFilesExist(builderMetadata) || //
+                buildContextHasDelta(builderMetadata);
+    }
+
+    private boolean allBuilderFilesExist(final Set<BuilderMetadata> builderMetadata) {
+        return builderMetadata.stream().map(this::resolveBuilderFile).allMatch(Files::exists);
+    }
+
+    private Path resolveBuilderFile(final BuilderMetadata builderMetadata) {
+        Path builderFile = target.toPath();
+        for (final String subdir : builderMetadata.getPackageName().split("\\.")) {
+            builderFile = builderFile.resolve(subdir);
+        }
+        builderFile = builderFile.resolve(builderMetadata.getName() + ".java");
+        return builderFile;
+    }
+
+    private boolean buildContextHasDelta(final Set<BuilderMetadata> builderMetadata) {
+        return determineBuiltTypeClassLocations(builderMetadata).anyMatch(buildContext::hasDelta);
+    }
+
+    private Stream<File> determineBuiltTypeClassLocations(final Set<BuilderMetadata> builderMetadata) {
+        return builderMetadata.stream() //
+                .map(BuilderMetadata::getBuiltType) //
+                .map(BuilderMetadata.BuiltType::getClass) //
+                .map(classService::determineClassLocation) //
+                .filter(Optional::isPresent) //
+                .map(Optional::get) //
+                .map(Path::toFile);
     }
 
     private void generateAndWriteBuildersToTarget(Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
@@ -236,6 +334,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return StringUtils.containsIgnoreCase(mojoExecution.getLifecyclePhase(), "test");
     }
 
+    private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
+        determineBuiltTypeClassLocations(builderMetadata).forEach(buildContext::refresh);
+    }
 
     /**
      * <p>
@@ -471,5 +572,33 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @Parameter(name = "addCompileSourceRoot", defaultValue = "true")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
         this.addCompileSourceRoot = addCompileSourceRoot;
+    }
+
+    /**
+     * <p>
+     * Specifies the scopes of the dependencies of the maven project within which this mojo is executed which should be
+     * included when collecting classes.
+     * </p>
+     * <p>
+     * By default, dependencies within the scope
+     * {@link org.apache.maven.artifact.Artifact#SCOPE_COMPILE compile},
+     * {@link org.apache.maven.artifact.Artifact#SCOPE_PROVIDED provided}
+     * or
+     * {@link org.apache.maven.artifact.Artifact#SCOPE_SYSTEM system}
+     * are included.
+     * </p>
+     * <p>
+     * If the mojo is executed within a {@link #isTestPhase() test phase}, the scope
+     * {@link org.apache.maven.artifact.Artifact#SCOPE_TEST test}
+     * is included by default as well.
+     * </p>
+     *
+     * @param scopesToInclude The scopes of the dependencies of the maven project within which this mojo is
+     *                        executed which should be included when collecting classes.
+     * @since 1.0.0
+     */
+    @Parameter(name = "scopesToInclude")
+    public void setScopesToInclude(final Set<String> scopesToInclude) {
+        this.scopesToInclude = scopesToInclude;
     }
 }
