@@ -23,12 +23,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,6 +48,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final MavenBuild mavenBuild;
 
     @lombok.NonNull
+    private final ClassLoading classLoading;
+
+    @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
 
     @lombok.NonNull
@@ -60,20 +62,13 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @Override
     @SneakyThrows
     public void execute() throws MojoFailureException, MojoExecutionException {
-        validateParams();
         logMavenParams();
-        final var oldClassLoader = getThreadClassLoader();
-        final Set<BuilderMetadata> nonEmptyBuilderMetadata;
-        try (final var classLoader = constructClassLoader()) {
-            setThreadClassLoader(classLoader);
-            final var classes = collectAndFilterClasses();
-            createTargetDirectory();
-            nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
-        } catch (final IOException e) {
-            throw new MojoExecutionException("Error while attempting to close ClassLoader.", e);
-        } finally {
-            setThreadClassLoader(oldClassLoader);
-        }
+        validateParams();
+        classLoading.setThreadClassLoaderToArtifactIncludingClassLoader();
+        final var classes = collectAndFilterClasses();
+        createTargetDirectory();
+        final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
+        classLoading.resetThreadClassLoader();
         if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
             generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
             addCompileSourceRoot();
@@ -81,12 +76,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
         }
     }
 
-    private ClassLoader getThreadClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
-    }
-
-    private void setThreadClassLoader(final ClassLoader classLoader) {
-        Thread.currentThread().setContextClassLoader(classLoader);
+    private void logMavenParams() {
+        getLog().debug("Parameters are: " + params);
     }
 
     private void validateParams() throws MojoExecutionException {
@@ -97,10 +88,6 @@ public class GenerateBuildersMojo extends AbstractMojo {
                 throw new MojoExecutionException("Parameter validation failed.\n" + violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining("\n")));
             }
         }
-    }
-
-    private void logMavenParams() {
-        getLog().debug("Parameters are: " + params);
     }
 
     private Set<Class<?>> collectAndFilterClasses() throws MojoExecutionException {
@@ -118,60 +105,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
                 allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
             } else {
                 getLog().info("Add class " + include.getClassName() + '.');
-                allClasses.add(loadClass(include.getClassName()));
+                allClasses.add(classLoading.loadClass(include.getClassName()));
             }
         }
         return allClasses;
-    }
-
-    private URLClassLoader constructClassLoader() throws MojoExecutionException {
-        final var classUrls = Stream.concat( //
-                        getOutputDirectoryUrls(), //
-                        getUrlsOfArtifactsInScopesToInclude()) //
-                .toArray(URL[]::new);
-        return new URLClassLoader(classUrls, getThreadClassLoader());
-    }
-
-    private Stream<URL> getOutputDirectoryUrls() throws MojoExecutionException {
-        final List<URL> outputDirectoryUrls = new ArrayList<>();
-        logAddingToClassLoader(mavenBuild.getOutputDirectory());
-        outputDirectoryUrls.add(toUrl(new File(mavenBuild.getOutputDirectory())));
-        if (mavenBuild.isTestPhase()) {
-            logAddingToClassLoader(mavenBuild.getTestOutputDirectory());
-            outputDirectoryUrls.add(toUrl(new File(mavenBuild.getTestOutputDirectory())));
-        }
-        return outputDirectoryUrls.stream();
-    }
-
-    private Stream<URL> getUrlsOfArtifactsInScopesToInclude() throws MojoExecutionException {
-        final List<URL> urlsOfArtifacts = new ArrayList<>();
-        for (final var artifact : mavenBuild.getArtifacts()) {
-            if (params.getScopesToInclude().contains(artifact.getScope())) {
-                logAddingToClassLoader(artifact.getFile());
-                urlsOfArtifacts.add(toUrl(artifact.getFile()));
-            }
-        }
-        return urlsOfArtifacts.stream();
-    }
-
-    private void logAddingToClassLoader(final Object resource) {
-        getLog().debug("Add " + resource + " to ClassLoader.");
-    }
-
-    private URL toUrl(final File file) throws MojoExecutionException {
-        try {
-            return file.toURI().toURL();
-        } catch (final MalformedURLException e) {
-            throw new MojoExecutionException("Error while attempting to convert file " + file + " to URL.", e);
-        }
-    }
-
-    private Class<?> loadClass(final String className) throws MojoExecutionException {
-        try {
-            return getThreadClassLoader().loadClass(className.trim());
-        } catch (final ClassNotFoundException e) {
-            throw new MojoExecutionException(e);
-        }
     }
 
     private Set<Class<?>> filterClasses(final Set<Class<?>> classes) {

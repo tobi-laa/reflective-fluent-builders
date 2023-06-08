@@ -374,8 +374,7 @@ class GenerateBuildersMojoIT {
                             .containsSubsequence( //
                                     "Failed to execute goal io.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
                                     "generate-builders (default) on project", //
-                                    ClassNotFoundException.class.getName(), //
-                                    "does.not.exist -> [Help 1]"));
+                                    "Unable to load class does.not.exist -> [Help 1]"));
         }
     }
 }
