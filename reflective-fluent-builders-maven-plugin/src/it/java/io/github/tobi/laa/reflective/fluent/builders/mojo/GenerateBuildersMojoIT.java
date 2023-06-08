@@ -130,7 +130,17 @@ class GenerateBuildersMojoIT {
                     .out() //
                     .debug() //
                     .contains( //
-                            "Properties are: StandardBuildersProperties(builderPackage=<PACKAGE_NAME>, builderSuffix=Builder, setterPrefix=set, getterPrefix=get, getAndAddEnabled=false, hierarchyCollection=StandardBuildersProperties.StandardHierarchyCollection())", //
+                            "Parameters are: MojoParams(builderPackage=<PACKAGE_NAME>, " +
+                                    "builderSuffix=Builder, " +
+                                    "setterPrefix=set, " +
+                                    "getterPrefix=get, " +
+                                    "getAndAddEnabled=false, " +
+                                    "hierarchyCollection=MojoParams.HierarchyCollection(excludes=null), " +
+                                    "includes=[Include(super=AbstractIncludeExclude(packageName=io.github.tobi.laa.reflective.fluent.builders.test.models.simple, className=null))], " +
+                                    "excludes=null, " +
+                                    "target=" + targetDirectory + ", " +
+                                    "addCompileSourceRoot=true, " +
+                                    "scopesToInclude=null)", //
                             "Add " + outputDirectory + " to ClassLoader.", //
                             "Add " + reflectiveFluentBuildersTestModels + " to ClassLoader.", //
                             "Add " + jakartaXmlBindApi + " to ClassLoader.", //
