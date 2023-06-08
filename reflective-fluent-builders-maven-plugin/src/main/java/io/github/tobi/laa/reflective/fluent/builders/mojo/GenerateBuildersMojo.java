@@ -46,6 +46,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final MojoParams params;
 
     @lombok.NonNull
+    private final MavenBuild mavenBuild;
+
+    @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
 
     @lombok.NonNull
@@ -53,9 +56,6 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
-
-    @lombok.NonNull
-    private final MavenBuild mavenBuild;
 
     @Override
     @SneakyThrows
@@ -238,8 +238,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private Stream<File> determineBuiltTypeClassLocations(final Set<BuilderMetadata> builderMetadata) {
         return builderMetadata.stream() //
                 .map(BuilderMetadata::getBuiltType) //
-                .map(BuilderMetadata.BuiltType::getClass) //
-                .map(classService::determineClassLocation) //
+                .map(BuilderMetadata.BuiltType::getLocation) //
                 .filter(Optional::isPresent) //
                 .map(Optional::get) //
                 .map(Path::toFile);
