@@ -38,13 +38,6 @@
                         </include>
                     </includes>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.github.tobi-laa</groupId>
-                        <artifactId>reflective-fluent-builders-test-models</artifactId>
-                        <version>@project.version@</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

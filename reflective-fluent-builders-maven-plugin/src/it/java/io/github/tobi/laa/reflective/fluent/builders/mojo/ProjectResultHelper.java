@@ -18,4 +18,16 @@ class ProjectResultHelper {
     Path getGeneratedTestSourcesDir(final MavenProjectResult result) {
         return result.getTargetProjectDirectory().resolve("target").resolve("generated-test-sources");
     }
+
+    Path getOutputDirectory(final MavenProjectResult result) {
+        return result.getTargetProjectDirectory().resolve("target").resolve("classes");
+    }
+
+    Path resolveMavenArtifact(final MavenProjectResult result, final String groupId, final String artifactId, final String version) {
+        var groupIdDir = result.getTargetCacheDirectory();
+        for (final var subdir : groupId.split("\\.")) {
+            groupIdDir = groupIdDir.resolve(subdir);
+        }
+        return groupIdDir.resolve(artifactId).resolve(version).resolve(artifactId + '-' + version + ".jar");
+    }
 }

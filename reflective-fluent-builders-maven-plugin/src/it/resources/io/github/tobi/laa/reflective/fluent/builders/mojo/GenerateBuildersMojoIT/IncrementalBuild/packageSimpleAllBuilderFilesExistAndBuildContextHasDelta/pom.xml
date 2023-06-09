@@ -18,6 +18,33 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-expected-builders</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>\${project.build.directory}/generated-sources/builders
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ${project.basedir}/${it.resources.directory}/expected-builders/default-config
+                                    </directory>
+                                    <includes>
+                                        <include>**/simple/**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>io.github.tobi-laa</groupId>
                 <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
                 <version>@project.version@</version>
@@ -37,7 +64,6 @@
                             </packageName>
                         </include>
                     </includes>
-                    <target>\${project.build.directory}/generated-sources/builders</target>
                 </configuration>
             </plugin>
         </plugins>

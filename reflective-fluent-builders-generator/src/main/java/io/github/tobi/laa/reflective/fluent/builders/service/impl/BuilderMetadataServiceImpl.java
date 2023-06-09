@@ -1,13 +1,14 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.collect.ImmutableSortedSet;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
-import com.google.common.collect.ImmutableSortedSet;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -42,6 +43,9 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private final SetterService setterService;
 
     @lombok.NonNull
+    private final ClassService classService;
+
+    @lombok.NonNull
     private final BuildersProperties properties;
 
     @Override
@@ -52,6 +56,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .name(clazz.getSimpleName() + properties.getBuilderSuffix()) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
+                        .location(classService.determineClassLocation(clazz).orElse(null)) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
                         .setters(gatherAndFilterAccessibleSettersAndAvoidNameCollisions(clazz))
                         .build()) //

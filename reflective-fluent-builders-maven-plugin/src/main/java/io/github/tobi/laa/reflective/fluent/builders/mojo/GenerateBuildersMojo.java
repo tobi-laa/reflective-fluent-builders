@@ -1,35 +1,35 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import com.google.common.collect.Sets;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import com.google.common.collect.Sets;
-import jakarta.validation.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
+import lombok.SneakyThrows;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -37,47 +37,18 @@ import java.util.stream.Collectors;
  * cases where it is not possible (or very hard) to change the sources of said classes to generate builders directly.
  * </p>
  */
-@Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GenerateBuildersMojo extends AbstractMojo {
 
-    // not using Lombok to generate setters for parameters as Javadoc can not be properly extracted by
-    // maven-plugin-report-plugin
-    private String builderPackage;
-
-    private String builderSuffix;
-
-    private String setterPrefix;
-
-    private String getterPrefix;
-
-    private boolean getAndAddEnabled;
-
-    @Valid
-    private HierarchyCollection hierarchyCollection;
-
-    @NotEmpty(message = "At least one <include> has to be specified.")
-    @Valid
-    private Set<Include> includes;
-
-    @Valid
-    private Set<Exclude> excludes;
-
-    private File target;
-
-    private boolean addCompileSourceRoot;
-
-    // for read-only parameters, no documentation is provided and thus Lombok can be used
-    @Setter(onMethod_ =
-    @Parameter(readonly = true, required = true, defaultValue = "${project}"))
-    private MavenProject mavenProject;
-
-    @Setter(onMethod_ =
-    @Parameter(readonly = true, required = true, defaultValue = "${mojoExecution}"))
-    private MojoExecution mojoExecution;
+    @lombok.NonNull
+    private final MojoParams params;
 
     @lombok.NonNull
-    private final BuildersProperties buildersProperties;
+    private final MavenBuild mavenBuild;
+
+    @lombok.NonNull
+    private final ClassLoading classLoading;
 
     @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
@@ -89,41 +60,36 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final BuilderMetadataService builderMetadataService;
 
     @Override
+    @SneakyThrows
     public void execute() throws MojoFailureException, MojoExecutionException {
+        logMavenParams();
         validateParams();
-        mapMavenParamsToProps();
+        classLoading.setThreadClassLoaderToArtifactIncludingClassLoader();
         final var classes = collectAndFilterClasses();
-        setDefaultTargetDirectoryIfNecessary();
-        createTargetDirectory();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
-        generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
-        addCompileSourceRoot();
+        classLoading.resetThreadClassLoader();
+        if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
+            createTargetDirectory();
+            generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
+            addCompileSourceRoot();
+            refreshBuildContext(nonEmptyBuilderMetadata);
+        } else {
+            logNoGenerationNecessary();
+        }
+    }
+
+    private void logMavenParams() {
+        getLog().debug("Parameters are: " + params);
     }
 
     private void validateParams() throws MojoExecutionException {
         try (final ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             final Validator validator = factory.getValidator();
-            final var violations = validator.validate(this);
+            final var violations = validator.validate(params);
             if (!violations.isEmpty()) {
                 throw new MojoExecutionException("Parameter validation failed.\n" + violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining("\n")));
             }
         }
-    }
-
-    private void mapMavenParamsToProps() {
-        final var standardBuildersProperties = (StandardBuildersProperties) buildersProperties;
-        standardBuildersProperties.setBuilderPackage(builderPackage);
-        standardBuildersProperties.setBuilderSuffix(builderSuffix);
-        standardBuildersProperties.setSetterPrefix(setterPrefix);
-        standardBuildersProperties.setGetterPrefix(getterPrefix);
-        standardBuildersProperties.setGetAndAddEnabled(getAndAddEnabled);
-        if (excludes != null) {
-            standardBuildersProperties.setExcludes(excludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
-        }
-        if (hierarchyCollection != null && hierarchyCollection.getExcludes() != null) {
-            standardBuildersProperties.getHierarchyCollection().setExcludes(hierarchyCollection.getExcludes().stream().map(Exclude::toPredicate).collect(Collectors.toSet()));
-        }
-        getLog().debug("Properties are: " + buildersProperties);
     }
 
     private Set<Class<?>> collectAndFilterClasses() throws MojoExecutionException {
@@ -135,24 +101,16 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private Set<Class<?>> collectClasses() throws MojoExecutionException {
         final var allClasses = new HashSet<Class<?>>();
-        for (final var include : includes) {
+        for (final var include : params.getIncludes()) {
             if (include.getPackageName() != null) {
                 getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
                 allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
             } else {
                 getLog().info("Add class " + include.getClassName() + '.');
-                allClasses.add(classForName(include.getClassName()));
+                allClasses.add(classLoading.loadClass(include.getClassName()));
             }
         }
         return allClasses;
-    }
-
-    private Class<?> classForName(final String className) throws MojoExecutionException {
-        try {
-            return Class.forName(className.trim());
-        } catch (final ClassNotFoundException e) {
-            throw new MojoExecutionException(e);
-        }
     }
 
     private Set<Class<?>> filterClasses(final Set<Class<?>> classes) {
@@ -171,26 +129,12 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return filteredClasses;
     }
 
-    private void setDefaultTargetDirectoryIfNecessary() {
-        if (target == null && isTestPhase()) {
-            target = Paths.get(mavenProject.getBuild().getDirectory()) //
-                    .resolve("generated-test-sources") //
-                    .resolve("builders") //
-                    .toFile();
-        } else if (target == null) {
-            target = Paths.get(mavenProject.getBuild().getDirectory())
-                    .resolve("generated-sources") //
-                    .resolve("builders") //
-                    .toFile();
-        }
-    }
-
     private void createTargetDirectory() throws MojoFailureException {
-        getLog().info("Make sure target directory " + target + " exists.");
+        getLog().info("Make sure target directory " + params.getTarget() + " exists.");
         try {
-            Files.createDirectories(target.toPath());
+            Files.createDirectories(params.getTarget().toPath());
         } catch (final IOException e) {
-            throw new MojoFailureException("Could not create target directory " + target + '.', e);
+            throw new MojoFailureException("Could not create target directory " + params.getTarget() + '.', e);
         }
     }
 
@@ -207,12 +151,44 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return nonEmptyMetadata;
     }
 
+    private boolean isGenerationNecessary(final Set<BuilderMetadata> builderMetadata) {
+        return !mavenBuild.isIncremental() || //
+                !allBuilderFilesExist(builderMetadata) || //
+                buildContextHasDelta(builderMetadata);
+    }
+
+    private boolean allBuilderFilesExist(final Set<BuilderMetadata> builderMetadata) {
+        return builderMetadata.stream().map(this::resolveBuilderFile).allMatch(Files::exists);
+    }
+
+    private Path resolveBuilderFile(final BuilderMetadata builderMetadata) {
+        Path builderFile = params.getTarget().toPath();
+        for (final String subdir : builderMetadata.getPackageName().split("\\.")) {
+            builderFile = builderFile.resolve(subdir);
+        }
+        builderFile = builderFile.resolve(builderMetadata.getName() + ".java");
+        return builderFile;
+    }
+
+    private boolean buildContextHasDelta(final Set<BuilderMetadata> builderMetadata) {
+        return determineBuiltTypeClassLocations(builderMetadata).anyMatch(mavenBuild::hasDelta);
+    }
+
+    private Stream<File> determineBuiltTypeClassLocations(final Set<BuilderMetadata> builderMetadata) {
+        return builderMetadata.stream() //
+                .map(BuilderMetadata::getBuiltType) //
+                .map(BuilderMetadata.BuiltType::getLocation) //
+                .filter(Optional::isPresent) //
+                .map(Optional::get) //
+                .map(Path::toFile);
+    }
+
     private void generateAndWriteBuildersToTarget(Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
         for (final var metadata : nonEmptyBuilderMetadata) {
             getLog().info("Generate builder for class " + metadata.getBuiltType().getType().getName());
             final var javaFile = javaFileGenerator.generateJavaFile(metadata);
             try {
-                javaFile.writeTo(target);
+                javaFile.writeTo(params.getTarget());
             } catch (final IOException e) {
                 throw new MojoFailureException("Could not create file for builder for " + metadata.getBuiltType().getType().getName() + '.', e);
             }
@@ -220,22 +196,18 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void addCompileSourceRoot() {
-        if (addCompileSourceRoot) {
-            final var path = target.getPath();
-            if (isTestPhase()) {
-                getLog().debug("Add " + path + " as test source folder.");
-                mavenProject.addTestCompileSourceRoot(target.getPath());
-            } else {
-                getLog().debug("Add " + path + " as source folder.");
-                mavenProject.addCompileSourceRoot(target.getPath());
-            }
+        if (params.isAddCompileSourceRoot()) {
+            mavenBuild.addCompileSourceRoot(params.getTarget());
         }
     }
 
-    private boolean isTestPhase() {
-        return StringUtils.containsIgnoreCase(mojoExecution.getLifecyclePhase(), "test");
+    private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
+        determineBuiltTypeClassLocations(builderMetadata).forEach(mavenBuild::refresh);
     }
-
+    
+    private void logNoGenerationNecessary() {
+        getLog().info("All builders are up-to-date, skipping generation.");
+    }
 
     /**
      * <p>
@@ -254,7 +226,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER)
     public void setBuilderPackage(final String builderPackage) {
-        this.builderPackage = builderPackage;
+        params.setBuilderPackage(builderPackage);
     }
 
     /**
@@ -268,7 +240,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "builderSuffix", defaultValue = "Builder")
     public void setBuilderSuffix(final String builderSuffix) {
-        this.builderSuffix = builderSuffix;
+        params.setBuilderSuffix(builderSuffix);
     }
 
     /**
@@ -282,7 +254,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "setterPrefix", defaultValue = "set")
     public void setSetterPrefix(final String setterPrefix) {
-        this.setterPrefix = setterPrefix;
+        params.setSetterPrefix(setterPrefix);
     }
 
     /**
@@ -296,7 +268,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "getterPrefix", defaultValue = "get")
     public void setGetterPrefix(final String getterPrefix) {
-        this.getterPrefix = getterPrefix;
+        params.setGetterPrefix(getterPrefix);
     }
 
     /**
@@ -311,7 +283,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "getAndAddEnabled", defaultValue = "false")
     public void setGetAndAddEnabled(final boolean getAndAddEnabled) {
-        this.getAndAddEnabled = getAndAddEnabled;
+        params.setGetAndAddEnabled(getAndAddEnabled);
     }
 
     /**
@@ -362,8 +334,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "hierarchyCollection")
-    public void setHierarchyCollection(final HierarchyCollection hierarchyCollection) {
-        this.hierarchyCollection = hierarchyCollection;
+    public void setHierarchyCollection(final MojoParams.HierarchyCollection hierarchyCollection) {
+        params.setHierarchyCollection(hierarchyCollection);
     }
 
     /**
@@ -393,7 +365,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(required = true, name = "includes")
     public void setIncludes(final Set<Include> includes) {
-        this.includes = includes;
+        params.setIncludes(includes);
     }
 
     /**
@@ -435,7 +407,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "excludes")
     public void setExcludes(final Set<Exclude> excludes) {
-        this.excludes = excludes;
+        params.setExcludes(excludes);
     }
 
     /**
@@ -455,7 +427,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "target")
     public void setTarget(final File target) {
-        this.target = target;
+        params.setTarget(target);
     }
 
     /**
@@ -470,6 +442,55 @@ public class GenerateBuildersMojo extends AbstractMojo {
      */
     @Parameter(name = "addCompileSourceRoot", defaultValue = "true")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
-        this.addCompileSourceRoot = addCompileSourceRoot;
+        params.setAddCompileSourceRoot(addCompileSourceRoot);
+    }
+
+    /**
+     * <p>
+     * Specifies the scopes of the dependencies of the maven project within which this mojo is executed which should be
+     * included when collecting classes.
+     * </p>
+     * <p>
+     * By default, dependencies within the scope
+     * {@link org.apache.maven.artifact.Artifact#SCOPE_COMPILE compile},
+     * {@link org.apache.maven.artifact.Artifact#SCOPE_PROVIDED provided}
+     * or
+     * {@link org.apache.maven.artifact.Artifact#SCOPE_SYSTEM system}
+     * are included.
+     * </p>
+     * <p>
+     * If the mojo is executed within a
+     * {@link MavenBuild#isTestPhase() test phase},
+     * the scope {@link org.apache.maven.artifact.Artifact#SCOPE_TEST test}
+     * is included by default as well.
+     * </p>
+     * <p>
+     * If more control is desired, an empty {@code <scopesToInclude/>} element can be provided and the desired
+     * dependencies to included can be explicitly provided as a dependency of this plugin:
+     * </p>
+     * <pre>
+     * {@code <plugin>
+     *     <groupId>io.github.tobi-laa</groupId>
+     *     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+     *     <version>1.0.0</version>
+     *     <executions>
+     *         <!-- omitted for brevity -->
+     *     </executions>
+     *     <dependencies>
+     *         <dependency>
+     *             <groupId>com.bar.foo</groupId>
+     *             <artifactId>dependency-to-include</artifactId>
+     *             <version>1.2.3</version>
+     *         </dependency>
+     *     </dependencies>
+     * </plugin>}</pre>
+     *
+     * @param scopesToInclude The scopes of the dependencies of the maven project within which this mojo is
+     *                        executed which should be included when collecting classes.
+     * @since 1.0.0
+     */
+    @Parameter(name = "scopesToInclude")
+    public void setScopesToInclude(final Set<String> scopesToInclude) {
+        params.setScopesToInclude(scopesToInclude);
     }
 }

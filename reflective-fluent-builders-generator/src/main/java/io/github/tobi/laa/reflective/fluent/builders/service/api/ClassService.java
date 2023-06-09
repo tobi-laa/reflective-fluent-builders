@@ -2,6 +2,8 @@ package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -36,4 +38,15 @@ public interface ClassService {
      */
     Set<Class<?>> collectClassesRecursively(final String packageName);
 
+    /**
+     * <p>
+     * Determines the location of the file that contains the given {@code clazz}. If it stems from an external
+     * dependency, this will point to a {@code jar} file. For local class files, it will point to the corresponding
+     * {@code class} file.
+     * </p>
+     *
+     * @param clazz The class for which to determine its location on the filesystem. Must not be {@code null.}
+     * @return The location of the file that contains {@code clazz}, if it could be determined.
+     */
+    Optional<Path> determineClassLocation(final Class<?> clazz);
 }

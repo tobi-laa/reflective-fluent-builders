@@ -32,11 +32,10 @@
                 <configuration>
                     <includes>
                         <include>
-                            <packageName>
-                                io.github.tobi.laa.reflective.fluent.builders.test.models.simple
-                            </packageName>
+                            <packageName>io.github.tobi.laa.reflective.fluent.builders.test.models.simple</packageName>
                         </include>
                     </includes>
+                    <scopesToInclude/>
                     <target>\${project.build.directory}/generated-sources/builders</target>
                 </configuration>
             </plugin>
