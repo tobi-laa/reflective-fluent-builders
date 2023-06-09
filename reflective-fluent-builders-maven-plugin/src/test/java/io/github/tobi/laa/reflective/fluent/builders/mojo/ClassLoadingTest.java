@@ -132,14 +132,14 @@ class ClassLoadingTest {
                 Arguments.of( //
                         false, //
                         new String[]{"compile"}, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 artifact().artifactId("no1").file(new File("artifact1")).scope("compile").build(), //
                                 artifact().artifactId("no2").file(new File("artifact2")).scope("test").build()), //
                         new URL[]{fileUrl("dummyOutput"), fileUrl("artifact1")}), //
                 Arguments.of( //
                         false, //
                         new String[]{"compile", "test"}, //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 artifact().artifactId("no1").file(new File("artifact1")).scope("compile").build(), //
                                 artifact().artifactId("no2").file(new File("artifact2")).scope("test").build()), //
                         new URL[]{fileUrl("dummyOutput"), fileUrl("artifact1"), fileUrl("artifact2")}));
