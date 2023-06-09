@@ -15,6 +15,8 @@ import java.io.File;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.lang.Boolean.parseBoolean;
+
 /**
  * <p>
  * Encapsulates accesses to {@link BuildContext}, {@link MavenProject} and {@link MojoExecution} for better testability.
@@ -35,7 +37,7 @@ class MavenBuild extends AbstractLogEnabled {
     private final MojoExecution mojoExecution;
 
     boolean isIncremental() {
-        return buildContext.isIncremental();
+        return buildContext.isIncremental() || parseBoolean(System.getenv("incrementalBuildForIntegrationTests"));
     }
 
     boolean hasDelta(final File file) {
@@ -53,6 +55,7 @@ class MavenBuild extends AbstractLogEnabled {
     }
 
     void addCompileSourceRoot(final File path) {
+        Objects.requireNonNull(path);
         if (isTestPhase()) {
             getLogger().debug("Add " + path + " as test source folder.");
             mavenProject.addTestCompileSourceRoot(path.getPath());

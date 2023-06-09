@@ -22,7 +22,6 @@ class ClockProviderTest {
         final Clock actual = clockProvider.get();
         // Assert
         assertThat(actual).isEqualTo(Clock.fixed(Instant.parse("3333-03-13T00:00:00.00Z"), ZoneId.of("UTC")));
-
     }
 
     @Test
@@ -37,6 +36,5 @@ class ClockProviderTest {
         final Clock actual = clockProvider.get();
         // Assert
         assertThat(actual).isEqualTo(Clock.systemDefaultZone());
-
     }
 }
