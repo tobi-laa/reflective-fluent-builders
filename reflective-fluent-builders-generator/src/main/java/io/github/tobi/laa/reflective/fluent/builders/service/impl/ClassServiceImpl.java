@@ -107,7 +107,7 @@ class ClassServiceImpl implements ClassService {
     private Path resolveClassFileIfNecessary(final Path path, final Class<?> clazz) {
         if (Files.isDirectory(path)) {
             Path classFile = path;
-            for (final String subdir : clazz.getPackageName().split("\\.")) {
+            for (final String subdir : clazz.getPackage().getName().split("\\.")) {
                 classFile = classFile.resolve(subdir);
             }
             classFile = classFile.resolve(clazz.getSimpleName() + ".class");
