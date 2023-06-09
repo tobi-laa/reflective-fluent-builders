@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -31,9 +32,9 @@ class ClassLoading extends AbstractLogEnabled {
     @lombok.NonNull
     private final MojoParams params;
 
-    private ClassLoader oldClassLoader;
+    ClassLoader oldClassLoader;
 
-    private URLClassLoader artifactIncludingClassLoader;
+    URLClassLoader artifactIncludingClassLoader;
 
     void setThreadClassLoaderToArtifactIncludingClassLoader() throws MojoExecutionException {
         oldClassLoader = getThreadClassLoader();
@@ -42,15 +43,19 @@ class ClassLoading extends AbstractLogEnabled {
     }
 
     void resetThreadClassLoader() throws MojoExecutionException {
-        setThreadClassLoader(oldClassLoader);
         try {
             artifactIncludingClassLoader.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new MojoExecutionException("Error while attempting to close ClassLoader.", e);
+        } finally {
+            setThreadClassLoader(oldClassLoader);
+            oldClassLoader = null;
+            artifactIncludingClassLoader = null;
         }
     }
 
     Class<?> loadClass(final String className) throws MojoExecutionException {
+        Objects.requireNonNull(className);
         try {
             return getThreadClassLoader().loadClass(className.trim());
         } catch (final ClassNotFoundException e) {
@@ -89,10 +94,11 @@ class ClassLoading extends AbstractLogEnabled {
     }
 
     private void logAddingToClassLoader(final Object resource) {
-        getLogger().debug("Add " + resource + " to ClassLoader.");
+        getLogger().debug("Attempt to add " + resource + " to ClassLoader.");
     }
 
     private URL toUrl(final File file) throws MojoExecutionException {
+        Objects.requireNonNull(file);
         try {
             return file.toURI().toURL();
         } catch (final MalformedURLException e) {
