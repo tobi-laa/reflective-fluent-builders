@@ -80,12 +80,12 @@ class ClassLoadingTest {
         mockOutputDirectory();
         mockScopesToInclude("compile");
         //
-        final var file = Mockito.mock(File.class);
-        final var uri = Mockito.mock(URI.class);
+        final File file = Mockito.mock(File.class);
+        final URI uri = Mockito.mock(URI.class);
         doReturn(uri).when(file).toURI();
         doThrow(new MalformedURLException("Thrown in unit test")).when(uri).toURL();
         //
-        final var artifact = artifact().file(file).scope("compile").build();
+        final Artifact artifact = artifact().file(file).scope("compile").build();
         mockArtifacts(singleton(artifact));
         // Act
         final ThrowingCallable setThreadClassLoaderToArtifactIncludingClassLoader = () -> classLoading.setThreadClassLoaderToArtifactIncludingClassLoader();
@@ -186,7 +186,7 @@ class ClassLoadingTest {
     @SneakyThrows
     void testLoadClassClassNotFoundException() {
         // Arrange
-        final var classLoader = Mockito.mock(ClassLoader.class);
+        final ClassLoader classLoader = Mockito.mock(ClassLoader.class);
         doThrow(new ClassNotFoundException("Thrown in unit test")).when(classLoader).loadClass(anyString());
         Thread.currentThread().setContextClassLoader(classLoader);
         // Act
@@ -202,7 +202,7 @@ class ClassLoadingTest {
     @SneakyThrows
     void testLoadClass() {
         // Act
-        final var actual = classLoading.loadClass(String.class.getName());
+        final Class<?> actual = classLoading.loadClass(String.class.getName());
         // Assert
         assertThat(actual).isEqualTo(String.class);
     }
@@ -234,7 +234,7 @@ class ClassLoadingTest {
                                         final ArtifactHandler artifactHandler, //
                                         final boolean optional, //
                                         final File file) {
-        final var artifact = new DefaultArtifact( //
+        final Artifact artifact = new DefaultArtifact( //
                 firstNonNull(groupId, "com.dummy"), //
                 firstNonNull(artifactId, "artfiact"), //
                 firstNonNull(versionRange, VersionRange.createFromVersionSpec("1.0")), //

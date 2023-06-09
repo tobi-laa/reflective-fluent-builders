@@ -36,14 +36,14 @@ class CollectionGetAndAdderTest {
     @Test
     void testCompareToEquivalentCollectionSetter() {
         // Arrange
-        final var collectionGetAndAdder = CollectionGetAndAdder.builder()
+        final CollectionGetAndAdder collectionGetAndAdder = CollectionGetAndAdder.builder()
                 .methodName("getSth")
                 .paramType(List.class)
                 .paramName("aName")
                 .visibility(Visibility.PRIVATE)
                 .paramTypeArg(Object.class)
                 .build();
-        final var collectionSetter = CollectionSetter.builder()
+        final CollectionSetter collectionSetter = CollectionSetter.builder()
                 .methodName("setSth")
                 .paramType(List.class)
                 .paramName("aName")
@@ -51,8 +51,8 @@ class CollectionGetAndAdderTest {
                 .paramTypeArg(Object.class)
                 .build();
         // Act
-        final var compareToSetter = collectionGetAndAdder.compareTo(collectionSetter);
-        final var compareFromSetter = collectionSetter.compareTo(collectionGetAndAdder);
+        final int compareToSetter = collectionGetAndAdder.compareTo(collectionSetter);
+        final int compareFromSetter = collectionSetter.compareTo(collectionGetAndAdder);
         // Assert
         assertThat(compareToSetter).isNotZero().isEqualTo(compareFromSetter * -1);
     }

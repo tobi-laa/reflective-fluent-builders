@@ -24,8 +24,8 @@ class ProjectResultHelper {
     }
 
     Path resolveMavenArtifact(final MavenProjectResult result, final String groupId, final String artifactId, final String version) {
-        var groupIdDir = result.getTargetCacheDirectory();
-        for (final var subdir : groupId.split("\\.")) {
+        Path groupIdDir = result.getTargetCacheDirectory();
+        for (final String subdir : groupId.split("\\.")) {
             groupIdDir = groupIdDir.resolve(subdir);
         }
         return groupIdDir.resolve(artifactId).resolve(version).resolve(artifactId + '-' + version + ".jar");

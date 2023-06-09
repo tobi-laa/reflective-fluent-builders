@@ -200,7 +200,7 @@ class ClassServiceImplTest {
     @Test
     void testDetermineClassLocationCodeSourceNull() {
         // Arrange
-        final var clazz = String.class;
+        final Class<?> clazz = String.class;
         // Act
         final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
         // Assert
@@ -210,7 +210,7 @@ class ClassServiceImplTest {
     @Test
     void testDetermineClassLocationFromJar() {
         // Arrange
-        final var clazz = Test.class;
+        final Class<?> clazz = Test.class;
         // Act
         final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
         // Assert
@@ -221,7 +221,7 @@ class ClassServiceImplTest {
     @Test
     void testDetermineClassLocationFromClassFile() {
         // Arrange
-        final var clazz = getClass();
+        final Class<?> clazz = getClass();
         // Act
         final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
         // Assert
@@ -233,8 +233,8 @@ class ClassServiceImplTest {
     @SneakyThrows
     void testGetLocationAsPathURISyntaxException() {
         // Arrange
-        final var codeSource = Mockito.mock(CodeSource.class);
-        final var url = Mockito.mock(URL.class);
+        final CodeSource codeSource = Mockito.mock(CodeSource.class);
+        final URL url = Mockito.mock(URL.class);
         when(codeSource.getLocation()).thenReturn(url);
         when(url.toURI()).thenThrow(new URISyntaxException("mock", "Thrown in unit test."));
         // Act

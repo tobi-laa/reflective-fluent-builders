@@ -116,11 +116,11 @@ class GenerateBuildersMojoIT {
                             "Generate builder for class " + Child.class.getName(), //
                             "Generate builder for class " + SimpleClass.class.getName(), //
                             "Generate builder for class " + Parent.class.getName());
-            final var reflectiveFluentBuildersTestModels = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
+            final Path reflectiveFluentBuildersTestModels = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
                     "io.github.tobi-laa", //
                     "reflective-fluent-builders-test-models", //
                     System.getProperty("project.version"));
-            final var jakartaXmlBindApi = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
+            final Path jakartaXmlBindApi = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
                     "jakarta.xml.bind", //
                     "jakarta.xml.bind-api", //
                     System.getProperty("jakarta.xml.bind-api.version"));
@@ -397,7 +397,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
-            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            final Path targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
                     .info() //
@@ -419,7 +419,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
-            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            final Path targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
                     .info() //
@@ -442,7 +442,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
-            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            final Path targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
                     .info() //

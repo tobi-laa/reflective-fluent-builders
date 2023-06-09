@@ -47,7 +47,7 @@ class NewInstanceFactoryMethodCodeGeneratorTest {
     @Test
     void testGenerateNoAccessibleNonArgsConstructor() {
         // Arrange
-        final var builderMetadata = BuilderMetadata.builder() //
+        final BuilderMetadata builderMetadata = BuilderMetadata.builder() //
                 .packageName("a.whole.different.pack") //
                 .name("AnotherBuilder") //
                 .builtType(BuilderMetadata.BuiltType.builder() //

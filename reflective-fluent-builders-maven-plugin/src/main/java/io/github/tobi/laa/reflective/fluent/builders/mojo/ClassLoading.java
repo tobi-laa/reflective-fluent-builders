@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
@@ -64,7 +65,7 @@ class ClassLoading extends AbstractLogEnabled {
     }
 
     private URLClassLoader constructArtifactIncludingClassLoader() throws MojoExecutionException {
-        final var classUrls = Stream.concat( //
+        final URL[] classUrls = Stream.concat( //
                         getOutputDirectoryUrls(), //
                         getUrlsOfArtifactsInScopesToInclude()) //
                 .toArray(URL[]::new);
@@ -84,7 +85,7 @@ class ClassLoading extends AbstractLogEnabled {
 
     private Stream<URL> getUrlsOfArtifactsInScopesToInclude() throws MojoExecutionException {
         final List<URL> urlsOfArtifacts = new ArrayList<>();
-        for (final var artifact : mavenBuild.getArtifacts()) {
+        for (final Artifact artifact : mavenBuild.getArtifacts()) {
             if (params.getScopesToInclude().contains(artifact.getScope())) {
                 logAddingToClassLoader(artifact.getFile());
                 urlsOfArtifacts.add(toUrl(artifact.getFile()));

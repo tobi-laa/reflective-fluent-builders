@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
@@ -17,6 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.Set;
 
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +54,7 @@ class MavenBuildTest {
         // Arrange
         doReturn(buildContextIncremental).when(buildContext).isIncremental();
         // Act
-        final var incremental = mavenBuild.isIncremental();
+        final boolean incremental = mavenBuild.isIncremental();
         // Assert
         assertThat(incremental).isEqualTo(buildContextIncremental);
     }
@@ -149,12 +151,12 @@ class MavenBuildTest {
     @Test
     void testGetDirectory() {
         // Arrange
-        final var directory = "dummy";
-        final var build = Mockito.mock(Build.class);
+        final String directory = "dummy";
+        final Build build = Mockito.mock(Build.class);
         doReturn(directory).when(build).getDirectory();
         doReturn(build).when(mavenProject).getBuild();
         // Act
-        final var actual = mavenBuild.getDirectory();
+        final String actual = mavenBuild.getDirectory();
         // Assert
         assertThat(actual).isSameAs(directory);
         verify(mavenProject).getBuild();
@@ -164,12 +166,12 @@ class MavenBuildTest {
     @Test
     void testGetOutputDirectory() {
         // Arrange
-        final var outputDirectory = "dummy";
-        final var build = Mockito.mock(Build.class);
+        final String outputDirectory = "dummy";
+        final Build build = Mockito.mock(Build.class);
         doReturn(outputDirectory).when(build).getOutputDirectory();
         doReturn(build).when(mavenProject).getBuild();
         // Act
-        final var actual = mavenBuild.getOutputDirectory();
+        final String actual = mavenBuild.getOutputDirectory();
         // Assert
         assertThat(actual).isSameAs(outputDirectory);
         verify(mavenProject).getBuild();
@@ -179,12 +181,12 @@ class MavenBuildTest {
     @Test
     void testGetTestOutputDirectory() {
         // Arrange
-        final var testOutputDirectory = "dummy";
-        final var build = Mockito.mock(Build.class);
+        final String testOutputDirectory = "dummy";
+        final Build build = Mockito.mock(Build.class);
         doReturn(testOutputDirectory).when(build).getTestOutputDirectory();
         doReturn(build).when(mavenProject).getBuild();
         // Act
-        final var actual = mavenBuild.getTestOutputDirectory();
+        final String actual = mavenBuild.getTestOutputDirectory();
         // Assert
         assertThat(actual).isSameAs(testOutputDirectory);
         verify(mavenProject).getBuild();
@@ -194,10 +196,10 @@ class MavenBuildTest {
     @Test
     void testGetArtifacts() {
         // Arrange
-        final var artifacts = emptySet();
+        final Set<Artifact> artifacts = emptySet();
         doReturn(artifacts).when(mavenProject).getArtifacts();
         // Act
-        final var actual = mavenBuild.getArtifacts();
+        final Set<Artifact> actual = mavenBuild.getArtifacts();
         // Assert
         assertThat(actual).isSameAs(artifacts);
         verify(mavenProject).getArtifacts();
