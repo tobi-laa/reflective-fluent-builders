@@ -75,7 +75,7 @@
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
         <jakarta.el-api.version>5.0.1</jakarta.el-api.version>
         <jakarta.el.version>5.0.0-M1</jakarta.el.version>
-        <plexus-build-api.version>1.0.0</plexus-build-api.version>
+        <plexus-build-api.version>1.2.0</plexus-build-api.version>
         <slf4j.version>2.0.7</slf4j.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
