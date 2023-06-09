@@ -37,12 +37,12 @@ class MavenBuild extends AbstractLogEnabled {
     private final MojoExecution mojoExecution;
 
     boolean isIncremental() {
-        return buildContext.isIncremental() || parseBoolean(System.getenv("incrementalBuildForIntegrationTests"));
+        return buildContext.isIncremental() || parseBoolean(System.getProperty("incrementalBuildForIntegrationTests"));
     }
 
     boolean hasDelta(final File file) {
         Objects.requireNonNull(file);
-        return buildContext.hasDelta(file);
+        return buildContext.hasDelta(file) && !parseBoolean(System.getProperty("fixedNoDeltaForIntegrationTests"));
     }
 
     void refresh(final File file) {

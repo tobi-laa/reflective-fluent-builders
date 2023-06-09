@@ -1,9 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
-import com.soebes.itf.jupiter.extension.MavenDebug;
-import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
-import com.soebes.itf.jupiter.extension.MavenRepository;
-import com.soebes.itf.jupiter.extension.MavenTest;
+import com.soebes.itf.jupiter.extension.*;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
@@ -222,6 +219,15 @@ class GenerateBuildersMojoIT {
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilder(builderClass, false, expectedBuildersRootDir));
         }
+
+        @MavenTest
+        void packageSimpleNoScopesToInclude(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(HasDirCondition.emptyDirInTarget(Paths.get("generated-sources", "builders")));
+        }
     }
 
     @Nested
@@ -375,6 +381,79 @@ class GenerateBuildersMojoIT {
                                     "Failed to execute goal io.github.tobi-laa:reflective-fluent-builders-maven-plugin", //
                                     "generate-builders (default) on project", //
                                     "Unable to load class does.not.exist -> [Help 1]"));
+        }
+    }
+
+    @Nested
+    @MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
+    class IncrementalBuild {
+
+        @MavenTest
+        @SystemProperty(value = "incrementalBuildForIntegrationTests", content = "true")
+        void packageSimpleNotAllBuilderFilesExist(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            assertThat(result) //
+                    .out() //
+                    .info() //
+                    .contains( //
+                            "Scan package " + Simple.class.getPackage().getName() + " recursively for classes.", //
+                            "Found 5 classes for which to generate builders.", //
+                            "Make sure target directory " + targetDirectory + " exists.", //
+                            "Generate builder for class " + Child.class.getName(), //
+                            "Generate builder for class " + SimpleClass.class.getName(), //
+                            "Generate builder for class " + Parent.class.getName())
+                    .doesNotContain("All builders are up-to-date, skipping generation.");
+        }
+
+        @MavenTest
+        @SystemProperty(value = "incrementalBuildForIntegrationTests", content = "true")
+        void packageSimpleAllBuilderFilesExistAndBuildContextHasDelta(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            assertThat(result) //
+                    .out() //
+                    .info() //
+                    .contains( //
+                            "Scan package " + Simple.class.getPackage().getName() + " recursively for classes.", //
+                            "Found 5 classes for which to generate builders.", //
+                            "Make sure target directory " + targetDirectory + " exists.", //
+                            "Generate builder for class " + Child.class.getName(), //
+                            "Generate builder for class " + SimpleClass.class.getName(), //
+                            "Generate builder for class " + Parent.class.getName())
+                    .doesNotContain("All builders are up-to-date, skipping generation.");
+        }
+
+        @MavenTest
+        @SystemProperty(value = "incrementalBuildForIntegrationTests", content = "true")
+        @SystemProperty(value = "fixedNoDeltaForIntegrationTests", content = "true")
+        void packageSimpleAllBuilderFilesExistAndBuildContextHasNoDelta(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
+            assertThat(result) //
+                    .out() //
+                    .info() //
+                    .doesNotContain( //
+                            "Make sure target directory " + targetDirectory + " exists.", //
+                            "Generate builder for class " + Child.class.getName(), //
+                            "Generate builder for class " + SimpleClass.class.getName(), //
+                            "Generate builder for class " + Parent.class.getName())
+                    .contains( //
+                            "Scan package " + Simple.class.getPackage().getName() + " recursively for classes.", //
+                            "Found 5 classes for which to generate builders.", //
+                            "All builders are up-to-date, skipping generation.");
         }
     }
 }

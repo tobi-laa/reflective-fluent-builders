@@ -66,13 +66,15 @@ public class GenerateBuildersMojo extends AbstractMojo {
         validateParams();
         classLoading.setThreadClassLoaderToArtifactIncludingClassLoader();
         final var classes = collectAndFilterClasses();
-        createTargetDirectory();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
         classLoading.resetThreadClassLoader();
         if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
+            createTargetDirectory();
             generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
             addCompileSourceRoot();
             refreshBuildContext(nonEmptyBuilderMetadata);
+        } else {
+            logNoGenerationNecessary();
         }
     }
 
@@ -202,7 +204,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
         determineBuiltTypeClassLocations(builderMetadata).forEach(mavenBuild::refresh);
     }
-
+    
+    private void logNoGenerationNecessary() {
+        getLog().info("All builders are up-to-date, skipping generation.");
+    }
 
     /**
      * <p>
