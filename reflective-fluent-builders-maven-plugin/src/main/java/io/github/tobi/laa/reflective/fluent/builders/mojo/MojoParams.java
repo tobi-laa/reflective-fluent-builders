@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import com.google.common.collect.ImmutableSet;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -65,7 +66,7 @@ public class MojoParams implements BuildersProperties {
 
     public Set<Predicate<Class<?>>> getExcludes() {
         if (excludes == null) {
-            return Set.of( //
+            return ImmutableSet.of( //
                     clazz -> clazz.getSimpleName().endsWith("Builder"), //
                     clazz -> clazz.getSimpleName().endsWith("BuilderImpl"));
         } else {
@@ -93,9 +94,9 @@ public class MojoParams implements BuildersProperties {
         if (scopesToInclude != null) {
             return scopesToInclude;
         } else if (mavenBuild.isTestPhase()) {
-            return Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM, SCOPE_TEST);
+            return ImmutableSet.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM, SCOPE_TEST);
         } else {
-            return Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM);
+            return ImmutableSet.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM);
         }
     }
 
@@ -109,7 +110,7 @@ public class MojoParams implements BuildersProperties {
         @Override
         public Set<Predicate<Class<?>>> getExcludes() {
             if (excludes == null) {
-                return Set.of(Object.class::equals);
+                return ImmutableSet.of(Object.class::equals);
             } else {
                 return excludes.stream().map(Exclude::toPredicate).collect(Collectors.toSet());
             }

@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import org.apache.maven.artifact.Artifact;
@@ -216,7 +217,7 @@ class ClassLoadingTest {
     }
 
     private void mockScopesToInclude(final String... scopes) {
-        doReturn(Set.of(scopes)).when(params).getScopesToInclude();
+        doReturn(ImmutableSet.of(scopes)).when(params).getScopesToInclude();
     }
 
     private void mockArtifacts(final Set<Artifact> artifacts) {
