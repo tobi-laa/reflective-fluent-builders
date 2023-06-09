@@ -217,7 +217,7 @@ class ClassLoadingTest {
     }
 
     private void mockScopesToInclude(final String... scopes) {
-        doReturn(ImmutableSet.of(scopes)).when(params).getScopesToInclude();
+        doReturn(ImmutableSet.copyOf(scopes)).when(params).getScopesToInclude();
     }
 
     private void mockArtifacts(final Set<Artifact> artifacts) {
