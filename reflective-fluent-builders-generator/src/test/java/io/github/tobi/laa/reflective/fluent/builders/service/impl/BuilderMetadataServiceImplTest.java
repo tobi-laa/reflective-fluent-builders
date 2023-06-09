@@ -7,6 +7,7 @@ import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
@@ -33,10 +34,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.SortedSet;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -58,6 +58,9 @@ class BuilderMetadataServiceImplTest {
     private SetterService setterService;
 
     @Mock
+    private ClassService classService;
+
+    @Mock
     private BuildersProperties properties;
 
     @Test
@@ -72,12 +75,13 @@ class BuilderMetadataServiceImplTest {
     @MethodSource
     void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix,
                                     final Visibility[] visibility, final SortedSet<Setter> setters,
-                                    final Class<?> clazz, final BuilderMetadata expected) {
+                                    final Class<?> clazz, final Path location, final BuilderMetadata expected) {
         // Arrange
         when(properties.getBuilderPackage()).thenReturn(builderPackage);
         when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
         when(visibilityService.toVisibility(anyInt())).thenReturn(visibility[0], ArrayUtils.remove(visibility, 0));
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
+        when(classService.determineClassLocation(clazz)).thenReturn(Optional.ofNullable(location));
         // Act
         final BuilderMetadata actual = builderService.collectBuilderMetadata(clazz);
         // Assert
@@ -93,6 +97,8 @@ class BuilderMetadataServiceImplTest {
         final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).build();
         final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).build();
         final Class<?> packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
+        final Path aPath = Paths.get("");
+        final Path anotherPath = Paths.get("another/path");
         return Stream.of( //
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
@@ -100,11 +106,13 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter, setterNameCollision1, setterNameCollision2), //
                         SimpleClass.class, //
+                        null, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(SimpleClass.class) //
+                                        .location(null) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(packagePrivateSetter) //
                                         .setter(publicSetter) //
@@ -118,11 +126,13 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter), //
                         ClassWithCollections.class, //
+                        aPath, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.complex.builder") //
                                 .name("ClassWithCollections") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(ClassWithCollections.class) //
+                                        .location(aPath) //
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(publicSetter) //
                                         .build()) //
@@ -133,16 +143,18 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
-                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
-                                        .paramType(packagePrivate)
-                                        .visibility(Visibility.PUBLIC)
+                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
+                                        .paramType(packagePrivate) //
+                                        .visibility(Visibility.PUBLIC) //
                                         .build()), //
                         PackagePrivateConstructor.class, //
+                        anotherPath, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.builder") //
                                 .name("PackagePrivateConstructor") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(PackagePrivateConstructor.class) //
+                                        .location(anotherPath) //
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(publicSetter) //
                                         .build()) //
@@ -158,11 +170,13 @@ class BuilderMetadataServiceImplTest {
                                         .visibility(Visibility.PUBLIC)
                                         .build()), //
                         PackagePrivateConstructor.class, //
+                        null, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
                                 .name("PackagePrivateConstructor") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(PackagePrivateConstructor.class) //
+                                        .location(null) //
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(publicSetter) //
                                         .setter(SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
@@ -182,11 +196,13 @@ class BuilderMetadataServiceImplTest {
                                         .visibility(Visibility.PUBLIC)
                                         .build()), //
                         PackagePrivateConstructor.class, //
+                        null, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
                                 .name("PackagePrivateConstructor") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(PackagePrivateConstructor.class) //
+                                        .location(null) //
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
                                                 .paramType(packagePrivate) //
@@ -200,11 +216,13 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
                         ImmutableSortedSet.of(privateSetter, protectedSetter), //
                         SimpleClassNoSetPrefix.class, //
+                        aPath, //
                         BuilderMetadata.builder() //
                                 .packageName("the.builder.package") //
                                 .name("SimpleClassNoSetPrefixMyBuilderSuffix") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(SimpleClassNoSetPrefix.class) //
+                                        .location(aPath) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build()), //
@@ -214,11 +232,13 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PUBLIC}, //
                         Collections.emptySortedSet(), //
                         SimpleClassNoDefaultConstructor.class, //
+                        anotherPath, //
                         BuilderMetadata.builder() //
                                 .packageName("builders.io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassNoDefaultConstructorBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(SimpleClassNoDefaultConstructor.class) //
+                                        .location(anotherPath) //
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build()) //

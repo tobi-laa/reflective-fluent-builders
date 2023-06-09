@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.github.tobi-laa</groupId>
         <artifactId>reflective-fluent-builders</artifactId>
-        <version>0.5.0-java8-SNAPSHOT</version>
+        <version>1.0.0-java8-SNAPSHOT</version>
     </parent>
     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
@@ -57,10 +57,19 @@
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.el</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-build-api</artifactId>
+        </dependency>
         <!-- testing dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -127,6 +136,11 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <systemPropertyVariables>
+                                <project.version>${project.version}</project.version>
+                                <jakarta.xml.bind-api.version>${jakarta.xml.bind-api.version}
+                                </jakarta.xml.bind-api.version>
+                            </systemPropertyVariables>
                             <environmentVariables>
                                 <useFixedClockForIntegrationTests>true</useFixedClockForIntegrationTests>
                                 <!-- hack to get coverage from integration tests via itf -->
@@ -168,6 +182,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
+                    <systemPropertyVariables>
+                        <project.version>${project.version}</project.version>
+                        <jakarta.xml.bind-api.version>${jakarta.xml.bind-api.version}</jakarta.xml.bind-api.version>
+                    </systemPropertyVariables>
                     <environmentVariables>
                         <useFixedClockForIntegrationTests>true</useFixedClockForIntegrationTests>
                     </environmentVariables>

@@ -14,11 +14,6 @@
             <artifactId>reflective-fluent-builders-test-models</artifactId>
             <version>@project.version@</version>
         </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -42,8 +37,6 @@
                             </packageName>
                         </include>
                     </includes>
-                    <target>\${project.build.directory}/generated-sources/builders</target>
-                    <addCompileSourceRoot>false</addCompileSourceRoot>
                 </configuration>
             </plugin>
         </plugins>

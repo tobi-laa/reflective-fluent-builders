@@ -18,10 +18,6 @@ public class PrivateConstructorBuilder {
     this.objectToBuild = objectToBuild;
   }
 
-  public static PrivateConstructorBuilder newInstance() {
-    return new PrivateConstructorBuilder(null);
-  }
-
   public static PrivateConstructorBuilder thatModifies(final PrivateConstructor objectToModify) {
     Objects.requireNonNull(objectToModify);
     return new PrivateConstructorBuilder(objectToModify);

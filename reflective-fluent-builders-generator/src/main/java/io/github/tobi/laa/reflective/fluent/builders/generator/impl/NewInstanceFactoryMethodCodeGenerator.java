@@ -32,10 +32,14 @@ class NewInstanceFactoryMethodCodeGenerator implements MethodCodeGenerator {
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        return Optional.of(MethodSpec.methodBuilder("newInstance")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(builderClassName)
-                .addStatement("return new $T(null)", builderClassName)
-                .build());
+        if (builderMetadata.getBuiltType().isAccessibleNonArgsConstructor()) {
+            return Optional.of(MethodSpec.methodBuilder("newInstance")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .returns(builderClassName)
+                    .addStatement("return new $T(null)", builderClassName)
+                    .build());
+        } else {
+            return Optional.empty();
+        }
     }
 }

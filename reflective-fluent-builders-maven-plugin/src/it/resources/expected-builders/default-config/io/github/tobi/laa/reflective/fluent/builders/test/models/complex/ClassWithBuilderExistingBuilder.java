@@ -18,10 +18,6 @@ public class ClassWithBuilderExistingBuilder {
     this.objectToBuild = objectToBuild;
   }
 
-  public static ClassWithBuilderExistingBuilder newInstance() {
-    return new ClassWithBuilderExistingBuilder(null);
-  }
-
   public static ClassWithBuilderExistingBuilder thatModifies(
       final ClassWithBuilderExisting objectToModify) {
     Objects.requireNonNull(objectToModify);

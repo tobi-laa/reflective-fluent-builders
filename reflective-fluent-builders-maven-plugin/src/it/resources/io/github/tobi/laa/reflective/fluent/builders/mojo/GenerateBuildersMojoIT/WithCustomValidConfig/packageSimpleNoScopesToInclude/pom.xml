@@ -14,11 +14,6 @@
             <artifactId>reflective-fluent-builders-test-models</artifactId>
             <version>@project.version@</version>
         </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -37,13 +32,11 @@
                 <configuration>
                     <includes>
                         <include>
-                            <packageName>
-                                io.github.tobi.laa.reflective.fluent.builders.test.models.simple
-                            </packageName>
+                            <packageName>io.github.tobi.laa.reflective.fluent.builders.test.models.simple</packageName>
                         </include>
                     </includes>
+                    <scopesToInclude/>
                     <target>\${project.build.directory}/generated-sources/builders</target>
-                    <addCompileSourceRoot>false</addCompileSourceRoot>
                 </configuration>
             </plugin>
         </plugins>

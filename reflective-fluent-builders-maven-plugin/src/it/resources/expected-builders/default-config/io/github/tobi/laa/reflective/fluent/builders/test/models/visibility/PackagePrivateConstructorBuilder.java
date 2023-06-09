@@ -18,10 +18,6 @@ public class PackagePrivateConstructorBuilder {
     this.objectToBuild = objectToBuild;
   }
 
-  public static PackagePrivateConstructorBuilder newInstance() {
-    return new PackagePrivateConstructorBuilder(null);
-  }
-
   public static PackagePrivateConstructorBuilder thatModifies(
       final PackagePrivateConstructor objectToModify) {
     Objects.requireNonNull(objectToModify);

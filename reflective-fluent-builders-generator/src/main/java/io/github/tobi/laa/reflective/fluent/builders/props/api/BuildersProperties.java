@@ -1,9 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.props.api;
 
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 
 import java.util.Set;
 import java.util.function.Predicate;

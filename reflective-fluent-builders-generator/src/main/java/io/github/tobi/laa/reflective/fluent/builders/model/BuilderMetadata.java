@@ -3,6 +3,8 @@ package io.github.tobi.laa.reflective.fluent.builders.model;
 import lombok.Data;
 import lombok.Singular;
 
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.SortedSet;
 
 /**
@@ -29,6 +31,18 @@ public class BuilderMetadata {
 
         @lombok.NonNull
         private final Class<?> type;
+
+        /**
+         * <p>
+         * Where the built type is located on the filesystem. Might point to a {@code class} or a {@code jar} file but
+         * might also be {@code null}.
+         * </p>
+         */
+        private final Path location;
+
+        public Optional<Path> getLocation() {
+            return Optional.ofNullable(location);
+        }
 
         private final boolean accessibleNonArgsConstructor;
 

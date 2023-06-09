@@ -1,9 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
-import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
+import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.api.Test;
@@ -44,6 +44,25 @@ class NewInstanceFactoryMethodCodeGeneratorTest {
         verifyNoInteractions(builderClassNameGenerator);
     }
 
+    @Test
+    void testGenerateNoAccessibleNonArgsConstructor() {
+        // Arrange
+        final var builderMetadata = BuilderMetadata.builder() //
+                .packageName("a.whole.different.pack") //
+                .name("AnotherBuilder") //
+                .builtType(BuilderMetadata.BuiltType.builder() //
+                        .type(ClassWithHierarchy.class) //
+                        .accessibleNonArgsConstructor(false) //
+                        .build()) //
+                .build();
+        when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
+        // Act
+        final Optional<MethodSpec> actual = generator.generate(builderMetadata);
+        // Assert
+        assertThat(actual).isEmpty();
+        verify(builderClassNameGenerator).generateClassName(builderMetadata);
+    }
+
     @ParameterizedTest
     @MethodSource
     void testGenerate(final BuilderMetadata builderMetadata, final String expected) {
@@ -66,20 +85,6 @@ class NewInstanceFactoryMethodCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(SimpleClass.class) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .build()) //
-                                .build(), //
-                        String.format(
-                                "public static %1$s newInstance(\n" +
-                                        "    ) {\n" +
-                                        "  return new %1$s(null);\n" +
-                                        "}\n", MockType.class.getName().replace('$', '.'))),
-                Arguments.of(
-                        BuilderMetadata.builder() //
-                                .packageName("a.whole.different.pack") //
-                                .name("AnotherBuilder") //
-                                .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(ClassWithHierarchy.class) //
-                                        .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build(), //
                         String.format(
