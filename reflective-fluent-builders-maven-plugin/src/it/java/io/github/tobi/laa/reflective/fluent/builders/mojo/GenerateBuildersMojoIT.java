@@ -141,9 +141,9 @@ class GenerateBuildersMojoIT {
                                     "target=" + targetDirectory + ", " +
                                     "addCompileSourceRoot=true, " +
                                     "scopesToInclude=null)", //
-                            "Add " + outputDirectory + " to ClassLoader.", //
-                            "Add " + reflectiveFluentBuildersTestModels + " to ClassLoader.", //
-                            "Add " + jakartaXmlBindApi + " to ClassLoader.", //
+                            "Attempt to add " + outputDirectory + " to ClassLoader.", //
+                            "Attempt to add " + reflectiveFluentBuildersTestModels + " to ClassLoader.", //
+                            "Attempt to add " + jakartaXmlBindApi + " to ClassLoader.", //
                             "Builders will be generated for the following classes:", //
                             "- " + SimpleClassNoSetPrefix.class.getName(), //
                             "- " + SimpleClassNoDefaultConstructor.class.getName(), //
