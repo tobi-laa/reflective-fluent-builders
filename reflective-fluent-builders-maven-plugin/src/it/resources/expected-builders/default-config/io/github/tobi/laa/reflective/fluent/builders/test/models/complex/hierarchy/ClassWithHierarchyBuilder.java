@@ -1,131 +1,131 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy;
 
-import javax.annotation.processing.Generated;
 import java.util.Objects;
+import javax.annotation.processing.Generated;
 
 @Generated(
-        value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
-        date = "3333-03-13T00:00Z[UTC]"
+    value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
+    date = "3333-03-13T00:00Z[UTC]"
 )
 public class ClassWithHierarchyBuilder {
-    private ClassWithHierarchy objectToBuild;
+  private ClassWithHierarchy objectToBuild;
 
-    private final CallSetterFor callSetterFor = new CallSetterFor();
+  private final CallSetterFor callSetterFor = new CallSetterFor();
 
-    private final FieldValue fieldValue = new FieldValue();
+  private final FieldValue fieldValue = new FieldValue();
 
-    private ClassWithHierarchyBuilder(final ClassWithHierarchy objectToBuild) {
-        this.objectToBuild = objectToBuild;
+  private ClassWithHierarchyBuilder(final ClassWithHierarchy objectToBuild) {
+    this.objectToBuild = objectToBuild;
+  }
+
+  public static ClassWithHierarchyBuilder newInstance() {
+    return new ClassWithHierarchyBuilder(null);
+  }
+
+  public static ClassWithHierarchyBuilder thatModifies(final ClassWithHierarchy objectToModify) {
+    Objects.requireNonNull(objectToModify);
+    return new ClassWithHierarchyBuilder(objectToModify);
+  }
+
+  public ClassWithHierarchyBuilder eight(final int eight) {
+    fieldValue.eight = eight;
+    callSetterFor.eight = true;
+    return this;
+  }
+
+  public ClassWithHierarchyBuilder four(final int four) {
+    fieldValue.four = four;
+    callSetterFor.four = true;
+    return this;
+  }
+
+  public ClassWithHierarchyBuilder one(final int one) {
+    fieldValue.one = one;
+    callSetterFor.one = true;
+    return this;
+  }
+
+  public ClassWithHierarchyBuilder seven(final int seven) {
+    fieldValue.seven = seven;
+    callSetterFor.seven = true;
+    return this;
+  }
+
+  public ClassWithHierarchyBuilder six(final int six) {
+    fieldValue.six = six;
+    callSetterFor.six = true;
+    return this;
+  }
+
+  public ClassWithHierarchyBuilder three(final int three) {
+    fieldValue.three = three;
+    callSetterFor.three = true;
+    return this;
+  }
+
+  public ClassWithHierarchyBuilder two(final int two) {
+    fieldValue.two = two;
+    callSetterFor.two = true;
+    return this;
+  }
+
+  public ClassWithHierarchy build() {
+    if (objectToBuild == null) {
+      objectToBuild = new ClassWithHierarchy();
     }
-
-    public static ClassWithHierarchyBuilder newInstance() {
-        return new ClassWithHierarchyBuilder(null);
+    if (callSetterFor.eight) {
+      objectToBuild.setEight(fieldValue.eight);
     }
-
-    public static ClassWithHierarchyBuilder thatModifies(final ClassWithHierarchy objectToModify) {
-        Objects.requireNonNull(objectToModify);
-        return new ClassWithHierarchyBuilder(objectToModify);
+    if (callSetterFor.four) {
+      objectToBuild.setFour(fieldValue.four);
     }
-
-    public ClassWithHierarchyBuilder eight(final int eight) {
-        fieldValue.eight = eight;
-        callSetterFor.eight = true;
-        return this;
+    if (callSetterFor.one) {
+      objectToBuild.setOne(fieldValue.one);
     }
-
-    public ClassWithHierarchyBuilder four(final int four) {
-        fieldValue.four = four;
-        callSetterFor.four = true;
-        return this;
+    if (callSetterFor.seven) {
+      objectToBuild.setSeven(fieldValue.seven);
     }
-
-    public ClassWithHierarchyBuilder one(final int one) {
-        fieldValue.one = one;
-        callSetterFor.one = true;
-        return this;
+    if (callSetterFor.six) {
+      objectToBuild.setSix(fieldValue.six);
     }
-
-    public ClassWithHierarchyBuilder seven(final int seven) {
-        fieldValue.seven = seven;
-        callSetterFor.seven = true;
-        return this;
+    if (callSetterFor.three) {
+      objectToBuild.setThree(fieldValue.three);
     }
-
-    public ClassWithHierarchyBuilder six(final int six) {
-        fieldValue.six = six;
-        callSetterFor.six = true;
-        return this;
+    if (callSetterFor.two) {
+      objectToBuild.setTwo(fieldValue.two);
     }
+    return objectToBuild;
+  }
 
-    public ClassWithHierarchyBuilder three(final int three) {
-        fieldValue.three = three;
-        callSetterFor.three = true;
-        return this;
-    }
+  private class CallSetterFor {
+    boolean eight;
 
-    public ClassWithHierarchyBuilder two(final int two) {
-        fieldValue.two = two;
-        callSetterFor.two = true;
-        return this;
-    }
+    boolean four;
 
-    public ClassWithHierarchy build() {
-        if (objectToBuild == null) {
-            objectToBuild = new ClassWithHierarchy();
-        }
-        if (callSetterFor.eight) {
-            objectToBuild.setEight(fieldValue.eight);
-        }
-        if (callSetterFor.four) {
-            objectToBuild.setFour(fieldValue.four);
-        }
-        if (callSetterFor.one) {
-            objectToBuild.setOne(fieldValue.one);
-        }
-        if (callSetterFor.seven) {
-            objectToBuild.setSeven(fieldValue.seven);
-        }
-        if (callSetterFor.six) {
-            objectToBuild.setSix(fieldValue.six);
-        }
-        if (callSetterFor.three) {
-            objectToBuild.setThree(fieldValue.three);
-        }
-        if (callSetterFor.two) {
-            objectToBuild.setTwo(fieldValue.two);
-        }
-        return objectToBuild;
-    }
+    boolean one;
 
-    private class CallSetterFor {
-        boolean eight;
+    boolean seven;
 
-        boolean four;
+    boolean six;
 
-        boolean one;
+    boolean three;
 
-        boolean seven;
+    boolean two;
+  }
 
-        boolean six;
+  private class FieldValue {
+    int eight;
 
-        boolean three;
+    int four;
 
-        boolean two;
-    }
+    int one;
 
-    private class FieldValue {
-        int eight;
+    int seven;
 
-        int four;
+    int six;
 
-        int one;
+    int three;
 
-        int seven;
-
-        int six;
-
-        int three;
-
-        int two;
-    }
+    int two;
+  }
 }

@@ -47,12 +47,6 @@ public class SecondSuperClassInDifferentPackageBuilder {
     return this;
   }
 
-  public SecondSuperClassInDifferentPackageBuilder seven(final int seven) {
-    fieldValue.seven = seven;
-    callSetterFor.seven = true;
-    return this;
-  }
-
   public SecondSuperClassInDifferentPackageBuilder six(final int six) {
     fieldValue.six = six;
     callSetterFor.six = true;
@@ -72,9 +66,6 @@ public class SecondSuperClassInDifferentPackageBuilder {
     if (callSetterFor.four) {
       objectToBuild.setFour(fieldValue.four);
     }
-    if (callSetterFor.seven) {
-      objectToBuild.setSeven(fieldValue.seven);
-    }
     if (callSetterFor.six) {
       objectToBuild.setSix(fieldValue.six);
     }
@@ -88,8 +79,6 @@ public class SecondSuperClassInDifferentPackageBuilder {
 
     boolean four;
 
-    boolean seven;
-
     boolean six;
   }
 
@@ -99,8 +88,6 @@ public class SecondSuperClassInDifferentPackageBuilder {
     int five;
 
     int four;
-
-    int seven;
 
     int six;
   }
