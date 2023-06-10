@@ -1,17 +1,17 @@
 package io.github.tobi.laa.reflective.fluent.builders.archunit;
 
-import io.github.tobi.laa.reflective.fluent.builders.ArchUnitMarker;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.junit.ArchTests;
+import io.github.tobi.laa.reflective.fluent.builders.ArchUnitMarker;
 
 /**
  * <p>
  * Main class for executing ArchUnit tests.
  * </p>
  */
-@AnalyzeClasses(packagesOf = ArchUnitMarker.class, importOptions = ImportOption.DoNotIncludeTests.class)
+@AnalyzeClasses(packagesOf = ArchUnitMarker.class, importOptions = {ImportOption.DoNotIncludeTests.class, ExcludeTestModels.class})
 class ArchUnitTests {
 
     @ArchTest

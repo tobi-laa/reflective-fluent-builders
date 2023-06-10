@@ -4,6 +4,7 @@ import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -64,6 +65,7 @@ class EnumSetInitializerCodeGeneratorTest {
                         .paramTypeArg(Object.class) //
                         .methodName("") //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build());
     }
 
@@ -110,6 +112,7 @@ class EnumSetInitializerCodeGeneratorTest {
                                 .paramTypeArg(EnumA.class) //
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(),
                         CodeBlock.builder().add("java.util.EnumSet.noneOf(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumSetInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
@@ -119,6 +122,7 @@ class EnumSetInitializerCodeGeneratorTest {
                                 .paramTypeArg(EnumB.class) //
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(),
                         CodeBlock.builder().add("java.util.EnumSet.noneOf(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumSetInitializerCodeGeneratorTest.EnumB.class)").build()));
     }

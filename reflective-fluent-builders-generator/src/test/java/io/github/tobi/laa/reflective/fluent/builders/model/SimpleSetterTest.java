@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -18,15 +19,17 @@ class SimpleSetterTest {
                 .paramType(Map.class)
                 .paramName("aName")
                 .visibility(Visibility.PRIVATE)
+                .declaringClass(SimpleClass.class) //
                 .build();
         // Act
         final SimpleSetter withParamName = simpleSetter.withParamName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(SimpleSetter.builder()
-                .methodName("getSth")
-                .paramType(Map.class)
-                .paramName(paramName)
-                .visibility(Visibility.PRIVATE)
+        assertThat(withParamName).usingRecursiveComparison().isEqualTo(SimpleSetter.builder() //
+                .methodName("getSth") //
+                .paramType(Map.class) //
+                .paramName(paramName) //
+                .visibility(Visibility.PRIVATE) //
+                .declaringClass(SimpleClass.class) //
                 .build());
     }
 }

@@ -10,6 +10,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIni
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -123,6 +124,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                         .paramType(Deque.class) //
                         .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build(), //
                 CollectionSetter.builder() //
                         .methodName("setList") //
@@ -130,6 +132,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                         .paramType(List.class) //
                         .paramTypeArg(String.class) //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build());
     }
 
@@ -164,6 +167,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .paramType(Deque.class) //
                                 .paramTypeArg(TypeUtils.wildcardType().build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()));
     }
 
@@ -196,6 +200,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .paramName("anInt") //
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
+                                .declaringClass(SimpleClass.class) //
                                 .build()), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -212,6 +217,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -229,6 +235,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .keyType(String.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()));
     }
 
@@ -298,6 +305,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .paramType(Deque.class) //
                                 .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s.CollectionDeque deque(\n" +
@@ -338,6 +346,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .paramType(List.class) //
                                 .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s.CollectionList list(\n" +

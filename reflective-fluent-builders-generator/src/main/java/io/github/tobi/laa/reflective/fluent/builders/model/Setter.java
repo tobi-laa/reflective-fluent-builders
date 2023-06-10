@@ -47,6 +47,16 @@ public interface Setter extends Comparable<Setter> {
 
     /**
      * <p>
+     * The class within which this setter is defined. This is particularly important for setters inherited from super
+     * classes or interfaces.
+     * </p>
+     *
+     * @return The class within which this setter is defined.
+     */
+    Class<?> getDeclaringClass();
+
+    /**
+     * <p>
      * Creates a <em>new</em> {@link Setter} with all values kept the same except for {@code paramName}.
      * </p>
      *

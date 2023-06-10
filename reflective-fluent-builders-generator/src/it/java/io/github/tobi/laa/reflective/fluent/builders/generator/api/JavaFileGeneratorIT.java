@@ -47,6 +47,7 @@ class JavaFileGeneratorIT {
                                 .paramName("anInt") //
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
+                                .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
                         .setter(ArraySetter.builder() //
                                 .methodName("setFloats") //
@@ -54,12 +55,14 @@ class JavaFileGeneratorIT {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
                         .setter(SimpleSetter.builder() //
                                 .methodName("setT") //
                                 .paramName("t") //
                                 .paramType(typeVariableT()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
                         .build()) //
                 .build();

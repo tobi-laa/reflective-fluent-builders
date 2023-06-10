@@ -5,6 +5,7 @@ import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationExc
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -65,6 +66,7 @@ class InnerClassForArrayCodeGeneratorTest {
                         .paramType(float[].class) //
                         .paramComponentType(float.class) //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build(), //
                 ArraySetter.builder() //
                         .methodName("setStrings") //
@@ -72,6 +74,7 @@ class InnerClassForArrayCodeGeneratorTest {
                         .paramType(String[].class) //
                         .paramComponentType(String.class) //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build());
     }
 
@@ -119,6 +122,7 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()));
     }
 
@@ -151,6 +155,7 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .paramName("anInt") //
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
+                                .declaringClass(SimpleClass.class) //
                                 .build()), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -167,6 +172,7 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .paramType(Deque.class) //
                                 .paramTypeArg(TypeUtils.wildcardType().build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -184,6 +190,7 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .keyType(String.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()));
     }
 
@@ -219,6 +226,7 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s.ArrayFloats floats(\n" +
@@ -267,6 +275,7 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .paramType(String[].class) //
                                 .paramComponentType(String.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s.ArrayStrings strings(\n" +

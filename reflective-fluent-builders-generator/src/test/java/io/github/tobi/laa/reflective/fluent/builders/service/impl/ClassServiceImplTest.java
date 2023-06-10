@@ -6,12 +6,10 @@ import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
 import lombok.SneakyThrows;
@@ -89,6 +87,7 @@ class ClassServiceImplTest {
                         ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
+                                SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
                                 AnInterface.class, //
                                 AnotherInterface.class, //
@@ -99,6 +98,7 @@ class ClassServiceImplTest {
                         ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
+                                SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
                                 AnInterface.class, //
                                 AnotherInterface.class)), //
@@ -108,6 +108,7 @@ class ClassServiceImplTest {
                         ImmutableSet.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
+                                SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
                                 AnotherInterface.class)), //
                 Arguments.of( //
@@ -170,6 +171,7 @@ class ClassServiceImplTest {
                                 Child.class, //
                                 Parent.class, //
                                 Simple.class, //
+                                SimpleAbstractClass.class, //
                                 SimpleClass.class, //
                                 SimpleClassNoDefaultConstructor.class, //
                                 SimpleClassNoSetPrefix.class)),

@@ -55,6 +55,7 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .paramName("anInt") //
                                                 .paramType(int.class) //
                                                 .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(ArraySetter.builder() //
                                                 .methodName("setFloats") //
@@ -62,6 +63,7 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .paramType(float[].class) //
                                                 .paramComponentType(float.class) //
                                                 .visibility(Visibility.PRIVATE) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .build()) //
                                 .build(), //
@@ -93,6 +95,7 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .keyType(Integer.class) //
                                                 .valueType(Object.class) //
                                                 .visibility(Visibility.PRIVATE) //
+                                                .declaringClass(ClassWithHierarchy.class) //
                                                 .build()) //
                                         .setter(CollectionSetter.builder() //
                                                 .methodName("setList") //
@@ -100,6 +103,7 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .paramType(List.class) //
                                                 .paramTypeArg(String.class) //
                                                 .visibility(Visibility.PRIVATE) //
+                                                .declaringClass(ClassWithHierarchy.class) //
                                                 .build()) //
                                         .build()) //
                                 .build(), //
@@ -127,6 +131,7 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .paramType(List.class) //
                                                 .paramTypeArg(PetJaxb.class) //
                                                 .visibility(Visibility.PRIVATE) //
+                                                .declaringClass(PetJaxb.class) //
                                                 .build()) //
                                         .build()) //
                                 .build(), //

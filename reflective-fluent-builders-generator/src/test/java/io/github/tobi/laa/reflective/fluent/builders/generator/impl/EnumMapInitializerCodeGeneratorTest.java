@@ -4,6 +4,7 @@ import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -65,6 +66,7 @@ class EnumMapInitializerCodeGeneratorTest {
                         .valueType(Object.class)
                         .methodName("") //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build());
     }
 
@@ -112,6 +114,7 @@ class EnumMapInitializerCodeGeneratorTest {
                                 .valueType(Object.class) //
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(),
                         CodeBlock.builder().add("new java.util.EnumMap<>(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumMapInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
@@ -122,6 +125,7 @@ class EnumMapInitializerCodeGeneratorTest {
                                 .valueType(Object.class) //
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(),
                         CodeBlock.builder().add("new java.util.EnumMap<>(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumMapInitializerCodeGeneratorTest.EnumB.class)").build()));
     }

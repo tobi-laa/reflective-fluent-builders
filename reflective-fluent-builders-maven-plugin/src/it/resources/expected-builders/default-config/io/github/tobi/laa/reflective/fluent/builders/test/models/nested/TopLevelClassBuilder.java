@@ -40,6 +40,13 @@ public class TopLevelClassBuilder {
     return this;
   }
 
+  public TopLevelClassBuilder nestedProtected(
+      final TopLevelClass.NestedProtectedLevelOne nestedProtected) {
+    fieldValue.nestedProtected = nestedProtected;
+    callSetterFor.nestedProtected = true;
+    return this;
+  }
+
   public TopLevelClassBuilder nestedPublic(final TopLevelClass.NestedPublicLevelOne nestedPublic) {
     fieldValue.nestedPublic = nestedPublic;
     callSetterFor.nestedPublic = true;
@@ -56,6 +63,9 @@ public class TopLevelClassBuilder {
     if (callSetterFor.nestedPackagePrivate) {
       objectToBuild.setNestedPackagePrivate(fieldValue.nestedPackagePrivate);
     }
+    if (callSetterFor.nestedProtected) {
+      objectToBuild.setNestedProtected(fieldValue.nestedProtected);
+    }
     if (callSetterFor.nestedPublic) {
       objectToBuild.setNestedPublic(fieldValue.nestedPublic);
     }
@@ -67,6 +77,8 @@ public class TopLevelClassBuilder {
 
     boolean nestedPackagePrivate;
 
+    boolean nestedProtected;
+
     boolean nestedPublic;
   }
 
@@ -74,6 +86,8 @@ public class TopLevelClassBuilder {
     TopLevelClass.NestedNonStatic nestedNonStatic;
 
     TopLevelClass.NestedPackagePrivateLevelOne nestedPackagePrivate;
+
+    TopLevelClass.NestedProtectedLevelOne nestedProtected;
 
     TopLevelClass.NestedPublicLevelOne nestedPublic;
   }

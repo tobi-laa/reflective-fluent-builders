@@ -27,15 +27,21 @@ public class FirstSuperClassBuilder {
     return new FirstSuperClassBuilder(objectToModify);
   }
 
-  public FirstSuperClassBuilder five(final int five) {
-    fieldValue.five = five;
-    callSetterFor.five = true;
+  public FirstSuperClassBuilder eight(final int eight) {
+    fieldValue.eight = eight;
+    callSetterFor.eight = true;
     return this;
   }
 
-  public FirstSuperClassBuilder three(final int three) {
-    fieldValue.three = three;
-    callSetterFor.three = true;
+  public FirstSuperClassBuilder four(final int four) {
+    fieldValue.four = four;
+    callSetterFor.four = true;
+    return this;
+  }
+
+  public FirstSuperClassBuilder seven(final int seven) {
+    fieldValue.seven = seven;
+    callSetterFor.seven = true;
     return this;
   }
 
@@ -49,11 +55,14 @@ public class FirstSuperClassBuilder {
     if (objectToBuild == null) {
       objectToBuild = new FirstSuperClass();
     }
-    if (callSetterFor.five) {
-      objectToBuild.setFive(fieldValue.five);
+    if (callSetterFor.eight) {
+      objectToBuild.setEight(fieldValue.eight);
     }
-    if (callSetterFor.three) {
-      objectToBuild.setThree(fieldValue.three);
+    if (callSetterFor.four) {
+      objectToBuild.setFour(fieldValue.four);
+    }
+    if (callSetterFor.seven) {
+      objectToBuild.setSeven(fieldValue.seven);
     }
     if (callSetterFor.two) {
       objectToBuild.setTwo(fieldValue.two);
@@ -62,17 +71,21 @@ public class FirstSuperClassBuilder {
   }
 
   private class CallSetterFor {
-    boolean five;
+    boolean eight;
 
-    boolean three;
+    boolean four;
+
+    boolean seven;
 
     boolean two;
   }
 
   private class FieldValue {
-    int five;
+    int eight;
 
-    int three;
+    int four;
+
+    int seven;
 
     int two;
   }

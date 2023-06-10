@@ -87,6 +87,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                    .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
             return CollectionSetter.builder().paramTypeArg(typeArg(param, 0)) //
@@ -94,6 +95,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                    .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
             return MapSetter.builder() //
@@ -103,6 +105,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                    .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else {
             return SimpleSetter.builder() //
@@ -110,6 +113,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                    .declaringClass(method.getDeclaringClass()) //
                     .build();
         }
     }
@@ -121,6 +125,7 @@ class SetterServiceImpl implements SetterService {
                 .paramType(method.getReturnType()) //
                 .paramName(dropGetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                .declaringClass(method.getDeclaringClass()) //
                 .build();
     }
 
