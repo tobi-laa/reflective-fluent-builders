@@ -2,6 +2,6 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierar
 
 public interface AnInterface {
 
-    default void setFour(final int four) {
+    default void setThree(final int three) {
     }
 }

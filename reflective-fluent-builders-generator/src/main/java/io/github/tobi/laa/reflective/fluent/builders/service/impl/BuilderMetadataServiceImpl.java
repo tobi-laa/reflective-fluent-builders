@@ -21,8 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
-import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.PACKAGE_PRIVATE;
-import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
+import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.*;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.function.Predicate.not;
 
@@ -51,14 +50,15 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     @Override
     public BuilderMetadata collectBuilderMetadata(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
+        final String builderPackage = resolveBuilderPackage(clazz);
         return BuilderMetadata.builder() //
-                .packageName(resolveBuilderPackage(clazz)) //
+                .packageName(builderPackage) //
                 .name(clazz.getSimpleName() + properties.getBuilderSuffix()) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
-                        .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz)) //
-                        .setters(gatherAndFilterAccessibleSettersAndAvoidNameCollisions(clazz))
+                        .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz, builderPackage)) //
+                        .setters(gatherAndFilterAccessibleSettersAndAvoidNameCollisions(clazz, builderPackage))
                         .build()) //
                 .build();
     }
@@ -67,24 +67,29 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
         return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
     }
 
-    private boolean hasAccessibleNonArgsConstructor(final Class<?> clazz) {
+    private boolean hasAccessibleNonArgsConstructor(final Class<?> clazz, final String builderPackage) {
         return Arrays //
                 .stream(clazz.getConstructors()) //
-                .filter(this::isAccessible) //
+                .filter(constructor -> isAccessible(constructor, builderPackage)) //
                 .mapToInt(Constructor::getParameterCount) //
                 .anyMatch(count -> count == 0);
     }
 
-    private boolean isAccessible(final Constructor<?> constructor) {
-        return isAccessible(constructor.getDeclaringClass(), constructor.getModifiers());
+    private boolean isAccessible(final Constructor<?> constructor, final String builderPackage) {
+        return isAccessible(constructor.getDeclaringClass(), constructor.getModifiers(), builderPackage);
     }
 
-    private SortedSet<Setter> gatherAndFilterAccessibleSettersAndAvoidNameCollisions(final Class<?> clazz) {
+    private SortedSet<Setter> gatherAndFilterAccessibleSettersAndAvoidNameCollisions(final Class<?> clazz, final String builderPackage) {
         final var setters = setterService.gatherAllSetters(clazz) //
                 .stream() //
-                .filter(setter -> isAccessible(clazz, setter.getVisibility()) && isAccessibleParamType(setter.getParamType()))
+                .filter(setter -> isAccessibleSetter(setter, builderPackage)) //
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         return avoidNameCollisions(setters);
+    }
+
+    private boolean isAccessibleSetter(final Setter setter, final String builderPackage) {
+        return isAccessible(setter.getDeclaringClass(), setter.getVisibility(), builderPackage) && //
+                isAccessibleParamType(setter.getParamType(), builderPackage);
     }
 
     private SortedSet<Setter> avoidNameCollisions(final Set<Setter> setters) {
@@ -116,7 +121,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .filter(not(Class::isEnum)) //
                 .filter(not(Class::isPrimitive)) //
                 .filter(not(clazz -> clazz.isMemberClass() && !isStatic(clazz.getModifiers()))) //
-                .filter(this::isAccessible) //
+                .filter(clazz -> isAccessible(clazz, resolveBuilderPackage(clazz))) //
                 .collect(Collectors.toSet());
     }
 
@@ -134,27 +139,25 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
         return Modifier.isAbstract(clazz.getModifiers());
     }
 
-    private boolean isAccessible(final Class<?> clazz) {
-        return isAccessible(clazz, clazz.getModifiers());
+    private boolean isAccessible(final Class<?> clazz, final String builderPackage) {
+        return isAccessible(clazz, clazz.getModifiers(), builderPackage);
     }
 
-    private boolean isAccessibleParamType(final Type paramType) {
+    private boolean isAccessibleParamType(final Type paramType, final String builderPackage) {
         final var clazz = (Class<?>) paramType;
         final var visibility = visibilityService.toVisibility(clazz.getModifiers());
-        return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
+        return isAccessible(clazz, visibility, builderPackage);
     }
 
-    private boolean isAccessible(final Class<?> clazz, final int modifiers) {
+    private boolean isAccessible(final Class<?> clazz, final int modifiers, final String builderPackage) {
         final var visibility = visibilityService.toVisibility(modifiers);
-        return isAccessible(clazz, visibility);
+        return isAccessible(clazz, visibility, builderPackage);
     }
 
-    private boolean isAccessible(final Class<?> clazz, final Visibility visibility) {
-        return visibility == PUBLIC || visibility == PACKAGE_PRIVATE && placeBuildersInSamePackage(clazz);
-    }
-
-    private boolean placeBuildersInSamePackage(final Class<?> clazz) {
-        return PACKAGE_PLACEHOLDER.equals(properties.getBuilderPackage()) || properties.getBuilderPackage().equals(clazz.getPackageName());
+    private boolean isAccessible(final Class<?> clazz, final Visibility visibility, final String builderPackage) {
+        return visibility == PUBLIC || //
+                visibility == PACKAGE_PRIVATE && !isAbstract(clazz) && builderPackage.equals(clazz.getPackage().getName()) || //
+                visibility == PROTECTED && builderPackage.equals(clazz.getPackage().getName());
     }
 
     @Override

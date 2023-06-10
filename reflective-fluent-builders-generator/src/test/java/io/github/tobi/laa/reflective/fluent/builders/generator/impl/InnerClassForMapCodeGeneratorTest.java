@@ -9,6 +9,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitialize
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -124,6 +125,7 @@ class InnerClassForMapCodeGeneratorTest {
                         .keyType(String.class)
                         .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build(), //
                 MapSetter.builder() //
                         .methodName("setSortedMap") //
@@ -132,6 +134,7 @@ class InnerClassForMapCodeGeneratorTest {
                         .keyType(Integer.class) //
                         .valueType(Object.class) //
                         .visibility(Visibility.PRIVATE) //
+                        .declaringClass(ClassWithCollections.class) //
                         .build());
     }
 
@@ -167,6 +170,7 @@ class InnerClassForMapCodeGeneratorTest {
                                 .keyType(String.class)
                                 .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()));
     }
 
@@ -199,6 +203,7 @@ class InnerClassForMapCodeGeneratorTest {
                                 .paramName("anInt") //
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
+                                .declaringClass(SimpleClass.class) //
                                 .build()), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -215,6 +220,7 @@ class InnerClassForMapCodeGeneratorTest {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -231,6 +237,7 @@ class InnerClassForMapCodeGeneratorTest {
                                 .paramType(Deque.class) //
                                 .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()));
     }
 
@@ -302,6 +309,7 @@ class InnerClassForMapCodeGeneratorTest {
                                 .keyType(String.class)
                                 .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s.MapMap map(\n" +
@@ -343,6 +351,7 @@ class InnerClassForMapCodeGeneratorTest {
                                 .keyType(Integer.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s.MapSortedMap sortedMap(\n" +

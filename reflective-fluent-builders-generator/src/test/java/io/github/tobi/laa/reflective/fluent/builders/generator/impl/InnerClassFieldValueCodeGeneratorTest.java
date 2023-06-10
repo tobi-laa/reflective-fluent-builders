@@ -84,23 +84,26 @@ class InnerClassFieldValueCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(SimpleClass.class) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder()
-                                                .methodName("ignored")
-                                                .paramName("anInt")
-                                                .paramType(int.class)
-                                                .visibility(Visibility.PUBLIC)
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("ignored") //
+                                                .paramName("anInt") //
+                                                .paramType(int.class) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder()
-                                                .methodName("ignored")
-                                                .paramName("string")
-                                                .paramType(String.class)
-                                                .visibility(Visibility.PUBLIC)
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("ignored") //
+                                                .paramName("string") //
+                                                .paramType(String.class) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder()
-                                                .methodName("ignored")
-                                                .paramName("object")
-                                                .paramType(Object.class)
-                                                .visibility(Visibility.PUBLIC)
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("ignored") //
+                                                .paramName("object") //
+                                                .paramType(Object.class) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .build()) //
                                 .build(), //
@@ -130,6 +133,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                                 .paramType(Set.class) //
                                                 .paramTypeArg(List.class) //
                                                 .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(CollectionSetter.builder() //
                                                 .methodName("ignored") //
@@ -137,6 +141,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                                 .paramType(Deque.class) //
                                                 .paramTypeArg(TypeUtils.wildcardType().build()) //
                                                 .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(ArraySetter.builder() //
                                                 .methodName("ignored") //
@@ -144,6 +149,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                                 .paramType(float[].class) //
                                                 .paramComponentType(float.class) //
                                                 .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(MapSetter.builder() //
                                                 .methodName("ignored") //
@@ -152,6 +158,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                                 .keyType(String.class) //
                                                 .valueType(Object.class) //
                                                 .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .build()) //
                                 .build(), //

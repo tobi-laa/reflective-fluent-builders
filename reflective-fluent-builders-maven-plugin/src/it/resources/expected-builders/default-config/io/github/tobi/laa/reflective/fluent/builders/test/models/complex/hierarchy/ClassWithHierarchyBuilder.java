@@ -27,9 +27,9 @@ public class ClassWithHierarchyBuilder {
     return new ClassWithHierarchyBuilder(objectToModify);
   }
 
-  public ClassWithHierarchyBuilder five(final int five) {
-    fieldValue.five = five;
-    callSetterFor.five = true;
+  public ClassWithHierarchyBuilder eight(final int eight) {
+    fieldValue.eight = eight;
+    callSetterFor.eight = true;
     return this;
   }
 
@@ -42,6 +42,12 @@ public class ClassWithHierarchyBuilder {
   public ClassWithHierarchyBuilder one(final int one) {
     fieldValue.one = one;
     callSetterFor.one = true;
+    return this;
+  }
+
+  public ClassWithHierarchyBuilder seven(final int seven) {
+    fieldValue.seven = seven;
+    callSetterFor.seven = true;
     return this;
   }
 
@@ -61,14 +67,17 @@ public class ClassWithHierarchyBuilder {
     if (objectToBuild == null) {
       objectToBuild = new ClassWithHierarchy();
     }
-    if (callSetterFor.five) {
-      objectToBuild.setFive(fieldValue.five);
+    if (callSetterFor.eight) {
+      objectToBuild.setEight(fieldValue.eight);
     }
     if (callSetterFor.four) {
       objectToBuild.setFour(fieldValue.four);
     }
     if (callSetterFor.one) {
       objectToBuild.setOne(fieldValue.one);
+    }
+    if (callSetterFor.seven) {
+      objectToBuild.setSeven(fieldValue.seven);
     }
     if (callSetterFor.three) {
       objectToBuild.setThree(fieldValue.three);
@@ -80,11 +89,13 @@ public class ClassWithHierarchyBuilder {
   }
 
   private class CallSetterFor {
-    boolean five;
+    boolean eight;
 
     boolean four;
 
     boolean one;
+
+    boolean seven;
 
     boolean three;
 
@@ -92,11 +103,13 @@ public class ClassWithHierarchyBuilder {
   }
 
   private class FieldValue {
-    int five;
+    int eight;
 
     int four;
 
     int one;
+
+    int seven;
 
     int three;
 

@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -13,24 +14,26 @@ class MapSetterTest {
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var mapSetter = MapSetter.builder()
-                .methodName("getSth")
-                .paramType(Map.class)
-                .paramName("aName")
-                .visibility(Visibility.PRIVATE)
-                .keyType(Object.class)
-                .valueType(Object.class)
+        final var mapSetter = MapSetter.builder() //
+                .methodName("getSth") //
+                .paramType(Map.class) //
+                .paramName("aName") //
+                .visibility(Visibility.PRIVATE) //
+                .declaringClass(ClassWithCollections.class) //
+                .keyType(Object.class) //
+                .valueType(Object.class) //
                 .build();
         // Act
         final var withParamName = mapSetter.withParamName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(MapSetter.builder()
-                .methodName("getSth")
-                .paramType(Map.class)
-                .paramName(paramName)
-                .visibility(Visibility.PRIVATE)
-                .keyType(Object.class)
-                .valueType(Object.class)
+        assertThat(withParamName).usingRecursiveComparison().isEqualTo(MapSetter.builder() //
+                .methodName("getSth") //
+                .paramType(Map.class) //
+                .paramName(paramName) //
+                .visibility(Visibility.PRIVATE) //
+                .declaringClass(ClassWithCollections.class) //
+                .keyType(Object.class) //
+                .valueType(Object.class) //
                 .build());
     }
 }

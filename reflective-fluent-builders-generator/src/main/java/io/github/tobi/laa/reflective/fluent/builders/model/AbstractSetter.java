@@ -31,6 +31,9 @@ public abstract class AbstractSetter implements Setter {
     @lombok.NonNull
     private final Visibility visibility;
 
+    @lombok.NonNull
+    private final Class<?> declaringClass;
+
     @Override
     public int compareTo(final Setter other) {
         Objects.requireNonNull(other);
@@ -40,6 +43,7 @@ public abstract class AbstractSetter implements Setter {
             return Stream.<IntSupplier>of( //
                             () -> compare(paramName, other.getParamName(), naturalOrder()), //
                             () -> compare(getParamType().getTypeName(), other.getParamType().getTypeName(), naturalOrder()), //
+                            () -> compare(declaringClass.getName(), other.getDeclaringClass().getName(), naturalOrder()), //
                             () -> compare(getClass().getName(), other.getClass().getName(), naturalOrder()))
                     .map(IntSupplier::getAsInt) //
                     .filter(i -> i != 0) //
