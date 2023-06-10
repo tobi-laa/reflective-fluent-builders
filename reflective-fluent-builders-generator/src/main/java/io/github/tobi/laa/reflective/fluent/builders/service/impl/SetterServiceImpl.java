@@ -118,6 +118,7 @@ class SetterServiceImpl implements SetterService {
         }
     }
 
+    @SuppressWarnings("java:S3252")
     private CollectionGetAndAdder toGetAndAdder(final Method method) {
         final Type returnType = method.getGenericReturnType();
         return CollectionGetAndAdder.builder().paramTypeArg(typeArg(returnType, 0)) //
