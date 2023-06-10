@@ -47,12 +47,6 @@ public class SecondSuperClassInDifferentPackageBuilder {
     return this;
   }
 
-  public SecondSuperClassInDifferentPackageBuilder six(final int six) {
-    fieldValue.six = six;
-    callSetterFor.six = true;
-    return this;
-  }
-
   public SecondSuperClassInDifferentPackage build() {
     if (objectToBuild == null) {
       objectToBuild = new SecondSuperClassInDifferentPackage();
@@ -66,9 +60,6 @@ public class SecondSuperClassInDifferentPackageBuilder {
     if (callSetterFor.four) {
       objectToBuild.setFour(fieldValue.four);
     }
-    if (callSetterFor.six) {
-      objectToBuild.setSix(fieldValue.six);
-    }
     return objectToBuild;
   }
 
@@ -78,8 +69,6 @@ public class SecondSuperClassInDifferentPackageBuilder {
     boolean five;
 
     boolean four;
-
-    boolean six;
   }
 
   private class FieldValue {
@@ -88,7 +77,5 @@ public class SecondSuperClassInDifferentPackageBuilder {
     int five;
 
     int four;
-
-    int six;
   }
 }

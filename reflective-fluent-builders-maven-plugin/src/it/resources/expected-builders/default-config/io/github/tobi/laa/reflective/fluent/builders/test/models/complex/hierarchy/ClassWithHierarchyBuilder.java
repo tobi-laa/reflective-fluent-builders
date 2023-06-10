@@ -51,12 +51,6 @@ public class ClassWithHierarchyBuilder {
     return this;
   }
 
-  public ClassWithHierarchyBuilder six(final int six) {
-    fieldValue.six = six;
-    callSetterFor.six = true;
-    return this;
-  }
-
   public ClassWithHierarchyBuilder three(final int three) {
     fieldValue.three = three;
     callSetterFor.three = true;
@@ -85,9 +79,6 @@ public class ClassWithHierarchyBuilder {
     if (callSetterFor.seven) {
       objectToBuild.setSeven(fieldValue.seven);
     }
-    if (callSetterFor.six) {
-      objectToBuild.setSix(fieldValue.six);
-    }
     if (callSetterFor.three) {
       objectToBuild.setThree(fieldValue.three);
     }
@@ -106,8 +97,6 @@ public class ClassWithHierarchyBuilder {
 
     boolean seven;
 
-    boolean six;
-
     boolean three;
 
     boolean two;
@@ -121,8 +110,6 @@ public class ClassWithHierarchyBuilder {
     int one;
 
     int seven;
-
-    int six;
 
     int three;
 

@@ -45,12 +45,6 @@ public class FirstSuperClassBuilder {
     return this;
   }
 
-  public FirstSuperClassBuilder six(final int six) {
-    fieldValue.six = six;
-    callSetterFor.six = true;
-    return this;
-  }
-
   public FirstSuperClassBuilder two(final int two) {
     fieldValue.two = two;
     callSetterFor.two = true;
@@ -70,9 +64,6 @@ public class FirstSuperClassBuilder {
     if (callSetterFor.seven) {
       objectToBuild.setSeven(fieldValue.seven);
     }
-    if (callSetterFor.six) {
-      objectToBuild.setSix(fieldValue.six);
-    }
     if (callSetterFor.two) {
       objectToBuild.setTwo(fieldValue.two);
     }
@@ -86,8 +77,6 @@ public class FirstSuperClassBuilder {
 
     boolean seven;
 
-    boolean six;
-
     boolean two;
   }
 
@@ -97,8 +86,6 @@ public class FirstSuperClassBuilder {
     int four;
 
     int seven;
-
-    int six;
 
     int two;
   }
