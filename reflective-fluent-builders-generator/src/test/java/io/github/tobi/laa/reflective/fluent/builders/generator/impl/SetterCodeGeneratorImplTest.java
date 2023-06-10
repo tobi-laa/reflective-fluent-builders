@@ -7,6 +7,8 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassN
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,6 +76,7 @@ class SetterCodeGeneratorImplTest {
                                 .paramType(Deque.class) //
                                 .paramTypeArg(TypeUtils.wildcardType().build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build()));
     }
 
@@ -119,6 +122,7 @@ class SetterCodeGeneratorImplTest {
                                 .paramName("anInt") //
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
+                                .declaringClass(SimpleClass.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s anInt(\n" +
@@ -136,6 +140,7 @@ class SetterCodeGeneratorImplTest {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s floats(\n" +
@@ -154,6 +159,7 @@ class SetterCodeGeneratorImplTest {
                                 .keyType(Integer.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s sortedMap(\n" +
@@ -171,6 +177,7 @@ class SetterCodeGeneratorImplTest {
                                 .paramType(List.class) //
                                 .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s list(\n" +
@@ -188,6 +195,7 @@ class SetterCodeGeneratorImplTest {
                                 .paramType(List.class) //
                                 .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(GetAndAdd.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s list(\n" +

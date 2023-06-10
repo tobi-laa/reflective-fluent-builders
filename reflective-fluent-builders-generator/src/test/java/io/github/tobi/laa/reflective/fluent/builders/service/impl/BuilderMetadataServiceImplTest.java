@@ -89,12 +89,12 @@ class BuilderMetadataServiceImplTest {
 
     @SneakyThrows
     private static Stream<Arguments> testCollectBuilderMetadata() {
-        final Setter privateSetter = SimpleSetter.builder().methodName("setPriv").paramName("priv").paramType(int.class).visibility(Visibility.PRIVATE).build();
-        final Setter packagePrivateSetter = SimpleSetter.builder().methodName("setPack").paramName("pack").paramType(char.class).visibility(Visibility.PACKAGE_PRIVATE).build();
-        final Setter protectedSetter = SimpleSetter.builder().methodName("setProt").paramName("prot").paramType(Object.class).visibility(Visibility.PROTECTED).build();
-        final Setter publicSetter = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(int.class).visibility(Visibility.PUBLIC).build();
-        final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).build();
-        final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).build();
+        final Setter privateSetter = SimpleSetter.builder().methodName("setPriv").paramName("priv").paramType(int.class).visibility(Visibility.PRIVATE).declaringClass(SimpleClass.class).build();
+        final Setter packagePrivateSetter = SimpleSetter.builder().methodName("setPack").paramName("pack").paramType(char.class).visibility(Visibility.PACKAGE_PRIVATE).declaringClass(SimpleClass.class).build();
+        final Setter protectedSetter = SimpleSetter.builder().methodName("setProt").paramName("prot").paramType(Object.class).visibility(Visibility.PROTECTED).declaringClass(SimpleClass.class).build();
+        final Setter publicSetter = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(int.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
+        final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
+        final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
         final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
         final var aPath = Paths.get("");
         final var anotherPath = Paths.get("another/path");
@@ -114,6 +114,7 @@ class BuilderMetadataServiceImplTest {
                                         .location(null) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(packagePrivateSetter) //
+                                        .setter(protectedSetter) //
                                         .setter(publicSetter) //
                                         .setter(setterNameCollision1.withParamName("pub0")) //
                                         .setter(setterNameCollision2.withParamName("pub1")) //
@@ -142,9 +143,12 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
-                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
+                                SimpleSetter.builder() //
+                                        .methodName("setPackagePrivate") //
+                                        .paramName("packagePrivate") //
                                         .paramType(packagePrivate) //
                                         .visibility(Visibility.PUBLIC) //
+                                        .declaringClass(PackagePrivateConstructor.class) //
                                         .build()), //
                         PackagePrivateConstructor.class, //
                         anotherPath, //
@@ -164,9 +168,12 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
-                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
-                                        .paramType(packagePrivate)
-                                        .visibility(Visibility.PUBLIC)
+                                SimpleSetter.builder() //
+                                        .methodName("setPackagePrivate") //
+                                        .paramName("packagePrivate") //
+                                        .paramType(packagePrivate) //
+                                        .visibility(Visibility.PUBLIC) //
+                                        .declaringClass(PackagePrivateConstructor.class) //
                                         .build()), //
                         PackagePrivateConstructor.class, //
                         null, //
@@ -178,9 +185,12 @@ class BuilderMetadataServiceImplTest {
                                         .location(null) //
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(publicSetter) //
-                                        .setter(SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("setPackagePrivate") //
+                                                .paramName("packagePrivate") //
                                                 .paramType(packagePrivate) //
                                                 .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(PackagePrivateConstructor.class) //
                                                 .build()) //
                                         .build()) //
                                 .build()), //
@@ -190,9 +200,12 @@ class BuilderMetadataServiceImplTest {
                         new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PRIVATE, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
-                                SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate")
-                                        .paramType(packagePrivate)
-                                        .visibility(Visibility.PUBLIC)
+                                SimpleSetter.builder() //
+                                        .methodName("setPackagePrivate") //
+                                        .paramName("packagePrivate") //
+                                        .paramType(packagePrivate) //
+                                        .visibility(Visibility.PUBLIC) //
+                                        .declaringClass(PackagePrivateConstructor.class) //
                                         .build()), //
                         PackagePrivateConstructor.class, //
                         null, //
@@ -203,9 +216,12 @@ class BuilderMetadataServiceImplTest {
                                         .type(PackagePrivateConstructor.class) //
                                         .location(null) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .setter(SimpleSetter.builder().methodName("setPackagePrivate").paramName("packagePrivate") //
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("setPackagePrivate") //
+                                                .paramName("packagePrivate") //
                                                 .paramType(packagePrivate) //
                                                 .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(PackagePrivateConstructor.class) //
                                                 .build()) //
                                         .build()) //
                                 .build()), //
@@ -393,6 +409,7 @@ class BuilderMetadataServiceImplTest {
                                                         .paramName("pub") //
                                                         .paramType(int.class) //
                                                         .visibility(Visibility.PUBLIC) //
+                                                        .declaringClass(SimpleClass.class) //
                                                         .build())
                                                 .build()) //
                                         .build()),
@@ -408,6 +425,7 @@ class BuilderMetadataServiceImplTest {
                                                         .paramName("pub") //
                                                         .paramType(int.class) //
                                                         .visibility(Visibility.PUBLIC) //
+                                                        .declaringClass(SimpleClass.class) //
                                                         .build())
                                                 .build()) //
                                         .build())));

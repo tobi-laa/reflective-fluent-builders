@@ -2,6 +2,8 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -50,6 +52,7 @@ class TypeNameGeneratorImplTest {
                                 .paramName("anInt") //
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
+                                .declaringClass(SimpleClass.class) //
                                 .build(), //
                         "int"
                 ),
@@ -62,6 +65,7 @@ class TypeNameGeneratorImplTest {
                                         .withUpperBounds(Object.class) //
                                         .build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.Deque<java.lang.Object>"
                 ),
@@ -72,6 +76,7 @@ class TypeNameGeneratorImplTest {
                                 .paramType(List.class) //
                                 .paramTypeArg(Character.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.List<java.lang.Character>"
                 ),
@@ -82,6 +87,7 @@ class TypeNameGeneratorImplTest {
                                 .paramType(List.class) //
                                 .paramTypeArg(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"
                 ),
@@ -92,6 +98,7 @@ class TypeNameGeneratorImplTest {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "float[]"
                 ),
@@ -103,6 +110,7 @@ class TypeNameGeneratorImplTest {
                                 .keyType(String.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.Map<java.lang.String, java.lang.Object>"
                 ),
@@ -116,6 +124,7 @@ class TypeNameGeneratorImplTest {
                                         .withUpperBounds(Object.class) //
                                         .build()) //
                                 .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.SortedMap<java.lang.String, java.lang.Object>"
                 ));

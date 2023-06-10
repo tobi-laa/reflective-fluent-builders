@@ -1,11 +1,13 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
-import com.squareup.javapoet.CodeBlock;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -246,6 +248,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .valueType(Object.class) //
                 .methodName("") //
                 .visibility(Visibility.PRIVATE) //
+                .declaringClass(ClassWithCollections.class) //
                 .build();
     }
 
@@ -260,6 +263,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .paramTypeArg(Object.class) //
                 .methodName("") //
                 .visibility(Visibility.PRIVATE) //
+                .declaringClass(ClassWithCollections.class) //
                 .build();
     }
 
@@ -270,6 +274,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .paramTypeArg(Object.class) //
                 .methodName("") //
                 .visibility(Visibility.PRIVATE) //
+                .declaringClass(GetAndAdd.class) //
                 .build();
     }
 
