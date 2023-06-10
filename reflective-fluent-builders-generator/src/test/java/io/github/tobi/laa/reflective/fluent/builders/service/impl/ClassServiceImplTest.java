@@ -4,6 +4,7 @@ import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
@@ -87,6 +88,7 @@ class ClassServiceImplTest {
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
+                                SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
                                 AnInterface.class, //
                                 AnotherInterface.class, //
@@ -97,6 +99,7 @@ class ClassServiceImplTest {
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
+                                SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
                                 AnInterface.class, //
                                 AnotherInterface.class)), //
@@ -106,6 +109,7 @@ class ClassServiceImplTest {
                         Set.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
+                                SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
                                 AnotherInterface.class)), //
                 Arguments.of( //
