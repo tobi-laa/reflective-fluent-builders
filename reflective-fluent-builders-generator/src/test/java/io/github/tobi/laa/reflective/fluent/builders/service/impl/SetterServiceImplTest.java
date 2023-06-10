@@ -7,6 +7,7 @@ import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityServi
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PersonJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -191,7 +192,7 @@ class SetterServiceImplTest {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
-        when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
+        when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, SecondSuperClassInDifferentPackage.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(ClassWithHierarchy.class);
         // Assert
@@ -200,10 +201,10 @@ class SetterServiceImplTest {
                         .withEqualsForType((a, b) -> true, WildcardType.class)
                         .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
                         .build())
-                .isEqualTo(Stream.of("setOne", "setTwo", "setThree", "setFour", "setFive") //
+                .isEqualTo(Stream.of("setOne", "setTwo", "setThree", "setSix", "setSeven", "setEight") //
                         .map(name -> SimpleSetter.builder().methodName(name).paramName(StringUtils.uncapitalize(name.substring(3))).paramType(int.class).visibility(Visibility.PROTECTED).build()) //
                         .collect(Collectors.toSet()));
-        verify(visibilityService, times(5)).toVisibility(anyInt());
+        verify(visibilityService, times(6)).toVisibility(anyInt());
     }
 
     private static TypeVariable<?> typeVariableT() {
