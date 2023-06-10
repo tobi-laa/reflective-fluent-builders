@@ -200,7 +200,7 @@ class SetterServiceImplTest {
                         .withEqualsForType((a, b) -> true, WildcardType.class)
                         .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
                         .build())
-                .isEqualTo(Set.of( //
+                .isEqualTo(ImmutableSet.of( //
                         SimpleSetter.builder().methodName("setOne").paramName("one").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(ClassWithHierarchy.class).build(), //
                         SimpleSetter.builder().methodName("setTwo").paramName("two").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(FirstSuperClass.class).build(), //
                         SimpleSetter.builder().methodName("setThree").paramName("three").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(AnInterface.class).build(), //
