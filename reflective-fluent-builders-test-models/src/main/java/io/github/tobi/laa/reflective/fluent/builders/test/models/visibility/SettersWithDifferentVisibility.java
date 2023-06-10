@@ -8,12 +8,12 @@ public class SettersWithDifferentVisibility {
     @Setter(AccessLevel.PRIVATE)
     private int privateSetter;
 
-    @Setter(AccessLevel.PACKAGE)
+    @Setter(AccessLevel.PROTECTED)
     private int protectedSetter;
 
     @Setter(AccessLevel.PACKAGE)
     private int packagePrivateSetter;
 
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PUBLIC)
     private int publicSetter;
 }
