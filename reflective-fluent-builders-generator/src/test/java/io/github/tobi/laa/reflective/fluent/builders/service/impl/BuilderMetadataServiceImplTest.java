@@ -13,6 +13,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWi
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleAbstractClass;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoDefaultConstructor;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
@@ -92,6 +93,8 @@ class BuilderMetadataServiceImplTest {
         final Setter privateSetter = SimpleSetter.builder().methodName("setPriv").paramName("priv").paramType(int.class).visibility(Visibility.PRIVATE).declaringClass(SimpleClass.class).build();
         final Setter packagePrivateSetter = SimpleSetter.builder().methodName("setPack").paramName("pack").paramType(char.class).visibility(Visibility.PACKAGE_PRIVATE).declaringClass(SimpleClass.class).build();
         final Setter protectedSetter = SimpleSetter.builder().methodName("setProt").paramName("prot").paramType(Object.class).visibility(Visibility.PROTECTED).declaringClass(SimpleClass.class).build();
+        final Setter protectedSetterFromAbstractClass = SimpleSetter.builder().methodName("setProtAbst").paramName("protAbst").paramType(Object.class).visibility(Visibility.PROTECTED).declaringClass(SimpleAbstractClass.class).build();
+        final Setter packagePrivateSetterFromAbstractClass = SimpleSetter.builder().methodName("setPackAbst").paramName("packAbst").paramType(char.class).visibility(Visibility.PACKAGE_PRIVATE).declaringClass(SimpleAbstractClass.class).build();
         final Setter publicSetter = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(int.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
         final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
         final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
@@ -103,7 +106,7 @@ class BuilderMetadataServiceImplTest {
                         "<PACKAGE_NAME>", //
                         "Builder", //
                         new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
-                        ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter, setterNameCollision1, setterNameCollision2), //
+                        ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, protectedSetterFromAbstractClass, packagePrivateSetterFromAbstractClass, publicSetter, setterNameCollision1, setterNameCollision2), //
                         SimpleClass.class, //
                         null, //
                         BuilderMetadata.builder() //
@@ -115,6 +118,7 @@ class BuilderMetadataServiceImplTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(packagePrivateSetter) //
                                         .setter(protectedSetter) //
+                                        .setter(protectedSetterFromAbstractClass) //
                                         .setter(publicSetter) //
                                         .setter(setterNameCollision1.withParamName("pub0")) //
                                         .setter(setterNameCollision2.withParamName("pub1")) //
