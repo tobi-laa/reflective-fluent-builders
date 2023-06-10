@@ -1,7 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy;
 
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
+
 @lombok.Setter
-public class FirstSuperClass extends TopLevelSuperClass {
+public class FirstSuperClass extends SecondSuperClassInDifferentPackage {
 
     private int two;
 }
