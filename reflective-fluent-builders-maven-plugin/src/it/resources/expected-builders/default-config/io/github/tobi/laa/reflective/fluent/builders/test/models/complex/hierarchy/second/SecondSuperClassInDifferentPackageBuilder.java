@@ -1,4 +1,4 @@
-package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy;
+package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second;
 
 import java.util.Objects;
 import javax.annotation.processing.Generated;
@@ -7,65 +7,61 @@ import javax.annotation.processing.Generated;
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
     date = "3333-03-13T00:00Z[UTC]"
 )
-public class FirstSuperClassBuilder {
-  private FirstSuperClass objectToBuild;
+public class SecondSuperClassInDifferentPackageBuilder {
+  private SecondSuperClassInDifferentPackage objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private FirstSuperClassBuilder(final FirstSuperClass objectToBuild) {
+  private SecondSuperClassInDifferentPackageBuilder(
+      final SecondSuperClassInDifferentPackage objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
-  public static FirstSuperClassBuilder newInstance() {
-    return new FirstSuperClassBuilder(null);
+  public static SecondSuperClassInDifferentPackageBuilder newInstance() {
+    return new SecondSuperClassInDifferentPackageBuilder(null);
   }
 
-  public static FirstSuperClassBuilder thatModifies(final FirstSuperClass objectToModify) {
+  public static SecondSuperClassInDifferentPackageBuilder thatModifies(
+      final SecondSuperClassInDifferentPackage objectToModify) {
     Objects.requireNonNull(objectToModify);
-    return new FirstSuperClassBuilder(objectToModify);
+    return new SecondSuperClassInDifferentPackageBuilder(objectToModify);
   }
 
-  public FirstSuperClassBuilder eight(final int eight) {
+  public SecondSuperClassInDifferentPackageBuilder eight(final int eight) {
     fieldValue.eight = eight;
     callSetterFor.eight = true;
     return this;
   }
 
-  public FirstSuperClassBuilder five(final int five) {
+  public SecondSuperClassInDifferentPackageBuilder five(final int five) {
     fieldValue.five = five;
     callSetterFor.five = true;
     return this;
   }
 
-  public FirstSuperClassBuilder four(final int four) {
+  public SecondSuperClassInDifferentPackageBuilder four(final int four) {
     fieldValue.four = four;
     callSetterFor.four = true;
     return this;
   }
 
-  public FirstSuperClassBuilder seven(final int seven) {
+  public SecondSuperClassInDifferentPackageBuilder seven(final int seven) {
     fieldValue.seven = seven;
     callSetterFor.seven = true;
     return this;
   }
 
-  public FirstSuperClassBuilder six(final int six) {
+  public SecondSuperClassInDifferentPackageBuilder six(final int six) {
     fieldValue.six = six;
     callSetterFor.six = true;
     return this;
   }
 
-  public FirstSuperClassBuilder two(final int two) {
-    fieldValue.two = two;
-    callSetterFor.two = true;
-    return this;
-  }
-
-  public FirstSuperClass build() {
+  public SecondSuperClassInDifferentPackage build() {
     if (objectToBuild == null) {
-      objectToBuild = new FirstSuperClass();
+      objectToBuild = new SecondSuperClassInDifferentPackage();
     }
     if (callSetterFor.eight) {
       objectToBuild.setEight(fieldValue.eight);
@@ -82,9 +78,6 @@ public class FirstSuperClassBuilder {
     if (callSetterFor.six) {
       objectToBuild.setSix(fieldValue.six);
     }
-    if (callSetterFor.two) {
-      objectToBuild.setTwo(fieldValue.two);
-    }
     return objectToBuild;
   }
 
@@ -98,8 +91,6 @@ public class FirstSuperClassBuilder {
     boolean seven;
 
     boolean six;
-
-    boolean two;
   }
 
   private class FieldValue {
@@ -112,7 +103,5 @@ public class FirstSuperClassBuilder {
     int seven;
 
     int six;
-
-    int two;
   }
 }
