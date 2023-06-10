@@ -1,7 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
 import java.util.Objects;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
