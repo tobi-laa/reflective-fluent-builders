@@ -18,6 +18,10 @@ public class ProtectedConstructorBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  public static ProtectedConstructorBuilder newInstance() {
+    return new ProtectedConstructorBuilder(null);
+  }
+
   public static ProtectedConstructorBuilder thatModifies(
       final ProtectedConstructor objectToModify) {
     Objects.requireNonNull(objectToModify);
@@ -31,6 +35,9 @@ public class ProtectedConstructorBuilder {
   }
 
   public ProtectedConstructor build() {
+    if (objectToBuild == null) {
+      objectToBuild = new ProtectedConstructor();
+    }
     if (callSetterFor.intField) {
       objectToBuild.setIntField(fieldValue.intField);
     }
