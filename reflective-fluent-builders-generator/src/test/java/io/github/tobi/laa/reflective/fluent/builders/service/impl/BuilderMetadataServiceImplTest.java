@@ -144,7 +144,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>.builder", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder() //
@@ -169,7 +169,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "<PACKAGE_NAME>", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder() //
@@ -187,7 +187,7 @@ class BuilderMetadataServiceImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(PackagePrivateConstructor.class) //
                                         .location(null) //
-                                        .accessibleNonArgsConstructor(false) //
+                                        .accessibleNonArgsConstructor(true) //
                                         .setter(publicSetter) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("setPackagePrivate") //
@@ -201,7 +201,7 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "io.github.tobi.laa.reflective.fluent.builders.test.models.visibility", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PRIVATE, Visibility.PACKAGE_PRIVATE}, //
+                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PACKAGE_PRIVATE, Visibility.PRIVATE, Visibility.PACKAGE_PRIVATE}, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder() //
@@ -219,7 +219,7 @@ class BuilderMetadataServiceImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(PackagePrivateConstructor.class) //
                                         .location(null) //
-                                        .accessibleNonArgsConstructor(false) //
+                                        .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("setPackagePrivate") //
                                                 .paramName("packagePrivate") //

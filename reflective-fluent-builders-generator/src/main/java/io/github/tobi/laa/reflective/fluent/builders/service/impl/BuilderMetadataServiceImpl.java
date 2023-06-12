@@ -69,7 +69,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private boolean hasAccessibleNonArgsConstructor(final Class<?> clazz, final String builderPackage) {
         return Arrays //
-                .stream(clazz.getConstructors()) //
+                .stream(clazz.getDeclaredConstructors()) //
                 .filter(constructor -> isAccessible(constructor, builderPackage)) //
                 .mapToInt(Constructor::getParameterCount) //
                 .anyMatch(count -> count == 0);
