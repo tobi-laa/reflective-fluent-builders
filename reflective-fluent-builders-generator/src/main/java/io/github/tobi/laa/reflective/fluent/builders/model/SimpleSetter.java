@@ -15,12 +15,11 @@ import java.lang.reflect.Type;
  */
 @SuperBuilder(toBuilder = true)
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @ToString(callSuper = true)
 public class SimpleSetter extends AbstractSetter {
-    
+
     @lombok.NonNull
-    @EqualsAndHashCode.Include
     private final Type paramType;
 
     @Override
