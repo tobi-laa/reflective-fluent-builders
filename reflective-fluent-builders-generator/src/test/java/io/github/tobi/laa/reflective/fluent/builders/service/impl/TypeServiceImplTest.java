@@ -122,7 +122,13 @@ class TypeServiceImplTest {
                         Set.of(List.class, Map.class, Long.class, Set.class, Deque.class, Number.class)));
     }
 
+    @SuppressWarnings("unused")
     private static class TypeVariables<R, S extends Number, T extends String> {
-        // no content
+
+        private R r;
+
+        private S s;
+
+        private T t;
     }
 }
