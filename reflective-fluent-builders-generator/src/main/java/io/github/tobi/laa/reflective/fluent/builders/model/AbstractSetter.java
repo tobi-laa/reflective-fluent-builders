@@ -1,7 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
@@ -21,7 +20,6 @@ import static java.util.Objects.compare;
 public abstract class AbstractSetter implements Setter {
 
     @lombok.NonNull
-    @EqualsAndHashCode.Include
     private final String methodName;
 
     @lombok.NonNull
