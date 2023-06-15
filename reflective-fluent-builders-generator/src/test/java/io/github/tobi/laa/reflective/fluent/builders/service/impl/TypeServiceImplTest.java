@@ -81,7 +81,7 @@ class TypeServiceImplTest {
 
     @SneakyThrows
     private static Type typeVariable(final String fieldName) {
-        return TypeVariables.class.getDeclaredField(fieldName).getType();
+        return TypeVariables.class.getDeclaredField(fieldName).getGenericType();
     }
 
     @ParameterizedTest
@@ -123,11 +123,6 @@ class TypeServiceImplTest {
     }
 
     private static class TypeVariables<R, S extends Number, T extends String> {
-
-        private R r;
-
-        private S s;
-
-        private T t;
+        // no content
     }
 }
