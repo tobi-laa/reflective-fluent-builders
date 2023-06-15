@@ -1,7 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
 import java.lang.Float;
-import java.lang.Object;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +46,7 @@ public class ClassWithGenericsBuilder<T> {
     return this;
   }
 
-  public ClassWithGenericsBuilder t(final Object t) {
+  public ClassWithGenericsBuilder t(final T t) {
     fieldValue.t = t;
     callSetterFor.t = true;
     return this;
@@ -82,7 +81,7 @@ public class ClassWithGenericsBuilder<T> {
 
     float[] floats;
 
-    Object t;
+    T t;
   }
 
   public class ArrayFloats {
