@@ -5,10 +5,7 @@ import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -43,6 +40,9 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     @lombok.NonNull
     private final ClassService classService;
+
+    @lombok.NonNull
+    private final TypeService typeService;
 
     @lombok.NonNull
     private final BuildersProperties properties;
@@ -144,9 +144,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean isAccessibleParamType(final Type paramType, final String builderPackage) {
-        final var clazz = (Class<?>) paramType;
-        final var visibility = visibilityService.toVisibility(clazz.getModifiers());
-        return isAccessible(clazz, visibility, builderPackage);
+        return typeService.explodeType(paramType).stream().allMatch(clazz -> isAccessible(clazz, builderPackage));
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers, final String builderPackage) {
