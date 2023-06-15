@@ -28,6 +28,7 @@ class NamingConventionRules {
     static ArchRule serviceImplementationsShouldBeSuffixed =
             classes()
                     .that().resideInAPackage("..service.impl..")
+                    .and().areNotMemberClasses()
                     .should().haveSimpleNameEndingWith("ServiceImpl");
 
     @ArchTest

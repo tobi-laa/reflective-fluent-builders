@@ -8,6 +8,7 @@ import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.TypeService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
@@ -40,6 +41,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,6 +61,9 @@ class BuilderMetadataServiceImplTest {
 
     @Mock
     private ClassService classService;
+
+    @Mock
+    private TypeService typeService;
 
     @Mock
     private BuildersProperties properties;
@@ -82,6 +87,7 @@ class BuilderMetadataServiceImplTest {
         when(visibilityService.toVisibility(anyInt())).thenReturn(visibility[0], ArrayUtils.remove(visibility, 0));
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
         when(classService.determineClassLocation(clazz)).thenReturn(Optional.ofNullable(location));
+        lenient().when(typeService.explodeType(any())).then(invocation -> singleton(invocation.getArguments()[0]));
         // Act
         final BuilderMetadata actual = builderService.collectBuilderMetadata(clazz);
         // Assert
@@ -382,7 +388,7 @@ class BuilderMetadataServiceImplTest {
         return Stream.of( //
                 Arguments.of(Collections.emptySet(), Collections.emptySet()), //
                 Arguments.of(
-                        Collections.singleton( //
+                        singleton( //
                                 BuilderMetadata.builder() //
                                         .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //
@@ -417,7 +423,7 @@ class BuilderMetadataServiceImplTest {
                                                         .build())
                                                 .build()) //
                                         .build()),
-                        Collections.singleton( //
+                        singleton( //
                                 BuilderMetadata.builder() //
                                         .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //

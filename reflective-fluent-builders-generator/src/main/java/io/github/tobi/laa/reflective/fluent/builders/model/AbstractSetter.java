@@ -1,7 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
@@ -18,11 +17,9 @@ import static java.util.Objects.compare;
  */
 @SuperBuilder(toBuilder = true)
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class AbstractSetter implements Setter {
 
     @lombok.NonNull
-    @EqualsAndHashCode.Include
     private final String methodName;
 
     @lombok.NonNull
@@ -42,12 +39,29 @@ public abstract class AbstractSetter implements Setter {
         } else {
             return Stream.<IntSupplier>of( //
                             () -> compare(paramName, other.getParamName(), naturalOrder()), //
-                            () -> compare(getParamType().getTypeName(), other.getParamType().getTypeName(), naturalOrder()), //
+                            () -> compare(getParamType(), other.getParamType(), new SetterTypeComparator()), //
                             () -> compare(getClass().getName(), other.getClass().getName(), naturalOrder()))
                     .map(IntSupplier::getAsInt) //
                     .filter(i -> i != 0) //
                     .findFirst() //
                     .orElse(1);
         }
+    }
+
+    @Override
+    public boolean equals(final Object anObject) {
+        if (this == anObject) {
+            return true;
+        } else if (anObject == null || anObject.getClass() != this.getClass()) {
+            return false;
+        }
+        final var aSetter = (Setter) anObject;
+        return Objects.equals(getMethodName(), aSetter.getMethodName()) && //
+                compare(getParamType(), aSetter.getParamType(), new SetterTypeComparator()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getMethodName(), getParamType());
     }
 }

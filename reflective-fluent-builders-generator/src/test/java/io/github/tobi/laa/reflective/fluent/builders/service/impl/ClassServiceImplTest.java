@@ -31,10 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.CodeSource;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -66,13 +63,13 @@ class ClassServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final Set<Class<?>> expected) {
+    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final List<Class<?>> expected) {
         // Arrange
         final var hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
         when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
         when(hierarchyCollection.getExcludes()).thenReturn(excludes);
         // Act
-        final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
+        final List<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
         assertEquals(expected, actual);
     }
@@ -82,28 +79,28 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.emptySet(), //
-                        Set.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
+                                AnInterface.class, //
                                 FirstSuperClass.class, //
                                 SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
-                                AnInterface.class, //
                                 AnotherInterface.class, //
                                 Object.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Set.<Predicate<Class<?>>>of(Object.class::equals), //
-                        Set.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
+                                AnInterface.class, //
                                 FirstSuperClass.class, //
                                 SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
-                                AnInterface.class, //
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Set.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
-                        Set.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
                                 SecondSuperClassInDifferentPackage.class, //
@@ -112,7 +109,7 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Set.<Predicate<Class<?>>>of(FirstSuperClass.class::equals), //
-                        Set.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
     }

@@ -7,12 +7,15 @@ import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityServi
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.Generic;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.GenericChild;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.GenericGrandChild;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.GenericParent;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PersonJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
-import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,10 +29,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.reflect.TypeUtils.parameterize;
+import static org.apache.commons.lang3.reflect.TypeUtils.wildcardType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -122,7 +126,7 @@ class SetterServiceImplTest {
             when(properties.getGetterPrefix()).thenReturn(getterPrefix);
         }
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
-        when(classService.collectFullClassHierarchy(clazz)).thenReturn(Set.of(clazz));
+        when(classService.collectFullClassHierarchy(clazz)).thenReturn(List.of(clazz));
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert
@@ -130,7 +134,7 @@ class SetterServiceImplTest {
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
                         .withEqualsForFields(
                                 (a, b) -> ((Type) a).getTypeName().equals(((Type) b).getTypeName()),
-                                "paramTypeArg", "keyType", "valueType")
+                                "paramType", "paramTypeArg", "keyType", "valueType")
                         .build())
                 .isEqualTo(expected);
         verify(visibilityService, times(expected.size())).toVisibility(anyInt());
@@ -143,7 +147,7 @@ class SetterServiceImplTest {
                                 SimpleSetter.builder().methodName("setAnInt").paramName("anInt").paramType(int.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 SimpleSetter.builder().methodName("setAString").paramName("aString").paramType(String.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 SimpleSetter.builder().methodName("setBooleanField").paramName("booleanField").paramType(boolean.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build(), //
-                                SimpleSetter.builder().methodName("setSetClass").paramName("setClass").paramType(Class.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build())), //
+                                SimpleSetter.builder().methodName("setSetClass").paramName("setClass").paramType(parameterize(Class.class, wildcardType().withUpperBounds(Object.class).build())).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build())), //
                 Arguments.of("", null, false, SimpleClassNoSetPrefix.class, Visibility.PACKAGE_PRIVATE, //
                         Set.of( //
                                 SimpleSetter.builder().methodName("anInt").paramName("anInt").paramType(int.class).visibility(Visibility.PACKAGE_PRIVATE).declaringClass(SimpleClassNoSetPrefix.class).build(), //
@@ -153,12 +157,12 @@ class SetterServiceImplTest {
                                 CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(Collection.class).paramTypeArg(Integer.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
                                 CollectionSetter.builder().methodName("setSet").paramName("set").paramType(Set.class).paramTypeArg(List.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
-                                CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(Deque.class).paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
-                                CollectionSetter.builder().methodName("setSortedSetWild").paramName("sortedSetWild").paramType(SortedSet.class).paramTypeArg(TypeUtils.wildcardType().build()).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
+                                CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(Deque.class).paramTypeArg(wildcardType().withUpperBounds(Object.class).build()).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
+                                CollectionSetter.builder().methodName("setSortedSetWild").paramName("sortedSetWild").paramType(SortedSet.class).paramTypeArg(wildcardType().build()).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
                                 ArraySetter.builder().methodName("setFloats").paramName("floats").paramType(float[].class).paramComponentType(float.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(String.class).valueType(Object.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
                                 MapSetter.builder().methodName("setMapTU").paramName("mapTU").paramType(Map.class).keyType(typeVariableT()).valueType(typeVariableU()).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
-                                MapSetter.builder().methodName("setMapWildObj").paramName("mapWildObj").paramType(Map.class).keyType(TypeUtils.wildcardType().build()).valueType(Object.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
+                                MapSetter.builder().methodName("setMapWildObj").paramName("mapWildObj").paramType(Map.class).keyType(wildcardType().build()).valueType(Object.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build(), //
                                 MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(Visibility.PRIVATE).declaringClass(ClassWithCollections.class).build())), //
                 Arguments.of("set", "get", false, PetJaxb.class, Visibility.PRIVATE, //
                         Set.of( //
@@ -185,30 +189,59 @@ class SetterServiceImplTest {
                                 ArraySetter.builder().methodName("setListSetterWrongType").paramName("listSetterWrongType").paramType(String[].class).paramComponentType(String.class).visibility(Visibility.PUBLIC).declaringClass(GetAndAdd.class).build())));
     }
 
-    @Test
-    void testGatherAllSettersForClassWithHierarchy() {
+    @ParameterizedTest
+    @MethodSource
+    void testGatherAllSettersForClassWithHierarchy(final Class<?> clazz, final List<Class<?>> fullClassHierarchy, final Set<Setter> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
-        when(classService.collectFullClassHierarchy(any())).thenReturn(Set.of(ClassWithHierarchy.class, FirstSuperClass.class, SecondSuperClassInDifferentPackage.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class));
+        when(classService.collectFullClassHierarchy(any())).thenReturn(fullClassHierarchy);
         // Act
-        final Set<Setter> actual = setterService.gatherAllSetters(ClassWithHierarchy.class);
+        final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert
         assertThat(actual)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
-                        .withEqualsForType((a, b) -> true, WildcardType.class)
-                        .withEqualsForType((a, b) -> a.getTypeName().equals(b.getTypeName()), TypeVariable.class)
+                        .withEqualsForFields(
+                                (a, b) -> ((Type) a).getTypeName().equals(((Type) b).getTypeName()),
+                                "paramType", "paramTypeArg", "keyType", "valueType")
                         .build())
-                .isEqualTo(Set.of( //
-                        SimpleSetter.builder().methodName("setOne").paramName("one").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(ClassWithHierarchy.class).build(), //
-                        SimpleSetter.builder().methodName("setTwo").paramName("two").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(FirstSuperClass.class).build(), //
-                        SimpleSetter.builder().methodName("setThree").paramName("three").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(AnInterface.class).build(), //
-                        SimpleSetter.builder().methodName("setFour").paramName("four").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(SecondSuperClassInDifferentPackage.class).build(), //
-                        SimpleSetter.builder().methodName("setFive").paramName("five").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(SecondSuperClassInDifferentPackage.class).build(), //
-                        SimpleSetter.builder().methodName("setSix").paramName("six").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(TopLevelSuperClass.class).build(), //
-                        SimpleSetter.builder().methodName("setSeven").paramName("seven").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(TopLevelSuperClass.class).build(), //
-                        SimpleSetter.builder().methodName("setEight").paramName("eight").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(AnotherInterface.class).build()));
-        verify(visibilityService, times(8)).toVisibility(anyInt());
+                .isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> testGatherAllSettersForClassWithHierarchy() {
+        return Stream.of( //
+                Arguments.of(
+                        ClassWithHierarchy.class,
+                        List.of(ClassWithHierarchy.class, FirstSuperClass.class, SecondSuperClassInDifferentPackage.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class),
+                        Set.of( //
+                                SimpleSetter.builder().methodName("setOne").paramName("one").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(ClassWithHierarchy.class).build(), //
+                                SimpleSetter.builder().methodName("setTwo").paramName("two").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(FirstSuperClass.class).build(), //
+                                SimpleSetter.builder().methodName("setThree").paramName("three").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(AnInterface.class).build(), //
+                                SimpleSetter.builder().methodName("setFour").paramName("four").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(SecondSuperClassInDifferentPackage.class).build(), //
+                                SimpleSetter.builder().methodName("setFive").paramName("five").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(SecondSuperClassInDifferentPackage.class).build(), //
+                                SimpleSetter.builder().methodName("setSix").paramName("six").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(TopLevelSuperClass.class).build(), //
+                                SimpleSetter.builder().methodName("setSeven").paramName("seven").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(TopLevelSuperClass.class).build(), //
+                                SimpleSetter.builder().methodName("setEight").paramName("eight").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(AnotherInterface.class).build())), //
+                Arguments.of(
+                        GenericChild.class,
+                        List.of(GenericChild.class, GenericParent.class),
+                        Set.of( //
+                                CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
+                                MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(typeVariableS()).valueType(typeVariableT()).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
+                                SimpleSetter.builder().methodName("setGeneric").paramName("generic").paramType(parameterize(Generic.class, typeVariableT())).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
+                                SimpleSetter.builder().methodName("setOtherGeneric").paramName("otherGeneric").paramType(parameterize(Generic.class, String.class)).visibility(Visibility.PROTECTED).declaringClass(GenericParent.class).build())), //
+                Arguments.of(
+                        GenericGrandChild.class,
+                        List.of(GenericGrandChild.class, GenericChild.class, GenericParent.class),
+                        Set.of( //
+                                CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
+                                MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(Long.class).valueType(Boolean.class).visibility(Visibility.PROTECTED).declaringClass(GenericGrandChild.class).build(), //
+                                SimpleSetter.builder().methodName("setGeneric").paramName("generic").paramType(parameterize(Generic.class, Boolean.class)).visibility(Visibility.PROTECTED).declaringClass(GenericGrandChild.class).build(),
+                                SimpleSetter.builder().methodName("setOtherGeneric").paramName("otherGeneric").paramType(parameterize(Generic.class, String.class)).visibility(Visibility.PROTECTED).declaringClass(GenericParent.class).build()))); //
+    }
+
+    private static TypeVariable<?> typeVariableS() {
+        return GenericParent.class.getTypeParameters()[1];
     }
 
     private static TypeVariable<?> typeVariableT() {
