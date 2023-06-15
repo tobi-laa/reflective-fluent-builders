@@ -13,4 +13,6 @@ public class GenericParent<R, S, T> {
     private Map<S, T> map;
 
     private Generic<T> generic;
+
+    private Generic<R> otherGeneric;
 }
