@@ -19,8 +19,8 @@ class SetterTypeComparator implements Comparator<Type> {
         } else if (b == null) {
             return 1;
         } else if (a instanceof ParameterizedType && b instanceof ParameterizedType) {
-            final var aRawType = ((ParameterizedType) a).getRawType();
-            final var bRawType = ((ParameterizedType) b).getRawType();
+            final Type aRawType = ((ParameterizedType) a).getRawType();
+            final Type bRawType = ((ParameterizedType) b).getRawType();
             return aRawType.getTypeName().compareTo(bRawType.getTypeName());
         } else {
             return a.getTypeName().compareTo(b.getTypeName());

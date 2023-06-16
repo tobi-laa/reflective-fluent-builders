@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -81,7 +82,7 @@ class SetterServiceImpl implements SetterService {
 
     private Setter toSetter(final Class<?> clazz, final Method method) {
         final Parameter param = method.getParameters()[0];
-        final var paramType = resolveType(clazz, method.getGenericParameterTypes()[0]);
+        final Type paramType = resolveType(clazz, method.getGenericParameterTypes()[0]);
         if (param.getType().isArray()) {
             return ArraySetter.builder() //
                     .paramComponentType(param.getType().getComponentType()) //

@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -36,7 +37,7 @@ class TypeServiceImplTest {
     @ValueSource(classes = {int.class, long.class, String.class, Long.class, Object.class, List.class})
     void testExplodeTypeSimple(final Class<?> type) {
         // Act
-        final var actual = service.explodeType(type);
+        final Set<Class<?>> actual = service.explodeType(type);
         // Assert
         assertThat(actual).containsExactly(type);
     }
@@ -45,7 +46,7 @@ class TypeServiceImplTest {
     @MethodSource
     void testExplodeTypeWildcard(final Type type, final Set<Class<?>> expected) {
         // Act
-        final var actual = service.explodeType(type);
+        final Set<Class<?>> actual = service.explodeType(type);
         // Assert
         assertThat(actual).isEqualTo(expected);
     }
@@ -54,29 +55,29 @@ class TypeServiceImplTest {
         return Stream.of( //
                 Arguments.of( //
                         wildcardType().withLowerBounds(Number.class).build(), //
-                        Set.of(Number.class)), //
+                        ImmutableSet.of(Number.class)), //
                 Arguments.of( //
                         wildcardType().withUpperBounds(String.class).build(), //
-                        Set.of(String.class)), //
+                        ImmutableSet.of(String.class)), //
                 Arguments.of( //
                         wildcardType().withLowerBounds(Number.class).withUpperBounds(String.class).build(), //
-                        Set.of(Number.class, String.class)));
+                        ImmutableSet.of(Number.class, String.class)));
     }
 
     @ParameterizedTest
     @MethodSource
     void testExplodeTypeTypeVariable(final Type type, final Set<Class<?>> expected) {
         // Act
-        final var actual = service.explodeType(type);
+        final Set<Class<?>> actual = service.explodeType(type);
         // Assert
         assertThat(actual).isEqualTo(expected);
     }
 
     private static Stream<Arguments> testExplodeTypeTypeVariable() {
         return Stream.of( //
-                Arguments.of(typeVariable("r"), Set.of(Object.class)), //
-                Arguments.of(typeVariable("s"), Set.of(Number.class)), //
-                Arguments.of(typeVariable("t"), Set.of(String.class)));
+                Arguments.of(typeVariable("r"), ImmutableSet.of(Object.class)), //
+                Arguments.of(typeVariable("s"), ImmutableSet.of(Number.class)), //
+                Arguments.of(typeVariable("t"), ImmutableSet.of(String.class)));
     }
 
     @SneakyThrows
@@ -88,7 +89,7 @@ class TypeServiceImplTest {
     @MethodSource
     void testExplodeTypeParameterizedType(final Type type, final Set<Class<?>> expected) {
         // Act
-        final var actual = service.explodeType(type);
+        final Set<Class<?>> actual = service.explodeType(type);
         // Assert
         assertThat(actual).isEqualTo(expected);
     }
@@ -98,16 +99,16 @@ class TypeServiceImplTest {
                 // constructed type is List<String>
                 Arguments.of( //
                         parameterize(List.class, String.class), //
-                        Set.of(List.class, String.class)), //
+                        ImmutableSet.of(List.class, String.class)), //
                 // constructed type is Map<Long, Boolean>
                 Arguments.of( //
                         parameterize(Map.class, Long.class, Boolean.class), //
-                        Set.of(Map.class, Long.class, Boolean.class)), //
+                        ImmutableSet.of(Map.class, Long.class, Boolean.class)), //
                 // constructed type is Set<Number>[]
                 Arguments.of( //
                         genericArrayType( //
                                 parameterize(Set.class, Number.class)), //
-                        Set.of(Set.class, Number.class)), //
+                        ImmutableSet.of(Set.class, Number.class)), //
                 // constructed type is List<Map<Long, Set<Deque<Number>[]>>>
                 Arguments.of( //
                         parameterize( //
@@ -119,7 +120,7 @@ class TypeServiceImplTest {
                                                 Set.class, //
                                                 genericArrayType( //
                                                         parameterize(Deque.class, Number.class))))), //
-                        Set.of(List.class, Map.class, Long.class, Set.class, Deque.class, Number.class)));
+                        ImmutableSet.of(List.class, Map.class, Long.class, Set.class, Deque.class, Number.class)));
     }
 
     @SuppressWarnings("unused")

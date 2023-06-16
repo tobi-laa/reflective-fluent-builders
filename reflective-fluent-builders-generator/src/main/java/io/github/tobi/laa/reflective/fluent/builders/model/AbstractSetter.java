@@ -55,7 +55,7 @@ public abstract class AbstractSetter implements Setter {
         } else if (anObject == null || anObject.getClass() != this.getClass()) {
             return false;
         }
-        final var aSetter = (Setter) anObject;
+        final Setter aSetter = (Setter) anObject;
         return Objects.equals(getMethodName(), aSetter.getMethodName()) && //
                 compare(getParamType(), aSetter.getParamType(), new SetterTypeComparator()) == 0;
     }

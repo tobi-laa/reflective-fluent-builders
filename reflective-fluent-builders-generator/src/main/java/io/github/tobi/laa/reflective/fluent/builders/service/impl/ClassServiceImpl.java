@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
@@ -53,7 +54,7 @@ class ClassServiceImpl implements ClassService {
                     .filter(not(this::excludeFromHierarchyCollection)) //
                     .forEach(classHierarchy::add);
         }
-        return classHierarchy.stream().distinct().collect(Collectors.toUnmodifiableList());
+        return classHierarchy.stream().distinct().collect(ImmutableList.toImmutableList());
     }
 
     private boolean excludeFromHierarchyCollection(final Class<?> clazz) {

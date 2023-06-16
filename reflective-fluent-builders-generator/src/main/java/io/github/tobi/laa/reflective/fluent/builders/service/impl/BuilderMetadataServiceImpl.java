@@ -64,7 +64,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private String builderClassName(final Class<?> clazz, final String builderPackage) {
-        var name = clazz.getSimpleName() + properties.getBuilderSuffix();
+        String name = clazz.getSimpleName() + properties.getBuilderSuffix();
         int count = 0;
         while (classService.existsOnClasspath(builderPackage + '.' + name)) {
             name = clazz.getSimpleName() + properties.getBuilderSuffix() + count;

@@ -25,7 +25,7 @@ class AbstractSetterTest {
     }
 
     private static Stream<Arguments> testEquals() {
-        final var abstractSetter = TestSetter.builder() //
+        final AbstractSetter abstractSetter = TestSetter.builder() //
                 .methodName("getSth") //
                 .paramName("aName") //
                 .visibility(Visibility.PRIVATE) //
