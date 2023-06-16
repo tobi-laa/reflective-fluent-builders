@@ -53,7 +53,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
         final String builderPackage = resolveBuilderPackage(clazz);
         return BuilderMetadata.builder() //
                 .packageName(builderPackage) //
-                .name(clazz.getSimpleName() + properties.getBuilderSuffix()) //
+                .name(builderClassName(clazz, builderPackage)) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
@@ -61,6 +61,16 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                         .setters(gatherAndFilterAccessibleSettersAndAvoidNameCollisions(clazz, builderPackage))
                         .build()) //
                 .build();
+    }
+
+    private String builderClassName(final Class<?> clazz, final String builderPackage) {
+        var name = clazz.getSimpleName() + properties.getBuilderSuffix();
+        int count = 0;
+        while (classService.existsOnClasspath(builderPackage + '.' + name)) {
+            name = clazz.getSimpleName() + properties.getBuilderSuffix() + count;
+            count++;
+        }
+        return name;
     }
 
     private String resolveBuilderPackage(final Class<?> clazz) {
