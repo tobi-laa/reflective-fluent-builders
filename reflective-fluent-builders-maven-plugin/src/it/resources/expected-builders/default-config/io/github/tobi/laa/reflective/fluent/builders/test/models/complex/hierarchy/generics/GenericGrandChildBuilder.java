@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
