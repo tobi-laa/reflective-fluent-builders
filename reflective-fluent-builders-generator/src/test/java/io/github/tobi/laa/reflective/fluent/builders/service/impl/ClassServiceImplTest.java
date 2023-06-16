@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
@@ -81,7 +82,7 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.emptySet(), //
-                        List.of( //
+                        ImmutableList.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class, //
                                 FirstSuperClass.class, //
@@ -92,7 +93,7 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.<Predicate<Class<?>>>singleton(Object.class::equals), //
-                        List.of( //
+                        ImmutableList.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class, //
                                 FirstSuperClass.class, //
@@ -102,7 +103,7 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         ImmutableSet.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
-                        List.of( //
+                        ImmutableList.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
                                 SecondSuperClassInDifferentPackage.class, //
@@ -111,7 +112,7 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.<Predicate<Class<?>>>singleton(FirstSuperClass.class::equals), //
-                        List.of( //
+                        ImmutableList   .of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
     }
