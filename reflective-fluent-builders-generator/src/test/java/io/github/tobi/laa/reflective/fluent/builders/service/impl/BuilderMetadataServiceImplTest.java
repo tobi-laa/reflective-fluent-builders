@@ -42,6 +42,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singleton;
+import static org.apache.commons.lang3.ArrayUtils.remove;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -80,13 +81,15 @@ class BuilderMetadataServiceImplTest {
     @MethodSource
     void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix,
                                     final Visibility[] visibility, final SortedSet<Setter> setters,
-                                    final Class<?> clazz, final Path location, final BuilderMetadata expected) {
+                                    final Class<?> clazz, final Path location, final Boolean[] existsOnClasspath,
+                                    final BuilderMetadata expected) {
         // Arrange
         when(properties.getBuilderPackage()).thenReturn(builderPackage);
         when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
-        when(visibilityService.toVisibility(anyInt())).thenReturn(visibility[0], ArrayUtils.remove(visibility, 0));
+        when(visibilityService.toVisibility(anyInt())).thenReturn(visibility[0], remove(visibility, 0));
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
         when(classService.determineClassLocation(clazz)).thenReturn(Optional.ofNullable(location));
+        when(classService.existsOnClasspath(anyString())).thenReturn(existsOnClasspath[0], remove(existsOnClasspath, 0));
         lenient().when(typeService.explodeType(any())).then(invocation -> singleton(invocation.getArguments()[0]));
         // Act
         final BuilderMetadata actual = builderService.collectBuilderMetadata(clazz);
@@ -115,6 +118,7 @@ class BuilderMetadataServiceImplTest {
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, protectedSetterFromAbstractClass, packagePrivateSetterFromAbstractClass, publicSetter, setterNameCollision1, setterNameCollision2), //
                         SimpleClass.class, //
                         null, //
+                        new Boolean[]{false}, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassBuilder") //
@@ -137,6 +141,7 @@ class BuilderMetadataServiceImplTest {
                         ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter), //
                         ClassWithCollections.class, //
                         aPath, //
+                        new Boolean[]{false}, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.complex.builder") //
                                 .name("ClassWithCollections") //
@@ -162,6 +167,7 @@ class BuilderMetadataServiceImplTest {
                                         .build()), //
                         PackagePrivateConstructor.class, //
                         anotherPath, //
+                        new Boolean[]{false}, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.builder") //
                                 .name("PackagePrivateConstructor") //
@@ -187,6 +193,7 @@ class BuilderMetadataServiceImplTest {
                                         .build()), //
                         PackagePrivateConstructor.class, //
                         null, //
+                        new Boolean[]{false}, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
                                 .name("PackagePrivateConstructor") //
@@ -219,6 +226,7 @@ class BuilderMetadataServiceImplTest {
                                         .build()), //
                         PackagePrivateConstructor.class, //
                         null, //
+                        new Boolean[]{false}, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
                                 .name("PackagePrivateConstructor") //
@@ -242,9 +250,10 @@ class BuilderMetadataServiceImplTest {
                         ImmutableSortedSet.of(privateSetter, protectedSetter), //
                         SimpleClassNoSetPrefix.class, //
                         aPath, //
+                        new Boolean[]{true, false}, //
                         BuilderMetadata.builder() //
                                 .packageName("the.builder.package") //
-                                .name("SimpleClassNoSetPrefixMyBuilderSuffix") //
+                                .name("SimpleClassNoSetPrefixMyBuilderSuffix0") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(SimpleClassNoSetPrefix.class) //
                                         .location(aPath) //
@@ -258,9 +267,10 @@ class BuilderMetadataServiceImplTest {
                         Collections.emptySortedSet(), //
                         SimpleClassNoDefaultConstructor.class, //
                         anotherPath, //
+                        new Boolean[]{true, true, false}, //
                         BuilderMetadata.builder() //
                                 .packageName("builders.io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
-                                .name("SimpleClassNoDefaultConstructorBuilder") //
+                                .name("SimpleClassNoDefaultConstructorBuilder1") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(SimpleClassNoDefaultConstructor.class) //
                                         .location(anotherPath) //
