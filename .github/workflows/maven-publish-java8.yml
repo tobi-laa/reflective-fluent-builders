@@ -20,6 +20,7 @@ jobs:
         with:
           tag: ${{ github.event.release.tag_name }}
           generateReleaseNotes: true
+          makeLatest: false
       - name: Set up Java for publishing to Maven Central Repository
         uses: actions/setup-java@v3
         with:
