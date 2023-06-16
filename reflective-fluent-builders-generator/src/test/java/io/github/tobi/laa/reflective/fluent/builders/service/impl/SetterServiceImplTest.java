@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
@@ -127,7 +128,7 @@ class SetterServiceImplTest {
             when(properties.getGetterPrefix()).thenReturn(getterPrefix);
         }
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
-        when(classService.collectFullClassHierarchy(clazz)).thenReturn(List.of(clazz));
+        when(classService.collectFullClassHierarchy(clazz)).thenReturn(ImmutableList.of(clazz));
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert
@@ -213,8 +214,8 @@ class SetterServiceImplTest {
         return Stream.of( //
                 Arguments.of(
                         ClassWithHierarchy.class,
-                        List.of(ClassWithHierarchy.class, FirstSuperClass.class, SecondSuperClassInDifferentPackage.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class),
-                        Set.of( //
+                        ImmutableList.of(ClassWithHierarchy.class, FirstSuperClass.class, SecondSuperClassInDifferentPackage.class, TopLevelSuperClass.class, AnInterface.class, AnotherInterface.class),
+                        ImmutableSet.of( //
                                 SimpleSetter.builder().methodName("setOne").paramName("one").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(ClassWithHierarchy.class).build(), //
                                 SimpleSetter.builder().methodName("setTwo").paramName("two").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(FirstSuperClass.class).build(), //
                                 SimpleSetter.builder().methodName("setThree").paramName("three").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(AnInterface.class).build(), //
@@ -225,16 +226,16 @@ class SetterServiceImplTest {
                                 SimpleSetter.builder().methodName("setEight").paramName("eight").paramType(int.class).visibility(Visibility.PROTECTED).declaringClass(AnotherInterface.class).build())), //
                 Arguments.of(
                         GenericChild.class,
-                        List.of(GenericChild.class, GenericParent.class),
-                        Set.of( //
+                        ImmutableList.of(GenericChild.class, GenericParent.class),
+                        ImmutableSet.of( //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(typeVariableS()).valueType(typeVariableT()).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
                                 SimpleSetter.builder().methodName("setGeneric").paramName("generic").paramType(parameterize(Generic.class, typeVariableT())).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
                                 SimpleSetter.builder().methodName("setOtherGeneric").paramName("otherGeneric").paramType(parameterize(Generic.class, String.class)).visibility(Visibility.PROTECTED).declaringClass(GenericParent.class).build())), //
                 Arguments.of(
                         GenericGrandChild.class,
-                        List.of(GenericGrandChild.class, GenericChild.class, GenericParent.class),
-                        Set.of( //
+                        ImmutableList.of(GenericGrandChild.class, GenericChild.class, GenericParent.class),
+                        ImmutableSet.of( //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(String.class).visibility(Visibility.PROTECTED).declaringClass(GenericChild.class).build(), //
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(Map.class).keyType(Long.class).valueType(Boolean.class).visibility(Visibility.PROTECTED).declaringClass(GenericGrandChild.class).build(), //
                                 SimpleSetter.builder().methodName("setGeneric").paramName("generic").paramType(parameterize(Generic.class, Boolean.class)).visibility(Visibility.PROTECTED).declaringClass(GenericGrandChild.class).build(),
