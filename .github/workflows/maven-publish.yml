@@ -19,6 +19,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.event.release.tag_name }}
+          generateReleaseNotes: true
       - name: Set up Java for publishing to Maven Central Repository
         uses: actions/setup-java@v3
         with:

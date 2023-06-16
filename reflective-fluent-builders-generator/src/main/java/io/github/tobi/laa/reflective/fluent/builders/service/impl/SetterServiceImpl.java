@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.reflect.TypeToken;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
@@ -13,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -49,13 +49,13 @@ class SetterServiceImpl implements SetterService {
                 .collect(Collectors.toList());
         final ImmutableSortedSet<Setter> setters = methods.stream() //
                 .filter(this::isSetter) //
-                .map(this::toSetter) //
+                .map(method -> toSetter(clazz, method)) //
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         if (properties.isGetAndAddEnabled()) {
             final ImmutableSortedSet<CollectionGetAndAdder> getAndAdders = methods.stream() //
                     .filter(this::isCollectionGetter) //
                     .filter(method -> noCorrespondingSetter(method, setters)) //
-                    .map(this::toGetAndAdder) //
+                    .map(method -> toGetAndAdder(clazz, method)) //
                     .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
             return ImmutableSortedSet.<Setter>naturalOrder().addAll(setters).addAll(getAndAdders).build();
         } else {
@@ -79,18 +79,21 @@ class SetterServiceImpl implements SetterService {
                         setter.getParamName().equals(dropGetterPrefix(method.getName())));
     }
 
-    private Setter toSetter(final Method method) {
+    private Setter toSetter(final Class<?> clazz, final Method method) {
         final Parameter param = method.getParameters()[0];
+        final var paramType = resolveType(clazz, method.getGenericParameterTypes()[0]);
         if (param.getType().isArray()) {
-            return ArraySetter.builder().paramComponentType(param.getType().getComponentType()) //
+            return ArraySetter.builder() //
+                    .paramComponentType(param.getType().getComponentType()) //
                     .methodName(method.getName()) //
-                    .paramType(param.getType()) //
+                    .paramType(paramType) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
-            return CollectionSetter.builder().paramTypeArg(typeArg(param, 0)) //
+            return CollectionSetter.builder() //
+                    .paramTypeArg(typeArg(paramType, 0)) //
                     .methodName(method.getName()) //
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
@@ -99,8 +102,8 @@ class SetterServiceImpl implements SetterService {
                     .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
             return MapSetter.builder() //
-                    .keyType(typeArg(param, 0)) //
-                    .valueType(typeArg(param, 1)) //
+                    .keyType(typeArg(paramType, 0)) //
+                    .valueType(typeArg(paramType, 1)) //
                     .methodName(method.getName()) //
                     .paramType(param.getType()) //
                     .paramName(dropSetterPrefix(method.getName())) //
@@ -110,7 +113,7 @@ class SetterServiceImpl implements SetterService {
         } else {
             return SimpleSetter.builder() //
                     .methodName(method.getName()) //
-                    .paramType(param.getType()) //
+                    .paramType(paramType) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .declaringClass(method.getDeclaringClass()) //
@@ -119,7 +122,7 @@ class SetterServiceImpl implements SetterService {
     }
 
     @SuppressWarnings("java:S3252")
-    private CollectionGetAndAdder toGetAndAdder(final Method method) {
+    private CollectionGetAndAdder toGetAndAdder(final Class<?> clazz, final Method method) {
         final Type returnType = method.getGenericReturnType();
         return CollectionGetAndAdder.builder().paramTypeArg(typeArg(returnType, 0)) //
                 .methodName(method.getName()) //
@@ -130,10 +133,6 @@ class SetterServiceImpl implements SetterService {
                 .build();
     }
 
-    private Type typeArg(final Parameter param, final int num) {
-        return typeArg(param.getParameterizedType(), num);
-    }
-
     private Type typeArg(final Type type, final int num) {
         if (type instanceof ParameterizedType) {
             final ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -141,6 +140,10 @@ class SetterServiceImpl implements SetterService {
         } else {
             return Object.class;
         }
+    }
+
+    private Type resolveType(final Class<?> clazz, final Type type) {
+        return TypeToken.of(clazz).resolveType(type).getType();
     }
 
     @Override

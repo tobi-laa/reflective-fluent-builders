@@ -14,12 +14,11 @@ import java.lang.reflect.Type;
  */
 @SuperBuilder(toBuilder = true)
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @ToString(callSuper = true)
 public class MapSetter extends AbstractSetter {
 
     @lombok.NonNull
-    @EqualsAndHashCode.Include
     private final Class<?> paramType;
 
     /**

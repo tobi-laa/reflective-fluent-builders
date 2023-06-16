@@ -5,10 +5,7 @@ import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -45,6 +42,9 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private final ClassService classService;
 
     @lombok.NonNull
+    private final TypeService typeService;
+
+    @lombok.NonNull
     private final BuildersProperties properties;
 
     @Override
@@ -53,7 +53,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
         final String builderPackage = resolveBuilderPackage(clazz);
         return BuilderMetadata.builder() //
                 .packageName(builderPackage) //
-                .name(clazz.getSimpleName() + properties.getBuilderSuffix()) //
+                .name(builderClassName(clazz, builderPackage)) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(clazz) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
@@ -63,13 +63,23 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .build();
     }
 
+    private String builderClassName(final Class<?> clazz, final String builderPackage) {
+        var name = clazz.getSimpleName() + properties.getBuilderSuffix();
+        int count = 0;
+        while (classService.existsOnClasspath(builderPackage + '.' + name)) {
+            name = clazz.getSimpleName() + properties.getBuilderSuffix() + count;
+            count++;
+        }
+        return name;
+    }
+
     private String resolveBuilderPackage(final Class<?> clazz) {
         return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackage().getName());
     }
 
     private boolean hasAccessibleNonArgsConstructor(final Class<?> clazz, final String builderPackage) {
         return Arrays //
-                .stream(clazz.getConstructors()) //
+                .stream(clazz.getDeclaredConstructors()) //
                 .filter(constructor -> isAccessible(constructor, builderPackage)) //
                 .mapToInt(Constructor::getParameterCount) //
                 .anyMatch(count -> count == 0);
@@ -144,9 +154,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean isAccessibleParamType(final Type paramType, final String builderPackage) {
-        final Class<?> clazz = (Class<?>) paramType;
-        final Visibility visibility = visibilityService.toVisibility(clazz.getModifiers());
-        return isAccessible(clazz, visibility, builderPackage);
+        return typeService.explodeType(paramType).stream().allMatch(clazz -> isAccessible(clazz, builderPackage));
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers, final String builderPackage) {

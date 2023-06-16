@@ -18,6 +18,10 @@ public class PackagePrivateConstructorBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  public static PackagePrivateConstructorBuilder newInstance() {
+    return new PackagePrivateConstructorBuilder(null);
+  }
+
   public static PackagePrivateConstructorBuilder thatModifies(
       final PackagePrivateConstructor objectToModify) {
     Objects.requireNonNull(objectToModify);
@@ -37,6 +41,9 @@ public class PackagePrivateConstructorBuilder {
   }
 
   public PackagePrivateConstructor build() {
+    if (objectToBuild == null) {
+      objectToBuild = new PackagePrivateConstructor();
+    }
     if (callSetterFor.intField) {
       objectToBuild.setIntField(fieldValue.intField);
     }

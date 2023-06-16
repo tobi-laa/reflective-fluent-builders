@@ -33,10 +33,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.CodeSource;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -68,13 +65,13 @@ class ClassServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final Set<Class<?>> expected) {
+    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final List<Class<?>> expected) {
         // Arrange
         final BuildersProperties.HierarchyCollection hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
         when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
         when(hierarchyCollection.getExcludes()).thenReturn(excludes);
         // Act
-        final Set<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
+        final List<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
         assertEquals(expected, actual);
     }
@@ -84,28 +81,28 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.emptySet(), //
-                        ImmutableSet.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
+                                AnInterface.class, //
                                 FirstSuperClass.class, //
                                 SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
-                                AnInterface.class, //
                                 AnotherInterface.class, //
                                 Object.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.<Predicate<Class<?>>>singleton(Object.class::equals), //
-                        ImmutableSet.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
+                                AnInterface.class, //
                                 FirstSuperClass.class, //
                                 SecondSuperClassInDifferentPackage.class, //
                                 TopLevelSuperClass.class, //
-                                AnInterface.class, //
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         ImmutableSet.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
-                        ImmutableSet.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
                                 SecondSuperClassInDifferentPackage.class, //
@@ -114,7 +111,7 @@ class ClassServiceImplTest {
                 Arguments.of( //
                         ClassWithHierarchy.class, //
                         Collections.<Predicate<Class<?>>>singleton(FirstSuperClass.class::equals), //
-                        ImmutableSet.of( //
+                        List.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
     }
@@ -243,5 +240,22 @@ class ClassServiceImplTest {
         final Executable getLocationAsPath = () -> classServiceImpl.getLocationAsPath(codeSource);
         // Assert
         assertThrows(URISyntaxException.class, getLocationAsPath);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testExistsOnClasspath(final String className, final boolean expected) {
+        // Act
+        final boolean actual = classServiceImpl.existsOnClasspath(className);
+        // Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> testExistsOnClasspath() {
+        return Stream.of( //
+                Arguments.of("this.class.exists.not", false), //
+                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.mojo.GenerateBuildersMojo", false), //
+                Arguments.of("java.lang.String", true), //
+                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", true));
     }
 }

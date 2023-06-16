@@ -11,3 +11,4 @@ Add a meaningful description of the changes introduced by this pull request. Ide
    mvn clean verify -Pgenerate-expected-builders-for-it
    ```
 - [ ] Build pipeline passes.
+- [ ] Test coverage is 100%.

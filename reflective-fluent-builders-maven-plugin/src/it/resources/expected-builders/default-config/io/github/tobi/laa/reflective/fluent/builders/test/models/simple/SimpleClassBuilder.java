@@ -47,7 +47,7 @@ public class SimpleClassBuilder {
     return this;
   }
 
-  public SimpleClassBuilder setClass(final Class setClass) {
+  public SimpleClassBuilder setClass(final Class<?> setClass) {
     fieldValue.setClass = setClass;
     callSetterFor.setClass = true;
     return this;
@@ -89,6 +89,6 @@ public class SimpleClassBuilder {
 
     boolean booleanField;
 
-    Class setClass;
+    Class<?> setClass;
   }
 }

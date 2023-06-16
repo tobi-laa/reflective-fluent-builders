@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.service.api;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,11 +20,19 @@ public interface ClassService {
      * {@code clazz} as well as all interfaces implemented by {@code clazz} and all its ancestors. Implementations may
      * offer the possibility to exclude some classes.
      * </p>
+     * <p>
+     * The elements in the returned list are unique.
+     * </p>
+     * <p>
+     * The order of said list is that in which the elements were encountered when traversing the class hierarchy. That
+     * means that {@code clazz} is always the first element and the top-most parent classes or interfaces are the
+     * last ones.
+     * </p>
      *
      * @param clazz The class for which the full class hierarchy should be collected. Must not be {@code null}.
      * @return The full class hierarchy of {@code clazz}. Never {@code null}.
      */
-    Set<Class<?>> collectFullClassHierarchy(final Class<?> clazz);
+    List<Class<?>> collectFullClassHierarchy(final Class<?> clazz);
 
     /**
      * <p>
@@ -49,4 +58,15 @@ public interface ClassService {
      * @return The location of the file that contains {@code clazz}, if it could be determined.
      */
     Optional<Path> determineClassLocation(final Class<?> clazz);
+
+    /**
+     * <p>
+     * Checks whether a class with the fully qualified {@code className} exists on the current classpath.
+     * </p>
+     *
+     * @param className Fully qualified {@code className} which to check for existence.
+     * @return {@code true} if a class with the fully qualified {@code className} exists on the current classpath,
+     * {@code false} otherwise.
+     */
+    boolean existsOnClasspath(final String className);
 }

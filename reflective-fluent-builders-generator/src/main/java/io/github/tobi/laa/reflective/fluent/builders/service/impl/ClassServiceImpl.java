@@ -41,9 +41,9 @@ class ClassServiceImpl implements ClassService {
     private final BuildersProperties properties;
 
     @Override
-    public Set<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
+    public List<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
-        final Set<Class<?>> classHierarchy = new HashSet<>();
+        final List<Class<?>> classHierarchy = new ArrayList<>();
         for (Class<?> i = clazz; i != null; i = i.getSuperclass()) {
             if (excludeFromHierarchyCollection(i)) {
                 break;
@@ -53,7 +53,7 @@ class ClassServiceImpl implements ClassService {
                     .filter(not(this::excludeFromHierarchyCollection)) //
                     .forEach(classHierarchy::add);
         }
-        return classHierarchy;
+        return classHierarchy.stream().distinct().collect(Collectors.toUnmodifiableList());
     }
 
     private boolean excludeFromHierarchyCollection(final Class<?> clazz) {
@@ -114,6 +114,16 @@ class ClassServiceImpl implements ClassService {
             return classFile;
         } else {
             return path;
+        }
+    }
+
+    @Override
+    public boolean existsOnClasspath(final String className) {
+        try {
+            Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (final ClassNotFoundException e) {
+            return false;
         }
     }
 }
