@@ -58,4 +58,15 @@ public interface ClassService {
      * @return The location of the file that contains {@code clazz}, if it could be determined.
      */
     Optional<Path> determineClassLocation(final Class<?> clazz);
+
+    /**
+     * <p>
+     * Checks whether a class with the fully qualified {@code className} exists on the current classpath.
+     * </p>
+     *
+     * @param className Fully qualified {@code className} which to check for existence.
+     * @return {@code true} if a class with the fully qualified {@code className} exists on the current classpath,
+     * {@code false} otherwise.
+     */
+    boolean existsOnClasspath(final String className);
 }

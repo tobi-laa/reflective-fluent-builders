@@ -115,4 +115,14 @@ class ClassServiceImpl implements ClassService {
             return path;
         }
     }
+
+    @Override
+    public boolean existsOnClasspath(final String className) {
+        try {
+            Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (final ClassNotFoundException e) {
+            return false;
+        }
+    }
 }

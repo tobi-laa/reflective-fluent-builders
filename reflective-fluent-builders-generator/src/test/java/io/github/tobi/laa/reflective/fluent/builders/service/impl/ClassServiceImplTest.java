@@ -239,4 +239,21 @@ class ClassServiceImplTest {
         // Assert
         assertThrows(URISyntaxException.class, getLocationAsPath);
     }
+
+    @ParameterizedTest
+    @MethodSource
+    void testExistsOnClasspath(final String className, final boolean expected) {
+        // Act
+        final boolean actual = classServiceImpl.existsOnClasspath(className);
+        // Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> testExistsOnClasspath() {
+        return Stream.of( //
+                Arguments.of("this.class.exists.not", false), //
+                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.mojo.GenerateBuildersMojo", false), //
+                Arguments.of("java.lang.String", true), //
+                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", true));
+    }
 }
