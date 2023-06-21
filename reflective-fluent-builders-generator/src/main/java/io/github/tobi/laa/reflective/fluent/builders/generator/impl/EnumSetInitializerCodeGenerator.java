@@ -1,9 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import com.squareup.javapoet.CodeBlock;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

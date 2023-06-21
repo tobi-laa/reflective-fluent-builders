@@ -1,7 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.MethodSpec;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 
 /**
  * <p>

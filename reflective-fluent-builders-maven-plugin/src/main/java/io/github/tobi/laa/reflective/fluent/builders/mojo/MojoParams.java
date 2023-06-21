@@ -17,8 +17,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.apache.maven.artifact.Artifact.*;
-
 /**
  * <p>
  * Encapsulates most {@link Parameter parameters} of

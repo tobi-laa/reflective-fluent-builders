@@ -11,7 +11,6 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -24,7 +23,6 @@ import javax.inject.Inject;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -62,8 +60,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final BuilderMetadataService builderMetadataService;
 
     @Override
-    @SneakyThrows
-    public void execute() throws MojoFailureException, MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         logMavenParams();
         validateParams();
         final var classes = collectAndFilterClasses();
@@ -76,8 +73,16 @@ public class GenerateBuildersMojo extends AbstractMojo {
         } else {
             logNoGenerationNecessary();
         }
+        closeClassLoader();
+    }
+
+    private void closeClassLoader() throws MojoExecutionException {
         if (classLoader instanceof Closeable) {
-            ((Closeable) classLoader).close();
+            try {
+                ((Closeable) classLoader).close();
+            } catch (final IOException e) {
+                throw new MojoExecutionException("Error while attempting to close ClassLoader.", e);
+            }
         }
     }
 
@@ -236,6 +241,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER)
+    @SuppressWarnings("unused")
     public void setBuilderPackage(final String builderPackage) {
         params.setBuilderPackage(builderPackage);
     }
@@ -250,6 +256,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "builderSuffix", defaultValue = "Builder")
+    @SuppressWarnings("unused")
     public void setBuilderSuffix(final String builderSuffix) {
         params.setBuilderSuffix(builderSuffix);
     }
@@ -264,6 +271,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "setterPrefix", defaultValue = "set")
+    @SuppressWarnings("unused")
     public void setSetterPrefix(final String setterPrefix) {
         params.setSetterPrefix(setterPrefix);
     }
@@ -278,6 +286,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "getterPrefix", defaultValue = "get")
+    @SuppressWarnings("unused")
     public void setGetterPrefix(final String getterPrefix) {
         params.setGetterPrefix(getterPrefix);
     }
@@ -293,6 +302,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "getAndAddEnabled", defaultValue = "false")
+    @SuppressWarnings("unused")
     public void setGetAndAddEnabled(final boolean getAndAddEnabled) {
         params.setGetAndAddEnabled(getAndAddEnabled);
     }
@@ -345,6 +355,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "hierarchyCollection")
+    @SuppressWarnings("unused")
     public void setHierarchyCollection(final MojoParams.HierarchyCollection hierarchyCollection) {
         params.setHierarchyCollection(hierarchyCollection);
     }
@@ -375,6 +386,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(required = true, name = "includes")
+    @SuppressWarnings("unused")
     public void setIncludes(final Set<Include> includes) {
         params.setIncludes(includes);
     }
@@ -417,6 +429,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "excludes")
+    @SuppressWarnings("unused")
     public void setExcludes(final Set<Exclude> excludes) {
         params.setExcludes(excludes);
     }
@@ -437,6 +450,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "target")
+    @SuppressWarnings("unused")
     public void setTarget(final File target) {
         params.setTarget(target);
     }
@@ -452,6 +466,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "addCompileSourceRoot", defaultValue = "true")
+    @SuppressWarnings("unused")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
         params.setAddCompileSourceRoot(addCompileSourceRoot);
     }

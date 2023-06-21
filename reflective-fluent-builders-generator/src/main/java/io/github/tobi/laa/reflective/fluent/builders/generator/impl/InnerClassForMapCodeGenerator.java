@@ -1,5 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.CallSetterFor;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
@@ -11,9 +14,6 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionC
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

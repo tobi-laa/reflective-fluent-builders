@@ -24,7 +24,6 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Enu
 import io.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Interface;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;

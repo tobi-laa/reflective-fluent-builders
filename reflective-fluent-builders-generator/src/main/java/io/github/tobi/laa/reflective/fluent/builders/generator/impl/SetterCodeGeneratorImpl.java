@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
@@ -8,7 +9,6 @@ import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
-import com.squareup.javapoet.MethodSpec;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

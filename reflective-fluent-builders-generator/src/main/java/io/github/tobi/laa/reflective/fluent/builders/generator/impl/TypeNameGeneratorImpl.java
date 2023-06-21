@@ -1,11 +1,11 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
