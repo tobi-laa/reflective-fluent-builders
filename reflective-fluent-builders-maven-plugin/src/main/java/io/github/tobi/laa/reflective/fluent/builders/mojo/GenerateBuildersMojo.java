@@ -21,8 +21,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import javax.inject.Inject;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -48,7 +50,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final MavenBuild mavenBuild;
 
     @lombok.NonNull
-    private final ClassLoading classLoading;
+    private final ClassLoader classLoader;
 
     @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
@@ -64,10 +66,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
     public void execute() throws MojoFailureException, MojoExecutionException {
         logMavenParams();
         validateParams();
-        classLoading.setThreadClassLoaderToArtifactIncludingClassLoader();
         final var classes = collectAndFilterClasses();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
-        classLoading.resetThreadClassLoader();
         if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
             createTargetDirectory();
             generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
@@ -75,6 +75,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
             refreshBuildContext(nonEmptyBuilderMetadata);
         } else {
             logNoGenerationNecessary();
+        }
+        if (classLoader instanceof Closeable) {
+            ((Closeable) classLoader).close();
         }
     }
 
@@ -107,10 +110,18 @@ public class GenerateBuildersMojo extends AbstractMojo {
                 allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
             } else {
                 getLog().info("Add class " + include.getClassName() + '.');
-                allClasses.add(classLoading.loadClass(include.getClassName()));
+                allClasses.add(loadClass(include.getClassName()));
             }
         }
         return allClasses;
+    }
+
+    private Class<?> loadClass(final String className) throws MojoExecutionException {
+        try {
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new MojoExecutionException("Unable to load class " + className, e);
+        }
     }
 
     private Set<Class<?>> filterClasses(final Set<Class<?>> classes) {
@@ -443,54 +454,5 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @Parameter(name = "addCompileSourceRoot", defaultValue = "true")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
         params.setAddCompileSourceRoot(addCompileSourceRoot);
-    }
-
-    /**
-     * <p>
-     * Specifies the scopes of the dependencies of the maven project within which this mojo is executed which should be
-     * included when collecting classes.
-     * </p>
-     * <p>
-     * By default, dependencies within the scope
-     * {@link org.apache.maven.artifact.Artifact#SCOPE_COMPILE compile},
-     * {@link org.apache.maven.artifact.Artifact#SCOPE_PROVIDED provided}
-     * or
-     * {@link org.apache.maven.artifact.Artifact#SCOPE_SYSTEM system}
-     * are included.
-     * </p>
-     * <p>
-     * If the mojo is executed within a
-     * {@link MavenBuild#isTestPhase() test phase},
-     * the scope {@link org.apache.maven.artifact.Artifact#SCOPE_TEST test}
-     * is included by default as well.
-     * </p>
-     * <p>
-     * If more control is desired, an empty {@code <scopesToInclude/>} element can be provided and the desired
-     * dependencies to included can be explicitly provided as a dependency of this plugin:
-     * </p>
-     * <pre>
-     * {@code <plugin>
-     *     <groupId>io.github.tobi-laa</groupId>
-     *     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
-     *     <version>1.0.0</version>
-     *     <executions>
-     *         <!-- omitted for brevity -->
-     *     </executions>
-     *     <dependencies>
-     *         <dependency>
-     *             <groupId>com.bar.foo</groupId>
-     *             <artifactId>dependency-to-include</artifactId>
-     *             <version>1.2.3</version>
-     *         </dependency>
-     *     </dependencies>
-     * </plugin>}</pre>
-     *
-     * @param scopesToInclude The scopes of the dependencies of the maven project within which this mojo is
-     *                        executed which should be included when collecting classes.
-     * @since 1.0.0
-     */
-    @Parameter(name = "scopesToInclude")
-    public void setScopesToInclude(final Set<String> scopesToInclude) {
-        params.setScopesToInclude(scopesToInclude);
     }
 }
