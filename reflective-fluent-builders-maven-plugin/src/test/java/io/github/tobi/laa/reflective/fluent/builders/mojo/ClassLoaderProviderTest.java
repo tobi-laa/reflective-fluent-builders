@@ -52,11 +52,10 @@ class ClassLoaderProviderTest {
 
     @Test
     @SneakyThrows
+    @SuppressWarnings("unused")
     void testGetMalformedURLException() {
         // Arrange
-        try (final var mock = mockConstruction(URI.class, (uri, context) -> {
-            doThrow(new MalformedURLException("Thrown in unit test")).when(uri).toURL();
-        })) {
+        try (final var mock = mockConstruction(URI.class, (uri, context) -> doThrow(new MalformedURLException("Thrown in unit test")).when(uri).toURL())) {
             mockCompileClasspathElements("doesNotMatter");
             // Act
             final ThrowingCallable get = () -> provider.get();
