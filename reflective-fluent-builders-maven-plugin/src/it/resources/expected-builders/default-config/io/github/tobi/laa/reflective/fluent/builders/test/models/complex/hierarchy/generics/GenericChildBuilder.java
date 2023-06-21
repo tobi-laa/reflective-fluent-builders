@@ -14,6 +14,8 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class GenericChildBuilder<S extends Number, T> {
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private GenericChild objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();

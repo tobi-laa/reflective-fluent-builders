@@ -8,6 +8,8 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class ProtectedConstructorBuilder {
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private ProtectedConstructor objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();

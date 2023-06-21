@@ -82,6 +82,8 @@ class JavaFileGeneratorIT {
                         "    date = \"3333-03-13T00:00Z[UTC]\"\n" +
                         ")\n" +
                         "public class ClassWithGenericsBuilder<T> {\n" +
+                        "  private boolean ______generatedByReflectiveFluentBuildersGenerator;\n" +
+                        "\n" +
                         "  private ClassWithGenerics objectToBuild;\n" +
                         "\n" +
                         "  private final CallSetterFor callSetterFor = new CallSetterFor();\n" +

@@ -11,6 +11,8 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class GetAndAddBuilder {
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private GetAndAdd objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();

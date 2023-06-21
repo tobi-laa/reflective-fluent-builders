@@ -9,6 +9,8 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class EntryBuilder {
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private PersonJaxb.Relations.Entry objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();

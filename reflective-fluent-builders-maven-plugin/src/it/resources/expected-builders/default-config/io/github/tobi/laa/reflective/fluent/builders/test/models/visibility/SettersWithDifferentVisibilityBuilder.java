@@ -8,6 +8,8 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class SettersWithDifferentVisibilityBuilder {
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private SettersWithDifferentVisibility objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();

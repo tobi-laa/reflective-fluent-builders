@@ -8,6 +8,8 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class ParentBuilder {
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private Parent objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
