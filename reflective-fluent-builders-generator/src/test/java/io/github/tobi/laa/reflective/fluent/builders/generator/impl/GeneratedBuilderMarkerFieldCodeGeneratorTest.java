@@ -28,8 +28,8 @@ class GeneratedBuilderMarkerFieldCodeGeneratorTest {
         // Assert
         assertThat(actual).isNotNull();
         assertThat(actual.toString())
-                .isEqualToIgnoringNewLines(String.format("" + //
-                                "/**\n" + //
+                .isEqualToIgnoringNewLines(String.format( //
+                        "/**\n" + //
                                 " * This field is solely used to be able to detect generated builders via reflection at a later stage.\n" + //
                                 " */\n" + //
                                 "private boolean %s;\n", //

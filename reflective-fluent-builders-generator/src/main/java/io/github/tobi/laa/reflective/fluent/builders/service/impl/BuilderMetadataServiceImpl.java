@@ -1,6 +1,5 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
-import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.GENERATED_BUILDER_MARKER_FIELD_NAME;
 import com.google.common.collect.ImmutableSortedSet;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
@@ -17,9 +16,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.GENERATED_BUILDER_MARKER_FIELD_NAME;
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
 import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.*;
 import static java.lang.reflect.Modifier.isStatic;
