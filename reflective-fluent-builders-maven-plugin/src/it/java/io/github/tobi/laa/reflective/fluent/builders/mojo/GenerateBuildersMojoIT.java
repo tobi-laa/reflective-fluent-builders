@@ -137,8 +137,7 @@ class GenerateBuildersMojoIT {
                                     "includes=[Include(super=AbstractIncludeExclude(packageName=io.github.tobi.laa.reflective.fluent.builders.test.models.simple, className=null))], " +
                                     "excludes=null, " +
                                     "target=" + targetDirectory + ", " +
-                                    "addCompileSourceRoot=true, " +
-                                    "scopesToInclude=null)", //
+                                    "addCompileSourceRoot=true)", //
                             "Attempt to add " + outputDirectory + " to ClassLoader.", //
                             "Attempt to add " + reflectiveFluentBuildersTestModels + " to ClassLoader.", //
                             "Attempt to add " + jakartaXmlBindApi + " to ClassLoader.", //
@@ -219,15 +218,6 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilder(builderClass, false, expectedBuildersRootDir));
-        }
-
-        @MavenTest
-        void packageSimpleNoScopesToInclude(final MavenExecutionResult result) {
-            assertThat(result) //
-                    .isSuccessful() //
-                    .project() //
-                    .hasTarget() //
-                    .has(HasDirCondition.emptyDirInTarget(Paths.get("generated-sources", "builders")));
         }
     }
 

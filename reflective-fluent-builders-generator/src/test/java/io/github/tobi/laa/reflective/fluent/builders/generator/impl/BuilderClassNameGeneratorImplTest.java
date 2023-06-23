@@ -1,7 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.ClassName;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

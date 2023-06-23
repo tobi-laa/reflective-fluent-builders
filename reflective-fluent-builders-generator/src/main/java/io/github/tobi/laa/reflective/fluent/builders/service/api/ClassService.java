@@ -61,12 +61,15 @@ public interface ClassService {
 
     /**
      * <p>
-     * Checks whether a class with the fully qualified {@code className} exists on the current classpath.
+     * Attempts to load the class with the fully qualified {@code className} if it exists on the current classpath.
+     * Returns an {@link Optional#empty() empty Optional} if no such class exists.
      * </p>
      *
-     * @param className Fully qualified {@code className} which to check for existence.
-     * @return {@code true} if a class with the fully qualified {@code className} exists on the current classpath,
-     * {@code false} otherwise.
+     * @param className Fully qualified name of the class to attempt to load. Must not be {@code null}.
+     * @return The class with the fully qualified {@code className} if it exists on the current classpath, otherwise an
+     * {@link Optional#empty() empty Optional}.
+     * @throws ReflectionException If an error (<em>not</em> {@link ClassNotFoundException}) occurs while attempting to
+     *                             load {@code className}.
      */
-    boolean existsOnClasspath(final String className);
+    Optional<Class<?>> loadClass(final String className);
 }

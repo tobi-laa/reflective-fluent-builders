@@ -30,6 +30,13 @@ public final class BuilderConstants {
 
     /**
      * <p>
+     * Name of the marker field which is solely used to be able to detect generated builders via reflection at a later stage.
+     * </p>
+     */
+    public static final String GENERATED_BUILDER_MARKER_FIELD_NAME = "______generatedByReflectiveFluentBuildersGenerator";
+
+    /**
+     * <p>
      * Class and field name for the inner class which is added to every generated builder for encapsulating the actual
      * field values to avoid name collisions.
      * </p>

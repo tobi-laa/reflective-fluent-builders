@@ -1,8 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.FieldSpec;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.FieldCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import com.squareup.javapoet.FieldSpec;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

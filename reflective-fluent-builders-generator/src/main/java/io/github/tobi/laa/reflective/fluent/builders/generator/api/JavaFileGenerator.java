@@ -1,8 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import com.squareup.javapoet.JavaFile;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 
 /**
  * Generates JavaPoet {@link JavaFile} objects containing the spec for a builder class from
