@@ -17,6 +17,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Predicates.not;
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.GENERATED_BUILDER_MARKER_FIELD_NAME;
@@ -77,13 +78,13 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private boolean builderAlreadyExists(final String builderClassName) {
         final Optional<Class<?>> builderClass = classService.loadClass(builderClassName);
-        if (builderClass.isEmpty()) {
+        if (!builderClass.isPresent()) {
             return false;
         } else {
             return builderClass
-                    .stream() //
                     .map(Class::getDeclaredFields) //
-                    .flatMap(Arrays::stream) //
+                    .map(Arrays::stream) //
+                    .orElseGet(Stream::empty) //
                     .map(Field::getName) //
                     .noneMatch(GENERATED_BUILDER_MARKER_FIELD_NAME::equals);
         }
