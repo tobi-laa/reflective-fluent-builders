@@ -11,6 +11,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevel
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.CodeSource;
+import java.security.SecureClassLoader;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -266,8 +268,7 @@ class ClassServiceImplTest {
         // Arrange
         final var className = "does.not.matter";
         final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
-        final var classLoader = spy(getSystemClassLoader());
-        doThrow(cause).when(classLoader).loadClass(anyString());
+        final var classLoader = new ThrowingClassLoader(cause);
         classServiceImpl = new ClassServiceImpl(properties, classLoader);
         // Act
         final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
@@ -300,5 +301,17 @@ class ClassServiceImplTest {
         return Stream.of( //
                 Arguments.of("java.lang.String", String.class), //
                 Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", ClassService.class));
+    }
+
+    @RequiredArgsConstructor
+    private static class ThrowingClassLoader extends SecureClassLoader {
+
+        private final Throwable exception;
+
+        @SneakyThrows
+        @Override
+        public Class<?> loadClass(final String name) {
+            throw exception;
+        }
     }
 }
