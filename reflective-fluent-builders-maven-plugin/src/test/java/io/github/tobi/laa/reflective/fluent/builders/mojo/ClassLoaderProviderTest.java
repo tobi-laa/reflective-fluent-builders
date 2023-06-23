@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -55,7 +56,7 @@ class ClassLoaderProviderTest {
     @SuppressWarnings("unused")
     void testGetMalformedURLException() {
         // Arrange
-        try (final var mock = mockConstruction(URI.class, (uri, context) -> doThrow(new MalformedURLException("Thrown in unit test")).when(uri).toURL())) {
+        try (final MockedConstruction<URI> mock = mockConstruction(URI.class, (uri, context) -> doThrow(new MalformedURLException("Thrown in unit test")).when(uri).toURL())) {
             mockCompileClasspathElements("doesNotMatter");
             // Act
             final ThrowingCallable get = () -> provider.get();
@@ -72,7 +73,7 @@ class ClassLoaderProviderTest {
     @SneakyThrows
     void testGetDependencyResolutionRequiredException(final boolean testPhase) {
         // Arrange
-        final var cause = new DependencyResolutionRequiredException(Mockito.mock(Artifact.class));
+        final DependencyResolutionRequiredException cause = new DependencyResolutionRequiredException(Mockito.mock(Artifact.class));
         mockTestPhase(testPhase);
         if (testPhase) {
             doThrow(cause).when(mavenProject).getTestClasspathElements();
@@ -100,7 +101,7 @@ class ClassLoaderProviderTest {
             mockCompileClasspathElements(classpathElements);
         }
         // Act
-        final var classLoader = provider.get();
+        final ClassLoader classLoader = provider.get();
         // Assert
         assertThat(classLoader).isNotNull().isInstanceOf(URLClassLoader.class);
         assertThat(((URLClassLoader) classLoader).getURLs()).containsExactlyInAnyOrder(expectedUrls);

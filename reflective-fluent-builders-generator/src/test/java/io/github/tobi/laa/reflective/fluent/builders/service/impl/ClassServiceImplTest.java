@@ -255,7 +255,7 @@ class ClassServiceImplTest {
     void testLoadClassNull() {
         // Arrange
         final String className = null;
-        final var classLoader = spy(getSystemClassLoader());
+        final ClassLoader classLoader = spy(getSystemClassLoader());
         classServiceImpl = new ClassServiceImpl(properties, classLoader);
         // Act
         final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
@@ -269,9 +269,9 @@ class ClassServiceImplTest {
     @SneakyThrows
     void testLoadClassException(final Class<? extends Throwable> causeType) {
         // Arrange
-        final var className = "does.not.matter";
-        final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
-        final var classLoader = new ThrowingClassLoader(cause);
+        final String className = "does.not.matter";
+        final Throwable cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
+        final ClassLoader classLoader = new ThrowingClassLoader(cause);
         classServiceImpl = new ClassServiceImpl(properties, classLoader);
         // Act
         final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
