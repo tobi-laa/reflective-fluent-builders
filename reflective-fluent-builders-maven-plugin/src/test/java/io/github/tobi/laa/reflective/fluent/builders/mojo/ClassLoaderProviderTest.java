@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import com.google.common.collect.ImmutableList;
 import lombok.SneakyThrows;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -24,7 +25,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -132,11 +132,11 @@ class ClassLoaderProviderTest {
 
     @SneakyThrows
     private void mockTestClasspathElements(final String... elements) {
-        doReturn(List.of(elements)).when(mavenProject).getTestClasspathElements();
+        doReturn(ImmutableList.of(elements)).when(mavenProject).getTestClasspathElements();
     }
 
     @SneakyThrows
     private void mockCompileClasspathElements(final String... elements) {
-        doReturn(List.of(elements)).when(mavenProject).getCompileClasspathElements();
+        doReturn(ImmutableList.of(elements)).when(mavenProject).getCompileClasspathElements();
     }
 }
