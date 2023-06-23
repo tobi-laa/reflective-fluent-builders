@@ -1,9 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MethodCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import com.squareup.javapoet.MethodSpec;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

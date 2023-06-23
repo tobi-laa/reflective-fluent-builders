@@ -12,13 +12,13 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarch
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -47,11 +47,15 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ClassServiceImplTest {
 
-    @InjectMocks
     private ClassServiceImpl classServiceImpl;
 
     @Mock
     private BuildersProperties properties;
+
+    @BeforeEach
+    void init() {
+        classServiceImpl = new ClassServiceImpl(properties, ClassLoader.getSystemClassLoader());
+    }
 
     @Test
     void testCollectFullClassHierarchyNull() {

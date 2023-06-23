@@ -17,8 +17,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.apache.maven.artifact.Artifact.*;
-
 /**
  * <p>
  * Encapsulates most {@link Parameter parameters} of
@@ -57,8 +55,6 @@ public class MojoParams implements BuildersProperties {
 
     private boolean addCompileSourceRoot;
 
-    private Set<String> scopesToInclude;
-
     @lombok.NonNull
     @ToString.Exclude
     private final MavenBuild mavenBuild;
@@ -86,16 +82,6 @@ public class MojoParams implements BuildersProperties {
                     .resolve("generated-sources") //
                     .resolve("builders") //
                     .toFile();
-        }
-    }
-
-    public Set<String> getScopesToInclude() {
-        if (scopesToInclude != null) {
-            return scopesToInclude;
-        } else if (mavenBuild.isTestPhase()) {
-            return Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM, SCOPE_TEST);
-        } else {
-            return Set.of(SCOPE_COMPILE, SCOPE_PROVIDED, SCOPE_SYSTEM);
         }
     }
 

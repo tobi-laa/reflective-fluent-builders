@@ -1,9 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.AnnotationSpec;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.AnnotationCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import com.squareup.javapoet.AnnotationSpec;
 import lombok.RequiredArgsConstructor;
 
 import javax.annotation.processing.Generated;

@@ -39,6 +39,9 @@ class ClassServiceImpl implements ClassService {
     @lombok.NonNull
     private final BuildersProperties properties;
 
+    @lombok.NonNull
+    private final ClassLoader classLoader;
+
     @Override
     public List<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
@@ -63,7 +66,7 @@ class ClassServiceImpl implements ClassService {
     public Set<Class<?>> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
         try {
-            return ClassPath.from(Thread.currentThread().getContextClassLoader()) //
+            return ClassPath.from(classLoader) //
                     .getTopLevelClassesRecursive(packageName) //
                     .stream() //
                     .map(ClassPath.ClassInfo::load) //
@@ -119,7 +122,7 @@ class ClassServiceImpl implements ClassService {
     @Override
     public boolean existsOnClasspath(final String className) {
         try {
-            Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+            Class.forName(className, false, classLoader);
             return true;
         } catch (final ClassNotFoundException e) {
             return false;

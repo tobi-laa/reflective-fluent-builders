@@ -11,7 +11,6 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -48,7 +47,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final MavenBuild mavenBuild;
 
     @lombok.NonNull
-    private final ClassLoading classLoading;
+    private final ClassLoader classLoader;
 
     @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
@@ -59,15 +58,15 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
 
+    @lombok.NonNull
+    private final Closer closer;
+
     @Override
-    @SneakyThrows
-    public void execute() throws MojoFailureException, MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         logMavenParams();
         validateParams();
-        classLoading.setThreadClassLoaderToArtifactIncludingClassLoader();
         final var classes = collectAndFilterClasses();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
-        classLoading.resetThreadClassLoader();
         if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
             createTargetDirectory();
             generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
@@ -76,6 +75,11 @@ public class GenerateBuildersMojo extends AbstractMojo {
         } else {
             logNoGenerationNecessary();
         }
+        closeClassLoader();
+    }
+
+    private void closeClassLoader() throws MojoExecutionException {
+        closer.closeIfCloseable(classLoader);
     }
 
     private void logMavenParams() {
@@ -107,10 +111,18 @@ public class GenerateBuildersMojo extends AbstractMojo {
                 allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
             } else {
                 getLog().info("Add class " + include.getClassName() + '.');
-                allClasses.add(classLoading.loadClass(include.getClassName()));
+                allClasses.add(loadClass(include.getClassName()));
             }
         }
         return allClasses;
+    }
+
+    private Class<?> loadClass(final String className) throws MojoExecutionException {
+        try {
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new MojoExecutionException("Unable to load class " + className, e);
+        }
     }
 
     private Set<Class<?>> filterClasses(final Set<Class<?>> classes) {
@@ -204,7 +216,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
         determineBuiltTypeClassLocations(builderMetadata).forEach(mavenBuild::refresh);
     }
-    
+
     private void logNoGenerationNecessary() {
         getLog().info("All builders are up-to-date, skipping generation.");
     }
@@ -225,6 +237,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "builderPackage", defaultValue = BuilderConstants.PACKAGE_PLACEHOLDER)
+    @SuppressWarnings("unused")
     public void setBuilderPackage(final String builderPackage) {
         params.setBuilderPackage(builderPackage);
     }
@@ -239,6 +252,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "builderSuffix", defaultValue = "Builder")
+    @SuppressWarnings("unused")
     public void setBuilderSuffix(final String builderSuffix) {
         params.setBuilderSuffix(builderSuffix);
     }
@@ -253,6 +267,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "setterPrefix", defaultValue = "set")
+    @SuppressWarnings("unused")
     public void setSetterPrefix(final String setterPrefix) {
         params.setSetterPrefix(setterPrefix);
     }
@@ -267,6 +282,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "getterPrefix", defaultValue = "get")
+    @SuppressWarnings("unused")
     public void setGetterPrefix(final String getterPrefix) {
         params.setGetterPrefix(getterPrefix);
     }
@@ -282,6 +298,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "getAndAddEnabled", defaultValue = "false")
+    @SuppressWarnings("unused")
     public void setGetAndAddEnabled(final boolean getAndAddEnabled) {
         params.setGetAndAddEnabled(getAndAddEnabled);
     }
@@ -334,6 +351,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "hierarchyCollection")
+    @SuppressWarnings("unused")
     public void setHierarchyCollection(final MojoParams.HierarchyCollection hierarchyCollection) {
         params.setHierarchyCollection(hierarchyCollection);
     }
@@ -364,6 +382,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(required = true, name = "includes")
+    @SuppressWarnings("unused")
     public void setIncludes(final Set<Include> includes) {
         params.setIncludes(includes);
     }
@@ -406,6 +425,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "excludes")
+    @SuppressWarnings("unused")
     public void setExcludes(final Set<Exclude> excludes) {
         params.setExcludes(excludes);
     }
@@ -426,6 +446,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "target")
+    @SuppressWarnings("unused")
     public void setTarget(final File target) {
         params.setTarget(target);
     }
@@ -441,56 +462,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @since 1.0.0
      */
     @Parameter(name = "addCompileSourceRoot", defaultValue = "true")
+    @SuppressWarnings("unused")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
         params.setAddCompileSourceRoot(addCompileSourceRoot);
-    }
-
-    /**
-     * <p>
-     * Specifies the scopes of the dependencies of the maven project within which this mojo is executed which should be
-     * included when collecting classes.
-     * </p>
-     * <p>
-     * By default, dependencies within the scope
-     * {@link org.apache.maven.artifact.Artifact#SCOPE_COMPILE compile},
-     * {@link org.apache.maven.artifact.Artifact#SCOPE_PROVIDED provided}
-     * or
-     * {@link org.apache.maven.artifact.Artifact#SCOPE_SYSTEM system}
-     * are included.
-     * </p>
-     * <p>
-     * If the mojo is executed within a
-     * {@link MavenBuild#isTestPhase() test phase},
-     * the scope {@link org.apache.maven.artifact.Artifact#SCOPE_TEST test}
-     * is included by default as well.
-     * </p>
-     * <p>
-     * If more control is desired, an empty {@code <scopesToInclude/>} element can be provided and the desired
-     * dependencies to included can be explicitly provided as a dependency of this plugin:
-     * </p>
-     * <pre>
-     * {@code <plugin>
-     *     <groupId>io.github.tobi-laa</groupId>
-     *     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
-     *     <version>1.0.0</version>
-     *     <executions>
-     *         <!-- omitted for brevity -->
-     *     </executions>
-     *     <dependencies>
-     *         <dependency>
-     *             <groupId>com.bar.foo</groupId>
-     *             <artifactId>dependency-to-include</artifactId>
-     *             <version>1.2.3</version>
-     *         </dependency>
-     *     </dependencies>
-     * </plugin>}</pre>
-     *
-     * @param scopesToInclude The scopes of the dependencies of the maven project within which this mojo is
-     *                        executed which should be included when collecting classes.
-     * @since 1.0.0
-     */
-    @Parameter(name = "scopesToInclude")
-    public void setScopesToInclude(final Set<String> scopesToInclude) {
-        params.setScopesToInclude(scopesToInclude);
     }
 }
