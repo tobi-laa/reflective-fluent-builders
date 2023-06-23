@@ -120,12 +120,13 @@ class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public boolean existsOnClasspath(final String className) {
+    public Optional<Class<?>> loadClass(String className) {
         try {
-            Class.forName(className, false, classLoader);
-            return true;
+            return Optional.of(Class.forName(className, false, classLoader));
         } catch (final ClassNotFoundException e) {
-            return false;
+            return Optional.empty();
+        } catch (final LinkageError | SecurityException e) {
+            throw new ReflectionException("Error while attempting to load class " + className + '.', e);
         }
     }
 }
