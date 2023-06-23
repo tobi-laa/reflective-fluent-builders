@@ -20,7 +20,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import javax.inject.Inject;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -59,6 +58,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
 
+    @lombok.NonNull
+    private final Closer closer;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         logMavenParams();
@@ -77,13 +79,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void closeClassLoader() throws MojoExecutionException {
-        if (classLoader instanceof Closeable) {
-            try {
-                ((Closeable) classLoader).close();
-            } catch (final IOException e) {
-                throw new MojoExecutionException("Error while attempting to close ClassLoader.", e);
-            }
-        }
+        closer.closeIfCloseable(classLoader);
     }
 
     private void logMavenParams() {
@@ -220,7 +216,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
         determineBuiltTypeClassLocations(builderMetadata).forEach(mavenBuild::refresh);
     }
-    
+
     private void logNoGenerationNecessary() {
         getLog().info("All builders are up-to-date, skipping generation.");
     }
