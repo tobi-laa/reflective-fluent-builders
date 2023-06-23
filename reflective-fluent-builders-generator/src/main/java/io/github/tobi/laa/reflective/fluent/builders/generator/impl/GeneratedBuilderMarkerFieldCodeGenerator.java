@@ -12,7 +12,7 @@ import static javax.lang.model.element.Modifier.PRIVATE;
 
 /**
  * <p>
- *     Generates an unused field with an unusual name that is solely used to be able to detect generated builders via reflection at a later stage.
+ * Generates an unused field with an unusual name that is solely used to be able to detect generated builders via reflection at a later stage.
  * </p>
  */
 @Named
@@ -20,6 +20,8 @@ import static javax.lang.model.element.Modifier.PRIVATE;
 class GeneratedBuilderMarkerFieldCodeGenerator implements FieldCodeGenerator {
     @Override
     public FieldSpec generate(final BuilderMetadata builderMetadata) {
-        return FieldSpec.builder(boolean.class, GENERATED_BUILDER_MARKER_FIELD_NAME, PRIVATE).build();
+        return FieldSpec.builder(boolean.class, GENERATED_BUILDER_MARKER_FIELD_NAME, PRIVATE)
+                .addJavadoc("This field is solely used to be able to detect generated builders via reflection at a later stage.")
+                .build();
     }
 }
