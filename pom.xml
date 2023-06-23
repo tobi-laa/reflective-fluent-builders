@@ -3,7 +3,7 @@
     <groupId>io.github.tobi-laa</groupId>
     <artifactId>reflective-fluent-builders</artifactId>
     <packaging>pom</packaging>
-    <version>1.3.0</version>
+    <version>1.4.0-SNAPSHOT</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
         Provides the possibility of generating fluent builders for existing classes via reflection.
@@ -29,7 +29,7 @@
         <connection>scm:git:git@github.com:tobias-laa/reflective-fluent-builders.git</connection>
         <developerConnection>scm:git:git@github.com:tobias-laa/reflective-fluent-builders.git</developerConnection>
         <url>https://github.com/tobias-laa/reflective-fluent-builders/tree/master</url>
-        <tag>v1.3.0</tag>
+        <tag>HEAD</tag>
     </scm>
     <issueManagement>
         <system>GitHub Issues</system>
