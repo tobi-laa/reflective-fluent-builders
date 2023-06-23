@@ -420,6 +420,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
      *          </li>
      *     </ul>
      * </p>
+     * <p>
+     * If not specified, the default value is set to exclude classes ending with {@code Builder} or {@code BuilderImpl}.
+     * </p>
      *
      * @param excludes Specifies classes to be excluded when generating builders.
      * @since 1.0.0
