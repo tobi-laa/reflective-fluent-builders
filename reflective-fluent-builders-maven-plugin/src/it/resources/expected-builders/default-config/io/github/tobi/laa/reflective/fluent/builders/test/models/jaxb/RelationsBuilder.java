@@ -10,6 +10,11 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class RelationsBuilder {
+  /**
+   * This field is solely used to be able to detect generated builders via reflection at a later stage.
+   */
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private PersonJaxb.Relations objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();

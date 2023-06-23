@@ -12,11 +12,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.GENERATED_BUILDER_MARKER_FIELD_NAME;
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.PACKAGE_PLACEHOLDER;
 import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.*;
 import static java.lang.reflect.Modifier.isStatic;
@@ -66,11 +68,25 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private String builderClassName(final Class<?> clazz, final String builderPackage) {
         var name = clazz.getSimpleName() + properties.getBuilderSuffix();
         int count = 0;
-        while (classService.existsOnClasspath(builderPackage + '.' + name)) {
+        while (builderAlreadyExists(builderPackage + '.' + name)) {
             name = clazz.getSimpleName() + properties.getBuilderSuffix() + count;
             count++;
         }
         return name;
+    }
+
+    private boolean builderAlreadyExists(final String builderClassName) {
+        final Optional<Class<?>> builderClass = classService.loadClass(builderClassName);
+        if (builderClass.isEmpty()) {
+            return false;
+        } else {
+            return builderClass
+                    .stream() //
+                    .map(Class::getDeclaredFields) //
+                    .flatMap(Arrays::stream) //
+                    .map(Field::getName) //
+                    .noneMatch(GENERATED_BUILDER_MARKER_FIELD_NAME::equals);
+        }
     }
 
     private String resolveBuilderPackage(final Class<?> clazz) {

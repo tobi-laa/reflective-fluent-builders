@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 import com.google.common.reflect.ClassPath;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
@@ -10,6 +11,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevel
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -31,18 +34,19 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.CodeSource;
+import java.security.SecureClassLoader;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClassServiceImplTest {
@@ -54,7 +58,7 @@ class ClassServiceImplTest {
 
     @BeforeEach
     void init() {
-        classServiceImpl = new ClassServiceImpl(properties, ClassLoader.getSystemClassLoader());
+        classServiceImpl = new ClassServiceImpl(properties, getSystemClassLoader());
     }
 
     @Test
@@ -244,20 +248,70 @@ class ClassServiceImplTest {
         assertThrows(URISyntaxException.class, getLocationAsPath);
     }
 
-    @ParameterizedTest
-    @MethodSource
-    void testExistsOnClasspath(final String className, final boolean expected) {
+    @Test
+    void testLoadClassNull() {
+        // Arrange
+        final String className = null;
+        final var classLoader = spy(getSystemClassLoader());
+        classServiceImpl = new ClassServiceImpl(properties, classLoader);
         // Act
-        final boolean actual = classServiceImpl.existsOnClasspath(className);
+        final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
         // Assert
-        assertThat(actual).isEqualTo(expected);
+        assertThatThrownBy(loadClass).isExactlyInstanceOf(NullPointerException.class);
+        verifyNoInteractions(classLoader);
     }
 
-    private static Stream<Arguments> testExistsOnClasspath() {
+    @ParameterizedTest
+    @ValueSource(classes = {LinkageError.class, SecurityException.class})
+    @SneakyThrows
+    void testLoadClassException(final Class<? extends Throwable> causeType) {
+        // Arrange
+        final var className = "does.not.matter";
+        final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
+        final var classLoader = new ThrowingClassLoader(cause);
+        classServiceImpl = new ClassServiceImpl(properties, classLoader);
+        // Act
+        final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
+        // Assert
+        assertThatThrownBy(loadClass) //
+                .isExactlyInstanceOf(ReflectionException.class) //
+                .hasMessage("Error while attempting to load class does.not.matter.") //
+                .hasCause(cause);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"this.class.exists.not", "io.github.tobi.laa.reflective.fluent.builders.mojo.GenerateBuildersMojo"})
+    void testLoadClassEmpty(final String className) {
+        // Act
+        final Optional<Class<?>> actual = classServiceImpl.loadClass(className);
+        // Assert
+        assertThat(actual).isEmpty();
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testLoadClass(final String className, final Class<?> expected) {
+        // Act
+        final Optional<Class<?>> actual = classServiceImpl.loadClass(className);
+        // Assert
+        assertThat(actual).get().isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> testLoadClass() {
         return Stream.of( //
-                Arguments.of("this.class.exists.not", false), //
-                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.mojo.GenerateBuildersMojo", false), //
-                Arguments.of("java.lang.String", true), //
-                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", true));
+                Arguments.of("java.lang.String", String.class), //
+                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", ClassService.class));
+    }
+
+    @RequiredArgsConstructor
+    private static class ThrowingClassLoader extends SecureClassLoader {
+
+        private final Throwable exception;
+
+        @SneakyThrows
+        @Override
+        public Class<?> loadClass(final String name) {
+            throw exception;
+        }
     }
 }

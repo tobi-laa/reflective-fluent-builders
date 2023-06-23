@@ -11,6 +11,11 @@ import javax.annotation.processing.Generated;
     date = "3333-03-13T00:00Z[UTC]"
 )
 public class GetAndAddBuilder {
+  /**
+   * This field is solely used to be able to detect generated builders via reflection at a later stage.
+   */
+  private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
   private GetAndAdd objectToBuild;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
