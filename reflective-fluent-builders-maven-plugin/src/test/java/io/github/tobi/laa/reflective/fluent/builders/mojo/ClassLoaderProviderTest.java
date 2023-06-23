@@ -132,11 +132,11 @@ class ClassLoaderProviderTest {
 
     @SneakyThrows
     private void mockTestClasspathElements(final String... elements) {
-        doReturn(ImmutableList.of(elements)).when(mavenProject).getTestClasspathElements();
+        doReturn(ImmutableList.copyOf(elements)).when(mavenProject).getTestClasspathElements();
     }
 
     @SneakyThrows
     private void mockCompileClasspathElements(final String... elements) {
-        doReturn(ImmutableList.of(elements)).when(mavenProject).getCompileClasspathElements();
+        doReturn(ImmutableList.copyOf(elements)).when(mavenProject).getCompileClasspathElements();
     }
 }
