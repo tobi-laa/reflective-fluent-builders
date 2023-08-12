@@ -1,8 +1,10 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.build.BuildContext;
@@ -12,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,16 +28,17 @@ import static java.lang.Boolean.parseBoolean;
 @Singleton
 @Named
 @RequiredArgsConstructor(onConstructor_ = @Inject)
+@Setter
 class MavenBuild extends AbstractLogEnabled {
 
     @lombok.NonNull
-    private final BuildContext buildContext;
+    private BuildContext buildContext;
 
     @lombok.NonNull
-    private final MavenProject mavenProject;
+    private MavenProject mavenProject;
 
     @lombok.NonNull
-    private final MojoExecution mojoExecution;
+    private MojoExecution mojoExecution;
 
     boolean isIncremental() {
         return buildContext.isIncremental() || parseBoolean(System.getProperty("incrementalBuildForIntegrationTests"));
@@ -79,5 +83,13 @@ class MavenBuild extends AbstractLogEnabled {
 
     Set<Artifact> getArtifacts() {
         return mavenProject.getArtifacts();
+    }
+
+    List<String> getClasspathElements() throws DependencyResolutionRequiredException {
+        if (isTestPhase()) {
+            return mavenProject.getTestClasspathElements();
+        } else {
+            return mavenProject.getCompileClasspathElements();
+        }
     }
 }

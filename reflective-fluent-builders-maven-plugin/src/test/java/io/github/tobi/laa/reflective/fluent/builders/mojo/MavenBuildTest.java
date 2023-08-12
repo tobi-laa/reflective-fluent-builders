@@ -1,6 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import lombok.SneakyThrows;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
@@ -11,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,6 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -203,5 +209,78 @@ class MavenBuildTest {
         // Assert
         assertThat(actual).isSameAs(artifacts);
         verify(mavenProject).getArtifacts();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    @SneakyThrows
+    void testGetClasspathElementsDependencyResolutionRequiredException(final boolean testPhase) {
+        // Arrange
+        final var exception = new DependencyResolutionRequiredException(Mockito.mock(Artifact.class));
+        mockTestPhase(testPhase);
+        if (testPhase) {
+            doThrow(exception).when(mavenProject).getTestClasspathElements();
+        } else {
+            doThrow(exception).when(mavenProject).getCompileClasspathElements();
+        }
+        // Act
+        final ThrowingCallable getClasspathElements = () -> mavenBuild.getClasspathElements();
+        // Assert
+        assertThatThrownBy(getClasspathElements).isSameAs(exception);
+        if (testPhase) {
+            verify(mavenProject).getTestClasspathElements();
+        } else {
+            verify(mavenProject).getCompileClasspathElements();
+        }
+        verifyNoMoreInteractions(mavenProject);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    @SneakyThrows
+    void testGetClasspathElements(final boolean testPhase, final String[] expected) {
+        // Arrange
+        mockTestPhase(testPhase);
+        if (testPhase) {
+            mockTestClasspathElements(expected);
+        } else {
+            mockCompileClasspathElements(expected);
+        }
+        // Act
+        final var actual = mavenBuild.getClasspathElements();
+        // Assert
+        assertThat(actual).containsExactlyInAnyOrder(expected);
+        if (testPhase) {
+            verify(mavenProject).getTestClasspathElements();
+        } else {
+            verify(mavenProject).getCompileClasspathElements();
+        }
+        verifyNoMoreInteractions(mavenProject);
+    }
+
+    private static Stream<Arguments> testGetClasspathElements() {
+        return Stream.of( //
+                Arguments.of(false, new String[0]), //
+                Arguments.of(true, new String[0]), //
+                Arguments.of(false, new String[]{"elem1"}),
+                Arguments.of(true, new String[]{"elem1", "elem2"}));
+    }
+
+    private void mockTestPhase(final boolean testPhase) {
+        if (testPhase) {
+            doReturn("generate-test-sources").when(mojoExecution).getLifecyclePhase();
+        } else {
+            doReturn("generate-sources").when(mojoExecution).getLifecyclePhase();
+        }
+    }
+
+    @SneakyThrows
+    private void mockTestClasspathElements(final String... elements) {
+        doReturn(List.of(elements)).when(mavenProject).getTestClasspathElements();
+    }
+
+    @SneakyThrows
+    private void mockCompileClasspathElements(final String... elements) {
+        doReturn(List.of(elements)).when(mavenProject).getCompileClasspathElements();
     }
 }

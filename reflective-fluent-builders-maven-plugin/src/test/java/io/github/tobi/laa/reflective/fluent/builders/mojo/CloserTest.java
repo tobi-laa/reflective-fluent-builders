@@ -1,7 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import lombok.SneakyThrows;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.codehaus.plexus.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +69,7 @@ class CloserTest {
         final ThrowingCallable close = () -> closer.closeIfCloseable(closeable);
         // Assert
         assertThatThrownBy(close) //
-                .isExactlyInstanceOf(MojoExecutionException.class)
+                .isExactlyInstanceOf(Closer.CloseException.class)
                 .hasMessageMatching("Error while attempting to close .+\\.")
                 .hasCause(cause);
     }
