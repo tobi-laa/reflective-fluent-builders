@@ -34,4 +34,12 @@ class GenerateExpectedBuilders {
     void generateExpectedBuilders(final MavenExecutionResult result) {
         assertThat(result).isSuccessful().project().hasTarget();
     }
+
+    @MavenTest
+    @MavenDebug
+    void generateExpectedBuildersMultiModuleProject(final MavenExecutionResult result) {
+        assertThat(result).isSuccessful();
+        assertThat(result).project().withModule("module1").hasTarget();
+        assertThat(result).project().withModule("module2").hasTarget();
+    }
 }

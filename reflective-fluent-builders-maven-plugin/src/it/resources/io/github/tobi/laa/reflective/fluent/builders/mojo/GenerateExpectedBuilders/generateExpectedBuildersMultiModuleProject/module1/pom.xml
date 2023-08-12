@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.tobi-laa</groupId>
+        <artifactId>reflective-fluent-builders-it</artifactId>
+        <version>@project.version@</version>
+    </parent>
+    <artifactId>module1</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.tobi-laa</groupId>
+                <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <id>generate-builders-with-default-config-for-module1</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>generate-builders</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>
+                                    <packageName>
+                                        io.github.tobi.laa.reflective.fluent.builders.test.models
+                                    </packageName>
+                                </include>
+                            </includes>
+                            <target>
+                                ${project.basedir}/${it.resources.directory}/expected-builders/multi-module-project/module1
+                            </target>
+                            <addCompileSourceRoot>false</addCompileSourceRoot>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

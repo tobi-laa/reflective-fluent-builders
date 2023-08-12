@@ -58,7 +58,7 @@ class ClassServiceImplTest {
 
     @BeforeEach
     void init() {
-        classServiceImpl = new ClassServiceImpl(properties, getSystemClassLoader());
+        classServiceImpl = new ClassServiceImpl(properties, ClassLoader::getSystemClassLoader);
     }
 
     @Test
@@ -253,7 +253,7 @@ class ClassServiceImplTest {
         // Arrange
         final String className = null;
         final var classLoader = spy(getSystemClassLoader());
-        classServiceImpl = new ClassServiceImpl(properties, classLoader);
+        classServiceImpl = new ClassServiceImpl(properties, () -> classLoader);
         // Act
         final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
         // Assert
@@ -269,7 +269,7 @@ class ClassServiceImplTest {
         final var className = "does.not.matter";
         final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
         final var classLoader = new ThrowingClassLoader(cause);
-        classServiceImpl = new ClassServiceImpl(properties, classLoader);
+        classServiceImpl = new ClassServiceImpl(properties, () -> classLoader);
         // Act
         final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
         // Assert

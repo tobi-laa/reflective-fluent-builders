@@ -446,4 +446,31 @@ class GenerateBuildersMojoIT {
                             "All builders are up-to-date, skipping generation.");
         }
     }
+
+    @Nested
+    @MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
+    class MultiModuleBuild {
+
+        @MavenTest
+        void multiModuleBuild(final MavenExecutionResult result) {
+            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "multi-module-project");
+            assertThat(result).isSuccessful();
+            assertThat(result) //
+                    .project() //
+                    .withModule("module1") //
+                    .hasTarget() //
+                    .has(ContainsBuildersCondition.expectedBuilder( //
+                            "io.github.tobi.laa.reflective.fluent.builders.test.models.DogBuilder", //
+                            true, //
+                            expectedBuildersRootDir.resolve("module1")));
+            assertThat(result) //
+                    .project() //
+                    .withModule("module2") //
+                    .hasTarget() //
+                    .has(ContainsBuildersCondition.expectedBuilder( //
+                            "io.github.tobi.laa.reflective.fluent.builders.test.models.CatBuilder", //
+                            true, //
+                            expectedBuildersRootDir.resolve("module2")));
+        }
+    }
 }

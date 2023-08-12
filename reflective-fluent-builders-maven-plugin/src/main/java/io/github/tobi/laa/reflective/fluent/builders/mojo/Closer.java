@@ -1,6 +1,5 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import javax.inject.Named;
@@ -24,17 +23,26 @@ class Closer extends AbstractLogEnabled {
      * </p>
      *
      * @param object The object to be closed if it implements {@link Closeable}. Must not be {@code null}.
-     * @throws MojoExecutionException In case an {@link IOException error} occurs while attempting to close {@code classLoader}.
+     * @throws CloseException In case an {@link IOException error} occurs while attempting to close {@code classLoader}.
      */
-    <T> void closeIfCloseable(final T object) throws MojoExecutionException {
+    <T> void closeIfCloseable(final T object) {
         if (object instanceof Closeable) {
             try {
                 ((Closeable) object).close();
             } catch (final IOException e) {
-                throw new MojoExecutionException("Error while attempting to close " + object.getClass() + '.', e);
+                throw new CloseException("Error while attempting to close " + object.getClass() + '.', e);
             }
         } else {
             getLogger().debug("Not closing " + object + " of type " + object.getClass() + " as it does not implements Closeable.");
+        }
+    }
+
+    static class CloseException extends RuntimeException {
+
+        private static final long serialVersionUID = -7002501270233855148L;
+
+        CloseException(final String message, final Throwable cause) {
+            super(message, cause);
         }
     }
 }

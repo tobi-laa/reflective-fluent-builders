@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -40,7 +41,7 @@ class ClassServiceImpl implements ClassService {
     private final BuildersProperties properties;
 
     @lombok.NonNull
-    private final ClassLoader classLoader;
+    private final Provider<ClassLoader> classLoaderProvider;
 
     @Override
     public List<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
@@ -66,7 +67,7 @@ class ClassServiceImpl implements ClassService {
     public Set<Class<?>> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
         try {
-            return ClassPath.from(classLoader) //
+            return ClassPath.from(classLoaderProvider.get()) //
                     .getTopLevelClassesRecursive(packageName) //
                     .stream() //
                     .map(ClassPath.ClassInfo::load) //
@@ -122,7 +123,7 @@ class ClassServiceImpl implements ClassService {
     @Override
     public Optional<Class<?>> loadClass(String className) {
         try {
-            return Optional.of(Class.forName(className, false, classLoader));
+            return Optional.of(Class.forName(className, false, classLoaderProvider.get()));
         } catch (final ClassNotFoundException e) {
             return Optional.empty();
         } catch (final LinkageError | SecurityException e) {
