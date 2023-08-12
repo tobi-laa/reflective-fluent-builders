@@ -41,7 +41,7 @@ class Closer extends AbstractLogEnabled {
 
         private static final long serialVersionUID = -7002501270233855148L;
 
-        private CloseException(final String message, final Throwable cause) {
+        CloseException(final String message, final Throwable cause) {
             super(message, cause);
         }
     }

@@ -8,6 +8,7 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import java.io.Closeable;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,7 +35,7 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
     @lombok.NonNull
     private final Closer closer;
 
-    private URLClassLoader classLoader;
+    URLClassLoader classLoader;
 
     private List<String> classLoaderElements;
 
@@ -61,7 +62,7 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
     }
 
     private void recreateClassLoaderForMavenBuild() {
-        closeOldClassLoaderIfNecessary();
+        closeAndDisposeOfClassLoader();
         createClassLoaderForMavenBuild();
     }
 
@@ -70,12 +71,27 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
         classLoader = new URLClassLoader(getClasspathElementUrls(), getSystemClassLoader());
     }
 
-    private void closeOldClassLoaderIfNecessary() {
+    /**
+     * <p>
+     * {@link Closeable#close() Closes} the {@link ClassLoader} that has been provided by this {@link ClassLoaderProvider}, if it
+     * exists. Also removes any internal reference to said {@link ClassLoader}.
+     * </p>
+     * <p>
+     * Calling this method guarantees that the next time {@link #get()} is called, a <em>new</em> instance of a
+     * {@link ClassLoader} is returned.
+     * </p>
+     *
+     * @throws ClassLoaderProviderException In case an error occurs while attempting to {@link Closeable#close() close} the
+     *                                      underlying {@link ClassLoader}.
+     */
+    void closeAndDisposeOfClassLoader() {
         if (classLoader != null) {
             try {
                 closer.closeIfCloseable(classLoader);
             } catch (final Closer.CloseException e) {
-                throw new ClassLoaderConstructionException("Error while closing old ClassLoader instance.", e);
+                throw new ClassLoaderProviderException("Error while closing old ClassLoader instance.", e);
+            } finally {
+                classLoader = null;
             }
         }
     }
@@ -94,7 +110,7 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
         try {
             return mavenBuild.getClasspathElements();
         } catch (final DependencyResolutionRequiredException e) {
-            throw new ClassLoaderConstructionException("Error while resolving dependencies of maven project.", e);
+            throw new ClassLoaderProviderException("Error while resolving dependencies of maven project.", e);
         }
     }
 
@@ -107,15 +123,15 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
         try {
             return file.toURI().toURL();
         } catch (final MalformedURLException e) {
-            throw new ClassLoaderConstructionException("Error while attempting to convert file " + file + " to URL.", e);
+            throw new ClassLoaderProviderException("Error while attempting to convert file " + file + " to URL.", e);
         }
     }
 
-    static class ClassLoaderConstructionException extends RuntimeException {
+    static class ClassLoaderProviderException extends RuntimeException {
 
         private static final long serialVersionUID = -8178484321714698102L;
 
-        private ClassLoaderConstructionException(final String message, final Throwable cause) {
+        private ClassLoaderProviderException(final String message, final Throwable cause) {
             super(message, cause);
         }
     }

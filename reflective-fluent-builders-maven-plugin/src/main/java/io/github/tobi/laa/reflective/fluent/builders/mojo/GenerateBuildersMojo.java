@@ -50,7 +50,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final MavenBuild mavenBuild;
 
     @lombok.NonNull
-    private final ClassLoader classLoader;
+    private final ClassLoaderProvider classLoaderProvider;
 
     @lombok.NonNull
     private final JavaFileGenerator javaFileGenerator;
@@ -60,9 +60,6 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
-
-    @lombok.NonNull
-    private final Closer closer;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -81,8 +78,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
         closeClassLoader();
     }
 
-    private void closeClassLoader() throws MojoExecutionException {
-        closer.closeIfCloseable(classLoader);
+    private void closeClassLoader() {
+        classLoaderProvider.closeAndDisposeOfClassLoader();
     }
 
     private void logMavenParams() {
@@ -122,8 +119,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private Class<?> loadClass(final String className) throws MojoExecutionException {
         try {
-            return classLoader.loadClass(className);
-        } catch (ClassNotFoundException e) {
+            return classLoaderProvider.get().loadClass(className);
+        } catch (final ClassNotFoundException e) {
             throw new MojoExecutionException("Unable to load class " + className, e);
         }
     }

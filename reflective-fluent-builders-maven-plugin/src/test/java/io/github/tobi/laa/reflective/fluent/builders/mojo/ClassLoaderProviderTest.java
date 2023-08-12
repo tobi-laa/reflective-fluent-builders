@@ -71,7 +71,7 @@ class ClassLoaderProviderTest {
             final ThrowingCallable get = () -> provider.get();
             // Assert
             assertThatThrownBy(get) //
-                    .isExactlyInstanceOf(ClassLoaderProvider.ClassLoaderConstructionException.class) //
+                    .isExactlyInstanceOf(ClassLoaderProvider.ClassLoaderProviderException.class) //
                     .hasMessageMatching("Error while attempting to convert file .+ to URL.") //
                     .hasCauseExactlyInstanceOf(MalformedURLException.class);
         }
@@ -87,7 +87,7 @@ class ClassLoaderProviderTest {
         final ThrowingCallable get = () -> provider.get();
         // Assert
         assertThatThrownBy(get) //
-                .isExactlyInstanceOf(ClassLoaderProvider.ClassLoaderConstructionException.class) //
+                .isExactlyInstanceOf(ClassLoaderProvider.ClassLoaderProviderException.class) //
                 .hasMessageMatching("Error while resolving dependencies of maven project.") //
                 .hasCauseExactlyInstanceOf(DependencyResolutionRequiredException.class);
     }
@@ -163,5 +163,45 @@ class ClassLoaderProviderTest {
 
     private void verifyLogAddingToClassLoader(final String... classpathElements) {
         Arrays.stream(classpathElements).forEach(resource -> verify(logger).debug("Attempt to add " + resource + " to ClassLoader."));
+    }
+
+    @Test
+    void testCloseAndDisposeOfClassLoaderClassLoaderNull() {
+        // Act
+        provider.closeAndDisposeOfClassLoader();
+        // Assert
+        assertThat(provider.classLoader).isNull();
+        verifyNoInteractions(closer);
+    }
+
+    @Test
+    @SneakyThrows
+    void testCloseAndDisposeOfClassLoaderCloseException() {
+        // Arrange
+        mockClasspathElements("elem1");
+        classLoader = provider.get();
+        final var cause = new Closer.CloseException("Thrown in unit test.", null);
+        doThrow(cause).when(closer).closeIfCloseable(any());
+        // Act
+        final ThrowingCallable closeAndDisposeOfClassLoader = () -> provider.closeAndDisposeOfClassLoader();
+        // Assert
+        assertThatThrownBy(closeAndDisposeOfClassLoader) //
+                .isExactlyInstanceOf(ClassLoaderProvider.ClassLoaderProviderException.class) //
+                .hasMessage("Error while closing old ClassLoader instance.") //
+                .hasCause(cause);
+        assertThat(provider.classLoader).isNull();
+        verify(closer).closeIfCloseable(classLoader);
+    }
+
+    @Test
+    void testCloseAndDisposeOfClassLoader() {
+        // Arrange
+        mockClasspathElements("elem1");
+        classLoader = provider.get();
+        // Act
+        provider.closeAndDisposeOfClassLoader();
+        // Assert
+        assertThat(provider.classLoader).isNull();
+        verify(closer).closeIfCloseable(classLoader);
     }
 }
