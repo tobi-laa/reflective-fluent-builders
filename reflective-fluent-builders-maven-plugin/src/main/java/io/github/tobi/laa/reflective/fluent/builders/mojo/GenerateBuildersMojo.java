@@ -12,12 +12,15 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.build.BuildContext;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -468,5 +471,47 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @SuppressWarnings("unused")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
         params.setAddCompileSourceRoot(addCompileSourceRoot);
+    }
+
+    /**
+     * <p>
+     * (Re-)Injects {@code buildContext} into components depending on it. This is mainly to circumvent bugs in multi module
+     * projects where dependencies are being re-used across executions.
+     * </p>
+     *
+     * @param buildContext (New) {@link BuildContext} to inject into components depending on it.
+     */
+    @Inject
+    @SuppressWarnings("unused")
+    public void setBuildContext(final BuildContext buildContext) {
+        mavenBuild.setBuildContext(buildContext);
+    }
+
+    /**
+     * <p>
+     * (Re-)Injects {@code mavenProject} into components depending on it. This is mainly to circumvent bugs in multi module
+     * projects where dependencies are being re-used across executions.
+     * </p>
+     *
+     * @param mavenProject (New) {@link MavenProject} to inject into components depending on it.
+     */
+    @Inject
+    @SuppressWarnings("unused")
+    public void setMavenProject(final MavenProject mavenProject) {
+        mavenBuild.setMavenProject(mavenProject);
+    }
+
+    /**
+     * <p>
+     * (Re-)Injects {@code mojoExecution} into components depending on it. This is mainly to circumvent bugs in multi module
+     * projects where dependencies are being re-used across executions.
+     * </p>
+     *
+     * @param mojoExecution (New) {@link MojoExecution} to inject into components depending on it.
+     */
+    @Inject
+    @SuppressWarnings("unused")
+    public void setMojoExecution(final MojoExecution mojoExecution) {
+        mavenBuild.setMojoExecution(mojoExecution);
     }
 }
