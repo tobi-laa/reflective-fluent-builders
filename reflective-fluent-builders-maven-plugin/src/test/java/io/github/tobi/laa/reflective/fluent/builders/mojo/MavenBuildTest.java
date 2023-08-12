@@ -216,7 +216,7 @@ class MavenBuildTest {
     @SneakyThrows
     void testGetClasspathElementsDependencyResolutionRequiredException(final boolean testPhase) {
         // Arrange
-        final var exception = new DependencyResolutionRequiredException(Mockito.mock(Artifact.class));
+        final DependencyResolutionRequiredException exception = new DependencyResolutionRequiredException(Mockito.mock(Artifact.class));
         mockTestPhase(testPhase);
         if (testPhase) {
             doThrow(exception).when(mavenProject).getTestClasspathElements();
@@ -247,7 +247,7 @@ class MavenBuildTest {
             mockCompileClasspathElements(expected);
         }
         // Act
-        final var actual = mavenBuild.getClasspathElements();
+        final List<String> actual = mavenBuild.getClasspathElements();
         // Assert
         assertThat(actual).containsExactlyInAnyOrder(expected);
         if (testPhase) {

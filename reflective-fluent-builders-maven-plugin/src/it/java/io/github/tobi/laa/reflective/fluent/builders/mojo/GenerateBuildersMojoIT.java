@@ -454,7 +454,7 @@ class GenerateBuildersMojoIT {
 
         @MavenTest
         void multiModuleBuild(final MavenExecutionResult result) {
-            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "multi-module-project");
+            final Path expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "multi-module-project");
             assertThat(result).isSuccessful();
             assertThat(result) //
                     .project() //

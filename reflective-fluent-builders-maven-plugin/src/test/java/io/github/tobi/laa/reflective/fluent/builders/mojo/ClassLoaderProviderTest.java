@@ -68,7 +68,7 @@ class ClassLoaderProviderTest {
     void testGetMalformedURLException() {
         // Arrange
         try (final MockedConstruction<URI> mock = mockConstruction(URI.class, (uri, context) -> doThrow(new MalformedURLException("Thrown in unit test")).when(uri).toURL())) {
-            mockCompileClasspathElements("doesNotMatter");
+            mockClasspathElements("doesNotMatter");
             // Act
             final ThrowingCallable get = () -> provider.get();
             // Assert
@@ -124,7 +124,7 @@ class ClassLoaderProviderTest {
     void testGetOldClassLoaderWithSameElementsAsMavenBuild() {
         // Arrange
         mockClasspathElements("elem1");
-        final var oldClassLoader = provider.get();
+        final ClassLoader oldClassLoader = provider.get();
         // Act
         classLoader = provider.get();
         // Assert
@@ -138,7 +138,7 @@ class ClassLoaderProviderTest {
         // Arrange
         doCallRealMethod().when(closer).closeIfCloseable(any());
         mockClasspathElements("elem1");
-        final var oldClassLoader = provider.get();
+        final ClassLoader oldClassLoader = provider.get();
         mockClasspathElements("elem1", "elem2");
         // Act
         classLoader = provider.get();
@@ -181,7 +181,7 @@ class ClassLoaderProviderTest {
         // Arrange
         mockClasspathElements("elem1");
         classLoader = provider.get();
-        final var cause = new Closer.CloseException("Thrown in unit test.", null);
+        final Closer.CloseException cause = new Closer.CloseException("Thrown in unit test.", null);
         doThrow(cause).when(closer).closeIfCloseable(any());
         // Act
         final ThrowingCallable closeAndDisposeOfClassLoader = () -> provider.closeAndDisposeOfClassLoader();

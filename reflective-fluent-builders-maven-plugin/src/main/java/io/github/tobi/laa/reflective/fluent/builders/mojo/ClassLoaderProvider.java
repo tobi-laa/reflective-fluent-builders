@@ -16,6 +16,7 @@ import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.lang.ClassLoader.getSystemClassLoader;
 
@@ -51,9 +52,9 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
         if (classLoader == null) {
             return true;
         } else {
-            final var elementsFromMavenBuild = new HashSet<>(getClasspathElements());
-            final var elementsFromOldClassLoader = new HashSet<>(classLoaderElements);
-            final var classLoaderDiffersFromMavenBuild = !elementsFromMavenBuild.equals(elementsFromOldClassLoader);
+            final Set<String> elementsFromMavenBuild = new HashSet<>(getClasspathElements());
+            final Set<String> elementsFromOldClassLoader = new HashSet<>(classLoaderElements);
+            final boolean classLoaderDiffersFromMavenBuild = !elementsFromMavenBuild.equals(elementsFromOldClassLoader);
             if (classLoaderDiffersFromMavenBuild) {
                 getLogger().debug("ClassLoader will be re-created as elements of underlying maven build have changed.");
             }

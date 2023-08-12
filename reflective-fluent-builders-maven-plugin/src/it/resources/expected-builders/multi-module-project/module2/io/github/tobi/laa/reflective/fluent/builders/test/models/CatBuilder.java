@@ -2,7 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models;
 
 import java.lang.String;
 import java.util.Objects;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
