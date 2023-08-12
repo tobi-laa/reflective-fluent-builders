@@ -26,7 +26,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -159,7 +158,7 @@ class ClassLoaderProviderTest {
 
     @SneakyThrows
     private void mockClasspathElements(final String... elements) {
-        doReturn(List.of(elements)).when(mavenBuild).getClasspathElements();
+        doReturn(ImmutableList.of(elements)).when(mavenBuild).getClasspathElements();
     }
 
     private void verifyLogAddingToClassLoader(final String... classpathElements) {
