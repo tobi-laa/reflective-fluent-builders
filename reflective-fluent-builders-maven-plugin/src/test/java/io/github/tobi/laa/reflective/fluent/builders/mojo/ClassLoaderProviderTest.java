@@ -141,8 +141,7 @@ class ClassLoaderProviderTest {
         // Act
         classLoader = provider.get();
         // Assert
-        assertThat(classLoader).isNotSameAs(oldClassLoader);
-        assertThat(classLoader).isNotNull().isInstanceOf(URLClassLoader.class);
+        assertThat(classLoader).isNotNull().isInstanceOf(URLClassLoader.class).isNotSameAs(oldClassLoader);
         assertThat(((URLClassLoader) classLoader).getURLs()).containsExactlyInAnyOrder(fileUrl("elem1"), fileUrl("elem2"));
         verify(logger, times(2)).debug("Attempt to add elem1 to ClassLoader.");
         verifyLogAddingToClassLoader("elem2");
