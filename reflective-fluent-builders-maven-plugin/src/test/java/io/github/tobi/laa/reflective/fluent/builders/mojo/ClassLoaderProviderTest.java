@@ -158,7 +158,7 @@ class ClassLoaderProviderTest {
 
     @SneakyThrows
     private void mockClasspathElements(final String... elements) {
-        doReturn(ImmutableList.of(elements)).when(mavenBuild).getClasspathElements();
+        doReturn(ImmutableList.copyOf(elements)).when(mavenBuild).getClasspathElements();
     }
 
     private void verifyLogAddingToClassLoader(final String... classpathElements) {
