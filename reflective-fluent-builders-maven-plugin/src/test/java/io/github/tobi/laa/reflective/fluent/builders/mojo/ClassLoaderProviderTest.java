@@ -3,7 +3,6 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 import lombok.SneakyThrows;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.project.MavenProject;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.codehaus.plexus.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -40,9 +38,6 @@ class ClassLoaderProviderTest {
     private MavenBuild mavenBuild;
 
     @Mock
-    private MavenProject mavenProject;
-
-    @Mock
     private Logger logger;
 
     @BeforeEach
@@ -56,7 +51,7 @@ class ClassLoaderProviderTest {
     void testGetMalformedURLException() {
         // Arrange
         try (final var mock = mockConstruction(URI.class, (uri, context) -> doThrow(new MalformedURLException("Thrown in unit test")).when(uri).toURL())) {
-            mockCompileClasspathElements("doesNotMatter");
+            mockClasspathElements("doesNotMatter");
             // Act
             final ThrowingCallable get = () -> provider.get();
             // Assert
@@ -67,18 +62,12 @@ class ClassLoaderProviderTest {
         }
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
+    @Test
     @SneakyThrows
-    void testGetDependencyResolutionRequiredException(final boolean testPhase) {
+    void testGetDependencyResolutionRequiredException() {
         // Arrange
         final var cause = new DependencyResolutionRequiredException(Mockito.mock(Artifact.class));
-        mockTestPhase(testPhase);
-        if (testPhase) {
-            doThrow(cause).when(mavenProject).getTestClasspathElements();
-        } else {
-            doThrow(cause).when(mavenProject).getCompileClasspathElements();
-        }
+        doThrow(cause).when(mavenBuild).getClasspathElements();
         // Act
         final ThrowingCallable get = () -> provider.get();
         // Assert
@@ -91,14 +80,9 @@ class ClassLoaderProviderTest {
     @ParameterizedTest
     @MethodSource
     @SneakyThrows
-    void testGet(final boolean testPhase, final String[] classpathElements, final URL[] expectedUrls) {
+    void testGet(final String[] classpathElements, final URL[] expectedUrls) {
         // Arrange
-        mockTestPhase(testPhase);
-        if (testPhase) {
-            mockTestClasspathElements(classpathElements);
-        } else {
-            mockCompileClasspathElements(classpathElements);
-        }
+        mockClasspathElements(classpathElements);
         // Act
         final var classLoader = provider.get();
         // Assert
@@ -108,14 +92,11 @@ class ClassLoaderProviderTest {
 
     private static Stream<Arguments> testGet() {
         return Stream.of( //
-                Arguments.of(false, new String[0], new URL[0]), //
-                Arguments.of(false, new String[0], new URL[0]), //
+                Arguments.of(new String[0], new URL[0]), //
                 Arguments.of( //
-                        false, //
                         new String[]{"elem1"}, //
                         new URL[]{fileUrl("elem1")}), //
                 Arguments.of( //
-                        true, //
                         new String[]{"elem1", "elem2"}, //
                         new URL[]{fileUrl("elem1"), fileUrl("elem2")}));
     }
@@ -125,17 +106,8 @@ class ClassLoaderProviderTest {
         return new URL("file", "", -1, Paths.get(file).toAbsolutePath().toString());
     }
 
-    private void mockTestPhase(final boolean testPhase) {
-        doReturn(testPhase).when(mavenBuild).isTestPhase();
-    }
-
     @SneakyThrows
-    private void mockTestClasspathElements(final String... elements) {
-        doReturn(List.of(elements)).when(mavenProject).getTestClasspathElements();
-    }
-
-    @SneakyThrows
-    private void mockCompileClasspathElements(final String... elements) {
-        doReturn(List.of(elements)).when(mavenProject).getCompileClasspathElements();
+    private void mockClasspathElements(final String... elements) {
+        doReturn(List.of(elements)).when(mavenBuild).getClasspathElements();
     }
 }

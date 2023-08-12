@@ -3,7 +3,6 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import javax.inject.Inject;
@@ -31,9 +30,6 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
     @lombok.NonNull
     private final MavenBuild mavenBuild;
 
-    @lombok.NonNull
-    private final MavenProject mavenProject;
-
     @Override
     public ClassLoader get() {
         return new URLClassLoader(getClasspathElementUrls(), getSystemClassLoader());
@@ -51,11 +47,7 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
 
     private List<String> getClasspathElements() {
         try {
-            if (mavenBuild.isTestPhase()) {
-                return mavenProject.getTestClasspathElements();
-            } else {
-                return mavenProject.getCompileClasspathElements();
-            }
+            return mavenBuild.getClasspathElements();
         } catch (final DependencyResolutionRequiredException e) {
             throw new ClassLoaderConstructionException("Error while resolving dependencies of maven project.", e);
         }
@@ -75,6 +67,8 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
     }
 
     static class ClassLoaderConstructionException extends RuntimeException {
+
+        private static final long serialVersionUID = -8178484321714698102L;
 
         private ClassLoaderConstructionException(final String message, final Throwable cause) {
             super(message, cause);

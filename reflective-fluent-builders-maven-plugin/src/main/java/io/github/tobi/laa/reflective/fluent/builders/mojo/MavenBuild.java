@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.build.BuildContext;
@@ -12,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -79,5 +81,13 @@ class MavenBuild extends AbstractLogEnabled {
 
     Set<Artifact> getArtifacts() {
         return mavenProject.getArtifacts();
+    }
+
+    List<String> getClasspathElements() throws DependencyResolutionRequiredException {
+        if (isTestPhase()) {
+            return mavenProject.getTestClasspathElements();
+        } else {
+            return mavenProject.getCompileClasspathElements();
+        }
     }
 }
