@@ -76,7 +76,9 @@ class TypeServiceImplTest {
         return Stream.of( //
                 Arguments.of(typeVariable("r"), Set.of(Object.class)), //
                 Arguments.of(typeVariable("s"), Set.of(Number.class)), //
-                Arguments.of(typeVariable("t"), Set.of(String.class)));
+                Arguments.of(typeVariable("t"), Set.of(String.class)), //
+                Arguments.of(typeVariable("u"), Set.of(Comparable.class)), //
+                Arguments.of(typeVariable("v"), Set.of(Comparable.class)));
     }
 
     @SneakyThrows
@@ -123,12 +125,16 @@ class TypeServiceImplTest {
     }
 
     @SuppressWarnings("unused")
-    private static class TypeVariables<R, S extends Number, T extends String> {
+    private static class TypeVariables<R, S extends Number, T extends String, U extends Comparable<U>, V extends U> {
 
         private R r;
 
         private S s;
 
         private T t;
+
+        private U u;
+
+        private V v;
     }
 }
