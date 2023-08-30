@@ -21,7 +21,7 @@ public class SimpleClassBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private SimpleClassBuilder(final SimpleClass objectToBuild) {
+  protected SimpleClassBuilder(final SimpleClass objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

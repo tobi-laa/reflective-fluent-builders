@@ -19,7 +19,7 @@ public class TopLevelClassBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private TopLevelClassBuilder(final TopLevelClass objectToBuild) {
+  protected TopLevelClassBuilder(final TopLevelClass objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

@@ -20,7 +20,7 @@ public class CatBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private CatBuilder(final Cat objectToBuild) {
+  protected CatBuilder(final Cat objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

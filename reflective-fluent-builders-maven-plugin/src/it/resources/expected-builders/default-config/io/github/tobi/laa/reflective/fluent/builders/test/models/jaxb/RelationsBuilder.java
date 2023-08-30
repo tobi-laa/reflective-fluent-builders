@@ -21,7 +21,7 @@ public class RelationsBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private RelationsBuilder(final PersonJaxb.Relations objectToBuild) {
+  protected RelationsBuilder(final PersonJaxb.Relations objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

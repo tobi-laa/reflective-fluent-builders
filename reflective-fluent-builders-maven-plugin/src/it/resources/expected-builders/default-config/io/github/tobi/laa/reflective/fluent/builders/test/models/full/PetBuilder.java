@@ -22,7 +22,7 @@ public class PetBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PetBuilder(final Pet objectToBuild) {
+  protected PetBuilder(final Pet objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

@@ -19,7 +19,7 @@ public class ClassWithHierarchyBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ClassWithHierarchyBuilder(final ClassWithHierarchy objectToBuild) {
+  protected ClassWithHierarchyBuilder(final ClassWithHierarchy objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

@@ -20,7 +20,7 @@ public class EntryBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private EntryBuilder(final PersonJaxb.Relations.Entry objectToBuild) {
+  protected EntryBuilder(final PersonJaxb.Relations.Entry objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

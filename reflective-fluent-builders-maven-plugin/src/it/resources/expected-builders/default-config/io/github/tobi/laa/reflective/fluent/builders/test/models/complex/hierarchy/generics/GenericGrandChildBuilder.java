@@ -26,7 +26,7 @@ public class GenericGrandChildBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private GenericGrandChildBuilder(final GenericGrandChild objectToBuild) {
+  protected GenericGrandChildBuilder(final GenericGrandChild objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

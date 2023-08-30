@@ -27,7 +27,7 @@ public class PersonBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PersonBuilder(final Person objectToBuild) {
+  protected PersonBuilder(final Person objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

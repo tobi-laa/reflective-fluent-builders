@@ -23,7 +23,7 @@ public class GenericParentBuilder<R, S, T> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private GenericParentBuilder(final GenericParent objectToBuild) {
+  protected GenericParentBuilder(final GenericParent objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

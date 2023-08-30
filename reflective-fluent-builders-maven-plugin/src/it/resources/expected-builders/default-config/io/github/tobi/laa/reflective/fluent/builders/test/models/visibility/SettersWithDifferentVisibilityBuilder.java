@@ -19,7 +19,7 @@ public class SettersWithDifferentVisibilityBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private SettersWithDifferentVisibilityBuilder(
+  protected SettersWithDifferentVisibilityBuilder(
       final SettersWithDifferentVisibility objectToBuild) {
     this.objectToBuild = objectToBuild;
   }

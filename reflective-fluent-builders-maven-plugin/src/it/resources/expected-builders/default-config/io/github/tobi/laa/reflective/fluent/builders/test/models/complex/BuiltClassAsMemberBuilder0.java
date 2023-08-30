@@ -19,7 +19,7 @@ public class BuiltClassAsMemberBuilder0 {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private BuiltClassAsMemberBuilder0(
+  protected BuiltClassAsMemberBuilder0(
       final BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild) {
     this.objectToBuild = objectToBuild;
   }

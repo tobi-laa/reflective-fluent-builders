@@ -22,7 +22,7 @@ public class PetJaxbBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PetJaxbBuilder(final PetJaxb objectToBuild) {
+  protected PetJaxbBuilder(final PetJaxb objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

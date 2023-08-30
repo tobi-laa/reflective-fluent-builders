@@ -19,7 +19,7 @@ public class ParentBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ParentBuilder(final Parent objectToBuild) {
+  protected ParentBuilder(final Parent objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

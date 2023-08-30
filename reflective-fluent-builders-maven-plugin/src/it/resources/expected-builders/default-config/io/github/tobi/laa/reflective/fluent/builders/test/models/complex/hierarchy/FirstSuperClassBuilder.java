@@ -19,7 +19,7 @@ public class FirstSuperClassBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private FirstSuperClassBuilder(final FirstSuperClass objectToBuild) {
+  protected FirstSuperClassBuilder(final FirstSuperClass objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

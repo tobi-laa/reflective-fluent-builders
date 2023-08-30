@@ -93,7 +93,7 @@ class JavaFileGeneratorIT {
                         "\n" +
                         "  private final FieldValue fieldValue = new FieldValue();\n" +
                         "\n" +
-                        "  private ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {\n" +
+                        "  protected ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {\n" +
                         "    this.objectToBuild = objectToBuild;\n" +
                         "  }\n" +
                         "\n" +

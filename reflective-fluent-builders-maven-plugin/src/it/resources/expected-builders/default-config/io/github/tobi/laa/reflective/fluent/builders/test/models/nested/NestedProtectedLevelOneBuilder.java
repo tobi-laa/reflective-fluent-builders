@@ -19,7 +19,7 @@ public class NestedProtectedLevelOneBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private NestedProtectedLevelOneBuilder(
+  protected NestedProtectedLevelOneBuilder(
       final TopLevelClass.NestedProtectedLevelOne objectToBuild) {
     this.objectToBuild = objectToBuild;
   }

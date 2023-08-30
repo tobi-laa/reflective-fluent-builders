@@ -19,7 +19,7 @@ public class ClassWithBuilderExistingBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ClassWithBuilderExistingBuilder(final ClassWithBuilderExisting objectToBuild) {
+  protected ClassWithBuilderExistingBuilder(final ClassWithBuilderExisting objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

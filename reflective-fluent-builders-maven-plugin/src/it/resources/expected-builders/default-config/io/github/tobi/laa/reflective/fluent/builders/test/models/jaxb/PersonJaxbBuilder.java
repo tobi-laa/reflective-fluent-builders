@@ -23,7 +23,7 @@ public class PersonJaxbBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PersonJaxbBuilder(final PersonJaxb objectToBuild) {
+  protected PersonJaxbBuilder(final PersonJaxb objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

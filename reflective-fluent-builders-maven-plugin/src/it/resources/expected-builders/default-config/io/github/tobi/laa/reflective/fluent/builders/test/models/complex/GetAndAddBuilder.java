@@ -22,7 +22,7 @@ public class GetAndAddBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private GetAndAddBuilder(final GetAndAdd objectToBuild) {
+  protected GetAndAddBuilder(final GetAndAdd objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

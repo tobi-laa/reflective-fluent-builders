@@ -51,7 +51,7 @@ class ConstructorCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        "private Constructor(\n" +
+                        "protected Constructor(\n" +
                                 "    final io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass objectToBuild) {\n" +
                                 "  this.objectToBuild = objectToBuild;\n" +
                                 "}\n"),
@@ -64,7 +64,7 @@ class ConstructorCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build(), //
-                        "private Constructor(\n" +
+                        "protected Constructor(\n" +
                                 "    final io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy objectToBuild) {\n" +
                                 "  this.objectToBuild = objectToBuild;\n" +
                                 "}\n"));

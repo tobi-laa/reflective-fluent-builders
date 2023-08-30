@@ -19,7 +19,7 @@ public class SecondSuperClassInDifferentPackageBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private SecondSuperClassInDifferentPackageBuilder(
+  protected SecondSuperClassInDifferentPackageBuilder(
       final SecondSuperClassInDifferentPackage objectToBuild) {
     this.objectToBuild = objectToBuild;
   }

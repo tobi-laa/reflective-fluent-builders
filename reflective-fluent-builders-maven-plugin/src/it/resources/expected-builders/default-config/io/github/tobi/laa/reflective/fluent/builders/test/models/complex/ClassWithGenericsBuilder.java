@@ -22,7 +22,7 @@ public class ClassWithGenericsBuilder<T> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {
+  protected ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

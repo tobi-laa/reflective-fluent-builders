@@ -25,7 +25,7 @@ public class GenericChildBuilder<S extends Number, T> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private GenericChildBuilder(final GenericChild objectToBuild) {
+  protected GenericChildBuilder(final GenericChild objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

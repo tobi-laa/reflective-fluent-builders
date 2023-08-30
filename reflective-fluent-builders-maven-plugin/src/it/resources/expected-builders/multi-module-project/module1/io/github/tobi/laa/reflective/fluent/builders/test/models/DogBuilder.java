@@ -20,7 +20,7 @@ public class DogBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private DogBuilder(final Dog objectToBuild) {
+  protected DogBuilder(final Dog objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

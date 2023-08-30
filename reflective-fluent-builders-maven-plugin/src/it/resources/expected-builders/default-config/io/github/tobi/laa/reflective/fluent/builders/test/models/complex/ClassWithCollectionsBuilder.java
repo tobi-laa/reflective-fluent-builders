@@ -34,7 +34,7 @@ public class ClassWithCollectionsBuilder<T, U> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ClassWithCollectionsBuilder(final ClassWithCollections objectToBuild) {
+  protected ClassWithCollectionsBuilder(final ClassWithCollections objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
