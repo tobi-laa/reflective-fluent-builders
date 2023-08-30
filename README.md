@@ -71,5 +71,103 @@ to decide during which phase of the maven build to execute the plugin.
 Refer also to the [default lifecycle](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#default-lifecycle).
 This will of course not be a problem if you are solely generating builders for classes from third party libraries.
 
+If you want to generate builders in compile scope for classes whose sources are located within the same module, you could try an approach like this:
+```xml
+<plugin>
+    <groupId>io.github.tobi-laa</groupId>
+    <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+    <version><!-- insert latest version --></version>
+    <executions>
+        <execution>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>generate-builders</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <includes>
+            <include>
+                <packageName>i.want.builders.for.this.package</packageName>
+            </include>
+        </includes>
+    </configuration>
+</plugin>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <executions>
+        <!-- the default compilation -->
+        <execution>
+            <phase>compile</phase>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+        </execution>
+        <!-- compilation of the generated builders -->
+        <execution>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+It is also possible to specify exclusions. For instance, assuming you use a _logical_ rather than a _functional_ naming convention within your application like so:
+```
+com.example.app.dog
+↳ Dog
+↳ DogEntity
+↳ DogService
+↳ DogMapper
+↳ DogRepository
+
+com.example.app.cat
+↳ Cat
+↳ CatEntity
+↳ CatService
+↳ CatMapper
+↳ CatRepository
+```
+
+If you were going to generate builders for this application, you would probably want to exclude all the services, mappers and repositories.
+This could be achieved by doing the following:
+
+```xml
+<plugin>
+    <groupId>io.github.tobi-laa</groupId>
+    <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+    <version><!-- insert latest version --></version>
+    <executions>
+        <execution>
+            <phase>generate-test-sources</phase>
+            <goals>
+                <goal>generate-builders</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <includes>
+            <include>
+                <packageName>com.example.app</packageName>
+            </include>
+        </includes>
+        <excludes>
+            <exclude>
+                <classRegex>.+Service</classRegex>
+            </exclude>
+            <exclude>
+                <classRegex>.+Mapper</classRegex>
+            </exclude>
+            <exclude>
+                <classRegex>.+Repository</classRegex>
+            </exclude>
+        </excludes>
+    </configuration>
+</plugin>
+```
+
 Full documentation of the maven plugin and its parameters can be found
 [here](https://tobias-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/plugin-info.html).
