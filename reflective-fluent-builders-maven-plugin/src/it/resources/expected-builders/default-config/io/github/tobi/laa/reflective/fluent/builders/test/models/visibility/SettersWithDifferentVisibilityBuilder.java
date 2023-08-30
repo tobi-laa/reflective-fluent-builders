@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -11,6 +12,7 @@ public class SettersWithDifferentVisibilityBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private SettersWithDifferentVisibility objectToBuild;
@@ -40,37 +42,37 @@ public class SettersWithDifferentVisibilityBuilder {
 
   public SettersWithDifferentVisibilityBuilder packagePrivateSetter(
       final int packagePrivateSetter) {
-    fieldValue.packagePrivateSetter = packagePrivateSetter;
-    callSetterFor.packagePrivateSetter = true;
+    this.fieldValue.packagePrivateSetter = packagePrivateSetter;
+    this.callSetterFor.packagePrivateSetter = true;
     return this;
   }
 
   public SettersWithDifferentVisibilityBuilder protectedSetter(final int protectedSetter) {
-    fieldValue.protectedSetter = protectedSetter;
-    callSetterFor.protectedSetter = true;
+    this.fieldValue.protectedSetter = protectedSetter;
+    this.callSetterFor.protectedSetter = true;
     return this;
   }
 
   public SettersWithDifferentVisibilityBuilder publicSetter(final int publicSetter) {
-    fieldValue.publicSetter = publicSetter;
-    callSetterFor.publicSetter = true;
+    this.fieldValue.publicSetter = publicSetter;
+    this.callSetterFor.publicSetter = true;
     return this;
   }
 
   public SettersWithDifferentVisibility build() {
-    if (objectToBuild == null) {
-      objectToBuild = new SettersWithDifferentVisibility();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new SettersWithDifferentVisibility();
     }
-    if (callSetterFor.packagePrivateSetter) {
-      objectToBuild.setPackagePrivateSetter(fieldValue.packagePrivateSetter);
+    if (this.callSetterFor.packagePrivateSetter) {
+      this.objectToBuild.setPackagePrivateSetter(this.fieldValue.packagePrivateSetter);
     }
-    if (callSetterFor.protectedSetter) {
-      objectToBuild.setProtectedSetter(fieldValue.protectedSetter);
+    if (this.callSetterFor.protectedSetter) {
+      this.objectToBuild.setProtectedSetter(this.fieldValue.protectedSetter);
     }
-    if (callSetterFor.publicSetter) {
-      objectToBuild.setPublicSetter(fieldValue.publicSetter);
+    if (this.callSetterFor.publicSetter) {
+      this.objectToBuild.setPublicSetter(this.fieldValue.publicSetter);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

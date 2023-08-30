@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -11,6 +12,7 @@ public class NestedPublicLevelOneBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private TopLevelClass.NestedPublicLevelOne objectToBuild;
@@ -39,19 +41,19 @@ public class NestedPublicLevelOneBuilder {
 
   public NestedPublicLevelOneBuilder nested(
       final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo nested) {
-    fieldValue.nested = nested;
-    callSetterFor.nested = true;
+    this.fieldValue.nested = nested;
+    this.callSetterFor.nested = true;
     return this;
   }
 
   public TopLevelClass.NestedPublicLevelOne build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass.NestedPublicLevelOne();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne();
     }
-    if (callSetterFor.nested) {
-      objectToBuild.setNested(fieldValue.nested);
+    if (this.callSetterFor.nested) {
+      this.objectToBuild.setNested(this.fieldValue.nested);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

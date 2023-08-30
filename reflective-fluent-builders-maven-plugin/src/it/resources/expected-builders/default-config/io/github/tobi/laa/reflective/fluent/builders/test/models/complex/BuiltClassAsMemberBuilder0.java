@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -11,6 +12,7 @@ public class BuiltClassAsMemberBuilder0 {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild;
@@ -39,19 +41,19 @@ public class BuiltClassAsMemberBuilder0 {
   }
 
   public BuiltClassAsMemberBuilder0 aField(final int aField) {
-    fieldValue.aField = aField;
-    callSetterFor.aField = true;
+    this.fieldValue.aField = aField;
+    this.callSetterFor.aField = true;
     return this;
   }
 
   public BuiltClassAsMemberBuilder.BuiltClassAsMember build() {
-    if (objectToBuild == null) {
-      objectToBuild = new BuiltClassAsMemberBuilder.BuiltClassAsMember();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new BuiltClassAsMemberBuilder.BuiltClassAsMember();
     }
-    if (callSetterFor.aField) {
-      objectToBuild.setAField(fieldValue.aField);
+    if (this.callSetterFor.aField) {
+      this.objectToBuild.setAField(this.fieldValue.aField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

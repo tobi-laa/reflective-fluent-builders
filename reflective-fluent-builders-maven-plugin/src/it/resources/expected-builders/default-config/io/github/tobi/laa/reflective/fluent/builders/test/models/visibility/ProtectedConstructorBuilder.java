@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -11,6 +12,7 @@ public class ProtectedConstructorBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private ProtectedConstructor objectToBuild;
@@ -38,19 +40,19 @@ public class ProtectedConstructorBuilder {
   }
 
   public ProtectedConstructorBuilder intField(final int intField) {
-    fieldValue.intField = intField;
-    callSetterFor.intField = true;
+    this.fieldValue.intField = intField;
+    this.callSetterFor.intField = true;
     return this;
   }
 
   public ProtectedConstructor build() {
-    if (objectToBuild == null) {
-      objectToBuild = new ProtectedConstructor();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new ProtectedConstructor();
     }
-    if (callSetterFor.intField) {
-      objectToBuild.setIntField(fieldValue.intField);
+    if (this.callSetterFor.intField) {
+      this.objectToBuild.setIntField(this.fieldValue.intField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

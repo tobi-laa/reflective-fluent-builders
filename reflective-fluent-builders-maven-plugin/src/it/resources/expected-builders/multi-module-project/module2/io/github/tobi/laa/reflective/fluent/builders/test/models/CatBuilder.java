@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models;
 
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -12,6 +13,7 @@ public class CatBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private Cat objectToBuild;
@@ -38,19 +40,19 @@ public class CatBuilder {
   }
 
   public CatBuilder fur(final String fur) {
-    fieldValue.fur = fur;
-    callSetterFor.fur = true;
+    this.fieldValue.fur = fur;
+    this.callSetterFor.fur = true;
     return this;
   }
 
   public Cat build() {
-    if (objectToBuild == null) {
-      objectToBuild = new Cat();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new Cat();
     }
-    if (callSetterFor.fur) {
-      objectToBuild.setFur(fieldValue.fur);
+    if (this.callSetterFor.fur) {
+      this.objectToBuild.setFur(this.fieldValue.fur);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

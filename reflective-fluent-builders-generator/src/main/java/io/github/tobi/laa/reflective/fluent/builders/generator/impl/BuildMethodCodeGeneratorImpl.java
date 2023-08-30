@@ -33,29 +33,29 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                 .returns(clazz);
         if (builderMetadata.getBuiltType().isAccessibleNonArgsConstructor()) {
             methodBuilder
-                    .beginControlFlow("if ($L == null)", OBJECT_TO_BUILD_FIELD_NAME)
-                    .addStatement("$L = new $T()", OBJECT_TO_BUILD_FIELD_NAME, clazz)
+                    .beginControlFlow("if (this.$L == null)", OBJECT_TO_BUILD_FIELD_NAME)
+                    .addStatement("this.$L = new $T()", OBJECT_TO_BUILD_FIELD_NAME, clazz)
                     .endControlFlow();
         }
         for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
             if (setter instanceof CollectionGetAndAdder) {
                 methodBuilder
                         .beginControlFlow(
-                                "if ($1L.$3L && $2L.$3L != null)",
+                                "if (this.$1L.$3L && this.$2L.$3L != null)",
                                 CallSetterFor.FIELD_NAME,
                                 FieldValue.FIELD_NAME,
                                 setter.getParamName())
                         .addStatement(
-                                "$L.$L.forEach($L.$L()::add)",
+                                "this.$L.$L.forEach($L.$L()::add)",
                                 FieldValue.FIELD_NAME,
                                 setter.getParamName(),
                                 OBJECT_TO_BUILD_FIELD_NAME,
                                 setter.getMethodName());
             } else {
                 methodBuilder
-                        .beginControlFlow("if ($L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
+                        .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
                         .addStatement(
-                                "$L.$L($L.$L)",
+                                "this.$L.$L(this.$L.$L)",
                                 OBJECT_TO_BUILD_FIELD_NAME,
                                 setter.getMethodName(),
                                 FieldValue.FIELD_NAME,
@@ -63,7 +63,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
             }
             methodBuilder.endControlFlow();
         }
-        methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);
+        methodBuilder.addStatement("return this.$L", OBJECT_TO_BUILD_FIELD_NAME);
         return methodBuilder.build();
     }
 }

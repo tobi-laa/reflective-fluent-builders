@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -11,6 +12,7 @@ public class NestedPublicLevelThreeBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree objectToBuild;
@@ -39,19 +41,19 @@ public class NestedPublicLevelThreeBuilder {
   }
 
   public NestedPublicLevelThreeBuilder field(final int field) {
-    fieldValue.field = field;
-    callSetterFor.field = true;
+    this.fieldValue.field = field;
+    this.callSetterFor.field = true;
     return this;
   }
 
   public TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree();
     }
-    if (callSetterFor.field) {
-      objectToBuild.setField(fieldValue.field);
+    if (this.callSetterFor.field) {
+      this.objectToBuild.setField(this.fieldValue.field);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

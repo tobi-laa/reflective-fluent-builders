@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.full;
 
 import java.lang.Object;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ public class PersonBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private Person objectToBuild;
@@ -61,73 +63,73 @@ public class PersonBuilder {
   }
 
   public PersonBuilder age(final int age) {
-    fieldValue.age = age;
-    callSetterFor.age = true;
+    this.fieldValue.age = age;
+    this.callSetterFor.age = true;
     return this;
   }
 
   public PersonBuilder attributes(final List<Object> attributes) {
-    fieldValue.attributes = attributes;
-    callSetterFor.attributes = true;
+    this.fieldValue.attributes = attributes;
+    this.callSetterFor.attributes = true;
     return this;
   }
 
   public PersonBuilder married(final boolean married) {
-    fieldValue.married = married;
-    callSetterFor.married = true;
+    this.fieldValue.married = married;
+    this.callSetterFor.married = true;
     return this;
   }
 
   public PersonBuilder married(final String married0) {
-    fieldValue.married0 = married0;
-    callSetterFor.married0 = true;
+    this.fieldValue.married0 = married0;
+    this.callSetterFor.married0 = true;
     return this;
   }
 
   public PersonBuilder names(final String[] names) {
-    fieldValue.names = names;
-    callSetterFor.names = true;
+    this.fieldValue.names = names;
+    this.callSetterFor.names = true;
     return this;
   }
 
   public PersonBuilder pets(final Set<Pet> pets) {
-    fieldValue.pets = pets;
-    callSetterFor.pets = true;
+    this.fieldValue.pets = pets;
+    this.callSetterFor.pets = true;
     return this;
   }
 
   public PersonBuilder relations(final Map<String, Person> relations) {
-    fieldValue.relations = relations;
-    callSetterFor.relations = true;
+    this.fieldValue.relations = relations;
+    this.callSetterFor.relations = true;
     return this;
   }
 
   public Person build() {
-    if (objectToBuild == null) {
-      objectToBuild = new Person();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new Person();
     }
-    if (callSetterFor.age) {
-      objectToBuild.setAge(fieldValue.age);
+    if (this.callSetterFor.age) {
+      this.objectToBuild.setAge(this.fieldValue.age);
     }
-    if (callSetterFor.attributes) {
-      objectToBuild.setAttributes(fieldValue.attributes);
+    if (this.callSetterFor.attributes) {
+      this.objectToBuild.setAttributes(this.fieldValue.attributes);
     }
-    if (callSetterFor.married) {
-      objectToBuild.setMarried(fieldValue.married);
+    if (this.callSetterFor.married) {
+      this.objectToBuild.setMarried(this.fieldValue.married);
     }
-    if (callSetterFor.married0) {
-      objectToBuild.setMarried(fieldValue.married0);
+    if (this.callSetterFor.married0) {
+      this.objectToBuild.setMarried(this.fieldValue.married0);
     }
-    if (callSetterFor.names) {
-      objectToBuild.setNames(fieldValue.names);
+    if (this.callSetterFor.names) {
+      this.objectToBuild.setNames(this.fieldValue.names);
     }
-    if (callSetterFor.pets) {
-      objectToBuild.setPets(fieldValue.pets);
+    if (this.callSetterFor.pets) {
+      this.objectToBuild.setPets(this.fieldValue.pets);
     }
-    if (callSetterFor.relations) {
-      objectToBuild.setRelations(fieldValue.relations);
+    if (this.callSetterFor.relations) {
+      this.objectToBuild.setRelations(this.fieldValue.relations);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

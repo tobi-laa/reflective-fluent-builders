@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -11,6 +12,7 @@ public class FirstSuperClassBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private FirstSuperClass objectToBuild;
@@ -37,46 +39,46 @@ public class FirstSuperClassBuilder {
   }
 
   public FirstSuperClassBuilder eight(final int eight) {
-    fieldValue.eight = eight;
-    callSetterFor.eight = true;
+    this.fieldValue.eight = eight;
+    this.callSetterFor.eight = true;
     return this;
   }
 
   public FirstSuperClassBuilder four(final int four) {
-    fieldValue.four = four;
-    callSetterFor.four = true;
+    this.fieldValue.four = four;
+    this.callSetterFor.four = true;
     return this;
   }
 
   public FirstSuperClassBuilder seven(final int seven) {
-    fieldValue.seven = seven;
-    callSetterFor.seven = true;
+    this.fieldValue.seven = seven;
+    this.callSetterFor.seven = true;
     return this;
   }
 
   public FirstSuperClassBuilder two(final int two) {
-    fieldValue.two = two;
-    callSetterFor.two = true;
+    this.fieldValue.two = two;
+    this.callSetterFor.two = true;
     return this;
   }
 
   public FirstSuperClass build() {
-    if (objectToBuild == null) {
-      objectToBuild = new FirstSuperClass();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new FirstSuperClass();
     }
-    if (callSetterFor.eight) {
-      objectToBuild.setEight(fieldValue.eight);
+    if (this.callSetterFor.eight) {
+      this.objectToBuild.setEight(this.fieldValue.eight);
     }
-    if (callSetterFor.four) {
-      objectToBuild.setFour(fieldValue.four);
+    if (this.callSetterFor.four) {
+      this.objectToBuild.setFour(this.fieldValue.four);
     }
-    if (callSetterFor.seven) {
-      objectToBuild.setSeven(fieldValue.seven);
+    if (this.callSetterFor.seven) {
+      this.objectToBuild.setSeven(this.fieldValue.seven);
     }
-    if (callSetterFor.two) {
-      objectToBuild.setTwo(fieldValue.two);
+    if (this.callSetterFor.two) {
+      this.objectToBuild.setTwo(this.fieldValue.two);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {
