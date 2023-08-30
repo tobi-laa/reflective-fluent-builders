@@ -69,16 +69,16 @@ class BuildMethodCodeGeneratorImplTest {
                                 .build(), //
                         String.format(
                                 "public %1$s build() {\n" +
-                                        "  if (objectToBuild == null) {\n" +
-                                        "    objectToBuild = new %1$s();\n" +
+                                        "  if (this.objectToBuild == null) {\n" +
+                                        "    this.objectToBuild = new %1$s();\n" +
                                         "  }\n" +
-                                        "  if (callSetterFor.anInt) {\n" +
-                                        "    objectToBuild.setAnInt(fieldValue.anInt);\n" +
+                                        "  if (this.callSetterFor.anInt) {\n" +
+                                        "    this.objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
                                         "  }\n" +
-                                        "  if (callSetterFor.floats) {\n" +
-                                        "    objectToBuild.setFloats(fieldValue.floats);\n" +
+                                        "  if (this.callSetterFor.floats) {\n" +
+                                        "    this.objectToBuild.setFloats(this.fieldValue.floats);\n" +
                                         "  }\n" +
-                                        "  return objectToBuild;\n" +
+                                        "  return this.objectToBuild;\n" +
                                         "}\n",
                                 SimpleClass.class.getName())),
                 Arguments.of(
@@ -109,13 +109,13 @@ class BuildMethodCodeGeneratorImplTest {
                                 .build(), //
                         String.format("public %1$s build(\n" +
                                         "    ) {\n" +
-                                        "  if (callSetterFor.list) {\n" +
-                                        "    objectToBuild.setList(fieldValue.list);\n" +
+                                        "  if (this.callSetterFor.list) {\n" +
+                                        "    this.objectToBuild.setList(this.fieldValue.list);\n" +
                                         "  }\n" +
-                                        "  if (callSetterFor.sortedMap) {\n" +
-                                        "    objectToBuild.setSortedMap(fieldValue.sortedMap);\n" +
+                                        "  if (this.callSetterFor.sortedMap) {\n" +
+                                        "    this.objectToBuild.setSortedMap(this.fieldValue.sortedMap);\n" +
                                         "  }\n" +
-                                        "  return objectToBuild;\n" +
+                                        "  return this.objectToBuild;\n" +
                                         "}\n",
                                 ClassWithHierarchy.class.getName())),
                 Arguments.of(
@@ -136,10 +136,10 @@ class BuildMethodCodeGeneratorImplTest {
                                         .build()) //
                                 .build(), //
                         String.format("public %1$s build() {\n" +
-                                        "  if (callSetterFor.siblings && fieldValue.siblings != null) {\n" +
-                                        "    fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);\n" +
+                                        "  if (this.callSetterFor.siblings && this.fieldValue.siblings != null) {\n" +
+                                        "    this.fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);\n" +
                                         "  }\n" +
-                                        "  return objectToBuild;\n" +
+                                        "  return this.objectToBuild;\n" +
                                         "}\n",
                                 PetJaxb.class.getName())));
     }

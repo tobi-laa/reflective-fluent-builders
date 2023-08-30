@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.Generated;
 
@@ -11,6 +12,7 @@ public class NestedPublicLevelTwoBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo objectToBuild;
@@ -19,13 +21,17 @@ public class NestedPublicLevelTwoBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private NestedPublicLevelTwoBuilder(
+  protected NestedPublicLevelTwoBuilder(
       final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected NestedPublicLevelTwoBuilder() {
+    // noop
+  }
+
   public static NestedPublicLevelTwoBuilder newInstance() {
-    return new NestedPublicLevelTwoBuilder(null);
+    return new NestedPublicLevelTwoBuilder();
   }
 
   public static NestedPublicLevelTwoBuilder thatModifies(
@@ -36,19 +42,19 @@ public class NestedPublicLevelTwoBuilder {
 
   public NestedPublicLevelTwoBuilder nested(
       final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree nested) {
-    fieldValue.nested = nested;
-    callSetterFor.nested = true;
+    this.fieldValue.nested = nested;
+    this.callSetterFor.nested = true;
     return this;
   }
 
   public TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo();
     }
-    if (callSetterFor.nested) {
-      objectToBuild.setNested(fieldValue.nested);
+    if (this.callSetterFor.nested) {
+      this.objectToBuild.setNested(this.fieldValue.nested);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

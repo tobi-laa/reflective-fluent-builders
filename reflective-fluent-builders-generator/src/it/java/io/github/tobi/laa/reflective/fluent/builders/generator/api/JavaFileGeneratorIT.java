@@ -74,6 +74,7 @@ class JavaFileGeneratorIT {
                 "package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;\n" +
                         "\n" +
                         "import java.lang.Float;\n" +
+                        "import java.lang.SuppressWarnings;\n" +
                         "import java.util.ArrayList;\n" +
                         "import java.util.List;\n" +
                         "import java.util.Objects;\n" +
@@ -87,6 +88,7 @@ class JavaFileGeneratorIT {
                         "  /**\n" +
                         "   * This field is solely used to be able to detect generated builders via reflection at a later stage.\n" +
                         "   */\n" +
+                        "  @SuppressWarnings(\"unused\")\n" +
                         "  private boolean ______generatedByReflectiveFluentBuildersGenerator;\n" +
                         "\n" +
                         "  private ClassWithGenerics objectToBuild;\n" +
@@ -95,12 +97,16 @@ class JavaFileGeneratorIT {
                         "\n" +
                         "  private final FieldValue fieldValue = new FieldValue();\n" +
                         "\n" +
-                        "  private ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {\n" +
+                        "  protected ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {\n" +
                         "    this.objectToBuild = objectToBuild;\n" +
                         "  }\n" +
                         "\n" +
+                        "  protected ClassWithGenericsBuilder() {\n" +
+                        "    // noop\n" +
+                        "  }\n" +
+                        "\n" +
                         "  public static ClassWithGenericsBuilder newInstance() {\n" +
-                        "    return new ClassWithGenericsBuilder(null);\n" +
+                        "    return new ClassWithGenericsBuilder();\n" +
                         "  }\n" +
                         "\n" +
                         "  public static ClassWithGenericsBuilder thatModifies(final ClassWithGenerics objectToModify) {\n" +
@@ -113,37 +119,37 @@ class JavaFileGeneratorIT {
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenericsBuilder anInt(final int anInt) {\n" +
-                        "    fieldValue.anInt = anInt;\n" +
-                        "    callSetterFor.anInt = true;\n" +
+                        "    this.fieldValue.anInt = anInt;\n" +
+                        "    this.callSetterFor.anInt = true;\n" +
                         "    return this;\n" +
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenericsBuilder floats(final float[] floats) {\n" +
-                        "    fieldValue.floats = floats;\n" +
-                        "    callSetterFor.floats = true;\n" +
+                        "    this.fieldValue.floats = floats;\n" +
+                        "    this.callSetterFor.floats = true;\n" +
                         "    return this;\n" +
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenericsBuilder t(final T t) {\n" +
-                        "    fieldValue.t = t;\n" +
-                        "    callSetterFor.t = true;\n" +
+                        "    this.fieldValue.t = t;\n" +
+                        "    this.callSetterFor.t = true;\n" +
                         "    return this;\n" +
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenerics build() {\n" +
-                        "    if (objectToBuild == null) {\n" +
-                        "      objectToBuild = new ClassWithGenerics();\n" +
+                        "    if (this.objectToBuild == null) {\n" +
+                        "      this.objectToBuild = new ClassWithGenerics();\n" +
                         "    }\n" +
-                        "    if (callSetterFor.anInt) {\n" +
-                        "      objectToBuild.setAnInt(fieldValue.anInt);\n" +
+                        "    if (this.callSetterFor.anInt) {\n" +
+                        "      this.objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
                         "    }\n" +
-                        "    if (callSetterFor.floats) {\n" +
-                        "      objectToBuild.setFloats(fieldValue.floats);\n" +
+                        "    if (this.callSetterFor.floats) {\n" +
+                        "      this.objectToBuild.setFloats(this.fieldValue.floats);\n" +
                         "    }\n" +
-                        "    if (callSetterFor.t) {\n" +
-                        "      objectToBuild.setT(fieldValue.t);\n" +
+                        "    if (this.callSetterFor.t) {\n" +
+                        "      this.objectToBuild.setT(this.fieldValue.t);\n" +
                         "    }\n" +
-                        "    return objectToBuild;\n" +
+                        "    return this.objectToBuild;\n" +
                         "  }\n" +
                         "\n" +
                         "  private class CallSetterFor {\n" +

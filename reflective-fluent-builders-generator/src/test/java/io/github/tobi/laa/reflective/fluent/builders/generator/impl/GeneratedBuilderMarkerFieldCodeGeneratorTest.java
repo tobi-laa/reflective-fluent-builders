@@ -32,6 +32,7 @@ class GeneratedBuilderMarkerFieldCodeGeneratorTest {
                         "/**\n" + //
                                 " * This field is solely used to be able to detect generated builders via reflection at a later stage.\n" + //
                                 " */\n" + //
+                                "@java.lang.SuppressWarnings(\"unused\")\n" + //
                                 "private boolean %s;\n", //
                         GENERATED_BUILDER_MARKER_FIELD_NAME));
     }

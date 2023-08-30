@@ -16,9 +16,9 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ConstructorCodeGeneratorTest {
+class ConstructorWithObjectToBuildCodeGeneratorTest {
 
-    private final ConstructorCodeGenerator generator = new ConstructorCodeGenerator();
+    private final ConstructorWithObjectToBuildCodeGenerator generator = new ConstructorWithObjectToBuildCodeGenerator();
 
     @Test
     void testGenerateNull() {
@@ -51,7 +51,7 @@ class ConstructorCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        "private Constructor(\n" +
+                        "protected Constructor(\n" +
                                 "    final io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass objectToBuild) {\n" +
                                 "  this.objectToBuild = objectToBuild;\n" +
                                 "}\n"),
@@ -64,13 +64,9 @@ class ConstructorCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build(), //
-                        "private Constructor(\n" +
+                        "protected Constructor(\n" +
                                 "    final io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy objectToBuild) {\n" +
                                 "  this.objectToBuild = objectToBuild;\n" +
                                 "}\n"));
-    }
-
-    private static class MockType {
-        // no content
     }
 }

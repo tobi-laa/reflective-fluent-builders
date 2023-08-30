@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy;
 
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.Generated;
 
@@ -11,6 +12,7 @@ public class ParentBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private Parent objectToBuild;
@@ -19,12 +21,16 @@ public class ParentBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ParentBuilder(final Parent objectToBuild) {
+  protected ParentBuilder(final Parent objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ParentBuilder() {
+    // noop
+  }
+
   public static ParentBuilder newInstance() {
-    return new ParentBuilder(null);
+    return new ParentBuilder();
   }
 
   public static ParentBuilder thatModifies(final Parent objectToModify) {
@@ -33,19 +39,19 @@ public class ParentBuilder {
   }
 
   public ParentBuilder parentField(final int parentField) {
-    fieldValue.parentField = parentField;
-    callSetterFor.parentField = true;
+    this.fieldValue.parentField = parentField;
+    this.callSetterFor.parentField = true;
     return this;
   }
 
   public Parent build() {
-    if (objectToBuild == null) {
-      objectToBuild = new Parent();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new Parent();
     }
-    if (callSetterFor.parentField) {
-      objectToBuild.setParentField(fieldValue.parentField);
+    if (this.callSetterFor.parentField) {
+      this.objectToBuild.setParentField(this.fieldValue.parentField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

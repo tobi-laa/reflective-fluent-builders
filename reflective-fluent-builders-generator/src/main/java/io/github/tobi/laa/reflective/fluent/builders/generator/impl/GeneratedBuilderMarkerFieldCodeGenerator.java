@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.FieldCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
@@ -21,6 +22,9 @@ class GeneratedBuilderMarkerFieldCodeGenerator implements FieldCodeGenerator {
     @Override
     public FieldSpec generate(final BuilderMetadata builderMetadata) {
         return FieldSpec.builder(boolean.class, GENERATED_BUILDER_MARKER_FIELD_NAME, PRIVATE)
+                .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
+                        .addMember("value", "$S", "unused")
+                        .build())
                 .addJavadoc("This field is solely used to be able to detect generated builders via reflection at a later stage.")
                 .build();
     }

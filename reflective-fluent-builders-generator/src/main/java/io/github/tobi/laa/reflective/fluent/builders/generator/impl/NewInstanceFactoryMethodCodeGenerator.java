@@ -36,7 +36,7 @@ class NewInstanceFactoryMethodCodeGenerator implements MethodCodeGenerator {
             return Optional.of(MethodSpec.methodBuilder("newInstance")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .returns(builderClassName)
-                    .addStatement("return new $T(null)", builderClassName)
+                    .addStatement("return new $T()", builderClassName)
                     .build());
         } else {
             return Optional.empty();

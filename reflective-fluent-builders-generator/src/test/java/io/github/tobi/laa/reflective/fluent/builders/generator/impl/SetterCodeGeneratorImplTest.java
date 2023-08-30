@@ -127,8 +127,8 @@ class SetterCodeGeneratorImplTest {
                         String.format(
                                 "public %1$s anInt(\n" +
                                         "    final %1$s anInt) {\n" +
-                                        "  fieldValue.anInt = anInt;\n" +
-                                        "  callSetterFor.anInt = true;\n" +
+                                        "  this.fieldValue.anInt = anInt;\n" +
+                                        "  this.callSetterFor.anInt = true;\n" +
                                         "  return this;\n" +
                                         "}\n",
                                 mockTypeName)), //
@@ -145,8 +145,8 @@ class SetterCodeGeneratorImplTest {
                         String.format(
                                 "public %1$s floats(\n" +
                                         "    final %1$s floats) {\n" +
-                                        "  fieldValue.floats = floats;\n" +
-                                        "  callSetterFor.floats = true;\n" +
+                                        "  this.fieldValue.floats = floats;\n" +
+                                        "  this.callSetterFor.floats = true;\n" +
                                         "  return this;\n" +
                                         "}\n",
                                 mockTypeName)), //
@@ -164,8 +164,8 @@ class SetterCodeGeneratorImplTest {
                         String.format(
                                 "public %1$s sortedMap(\n" +
                                         "    final %1$s sortedMap) {\n" +
-                                        "  fieldValue.sortedMap = sortedMap;\n" +
-                                        "  callSetterFor.sortedMap = true;\n" +
+                                        "  this.fieldValue.sortedMap = sortedMap;\n" +
+                                        "  this.callSetterFor.sortedMap = true;\n" +
                                         "  return this;\n" +
                                         "}\n",
                                 mockTypeName)), //
@@ -182,8 +182,8 @@ class SetterCodeGeneratorImplTest {
                         String.format(
                                 "public %1$s list(\n" +
                                         "    final %1$s list) {\n" +
-                                        "  fieldValue.list = list;\n" +
-                                        "  callSetterFor.list = true;\n" +
+                                        "  this.fieldValue.list = list;\n" +
+                                        "  this.callSetterFor.list = true;\n" +
                                         "  return this;\n" +
                                         "}\n",
                                 mockTypeName)), //
@@ -200,8 +200,8 @@ class SetterCodeGeneratorImplTest {
                         String.format(
                                 "public %1$s list(\n" +
                                         "    final %1$s list) {\n" +
-                                        "  fieldValue.list = list;\n" +
-                                        "  callSetterFor.list = true;\n" +
+                                        "  this.fieldValue.list = list;\n" +
+                                        "  this.callSetterFor.list = true;\n" +
                                         "  return this;\n" +
                                         "}\n",
                                 mockTypeName)));

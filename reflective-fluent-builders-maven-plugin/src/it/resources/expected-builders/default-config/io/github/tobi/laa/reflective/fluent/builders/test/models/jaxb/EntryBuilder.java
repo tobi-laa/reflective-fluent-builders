@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb;
 
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.Generated;
 
@@ -12,6 +13,7 @@ public class EntryBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private PersonJaxb.Relations.Entry objectToBuild;
@@ -20,12 +22,16 @@ public class EntryBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private EntryBuilder(final PersonJaxb.Relations.Entry objectToBuild) {
+  protected EntryBuilder(final PersonJaxb.Relations.Entry objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected EntryBuilder() {
+    // noop
+  }
+
   public static EntryBuilder newInstance() {
-    return new EntryBuilder(null);
+    return new EntryBuilder();
   }
 
   public static EntryBuilder thatModifies(final PersonJaxb.Relations.Entry objectToModify) {
@@ -34,28 +40,28 @@ public class EntryBuilder {
   }
 
   public EntryBuilder key(final String key) {
-    fieldValue.key = key;
-    callSetterFor.key = true;
+    this.fieldValue.key = key;
+    this.callSetterFor.key = true;
     return this;
   }
 
   public EntryBuilder value(final PersonJaxb value) {
-    fieldValue.value = value;
-    callSetterFor.value = true;
+    this.fieldValue.value = value;
+    this.callSetterFor.value = true;
     return this;
   }
 
   public PersonJaxb.Relations.Entry build() {
-    if (objectToBuild == null) {
-      objectToBuild = new PersonJaxb.Relations.Entry();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new PersonJaxb.Relations.Entry();
     }
-    if (callSetterFor.key) {
-      objectToBuild.setKey(fieldValue.key);
+    if (this.callSetterFor.key) {
+      this.objectToBuild.setKey(this.fieldValue.key);
     }
-    if (callSetterFor.value) {
-      objectToBuild.setValue(fieldValue.value);
+    if (this.callSetterFor.value) {
+      this.objectToBuild.setValue(this.fieldValue.value);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {
