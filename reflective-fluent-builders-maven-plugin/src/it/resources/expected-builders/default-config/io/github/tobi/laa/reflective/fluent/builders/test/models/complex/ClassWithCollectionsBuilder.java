@@ -93,100 +93,100 @@ public class ClassWithCollectionsBuilder<T, U> {
   }
 
   public ClassWithCollectionsBuilder deque(final Deque<Object> deque) {
-    fieldValue.deque = deque;
-    callSetterFor.deque = true;
+    this.fieldValue.deque = deque;
+    this.callSetterFor.deque = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder floats(final float[] floats) {
-    fieldValue.floats = floats;
-    callSetterFor.floats = true;
+    this.fieldValue.floats = floats;
+    this.callSetterFor.floats = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder ints(final Collection<Integer> ints) {
-    fieldValue.ints = ints;
-    callSetterFor.ints = true;
+    this.fieldValue.ints = ints;
+    this.callSetterFor.ints = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder list(final List<Object> list) {
-    fieldValue.list = list;
-    callSetterFor.list = true;
+    this.fieldValue.list = list;
+    this.callSetterFor.list = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder map(final Map<String, Object> map) {
-    fieldValue.map = map;
-    callSetterFor.map = true;
+    this.fieldValue.map = map;
+    this.callSetterFor.map = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder mapNoTypeArgs(final Map<Object, Object> mapNoTypeArgs) {
-    fieldValue.mapNoTypeArgs = mapNoTypeArgs;
-    callSetterFor.mapNoTypeArgs = true;
+    this.fieldValue.mapNoTypeArgs = mapNoTypeArgs;
+    this.callSetterFor.mapNoTypeArgs = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder mapTU(final Map<T, U> mapTU) {
-    fieldValue.mapTU = mapTU;
-    callSetterFor.mapTU = true;
+    this.fieldValue.mapTU = mapTU;
+    this.callSetterFor.mapTU = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder mapWildObj(final Map<Object, Object> mapWildObj) {
-    fieldValue.mapWildObj = mapWildObj;
-    callSetterFor.mapWildObj = true;
+    this.fieldValue.mapWildObj = mapWildObj;
+    this.callSetterFor.mapWildObj = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder set(final Set<List> set) {
-    fieldValue.set = set;
-    callSetterFor.set = true;
+    this.fieldValue.set = set;
+    this.callSetterFor.set = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder sortedSetWild(final SortedSet<Object> sortedSetWild) {
-    fieldValue.sortedSetWild = sortedSetWild;
-    callSetterFor.sortedSetWild = true;
+    this.fieldValue.sortedSetWild = sortedSetWild;
+    this.callSetterFor.sortedSetWild = true;
     return this;
   }
 
   public ClassWithCollections build() {
-    if (objectToBuild == null) {
-      objectToBuild = new ClassWithCollections();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new ClassWithCollections();
     }
-    if (callSetterFor.deque) {
-      objectToBuild.setDeque(fieldValue.deque);
+    if (this.callSetterFor.deque) {
+      this.objectToBuild.setDeque(this.fieldValue.deque);
     }
-    if (callSetterFor.floats) {
-      objectToBuild.setFloats(fieldValue.floats);
+    if (this.callSetterFor.floats) {
+      this.objectToBuild.setFloats(this.fieldValue.floats);
     }
-    if (callSetterFor.ints) {
-      objectToBuild.setInts(fieldValue.ints);
+    if (this.callSetterFor.ints) {
+      this.objectToBuild.setInts(this.fieldValue.ints);
     }
-    if (callSetterFor.list) {
-      objectToBuild.setList(fieldValue.list);
+    if (this.callSetterFor.list) {
+      this.objectToBuild.setList(this.fieldValue.list);
     }
-    if (callSetterFor.map) {
-      objectToBuild.setMap(fieldValue.map);
+    if (this.callSetterFor.map) {
+      this.objectToBuild.setMap(this.fieldValue.map);
     }
-    if (callSetterFor.mapNoTypeArgs) {
-      objectToBuild.setMapNoTypeArgs(fieldValue.mapNoTypeArgs);
+    if (this.callSetterFor.mapNoTypeArgs) {
+      this.objectToBuild.setMapNoTypeArgs(this.fieldValue.mapNoTypeArgs);
     }
-    if (callSetterFor.mapTU) {
-      objectToBuild.setMapTU(fieldValue.mapTU);
+    if (this.callSetterFor.mapTU) {
+      this.objectToBuild.setMapTU(this.fieldValue.mapTU);
     }
-    if (callSetterFor.mapWildObj) {
-      objectToBuild.setMapWildObj(fieldValue.mapWildObj);
+    if (this.callSetterFor.mapWildObj) {
+      this.objectToBuild.setMapWildObj(this.fieldValue.mapWildObj);
     }
-    if (callSetterFor.set) {
-      objectToBuild.setSet(fieldValue.set);
+    if (this.callSetterFor.set) {
+      this.objectToBuild.setSet(this.fieldValue.set);
     }
-    if (callSetterFor.sortedSetWild) {
-      objectToBuild.setSortedSetWild(fieldValue.sortedSetWild);
+    if (this.callSetterFor.sortedSetWild) {
+      this.objectToBuild.setSortedSetWild(this.fieldValue.sortedSetWild);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

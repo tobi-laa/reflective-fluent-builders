@@ -49,46 +49,46 @@ public class GenericParentBuilder<R, S, T> {
   }
 
   public GenericParentBuilder generic(final Generic<T> generic) {
-    fieldValue.generic = generic;
-    callSetterFor.generic = true;
+    this.fieldValue.generic = generic;
+    this.callSetterFor.generic = true;
     return this;
   }
 
   public GenericParentBuilder list(final List<R> list) {
-    fieldValue.list = list;
-    callSetterFor.list = true;
+    this.fieldValue.list = list;
+    this.callSetterFor.list = true;
     return this;
   }
 
   public GenericParentBuilder map(final Map<S, T> map) {
-    fieldValue.map = map;
-    callSetterFor.map = true;
+    this.fieldValue.map = map;
+    this.callSetterFor.map = true;
     return this;
   }
 
   public GenericParentBuilder otherGeneric(final Generic<R> otherGeneric) {
-    fieldValue.otherGeneric = otherGeneric;
-    callSetterFor.otherGeneric = true;
+    this.fieldValue.otherGeneric = otherGeneric;
+    this.callSetterFor.otherGeneric = true;
     return this;
   }
 
   public GenericParent build() {
-    if (objectToBuild == null) {
-      objectToBuild = new GenericParent();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new GenericParent();
     }
-    if (callSetterFor.generic) {
-      objectToBuild.setGeneric(fieldValue.generic);
+    if (this.callSetterFor.generic) {
+      this.objectToBuild.setGeneric(this.fieldValue.generic);
     }
-    if (callSetterFor.list) {
-      objectToBuild.setList(fieldValue.list);
+    if (this.callSetterFor.list) {
+      this.objectToBuild.setList(this.fieldValue.list);
     }
-    if (callSetterFor.map) {
-      objectToBuild.setMap(fieldValue.map);
+    if (this.callSetterFor.map) {
+      this.objectToBuild.setMap(this.fieldValue.map);
     }
-    if (callSetterFor.otherGeneric) {
-      objectToBuild.setOtherGeneric(fieldValue.otherGeneric);
+    if (this.callSetterFor.otherGeneric) {
+      this.objectToBuild.setOtherGeneric(this.fieldValue.otherGeneric);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

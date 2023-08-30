@@ -115,37 +115,37 @@ class JavaFileGeneratorIT {
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenericsBuilder anInt(final int anInt) {\n" +
-                        "    fieldValue.anInt = anInt;\n" +
-                        "    callSetterFor.anInt = true;\n" +
+                        "    this.fieldValue.anInt = anInt;\n" +
+                        "    this.callSetterFor.anInt = true;\n" +
                         "    return this;\n" +
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenericsBuilder floats(final float[] floats) {\n" +
-                        "    fieldValue.floats = floats;\n" +
-                        "    callSetterFor.floats = true;\n" +
+                        "    this.fieldValue.floats = floats;\n" +
+                        "    this.callSetterFor.floats = true;\n" +
                         "    return this;\n" +
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenericsBuilder t(final T t) {\n" +
-                        "    fieldValue.t = t;\n" +
-                        "    callSetterFor.t = true;\n" +
+                        "    this.fieldValue.t = t;\n" +
+                        "    this.callSetterFor.t = true;\n" +
                         "    return this;\n" +
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenerics build() {\n" +
-                        "    if (objectToBuild == null) {\n" +
-                        "      objectToBuild = new ClassWithGenerics();\n" +
+                        "    if (this.objectToBuild == null) {\n" +
+                        "      this.objectToBuild = new ClassWithGenerics();\n" +
                         "    }\n" +
-                        "    if (callSetterFor.anInt) {\n" +
-                        "      objectToBuild.setAnInt(fieldValue.anInt);\n" +
+                        "    if (this.callSetterFor.anInt) {\n" +
+                        "      this.objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
                         "    }\n" +
-                        "    if (callSetterFor.floats) {\n" +
-                        "      objectToBuild.setFloats(fieldValue.floats);\n" +
+                        "    if (this.callSetterFor.floats) {\n" +
+                        "      this.objectToBuild.setFloats(this.fieldValue.floats);\n" +
                         "    }\n" +
-                        "    if (callSetterFor.t) {\n" +
-                        "      objectToBuild.setT(fieldValue.t);\n" +
+                        "    if (this.callSetterFor.t) {\n" +
+                        "      this.objectToBuild.setT(this.fieldValue.t);\n" +
                         "    }\n" +
-                        "    return objectToBuild;\n" +
+                        "    return this.objectToBuild;\n" +
                         "  }\n" +
                         "\n" +
                         "  private class CallSetterFor {\n" +

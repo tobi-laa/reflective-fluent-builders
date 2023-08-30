@@ -60,55 +60,55 @@ public class GetAndAddBuilder {
   }
 
   public GetAndAddBuilder listGetterAndSetter(final List<String> listGetterAndSetter) {
-    fieldValue.listGetterAndSetter = listGetterAndSetter;
-    callSetterFor.listGetterAndSetter = true;
+    this.fieldValue.listGetterAndSetter = listGetterAndSetter;
+    this.callSetterFor.listGetterAndSetter = true;
     return this;
   }
 
   public GetAndAddBuilder listNoGetter(final List<String> listNoGetter) {
-    fieldValue.listNoGetter = listNoGetter;
-    callSetterFor.listNoGetter = true;
+    this.fieldValue.listNoGetter = listNoGetter;
+    this.callSetterFor.listNoGetter = true;
     return this;
   }
 
   public GetAndAddBuilder listNoSetter(final List<String> listNoSetter) {
-    fieldValue.listNoSetter = listNoSetter;
-    callSetterFor.listNoSetter = true;
+    this.fieldValue.listNoSetter = listNoSetter;
+    this.callSetterFor.listNoSetter = true;
     return this;
   }
 
   public GetAndAddBuilder listSetterWrongType(final String[] listSetterWrongType) {
-    fieldValue.listSetterWrongType = listSetterWrongType;
-    callSetterFor.listSetterWrongType = true;
+    this.fieldValue.listSetterWrongType = listSetterWrongType;
+    this.callSetterFor.listSetterWrongType = true;
     return this;
   }
 
   public GetAndAddBuilder listSetterWrongType(final List<String> listSetterWrongType0) {
-    fieldValue.listSetterWrongType0 = listSetterWrongType0;
-    callSetterFor.listSetterWrongType0 = true;
+    this.fieldValue.listSetterWrongType0 = listSetterWrongType0;
+    this.callSetterFor.listSetterWrongType0 = true;
     return this;
   }
 
   public GetAndAdd build() {
-    if (objectToBuild == null) {
-      objectToBuild = new GetAndAdd();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new GetAndAdd();
     }
-    if (callSetterFor.listGetterAndSetter) {
-      objectToBuild.setListGetterAndSetter(fieldValue.listGetterAndSetter);
+    if (this.callSetterFor.listGetterAndSetter) {
+      this.objectToBuild.setListGetterAndSetter(this.fieldValue.listGetterAndSetter);
     }
-    if (callSetterFor.listNoGetter) {
-      objectToBuild.setListNoGetter(fieldValue.listNoGetter);
+    if (this.callSetterFor.listNoGetter) {
+      this.objectToBuild.setListNoGetter(this.fieldValue.listNoGetter);
     }
-    if (callSetterFor.listNoSetter && fieldValue.listNoSetter != null) {
-      fieldValue.listNoSetter.forEach(objectToBuild.getListNoSetter()::add);
+    if (this.callSetterFor.listNoSetter && this.fieldValue.listNoSetter != null) {
+      this.fieldValue.listNoSetter.forEach(objectToBuild.getListNoSetter()::add);
     }
-    if (callSetterFor.listSetterWrongType) {
-      objectToBuild.setListSetterWrongType(fieldValue.listSetterWrongType);
+    if (this.callSetterFor.listSetterWrongType) {
+      this.objectToBuild.setListSetterWrongType(this.fieldValue.listSetterWrongType);
     }
-    if (callSetterFor.listSetterWrongType0 && fieldValue.listSetterWrongType0 != null) {
-      fieldValue.listSetterWrongType0.forEach(objectToBuild.getListSetterWrongType()::add);
+    if (this.callSetterFor.listSetterWrongType0 && this.fieldValue.listSetterWrongType0 != null) {
+      this.fieldValue.listSetterWrongType0.forEach(objectToBuild.getListSetterWrongType()::add);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

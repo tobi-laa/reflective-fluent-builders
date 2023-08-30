@@ -43,19 +43,19 @@ public class RelationsBuilder {
   }
 
   public RelationsBuilder entry(final List<PersonJaxb.Relations.Entry> entry) {
-    fieldValue.entry = entry;
-    callSetterFor.entry = true;
+    this.fieldValue.entry = entry;
+    this.callSetterFor.entry = true;
     return this;
   }
 
   public PersonJaxb.Relations build() {
-    if (objectToBuild == null) {
-      objectToBuild = new PersonJaxb.Relations();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new PersonJaxb.Relations();
     }
-    if (callSetterFor.entry && fieldValue.entry != null) {
-      fieldValue.entry.forEach(objectToBuild.getEntry()::add);
+    if (this.callSetterFor.entry && this.fieldValue.entry != null) {
+      this.fieldValue.entry.forEach(objectToBuild.getEntry()::add);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

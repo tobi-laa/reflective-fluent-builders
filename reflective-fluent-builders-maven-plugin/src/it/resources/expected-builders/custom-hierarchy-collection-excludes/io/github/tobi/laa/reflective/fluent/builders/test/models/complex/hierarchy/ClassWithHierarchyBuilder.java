@@ -37,28 +37,28 @@ public class ClassWithHierarchyBuilder {
   }
 
   public ClassWithHierarchyBuilder one(final int one) {
-    fieldValue.one = one;
-    callSetterFor.one = true;
+    this.fieldValue.one = one;
+    this.callSetterFor.one = true;
     return this;
   }
 
   public ClassWithHierarchyBuilder three(final int three) {
-    fieldValue.three = three;
-    callSetterFor.three = true;
+    this.fieldValue.three = three;
+    this.callSetterFor.three = true;
     return this;
   }
 
   public ClassWithHierarchy build() {
-    if (objectToBuild == null) {
-      objectToBuild = new ClassWithHierarchy();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new ClassWithHierarchy();
     }
-    if (callSetterFor.one) {
-      objectToBuild.setOne(fieldValue.one);
+    if (this.callSetterFor.one) {
+      this.objectToBuild.setOne(this.fieldValue.one);
     }
-    if (callSetterFor.three) {
-      objectToBuild.setThree(fieldValue.three);
+    if (this.callSetterFor.three) {
+      this.objectToBuild.setThree(this.fieldValue.three);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

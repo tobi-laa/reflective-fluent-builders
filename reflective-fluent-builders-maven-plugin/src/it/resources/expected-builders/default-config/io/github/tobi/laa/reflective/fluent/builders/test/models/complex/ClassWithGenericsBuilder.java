@@ -44,37 +44,37 @@ public class ClassWithGenericsBuilder<T> {
   }
 
   public ClassWithGenericsBuilder anInt(final int anInt) {
-    fieldValue.anInt = anInt;
-    callSetterFor.anInt = true;
+    this.fieldValue.anInt = anInt;
+    this.callSetterFor.anInt = true;
     return this;
   }
 
   public ClassWithGenericsBuilder floats(final float[] floats) {
-    fieldValue.floats = floats;
-    callSetterFor.floats = true;
+    this.fieldValue.floats = floats;
+    this.callSetterFor.floats = true;
     return this;
   }
 
   public ClassWithGenericsBuilder t(final T t) {
-    fieldValue.t = t;
-    callSetterFor.t = true;
+    this.fieldValue.t = t;
+    this.callSetterFor.t = true;
     return this;
   }
 
   public ClassWithGenerics build() {
-    if (objectToBuild == null) {
-      objectToBuild = new ClassWithGenerics();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new ClassWithGenerics();
     }
-    if (callSetterFor.anInt) {
-      objectToBuild.setAnInt(fieldValue.anInt);
+    if (this.callSetterFor.anInt) {
+      this.objectToBuild.setAnInt(this.fieldValue.anInt);
     }
-    if (callSetterFor.floats) {
-      objectToBuild.setFloats(fieldValue.floats);
+    if (this.callSetterFor.floats) {
+      this.objectToBuild.setFloats(this.fieldValue.floats);
     }
-    if (callSetterFor.t) {
-      objectToBuild.setT(fieldValue.t);
+    if (this.callSetterFor.t) {
+      this.objectToBuild.setT(this.fieldValue.t);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

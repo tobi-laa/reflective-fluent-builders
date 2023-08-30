@@ -38,28 +38,28 @@ public class EntryBuilder {
   }
 
   public EntryBuilder key(final String key) {
-    fieldValue.key = key;
-    callSetterFor.key = true;
+    this.fieldValue.key = key;
+    this.callSetterFor.key = true;
     return this;
   }
 
   public EntryBuilder value(final PersonJaxb value) {
-    fieldValue.value = value;
-    callSetterFor.value = true;
+    this.fieldValue.value = value;
+    this.callSetterFor.value = true;
     return this;
   }
 
   public PersonJaxb.Relations.Entry build() {
-    if (objectToBuild == null) {
-      objectToBuild = new PersonJaxb.Relations.Entry();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new PersonJaxb.Relations.Entry();
     }
-    if (callSetterFor.key) {
-      objectToBuild.setKey(fieldValue.key);
+    if (this.callSetterFor.key) {
+      this.objectToBuild.setKey(this.fieldValue.key);
     }
-    if (callSetterFor.value) {
-      objectToBuild.setValue(fieldValue.value);
+    if (this.callSetterFor.value) {
+      this.objectToBuild.setValue(this.fieldValue.value);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

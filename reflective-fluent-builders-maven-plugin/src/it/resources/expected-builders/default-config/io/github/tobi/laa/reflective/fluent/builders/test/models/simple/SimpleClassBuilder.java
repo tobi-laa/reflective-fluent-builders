@@ -39,46 +39,46 @@ public class SimpleClassBuilder {
   }
 
   public SimpleClassBuilder aString(final String aString) {
-    fieldValue.aString = aString;
-    callSetterFor.aString = true;
+    this.fieldValue.aString = aString;
+    this.callSetterFor.aString = true;
     return this;
   }
 
   public SimpleClassBuilder anInt(final int anInt) {
-    fieldValue.anInt = anInt;
-    callSetterFor.anInt = true;
+    this.fieldValue.anInt = anInt;
+    this.callSetterFor.anInt = true;
     return this;
   }
 
   public SimpleClassBuilder booleanField(final boolean booleanField) {
-    fieldValue.booleanField = booleanField;
-    callSetterFor.booleanField = true;
+    this.fieldValue.booleanField = booleanField;
+    this.callSetterFor.booleanField = true;
     return this;
   }
 
   public SimpleClassBuilder setClass(final Class<?> setClass) {
-    fieldValue.setClass = setClass;
-    callSetterFor.setClass = true;
+    this.fieldValue.setClass = setClass;
+    this.callSetterFor.setClass = true;
     return this;
   }
 
   public SimpleClass build() {
-    if (objectToBuild == null) {
-      objectToBuild = new SimpleClass();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new SimpleClass();
     }
-    if (callSetterFor.aString) {
-      objectToBuild.setAString(fieldValue.aString);
+    if (this.callSetterFor.aString) {
+      this.objectToBuild.setAString(this.fieldValue.aString);
     }
-    if (callSetterFor.anInt) {
-      objectToBuild.setAnInt(fieldValue.anInt);
+    if (this.callSetterFor.anInt) {
+      this.objectToBuild.setAnInt(this.fieldValue.anInt);
     }
-    if (callSetterFor.booleanField) {
-      objectToBuild.setBooleanField(fieldValue.booleanField);
+    if (this.callSetterFor.booleanField) {
+      this.objectToBuild.setBooleanField(this.fieldValue.booleanField);
     }
-    if (callSetterFor.setClass) {
-      objectToBuild.setSetClass(fieldValue.setClass);
+    if (this.callSetterFor.setClass) {
+      this.objectToBuild.setSetClass(this.fieldValue.setClass);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

@@ -39,19 +39,19 @@ public class NestedProtectedLevelOneBuilder {
   }
 
   public NestedProtectedLevelOneBuilder field(final int field) {
-    fieldValue.field = field;
-    callSetterFor.field = true;
+    this.fieldValue.field = field;
+    this.callSetterFor.field = true;
     return this;
   }
 
   public TopLevelClass.NestedProtectedLevelOne build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass.NestedProtectedLevelOne();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass.NestedProtectedLevelOne();
     }
-    if (callSetterFor.field) {
-      objectToBuild.setField(fieldValue.field);
+    if (this.callSetterFor.field) {
+      this.objectToBuild.setField(this.fieldValue.field);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

@@ -37,19 +37,19 @@ public class ParentBuilder {
   }
 
   public ParentBuilder parentField(final int parentField) {
-    fieldValue.parentField = parentField;
-    callSetterFor.parentField = true;
+    this.fieldValue.parentField = parentField;
+    this.callSetterFor.parentField = true;
     return this;
   }
 
   public Parent build() {
-    if (objectToBuild == null) {
-      objectToBuild = new Parent();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new Parent();
     }
-    if (callSetterFor.parentField) {
-      objectToBuild.setParentField(fieldValue.parentField);
+    if (this.callSetterFor.parentField) {
+      this.objectToBuild.setParentField(this.fieldValue.parentField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

@@ -44,46 +44,46 @@ public class PetBuilder {
   }
 
   public PetBuilder fullName(final String fullName) {
-    fieldValue.fullName = fullName;
-    callSetterFor.fullName = true;
+    this.fieldValue.fullName = fullName;
+    this.callSetterFor.fullName = true;
     return this;
   }
 
   public PetBuilder owner(final Person owner) {
-    fieldValue.owner = owner;
-    callSetterFor.owner = true;
+    this.fieldValue.owner = owner;
+    this.callSetterFor.owner = true;
     return this;
   }
 
   public PetBuilder siblings(final SortedSet<Pet> siblings) {
-    fieldValue.siblings = siblings;
-    callSetterFor.siblings = true;
+    this.fieldValue.siblings = siblings;
+    this.callSetterFor.siblings = true;
     return this;
   }
 
   public PetBuilder weight(final float weight) {
-    fieldValue.weight = weight;
-    callSetterFor.weight = true;
+    this.fieldValue.weight = weight;
+    this.callSetterFor.weight = true;
     return this;
   }
 
   public Pet build() {
-    if (objectToBuild == null) {
-      objectToBuild = new Pet();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new Pet();
     }
-    if (callSetterFor.fullName) {
-      objectToBuild.setFullName(fieldValue.fullName);
+    if (this.callSetterFor.fullName) {
+      this.objectToBuild.setFullName(this.fieldValue.fullName);
     }
-    if (callSetterFor.owner) {
-      objectToBuild.setOwner(fieldValue.owner);
+    if (this.callSetterFor.owner) {
+      this.objectToBuild.setOwner(this.fieldValue.owner);
     }
-    if (callSetterFor.siblings) {
-      objectToBuild.setSiblings(fieldValue.siblings);
+    if (this.callSetterFor.siblings) {
+      this.objectToBuild.setSiblings(this.fieldValue.siblings);
     }
-    if (callSetterFor.weight) {
-      objectToBuild.setWeight(fieldValue.weight);
+    if (this.callSetterFor.weight) {
+      this.objectToBuild.setWeight(this.fieldValue.weight);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

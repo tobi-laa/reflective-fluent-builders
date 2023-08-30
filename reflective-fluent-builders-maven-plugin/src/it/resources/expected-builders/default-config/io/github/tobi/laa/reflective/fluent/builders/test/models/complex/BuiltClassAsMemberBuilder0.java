@@ -39,19 +39,19 @@ public class BuiltClassAsMemberBuilder0 {
   }
 
   public BuiltClassAsMemberBuilder0 aField(final int aField) {
-    fieldValue.aField = aField;
-    callSetterFor.aField = true;
+    this.fieldValue.aField = aField;
+    this.callSetterFor.aField = true;
     return this;
   }
 
   public BuiltClassAsMemberBuilder.BuiltClassAsMember build() {
-    if (objectToBuild == null) {
-      objectToBuild = new BuiltClassAsMemberBuilder.BuiltClassAsMember();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new BuiltClassAsMemberBuilder.BuiltClassAsMember();
     }
-    if (callSetterFor.aField) {
-      objectToBuild.setAField(fieldValue.aField);
+    if (this.callSetterFor.aField) {
+      this.objectToBuild.setAField(this.fieldValue.aField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

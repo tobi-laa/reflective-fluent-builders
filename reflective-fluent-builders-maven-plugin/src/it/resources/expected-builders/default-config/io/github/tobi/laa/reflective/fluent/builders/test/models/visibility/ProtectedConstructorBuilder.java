@@ -38,19 +38,19 @@ public class ProtectedConstructorBuilder {
   }
 
   public ProtectedConstructorBuilder intField(final int intField) {
-    fieldValue.intField = intField;
-    callSetterFor.intField = true;
+    this.fieldValue.intField = intField;
+    this.callSetterFor.intField = true;
     return this;
   }
 
   public ProtectedConstructor build() {
-    if (objectToBuild == null) {
-      objectToBuild = new ProtectedConstructor();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new ProtectedConstructor();
     }
-    if (callSetterFor.intField) {
-      objectToBuild.setIntField(fieldValue.intField);
+    if (this.callSetterFor.intField) {
+      this.objectToBuild.setIntField(this.fieldValue.intField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

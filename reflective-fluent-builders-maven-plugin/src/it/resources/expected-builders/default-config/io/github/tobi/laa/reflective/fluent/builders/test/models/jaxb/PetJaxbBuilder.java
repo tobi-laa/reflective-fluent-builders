@@ -44,46 +44,46 @@ public class PetJaxbBuilder {
   }
 
   public PetJaxbBuilder fullName(final String fullName) {
-    fieldValue.fullName = fullName;
-    callSetterFor.fullName = true;
+    this.fieldValue.fullName = fullName;
+    this.callSetterFor.fullName = true;
     return this;
   }
 
   public PetJaxbBuilder owner(final PersonJaxb owner) {
-    fieldValue.owner = owner;
-    callSetterFor.owner = true;
+    this.fieldValue.owner = owner;
+    this.callSetterFor.owner = true;
     return this;
   }
 
   public PetJaxbBuilder siblings(final List<PetJaxb> siblings) {
-    fieldValue.siblings = siblings;
-    callSetterFor.siblings = true;
+    this.fieldValue.siblings = siblings;
+    this.callSetterFor.siblings = true;
     return this;
   }
 
   public PetJaxbBuilder weight(final float weight) {
-    fieldValue.weight = weight;
-    callSetterFor.weight = true;
+    this.fieldValue.weight = weight;
+    this.callSetterFor.weight = true;
     return this;
   }
 
   public PetJaxb build() {
-    if (objectToBuild == null) {
-      objectToBuild = new PetJaxb();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new PetJaxb();
     }
-    if (callSetterFor.fullName) {
-      objectToBuild.setFullName(fieldValue.fullName);
+    if (this.callSetterFor.fullName) {
+      this.objectToBuild.setFullName(this.fieldValue.fullName);
     }
-    if (callSetterFor.owner) {
-      objectToBuild.setOwner(fieldValue.owner);
+    if (this.callSetterFor.owner) {
+      this.objectToBuild.setOwner(this.fieldValue.owner);
     }
-    if (callSetterFor.siblings && fieldValue.siblings != null) {
-      fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);
+    if (this.callSetterFor.siblings && this.fieldValue.siblings != null) {
+      this.fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);
     }
-    if (callSetterFor.weight) {
-      objectToBuild.setWeight(fieldValue.weight);
+    if (this.callSetterFor.weight) {
+      this.objectToBuild.setWeight(this.fieldValue.weight);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

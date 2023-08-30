@@ -39,19 +39,19 @@ public class NestedPublicLevelThreeBuilder {
   }
 
   public NestedPublicLevelThreeBuilder field(final int field) {
-    fieldValue.field = field;
-    callSetterFor.field = true;
+    this.fieldValue.field = field;
+    this.callSetterFor.field = true;
     return this;
   }
 
   public TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree();
     }
-    if (callSetterFor.field) {
-      objectToBuild.setField(fieldValue.field);
+    if (this.callSetterFor.field) {
+      this.objectToBuild.setField(this.fieldValue.field);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

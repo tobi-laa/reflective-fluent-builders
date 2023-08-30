@@ -39,19 +39,19 @@ public class NestedPackagePrivateLevelOneBuilder {
   }
 
   public NestedPackagePrivateLevelOneBuilder field(final int field) {
-    fieldValue.field = field;
-    callSetterFor.field = true;
+    this.fieldValue.field = field;
+    this.callSetterFor.field = true;
     return this;
   }
 
   public TopLevelClass.NestedPackagePrivateLevelOne build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass.NestedPackagePrivateLevelOne();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass.NestedPackagePrivateLevelOne();
     }
-    if (callSetterFor.field) {
-      objectToBuild.setField(fieldValue.field);
+    if (this.callSetterFor.field) {
+      this.objectToBuild.setField(this.fieldValue.field);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

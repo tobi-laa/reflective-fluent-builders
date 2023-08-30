@@ -38,19 +38,19 @@ public class DogBuilder {
   }
 
   public DogBuilder name(final String name) {
-    fieldValue.name = name;
-    callSetterFor.name = true;
+    this.fieldValue.name = name;
+    this.callSetterFor.name = true;
     return this;
   }
 
   public Dog build() {
-    if (objectToBuild == null) {
-      objectToBuild = new Dog();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new Dog();
     }
-    if (callSetterFor.name) {
-      objectToBuild.setName(fieldValue.name);
+    if (this.callSetterFor.name) {
+      this.objectToBuild.setName(this.fieldValue.name);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

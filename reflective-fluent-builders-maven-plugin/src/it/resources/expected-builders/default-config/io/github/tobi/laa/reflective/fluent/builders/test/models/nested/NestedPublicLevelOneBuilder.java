@@ -39,19 +39,19 @@ public class NestedPublicLevelOneBuilder {
 
   public NestedPublicLevelOneBuilder nested(
       final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo nested) {
-    fieldValue.nested = nested;
-    callSetterFor.nested = true;
+    this.fieldValue.nested = nested;
+    this.callSetterFor.nested = true;
     return this;
   }
 
   public TopLevelClass.NestedPublicLevelOne build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass.NestedPublicLevelOne();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne();
     }
-    if (callSetterFor.nested) {
-      objectToBuild.setNested(fieldValue.nested);
+    if (this.callSetterFor.nested) {
+      this.objectToBuild.setNested(this.fieldValue.nested);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

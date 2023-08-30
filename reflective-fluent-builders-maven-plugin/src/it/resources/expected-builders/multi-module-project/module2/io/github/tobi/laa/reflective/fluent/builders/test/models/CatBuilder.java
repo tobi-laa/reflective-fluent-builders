@@ -38,19 +38,19 @@ public class CatBuilder {
   }
 
   public CatBuilder fur(final String fur) {
-    fieldValue.fur = fur;
-    callSetterFor.fur = true;
+    this.fieldValue.fur = fur;
+    this.callSetterFor.fur = true;
     return this;
   }
 
   public Cat build() {
-    if (objectToBuild == null) {
-      objectToBuild = new Cat();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new Cat();
     }
-    if (callSetterFor.fur) {
-      objectToBuild.setFur(fieldValue.fur);
+    if (this.callSetterFor.fur) {
+      this.objectToBuild.setFur(this.fieldValue.fur);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

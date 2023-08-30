@@ -37,48 +37,48 @@ public class TopLevelClassBuilder {
   }
 
   public TopLevelClassBuilder nestedNonStatic(final TopLevelClass.NestedNonStatic nestedNonStatic) {
-    fieldValue.nestedNonStatic = nestedNonStatic;
-    callSetterFor.nestedNonStatic = true;
+    this.fieldValue.nestedNonStatic = nestedNonStatic;
+    this.callSetterFor.nestedNonStatic = true;
     return this;
   }
 
   public TopLevelClassBuilder nestedPackagePrivate(
       final TopLevelClass.NestedPackagePrivateLevelOne nestedPackagePrivate) {
-    fieldValue.nestedPackagePrivate = nestedPackagePrivate;
-    callSetterFor.nestedPackagePrivate = true;
+    this.fieldValue.nestedPackagePrivate = nestedPackagePrivate;
+    this.callSetterFor.nestedPackagePrivate = true;
     return this;
   }
 
   public TopLevelClassBuilder nestedProtected(
       final TopLevelClass.NestedProtectedLevelOne nestedProtected) {
-    fieldValue.nestedProtected = nestedProtected;
-    callSetterFor.nestedProtected = true;
+    this.fieldValue.nestedProtected = nestedProtected;
+    this.callSetterFor.nestedProtected = true;
     return this;
   }
 
   public TopLevelClassBuilder nestedPublic(final TopLevelClass.NestedPublicLevelOne nestedPublic) {
-    fieldValue.nestedPublic = nestedPublic;
-    callSetterFor.nestedPublic = true;
+    this.fieldValue.nestedPublic = nestedPublic;
+    this.callSetterFor.nestedPublic = true;
     return this;
   }
 
   public TopLevelClass build() {
-    if (objectToBuild == null) {
-      objectToBuild = new TopLevelClass();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new TopLevelClass();
     }
-    if (callSetterFor.nestedNonStatic) {
-      objectToBuild.setNestedNonStatic(fieldValue.nestedNonStatic);
+    if (this.callSetterFor.nestedNonStatic) {
+      this.objectToBuild.setNestedNonStatic(this.fieldValue.nestedNonStatic);
     }
-    if (callSetterFor.nestedPackagePrivate) {
-      objectToBuild.setNestedPackagePrivate(fieldValue.nestedPackagePrivate);
+    if (this.callSetterFor.nestedPackagePrivate) {
+      this.objectToBuild.setNestedPackagePrivate(this.fieldValue.nestedPackagePrivate);
     }
-    if (callSetterFor.nestedProtected) {
-      objectToBuild.setNestedProtected(fieldValue.nestedProtected);
+    if (this.callSetterFor.nestedProtected) {
+      this.objectToBuild.setNestedProtected(this.fieldValue.nestedProtected);
     }
-    if (callSetterFor.nestedPublic) {
-      objectToBuild.setNestedPublic(fieldValue.nestedPublic);
+    if (this.callSetterFor.nestedPublic) {
+      this.objectToBuild.setNestedPublic(this.fieldValue.nestedPublic);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

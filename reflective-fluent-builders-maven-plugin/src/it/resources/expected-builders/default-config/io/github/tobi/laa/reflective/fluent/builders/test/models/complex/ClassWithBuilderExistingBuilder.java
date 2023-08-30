@@ -30,16 +30,16 @@ public class ClassWithBuilderExistingBuilder {
   }
 
   public ClassWithBuilderExistingBuilder aField(final int aField) {
-    fieldValue.aField = aField;
-    callSetterFor.aField = true;
+    this.fieldValue.aField = aField;
+    this.callSetterFor.aField = true;
     return this;
   }
 
   public ClassWithBuilderExisting build() {
-    if (callSetterFor.aField) {
-      objectToBuild.setAField(fieldValue.aField);
+    if (this.callSetterFor.aField) {
+      this.objectToBuild.setAField(this.fieldValue.aField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

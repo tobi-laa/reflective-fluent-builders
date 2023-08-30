@@ -38,28 +38,28 @@ public class PackagePrivateConstructorBuilder {
   }
 
   public PackagePrivateConstructorBuilder intField(final int intField) {
-    fieldValue.intField = intField;
-    callSetterFor.intField = true;
+    this.fieldValue.intField = intField;
+    this.callSetterFor.intField = true;
     return this;
   }
 
   public PackagePrivateConstructorBuilder packagePrivate(final PackagePrivate packagePrivate) {
-    fieldValue.packagePrivate = packagePrivate;
-    callSetterFor.packagePrivate = true;
+    this.fieldValue.packagePrivate = packagePrivate;
+    this.callSetterFor.packagePrivate = true;
     return this;
   }
 
   public PackagePrivateConstructor build() {
-    if (objectToBuild == null) {
-      objectToBuild = new PackagePrivateConstructor();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new PackagePrivateConstructor();
     }
-    if (callSetterFor.intField) {
-      objectToBuild.setIntField(fieldValue.intField);
+    if (this.callSetterFor.intField) {
+      this.objectToBuild.setIntField(this.fieldValue.intField);
     }
-    if (callSetterFor.packagePrivate) {
-      objectToBuild.setPackagePrivate(fieldValue.packagePrivate);
+    if (this.callSetterFor.packagePrivate) {
+      this.objectToBuild.setPackagePrivate(this.fieldValue.packagePrivate);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

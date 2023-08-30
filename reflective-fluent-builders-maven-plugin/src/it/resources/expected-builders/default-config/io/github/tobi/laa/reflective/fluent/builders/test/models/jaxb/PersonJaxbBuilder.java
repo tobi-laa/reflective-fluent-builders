@@ -53,64 +53,64 @@ public class PersonJaxbBuilder {
   }
 
   public PersonJaxbBuilder age(final int age) {
-    fieldValue.age = age;
-    callSetterFor.age = true;
+    this.fieldValue.age = age;
+    this.callSetterFor.age = true;
     return this;
   }
 
   public PersonJaxbBuilder attributes(final List<Object> attributes) {
-    fieldValue.attributes = attributes;
-    callSetterFor.attributes = true;
+    this.fieldValue.attributes = attributes;
+    this.callSetterFor.attributes = true;
     return this;
   }
 
   public PersonJaxbBuilder married(final boolean married) {
-    fieldValue.married = married;
-    callSetterFor.married = true;
+    this.fieldValue.married = married;
+    this.callSetterFor.married = true;
     return this;
   }
 
   public PersonJaxbBuilder names(final List<String> names) {
-    fieldValue.names = names;
-    callSetterFor.names = true;
+    this.fieldValue.names = names;
+    this.callSetterFor.names = true;
     return this;
   }
 
   public PersonJaxbBuilder pets(final List<PetJaxb> pets) {
-    fieldValue.pets = pets;
-    callSetterFor.pets = true;
+    this.fieldValue.pets = pets;
+    this.callSetterFor.pets = true;
     return this;
   }
 
   public PersonJaxbBuilder relations(final PersonJaxb.Relations relations) {
-    fieldValue.relations = relations;
-    callSetterFor.relations = true;
+    this.fieldValue.relations = relations;
+    this.callSetterFor.relations = true;
     return this;
   }
 
   public PersonJaxb build() {
-    if (objectToBuild == null) {
-      objectToBuild = new PersonJaxb();
+    if (this.objectToBuild == null) {
+      this.objectToBuild = new PersonJaxb();
     }
-    if (callSetterFor.age) {
-      objectToBuild.setAge(fieldValue.age);
+    if (this.callSetterFor.age) {
+      this.objectToBuild.setAge(this.fieldValue.age);
     }
-    if (callSetterFor.attributes && fieldValue.attributes != null) {
-      fieldValue.attributes.forEach(objectToBuild.getAttributes()::add);
+    if (this.callSetterFor.attributes && this.fieldValue.attributes != null) {
+      this.fieldValue.attributes.forEach(objectToBuild.getAttributes()::add);
     }
-    if (callSetterFor.married) {
-      objectToBuild.setMarried(fieldValue.married);
+    if (this.callSetterFor.married) {
+      this.objectToBuild.setMarried(this.fieldValue.married);
     }
-    if (callSetterFor.names && fieldValue.names != null) {
-      fieldValue.names.forEach(objectToBuild.getNames()::add);
+    if (this.callSetterFor.names && this.fieldValue.names != null) {
+      this.fieldValue.names.forEach(objectToBuild.getNames()::add);
     }
-    if (callSetterFor.pets && fieldValue.pets != null) {
-      fieldValue.pets.forEach(objectToBuild.getPets()::add);
+    if (this.callSetterFor.pets && this.fieldValue.pets != null) {
+      this.fieldValue.pets.forEach(objectToBuild.getPets()::add);
     }
-    if (callSetterFor.relations) {
-      objectToBuild.setRelations(fieldValue.relations);
+    if (this.callSetterFor.relations) {
+      this.objectToBuild.setRelations(this.fieldValue.relations);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {

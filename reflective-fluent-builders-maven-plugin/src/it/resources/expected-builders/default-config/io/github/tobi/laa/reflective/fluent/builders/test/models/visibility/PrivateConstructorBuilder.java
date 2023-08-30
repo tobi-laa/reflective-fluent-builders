@@ -29,16 +29,16 @@ public class PrivateConstructorBuilder {
   }
 
   public PrivateConstructorBuilder intField(final int intField) {
-    fieldValue.intField = intField;
-    callSetterFor.intField = true;
+    this.fieldValue.intField = intField;
+    this.callSetterFor.intField = true;
     return this;
   }
 
   public PrivateConstructor build() {
-    if (callSetterFor.intField) {
-      objectToBuild.setIntField(fieldValue.intField);
+    if (this.callSetterFor.intField) {
+      this.objectToBuild.setIntField(this.fieldValue.intField);
     }
-    return objectToBuild;
+    return this.objectToBuild;
   }
 
   private class CallSetterFor {
