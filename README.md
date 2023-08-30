@@ -115,7 +115,7 @@ If you want to generate builders in compile scope for classes whose sources are 
 </plugin>
 ```
 
-It is also possible to specify exclusions. For instance, assuming you use a _logical_ rather than a _functional_ naming convention within your application like so:
+It is also possible to specify exclusions. For instance, let us assume you use a _logical_ rather than a _functional_ naming convention within your application like so:
 ```
 com.example.app.dog
 ↳ Dog
