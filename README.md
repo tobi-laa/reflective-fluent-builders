@@ -20,6 +20,24 @@ If however one of these conditions applies to your situation, this maven plugin 
 - You want to generate builders for **generated sources** such as `JAXB`-annotated classes generated from an `XML` schema
 - You want to generate builders for your classes in **test scope only**
 
+# Generator usage
+If you are only interested in using the maven plugin, skip to the [corresponding section](#maven-plugin-usage). However, if for some reaseon you want to use the generator directly in one of your projects,
+these are the steps you have to follow:
+1. Include the maven dependency:
+    ```xml
+    <dependency>
+        <groupId>io.github.tobi-laa</groupId>
+        <artifactId>reflective-fluent-builders-generator</artifactId>
+        <version><!-- insert latest version --></version>
+    </dependency>
+    ```
+2. Instantiate all JSR-330-annotated components from the package `io.github.tobi.laa.reflective.fluent.builders` with a dependency injection framework of your choice.
+3. _Manually_ add instances of the following classes as they are needed by some components:
+    * `io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties`
+    * `java.time.Clock`
+    * `java.lang.ClassLoader`
+4. The relevant components to inject whereever you need them are `BuilderMetadataService` and `JavaFileGenerator`.
+
 # Maven Plugin usage
 TODO add short description and a few examples
 
