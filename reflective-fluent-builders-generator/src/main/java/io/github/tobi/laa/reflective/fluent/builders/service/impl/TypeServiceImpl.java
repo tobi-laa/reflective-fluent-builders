@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.*;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ class TypeServiceImpl implements TypeService {
 
         private final ImmutableSet.Builder<Class<?>> builder = ImmutableSet.builder();
 
+        private final Set<Type> alreadyProcessedTypes = new HashSet<>();
+
         private final Type type;
 
         Set<Class<?>> collect() {
@@ -39,22 +42,25 @@ class TypeServiceImpl implements TypeService {
         }
 
         private void collect(final Type type) {
-            if (type instanceof GenericArrayType) {
-                final var genericArrayType = (GenericArrayType) type;
-                collect(genericArrayType.getGenericComponentType());
-            } else if (type instanceof ParameterizedType) {
-                final var parameterizedType = (ParameterizedType) type;
-                collect(parameterizedType.getRawType());
-                Arrays.stream(parameterizedType.getActualTypeArguments()).forEach(this::collect);
-            } else if (type instanceof TypeVariable) {
-                final var typeVariable = (TypeVariable<?>) type;
-                Arrays.stream(typeVariable.getBounds()).forEach(this::collect);
-            } else if (type instanceof WildcardType) {
-                final var wildcardType = (WildcardType) type;
-                Arrays.stream(wildcardType.getUpperBounds()).forEach(this::collect);
-                Arrays.stream(wildcardType.getLowerBounds()).forEach(this::collect);
-            } else {
-                builder.add((Class<?>) type);
+            if (!alreadyProcessedTypes.contains(type)) {
+                alreadyProcessedTypes.add(type);
+                if (type instanceof GenericArrayType) {
+                    final var genericArrayType = (GenericArrayType) type;
+                    collect(genericArrayType.getGenericComponentType());
+                } else if (type instanceof ParameterizedType) {
+                    final var parameterizedType = (ParameterizedType) type;
+                    collect(parameterizedType.getRawType());
+                    Arrays.stream(parameterizedType.getActualTypeArguments()).forEach(this::collect);
+                } else if (type instanceof TypeVariable) {
+                    final var typeVariable = (TypeVariable<?>) type;
+                    Arrays.stream(typeVariable.getBounds()).forEach(this::collect);
+                } else if (type instanceof WildcardType) {
+                    final var wildcardType = (WildcardType) type;
+                    Arrays.stream(wildcardType.getUpperBounds()).forEach(this::collect);
+                    Arrays.stream(wildcardType.getLowerBounds()).forEach(this::collect);
+                } else {
+                    builder.add((Class<?>) type);
+                }
             }
         }
     }
