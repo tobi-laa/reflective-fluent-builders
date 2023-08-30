@@ -90,7 +90,7 @@ class NewInstanceFactoryMethodCodeGeneratorTest {
                         String.format(
                                 "public static %1$s newInstance(\n" +
                                         "    ) {\n" +
-                                        "  return new %1$s(null);\n" +
+                                        "  return new %1$s();\n" +
                                         "}\n", MockType.class.getName().replace('$', '.'))));
     }
 

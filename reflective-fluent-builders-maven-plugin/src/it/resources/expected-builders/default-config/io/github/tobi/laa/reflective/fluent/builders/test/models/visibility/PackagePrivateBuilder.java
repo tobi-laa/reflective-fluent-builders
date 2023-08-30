@@ -19,12 +19,16 @@ public class PackagePrivateBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PackagePrivateBuilder(final PackagePrivate objectToBuild) {
+  protected PackagePrivateBuilder(final PackagePrivate objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PackagePrivateBuilder() {
+    // noop
+  }
+
   public static PackagePrivateBuilder newInstance() {
-    return new PackagePrivateBuilder(null);
+    return new PackagePrivateBuilder();
   }
 
   public static PackagePrivateBuilder thatModifies(final PackagePrivate objectToModify) {

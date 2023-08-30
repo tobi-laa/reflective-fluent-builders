@@ -19,13 +19,17 @@ public class NestedPublicLevelTwoBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private NestedPublicLevelTwoBuilder(
+  protected NestedPublicLevelTwoBuilder(
       final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected NestedPublicLevelTwoBuilder() {
+    // noop
+  }
+
   public static NestedPublicLevelTwoBuilder newInstance() {
-    return new NestedPublicLevelTwoBuilder(null);
+    return new NestedPublicLevelTwoBuilder();
   }
 
   public static NestedPublicLevelTwoBuilder thatModifies(

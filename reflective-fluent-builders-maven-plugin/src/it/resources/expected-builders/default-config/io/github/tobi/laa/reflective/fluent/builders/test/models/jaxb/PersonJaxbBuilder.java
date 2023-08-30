@@ -23,12 +23,16 @@ public class PersonJaxbBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PersonJaxbBuilder(final PersonJaxb objectToBuild) {
+  protected PersonJaxbBuilder(final PersonJaxb objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PersonJaxbBuilder() {
+    // noop
+  }
+
   public static PersonJaxbBuilder newInstance() {
-    return new PersonJaxbBuilder(null);
+    return new PersonJaxbBuilder();
   }
 
   public static PersonJaxbBuilder thatModifies(final PersonJaxb objectToModify) {

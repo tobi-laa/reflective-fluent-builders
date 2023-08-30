@@ -19,7 +19,7 @@ public class PrivateConstructorBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PrivateConstructorBuilder(final PrivateConstructor objectToBuild) {
+  protected PrivateConstructorBuilder(final PrivateConstructor objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 

@@ -21,12 +21,16 @@ public class SimpleClassBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private SimpleClassBuilder(final SimpleClass objectToBuild) {
+  protected SimpleClassBuilder(final SimpleClass objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected SimpleClassBuilder() {
+    // noop
+  }
+
   public static SimpleClassBuilder newInstance() {
-    return new SimpleClassBuilder(null);
+    return new SimpleClassBuilder();
   }
 
   public static SimpleClassBuilder thatModifies(final SimpleClass objectToModify) {

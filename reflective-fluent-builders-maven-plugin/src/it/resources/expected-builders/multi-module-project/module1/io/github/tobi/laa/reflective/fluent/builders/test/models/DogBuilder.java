@@ -20,12 +20,16 @@ public class DogBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private DogBuilder(final Dog objectToBuild) {
+  protected DogBuilder(final Dog objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected DogBuilder() {
+    // noop
+  }
+
   public static DogBuilder newInstance() {
-    return new DogBuilder(null);
+    return new DogBuilder();
   }
 
   public static DogBuilder thatModifies(final Dog objectToModify) {

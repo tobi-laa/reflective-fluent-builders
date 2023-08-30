@@ -14,18 +14,19 @@ import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderCon
 
 /**
  * <p>
- * Implementation of {@link MethodCodeGenerator} for generating the default constructor.
+ * Implementation of {@link MethodCodeGenerator} for generating a constructor that takes a pre-existing object to be
+ * modified.
  * </p>
  */
 @Named
 @Singleton
-class ConstructorCodeGenerator implements MethodCodeGenerator {
+class ConstructorWithObjectToBuildCodeGenerator implements MethodCodeGenerator {
 
     @Override
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         return Optional.of(MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PRIVATE)
+                .addModifiers(Modifier.PROTECTED)
                 .addParameter(builderMetadata.getBuiltType().getType(), OBJECT_TO_BUILD_FIELD_NAME, Modifier.FINAL)
                 .addStatement("this.$1L = $1L", OBJECT_TO_BUILD_FIELD_NAME)
                 .build());

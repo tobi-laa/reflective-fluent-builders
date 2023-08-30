@@ -20,12 +20,16 @@ public class ChildBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ChildBuilder(final Child objectToBuild) {
+  protected ChildBuilder(final Child objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ChildBuilder() {
+    // noop
+  }
+
   public static ChildBuilder newInstance() {
-    return new ChildBuilder(null);
+    return new ChildBuilder();
   }
 
   public static ChildBuilder thatModifies(final Child objectToModify) {

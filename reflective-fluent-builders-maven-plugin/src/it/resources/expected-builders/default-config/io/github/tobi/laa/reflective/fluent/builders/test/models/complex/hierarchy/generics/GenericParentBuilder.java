@@ -23,12 +23,16 @@ public class GenericParentBuilder<R, S, T> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private GenericParentBuilder(final GenericParent objectToBuild) {
+  protected GenericParentBuilder(final GenericParent objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected GenericParentBuilder() {
+    // noop
+  }
+
   public static GenericParentBuilder newInstance() {
-    return new GenericParentBuilder(null);
+    return new GenericParentBuilder();
   }
 
   public static GenericParentBuilder thatModifies(final GenericParent objectToModify) {

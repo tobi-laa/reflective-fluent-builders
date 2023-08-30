@@ -19,12 +19,16 @@ public class ParentBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ParentBuilder(final Parent objectToBuild) {
+  protected ParentBuilder(final Parent objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ParentBuilder() {
+    // noop
+  }
+
   public static ParentBuilder newInstance() {
-    return new ParentBuilder(null);
+    return new ParentBuilder();
   }
 
   public static ParentBuilder thatModifies(final Parent objectToModify) {

@@ -25,12 +25,16 @@ public class GenericChildBuilder<S extends Number, T> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private GenericChildBuilder(final GenericChild objectToBuild) {
+  protected GenericChildBuilder(final GenericChild objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected GenericChildBuilder() {
+    // noop
+  }
+
   public static GenericChildBuilder newInstance() {
-    return new GenericChildBuilder(null);
+    return new GenericChildBuilder();
   }
 
   public static GenericChildBuilder thatModifies(final GenericChild objectToModify) {

@@ -34,12 +34,16 @@ public class ClassWithCollectionsBuilder<T, U> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ClassWithCollectionsBuilder(final ClassWithCollections objectToBuild) {
+  protected ClassWithCollectionsBuilder(final ClassWithCollections objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ClassWithCollectionsBuilder() {
+    // noop
+  }
+
   public static ClassWithCollectionsBuilder newInstance() {
-    return new ClassWithCollectionsBuilder(null);
+    return new ClassWithCollectionsBuilder();
   }
 
   public static ClassWithCollectionsBuilder thatModifies(

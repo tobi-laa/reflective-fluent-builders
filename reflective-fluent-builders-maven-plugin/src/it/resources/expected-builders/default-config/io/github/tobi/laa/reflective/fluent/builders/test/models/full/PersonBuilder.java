@@ -27,12 +27,16 @@ public class PersonBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PersonBuilder(final Person objectToBuild) {
+  protected PersonBuilder(final Person objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PersonBuilder() {
+    // noop
+  }
+
   public static PersonBuilder newInstance() {
-    return new PersonBuilder(null);
+    return new PersonBuilder();
   }
 
   public static PersonBuilder thatModifies(final Person objectToModify) {

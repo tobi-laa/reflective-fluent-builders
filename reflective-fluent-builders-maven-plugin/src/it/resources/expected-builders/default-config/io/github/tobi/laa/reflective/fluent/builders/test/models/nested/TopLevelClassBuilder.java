@@ -19,12 +19,16 @@ public class TopLevelClassBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private TopLevelClassBuilder(final TopLevelClass objectToBuild) {
+  protected TopLevelClassBuilder(final TopLevelClass objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected TopLevelClassBuilder() {
+    // noop
+  }
+
   public static TopLevelClassBuilder newInstance() {
-    return new TopLevelClassBuilder(null);
+    return new TopLevelClassBuilder();
   }
 
   public static TopLevelClassBuilder thatModifies(final TopLevelClass objectToModify) {

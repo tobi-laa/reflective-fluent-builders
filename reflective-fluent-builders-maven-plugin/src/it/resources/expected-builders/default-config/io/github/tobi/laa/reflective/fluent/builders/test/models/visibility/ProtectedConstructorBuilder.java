@@ -19,12 +19,16 @@ public class ProtectedConstructorBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ProtectedConstructorBuilder(final ProtectedConstructor objectToBuild) {
+  protected ProtectedConstructorBuilder(final ProtectedConstructor objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ProtectedConstructorBuilder() {
+    // noop
+  }
+
   public static ProtectedConstructorBuilder newInstance() {
-    return new ProtectedConstructorBuilder(null);
+    return new ProtectedConstructorBuilder();
   }
 
   public static ProtectedConstructorBuilder thatModifies(

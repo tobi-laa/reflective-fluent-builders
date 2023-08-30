@@ -22,12 +22,16 @@ public class ClassWithGenericsBuilder<T> {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {
+  protected ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ClassWithGenericsBuilder() {
+    // noop
+  }
+
   public static ClassWithGenericsBuilder newInstance() {
-    return new ClassWithGenericsBuilder(null);
+    return new ClassWithGenericsBuilder();
   }
 
   public static ClassWithGenericsBuilder thatModifies(final ClassWithGenerics objectToModify) {

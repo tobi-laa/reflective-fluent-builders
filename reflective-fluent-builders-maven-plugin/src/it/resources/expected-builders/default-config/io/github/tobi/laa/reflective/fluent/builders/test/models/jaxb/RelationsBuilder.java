@@ -21,12 +21,16 @@ public class RelationsBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private RelationsBuilder(final PersonJaxb.Relations objectToBuild) {
+  protected RelationsBuilder(final PersonJaxb.Relations objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected RelationsBuilder() {
+    // noop
+  }
+
   public static RelationsBuilder newInstance() {
-    return new RelationsBuilder(null);
+    return new RelationsBuilder();
   }
 
   public static RelationsBuilder thatModifies(final PersonJaxb.Relations objectToModify) {

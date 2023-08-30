@@ -20,12 +20,16 @@ public class EntryBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private EntryBuilder(final PersonJaxb.Relations.Entry objectToBuild) {
+  protected EntryBuilder(final PersonJaxb.Relations.Entry objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected EntryBuilder() {
+    // noop
+  }
+
   public static EntryBuilder newInstance() {
-    return new EntryBuilder(null);
+    return new EntryBuilder();
   }
 
   public static EntryBuilder thatModifies(final PersonJaxb.Relations.Entry objectToModify) {

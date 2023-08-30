@@ -20,12 +20,16 @@ public class CatBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private CatBuilder(final Cat objectToBuild) {
+  protected CatBuilder(final Cat objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected CatBuilder() {
+    // noop
+  }
+
   public static CatBuilder newInstance() {
-    return new CatBuilder(null);
+    return new CatBuilder();
   }
 
   public static CatBuilder thatModifies(final Cat objectToModify) {

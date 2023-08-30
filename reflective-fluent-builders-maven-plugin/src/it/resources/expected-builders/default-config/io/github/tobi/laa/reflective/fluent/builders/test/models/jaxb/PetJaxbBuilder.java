@@ -22,12 +22,16 @@ public class PetJaxbBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private PetJaxbBuilder(final PetJaxb objectToBuild) {
+  protected PetJaxbBuilder(final PetJaxb objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PetJaxbBuilder() {
+    // noop
+  }
+
   public static PetJaxbBuilder newInstance() {
-    return new PetJaxbBuilder(null);
+    return new PetJaxbBuilder();
   }
 
   public static PetJaxbBuilder thatModifies(final PetJaxb objectToModify) {

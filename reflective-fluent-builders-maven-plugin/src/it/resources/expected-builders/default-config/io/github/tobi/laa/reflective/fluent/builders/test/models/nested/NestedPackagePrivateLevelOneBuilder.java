@@ -19,13 +19,17 @@ public class NestedPackagePrivateLevelOneBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private NestedPackagePrivateLevelOneBuilder(
+  protected NestedPackagePrivateLevelOneBuilder(
       final TopLevelClass.NestedPackagePrivateLevelOne objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected NestedPackagePrivateLevelOneBuilder() {
+    // noop
+  }
+
   public static NestedPackagePrivateLevelOneBuilder newInstance() {
-    return new NestedPackagePrivateLevelOneBuilder(null);
+    return new NestedPackagePrivateLevelOneBuilder();
   }
 
   public static NestedPackagePrivateLevelOneBuilder thatModifies(

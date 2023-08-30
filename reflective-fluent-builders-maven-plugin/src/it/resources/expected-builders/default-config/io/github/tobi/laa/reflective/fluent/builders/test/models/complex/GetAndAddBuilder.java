@@ -22,12 +22,16 @@ public class GetAndAddBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private GetAndAddBuilder(final GetAndAdd objectToBuild) {
+  protected GetAndAddBuilder(final GetAndAdd objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected GetAndAddBuilder() {
+    // noop
+  }
+
   public static GetAndAddBuilder newInstance() {
-    return new GetAndAddBuilder(null);
+    return new GetAndAddBuilder();
   }
 
   public static GetAndAddBuilder thatModifies(final GetAndAdd objectToModify) {

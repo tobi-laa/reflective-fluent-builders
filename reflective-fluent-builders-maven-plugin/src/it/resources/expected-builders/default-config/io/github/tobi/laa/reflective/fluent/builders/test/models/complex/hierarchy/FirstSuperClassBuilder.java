@@ -19,12 +19,16 @@ public class FirstSuperClassBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private FirstSuperClassBuilder(final FirstSuperClass objectToBuild) {
+  protected FirstSuperClassBuilder(final FirstSuperClass objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected FirstSuperClassBuilder() {
+    // noop
+  }
+
   public static FirstSuperClassBuilder newInstance() {
-    return new FirstSuperClassBuilder(null);
+    return new FirstSuperClassBuilder();
   }
 
   public static FirstSuperClassBuilder thatModifies(final FirstSuperClass objectToModify) {

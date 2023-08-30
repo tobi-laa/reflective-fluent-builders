@@ -19,13 +19,17 @@ public class BuiltClassAsMemberBuilder0 {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private BuiltClassAsMemberBuilder0(
+  protected BuiltClassAsMemberBuilder0(
       final BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected BuiltClassAsMemberBuilder0() {
+    // noop
+  }
+
   public static BuiltClassAsMemberBuilder0 newInstance() {
-    return new BuiltClassAsMemberBuilder0(null);
+    return new BuiltClassAsMemberBuilder0();
   }
 
   public static BuiltClassAsMemberBuilder0 thatModifies(

@@ -19,13 +19,17 @@ public class SecondSuperClassInDifferentPackageBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
-  private SecondSuperClassInDifferentPackageBuilder(
+  protected SecondSuperClassInDifferentPackageBuilder(
       final SecondSuperClassInDifferentPackage objectToBuild) {
     this.objectToBuild = objectToBuild;
   }
 
+  protected SecondSuperClassInDifferentPackageBuilder() {
+    // noop
+  }
+
   public static SecondSuperClassInDifferentPackageBuilder newInstance() {
-    return new SecondSuperClassInDifferentPackageBuilder(null);
+    return new SecondSuperClassInDifferentPackageBuilder();
   }
 
   public static SecondSuperClassInDifferentPackageBuilder thatModifies(
