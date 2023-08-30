@@ -69,8 +69,4 @@ class ConstructorWithObjectToBuildCodeGeneratorTest {
                                 "  this.objectToBuild = objectToBuild;\n" +
                                 "}\n"));
     }
-
-    private static class MockType {
-        // no content
-    }
 }
