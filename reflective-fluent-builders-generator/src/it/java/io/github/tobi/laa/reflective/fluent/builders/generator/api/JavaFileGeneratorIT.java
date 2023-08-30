@@ -97,8 +97,12 @@ class JavaFileGeneratorIT {
                         "    this.objectToBuild = objectToBuild;\n" +
                         "  }\n" +
                         "\n" +
+                        "  protected ClassWithGenericsBuilder() {\n" +
+                        "    // noop\n" +
+                        "  }\n" +
+                        "\n" +
                         "  public static ClassWithGenericsBuilder newInstance() {\n" +
-                        "    return new ClassWithGenericsBuilder(null);\n" +
+                        "    return new ClassWithGenericsBuilder();\n" +
                         "  }\n" +
                         "\n" +
                         "  public static ClassWithGenericsBuilder thatModifies(final ClassWithGenerics objectToModify) {\n" +
