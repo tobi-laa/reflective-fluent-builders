@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.full;
 
 import java.lang.Object;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ public class PersonBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private Person objectToBuild;

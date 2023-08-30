@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
 import java.lang.Float;
+import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +15,7 @@ public class ClassWithGenericsBuilder<T> {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private ClassWithGenerics objectToBuild;

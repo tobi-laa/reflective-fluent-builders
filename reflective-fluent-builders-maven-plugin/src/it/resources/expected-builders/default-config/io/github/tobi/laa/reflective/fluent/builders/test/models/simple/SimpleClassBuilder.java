@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.simple;
 
 import java.lang.Class;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
 
@@ -13,6 +14,7 @@ public class SimpleClassBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private SimpleClass objectToBuild;

@@ -4,6 +4,7 @@ import java.lang.Float;
 import java.lang.Integer;
 import java.lang.Object;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,7 @@ public class ClassWithCollectionsBuilder<T, U> {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private ClassWithCollections objectToBuild;

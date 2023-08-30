@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierar
 
 import java.lang.Number;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ public class GenericChildBuilder<S extends Number, T> {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private GenericChild objectToBuild;

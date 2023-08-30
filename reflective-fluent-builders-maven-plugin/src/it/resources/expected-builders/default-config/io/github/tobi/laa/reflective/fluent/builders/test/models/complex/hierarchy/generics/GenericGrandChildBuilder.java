@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierar
 import java.lang.Boolean;
 import java.lang.Long;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ public class GenericGrandChildBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
+  @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private GenericGrandChild objectToBuild;
