@@ -38,6 +38,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Complex.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -47,6 +48,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Full.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -56,6 +58,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -65,6 +68,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(HasDirCondition.emptyDirInTarget(Paths.get("generated-sources", "builders")));
+            assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
         }
 
         @MavenTest
@@ -74,6 +78,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Visibility.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -83,6 +88,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(NestedMarker.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -92,6 +98,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilders(Jaxb.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
         }
     }
 
@@ -153,6 +160,7 @@ class GenerateBuildersMojoIT {
                             "- " + SimpleClassNoSetPrefix.class.getName(), //
                             "The following classes have been configured to be excluded:", //
                             "Add " + targetDirectory + " as source folder.");
+            assertThat(result).out().warn().isEmpty();
         }
     }
 
@@ -167,6 +175,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(HasDirCondition.emptyDirInTarget(Paths.get("classes")));
+            assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
         }
 
         @MavenTest
@@ -179,6 +188,7 @@ class GenerateBuildersMojoIT {
                     .has(HasDirCondition.emptyDirInTarget(Paths.get("classes"))) //
                     .has(HasDirCondition.nonEmptyDirInTarget(Paths.get("test-classes"))) //
                     .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), true));
+            assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
         }
 
         @MavenTest
@@ -193,6 +203,7 @@ class GenerateBuildersMojoIT {
                     .out() //
                     .info() //
                     .contains("Add class " + SimpleClass.class.getName() + '.');
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -206,6 +217,7 @@ class GenerateBuildersMojoIT {
                     .has(HasNoBuilderCondition.noBuilder(SimpleClassNoSetPrefix.class.getName() + "Builder")) //
                     .has(HasNoBuilderCondition.noBuilder(Child.class.getName() + "Builder")) //
                     .has(HasNoBuilderCondition.noBuilder(Parent.class.getName() + "Builder"));
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -217,6 +229,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(ContainsBuildersCondition.expectedBuilder(builderClass, false, expectedBuildersRootDir));
+            assertThat(result).out().warn().isEmpty();
         }
     }
 
@@ -398,6 +411,7 @@ class GenerateBuildersMojoIT {
                             "Generate builder for class " + SimpleClass.class.getName(), //
                             "Generate builder for class " + Parent.class.getName())
                     .doesNotContain("All builders are up-to-date, skipping generation.");
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -420,6 +434,7 @@ class GenerateBuildersMojoIT {
                             "Generate builder for class " + SimpleClass.class.getName(), //
                             "Generate builder for class " + Parent.class.getName())
                     .doesNotContain("All builders are up-to-date, skipping generation.");
+            assertThat(result).out().warn().isEmpty();
         }
 
         @MavenTest
@@ -444,6 +459,7 @@ class GenerateBuildersMojoIT {
                             "Scan package " + Simple.class.getPackage().getName() + " recursively for classes.", //
                             "Found 5 classes for which to generate builders.", //
                             "All builders are up-to-date, skipping generation.");
+            assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
         }
     }
 
@@ -471,6 +487,7 @@ class GenerateBuildersMojoIT {
                             "io.github.tobi.laa.reflective.fluent.builders.test.models.CatBuilder", //
                             true, //
                             expectedBuildersRootDir.resolve("module2")));
+            assertThat(result).out().warn().isEmpty();
         }
     }
 }
