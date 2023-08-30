@@ -39,7 +39,37 @@ these are the steps you have to follow:
 4. The relevant components to inject whereever you need them are `BuilderMetadataService` and `JavaFileGenerator`.
 
 # Maven Plugin usage
-TODO add short description and a few examples
+To use the maven plugin, all you need to do (at a minimum) is to tell it which packages and/or classes you want builders generated for. A small example might look like this:
+```xml
+<plugin>
+    <groupId>io.github.tobi-laa</groupId>
+    <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+    <version><!-- insert latest version --></version>
+    <executions>
+        <execution>
+            <phase>generate-test-sources</phase>
+            <goals>
+                <goal>generate-builders</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <includes>
+            <include>
+                <packageName>i.want.builders.for.this.package</packageName>
+            </include>
+            <include>
+                <className>i.also.want.a.builder.ForThisClass</className>
+            </include>
+        </includes>
+    </configuration>
+</plugin>
+```
+
+A caveat when using the plugin is that all classes for which you desire builders need to be compiled already as reflection is used for scanning packages and classes, so depending on your usecase you need
+to decide during which phase of the maven build to execute the plugin.
+Refer also to the [default lifecycle](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#default-lifecycle).
+This will of course not be a problem if you are solely generating builders for classes from third party libraries.
 
 Full documentation of the maven plugin and its parameters can be found
 [here](https://tobias-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/plugin-info.html).
