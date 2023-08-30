@@ -24,8 +24,12 @@ public class NestedPublicLevelThreeBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected NestedPublicLevelThreeBuilder() {
+    // noop
+  }
+
   public static NestedPublicLevelThreeBuilder newInstance() {
-    return new NestedPublicLevelThreeBuilder(null);
+    return new NestedPublicLevelThreeBuilder();
   }
 
   public static NestedPublicLevelThreeBuilder thatModifies(

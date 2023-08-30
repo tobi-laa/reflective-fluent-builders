@@ -23,8 +23,12 @@ public class ParentBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ParentBuilder() {
+    // noop
+  }
+
   public static ParentBuilder newInstance() {
-    return new ParentBuilder(null);
+    return new ParentBuilder();
   }
 
   public static ParentBuilder thatModifies(final Parent objectToModify) {

@@ -24,8 +24,12 @@ public class SecondSuperClassInDifferentPackageBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected SecondSuperClassInDifferentPackageBuilder() {
+    // noop
+  }
+
   public static SecondSuperClassInDifferentPackageBuilder newInstance() {
-    return new SecondSuperClassInDifferentPackageBuilder(null);
+    return new SecondSuperClassInDifferentPackageBuilder();
   }
 
   public static SecondSuperClassInDifferentPackageBuilder thatModifies(

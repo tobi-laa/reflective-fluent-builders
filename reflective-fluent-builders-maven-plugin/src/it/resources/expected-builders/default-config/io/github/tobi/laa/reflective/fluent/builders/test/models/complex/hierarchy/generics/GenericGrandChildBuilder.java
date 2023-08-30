@@ -30,8 +30,12 @@ public class GenericGrandChildBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected GenericGrandChildBuilder() {
+    // noop
+  }
+
   public static GenericGrandChildBuilder newInstance() {
-    return new GenericGrandChildBuilder(null);
+    return new GenericGrandChildBuilder();
   }
 
   public static GenericGrandChildBuilder thatModifies(final GenericGrandChild objectToModify) {

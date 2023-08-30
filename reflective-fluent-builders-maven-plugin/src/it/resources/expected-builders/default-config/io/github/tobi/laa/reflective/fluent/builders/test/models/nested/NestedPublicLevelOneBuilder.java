@@ -23,8 +23,12 @@ public class NestedPublicLevelOneBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected NestedPublicLevelOneBuilder() {
+    // noop
+  }
+
   public static NestedPublicLevelOneBuilder newInstance() {
-    return new NestedPublicLevelOneBuilder(null);
+    return new NestedPublicLevelOneBuilder();
   }
 
   public static NestedPublicLevelOneBuilder thatModifies(

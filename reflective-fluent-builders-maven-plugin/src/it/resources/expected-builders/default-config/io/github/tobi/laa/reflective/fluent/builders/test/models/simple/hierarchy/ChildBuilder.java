@@ -24,8 +24,12 @@ public class ChildBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ChildBuilder() {
+    // noop
+  }
+
   public static ChildBuilder newInstance() {
-    return new ChildBuilder(null);
+    return new ChildBuilder();
   }
 
   public static ChildBuilder thatModifies(final Child objectToModify) {

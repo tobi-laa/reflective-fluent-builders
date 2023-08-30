@@ -31,8 +31,12 @@ public class PersonBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PersonBuilder() {
+    // noop
+  }
+
   public static PersonBuilder newInstance() {
-    return new PersonBuilder(null);
+    return new PersonBuilder();
   }
 
   public static PersonBuilder thatModifies(final Person objectToModify) {

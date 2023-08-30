@@ -26,8 +26,12 @@ public class PetBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PetBuilder() {
+    // noop
+  }
+
   public static PetBuilder newInstance() {
-    return new PetBuilder(null);
+    return new PetBuilder();
   }
 
   public static PetBuilder thatModifies(final Pet objectToModify) {

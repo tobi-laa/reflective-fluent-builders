@@ -24,8 +24,12 @@ public class DogBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected DogBuilder() {
+    // noop
+  }
+
   public static DogBuilder newInstance() {
-    return new DogBuilder(null);
+    return new DogBuilder();
   }
 
   public static DogBuilder thatModifies(final Dog objectToModify) {

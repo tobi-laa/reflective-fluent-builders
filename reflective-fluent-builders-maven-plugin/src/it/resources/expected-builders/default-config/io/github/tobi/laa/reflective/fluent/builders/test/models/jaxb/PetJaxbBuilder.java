@@ -26,8 +26,12 @@ public class PetJaxbBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PetJaxbBuilder() {
+    // noop
+  }
+
   public static PetJaxbBuilder newInstance() {
-    return new PetJaxbBuilder(null);
+    return new PetJaxbBuilder();
   }
 
   public static PetJaxbBuilder thatModifies(final PetJaxb objectToModify) {

@@ -24,8 +24,12 @@ public class EntryBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected EntryBuilder() {
+    // noop
+  }
+
   public static EntryBuilder newInstance() {
-    return new EntryBuilder(null);
+    return new EntryBuilder();
   }
 
   public static EntryBuilder thatModifies(final PersonJaxb.Relations.Entry objectToModify) {

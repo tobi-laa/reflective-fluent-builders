@@ -26,8 +26,12 @@ public class ClassWithGenericsBuilder<T> {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ClassWithGenericsBuilder() {
+    // noop
+  }
+
   public static ClassWithGenericsBuilder newInstance() {
-    return new ClassWithGenericsBuilder(null);
+    return new ClassWithGenericsBuilder();
   }
 
   public static ClassWithGenericsBuilder thatModifies(final ClassWithGenerics objectToModify) {

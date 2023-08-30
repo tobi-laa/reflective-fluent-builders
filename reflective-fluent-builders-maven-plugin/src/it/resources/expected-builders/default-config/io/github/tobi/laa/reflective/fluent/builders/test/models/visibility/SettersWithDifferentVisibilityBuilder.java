@@ -24,8 +24,12 @@ public class SettersWithDifferentVisibilityBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected SettersWithDifferentVisibilityBuilder() {
+    // noop
+  }
+
   public static SettersWithDifferentVisibilityBuilder newInstance() {
-    return new SettersWithDifferentVisibilityBuilder(null);
+    return new SettersWithDifferentVisibilityBuilder();
   }
 
   public static SettersWithDifferentVisibilityBuilder thatModifies(

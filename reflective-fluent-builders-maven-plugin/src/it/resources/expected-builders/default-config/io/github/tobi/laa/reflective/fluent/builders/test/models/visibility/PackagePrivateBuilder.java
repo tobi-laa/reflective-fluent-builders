@@ -23,8 +23,12 @@ public class PackagePrivateBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PackagePrivateBuilder() {
+    // noop
+  }
+
   public static PackagePrivateBuilder newInstance() {
-    return new PackagePrivateBuilder(null);
+    return new PackagePrivateBuilder();
   }
 
   public static PackagePrivateBuilder thatModifies(final PackagePrivate objectToModify) {

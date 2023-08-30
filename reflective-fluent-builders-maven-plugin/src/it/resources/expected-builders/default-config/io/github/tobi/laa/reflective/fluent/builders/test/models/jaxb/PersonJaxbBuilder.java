@@ -27,8 +27,12 @@ public class PersonJaxbBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PersonJaxbBuilder() {
+    // noop
+  }
+
   public static PersonJaxbBuilder newInstance() {
-    return new PersonJaxbBuilder(null);
+    return new PersonJaxbBuilder();
   }
 
   public static PersonJaxbBuilder thatModifies(final PersonJaxb objectToModify) {

@@ -38,8 +38,12 @@ public class ClassWithCollectionsBuilder<T, U> {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ClassWithCollectionsBuilder() {
+    // noop
+  }
+
   public static ClassWithCollectionsBuilder newInstance() {
-    return new ClassWithCollectionsBuilder(null);
+    return new ClassWithCollectionsBuilder();
   }
 
   public static ClassWithCollectionsBuilder thatModifies(

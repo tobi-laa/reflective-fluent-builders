@@ -25,8 +25,12 @@ public class RelationsBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected RelationsBuilder() {
+    // noop
+  }
+
   public static RelationsBuilder newInstance() {
-    return new RelationsBuilder(null);
+    return new RelationsBuilder();
   }
 
   public static RelationsBuilder thatModifies(final PersonJaxb.Relations objectToModify) {

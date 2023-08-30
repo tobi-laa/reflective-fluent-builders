@@ -23,8 +23,12 @@ public class FirstSuperClassBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected FirstSuperClassBuilder() {
+    // noop
+  }
+
   public static FirstSuperClassBuilder newInstance() {
-    return new FirstSuperClassBuilder(null);
+    return new FirstSuperClassBuilder();
   }
 
   public static FirstSuperClassBuilder thatModifies(final FirstSuperClass objectToModify) {

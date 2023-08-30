@@ -27,8 +27,12 @@ public class GenericParentBuilder<R, S, T> {
     this.objectToBuild = objectToBuild;
   }
 
+  protected GenericParentBuilder() {
+    // noop
+  }
+
   public static GenericParentBuilder newInstance() {
-    return new GenericParentBuilder(null);
+    return new GenericParentBuilder();
   }
 
   public static GenericParentBuilder thatModifies(final GenericParent objectToModify) {

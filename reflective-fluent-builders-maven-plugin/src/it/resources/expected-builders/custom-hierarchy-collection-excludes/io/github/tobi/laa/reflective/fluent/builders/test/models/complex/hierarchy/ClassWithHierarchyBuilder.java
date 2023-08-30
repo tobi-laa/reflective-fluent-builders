@@ -23,8 +23,12 @@ public class ClassWithHierarchyBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected ClassWithHierarchyBuilder() {
+    // noop
+  }
+
   public static ClassWithHierarchyBuilder newInstance() {
-    return new ClassWithHierarchyBuilder(null);
+    return new ClassWithHierarchyBuilder();
   }
 
   public static ClassWithHierarchyBuilder thatModifies(final ClassWithHierarchy objectToModify) {

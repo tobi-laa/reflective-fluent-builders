@@ -24,8 +24,12 @@ public class NestedPackagePrivateLevelOneBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected NestedPackagePrivateLevelOneBuilder() {
+    // noop
+  }
+
   public static NestedPackagePrivateLevelOneBuilder newInstance() {
-    return new NestedPackagePrivateLevelOneBuilder(null);
+    return new NestedPackagePrivateLevelOneBuilder();
   }
 
   public static NestedPackagePrivateLevelOneBuilder thatModifies(

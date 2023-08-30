@@ -26,8 +26,12 @@ public class GetAndAddBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected GetAndAddBuilder() {
+    // noop
+  }
+
   public static GetAndAddBuilder newInstance() {
-    return new GetAndAddBuilder(null);
+    return new GetAndAddBuilder();
   }
 
   public static GetAndAddBuilder thatModifies(final GetAndAdd objectToModify) {

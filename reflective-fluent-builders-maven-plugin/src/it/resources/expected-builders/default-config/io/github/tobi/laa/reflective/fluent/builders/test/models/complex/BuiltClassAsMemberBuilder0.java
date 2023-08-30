@@ -24,8 +24,12 @@ public class BuiltClassAsMemberBuilder0 {
     this.objectToBuild = objectToBuild;
   }
 
+  protected BuiltClassAsMemberBuilder0() {
+    // noop
+  }
+
   public static BuiltClassAsMemberBuilder0 newInstance() {
-    return new BuiltClassAsMemberBuilder0(null);
+    return new BuiltClassAsMemberBuilder0();
   }
 
   public static BuiltClassAsMemberBuilder0 thatModifies(

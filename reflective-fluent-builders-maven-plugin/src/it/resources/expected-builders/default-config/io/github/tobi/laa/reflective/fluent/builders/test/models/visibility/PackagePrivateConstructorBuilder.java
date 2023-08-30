@@ -23,8 +23,12 @@ public class PackagePrivateConstructorBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected PackagePrivateConstructorBuilder() {
+    // noop
+  }
+
   public static PackagePrivateConstructorBuilder newInstance() {
-    return new PackagePrivateConstructorBuilder(null);
+    return new PackagePrivateConstructorBuilder();
   }
 
   public static PackagePrivateConstructorBuilder thatModifies(

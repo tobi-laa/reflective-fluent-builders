@@ -25,8 +25,12 @@ public class SimpleClassBuilder {
     this.objectToBuild = objectToBuild;
   }
 
+  protected SimpleClassBuilder() {
+    // noop
+  }
+
   public static SimpleClassBuilder newInstance() {
-    return new SimpleClassBuilder(null);
+    return new SimpleClassBuilder();
   }
 
   public static SimpleClassBuilder thatModifies(final SimpleClass objectToModify) {
