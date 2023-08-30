@@ -16,9 +16,9 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ConstructorCodeGeneratorTest {
+class ConstructorWithObjectToBuildCodeGeneratorTest {
 
-    private final ConstructorCodeGenerator generator = new ConstructorCodeGenerator();
+    private final ConstructorWithObjectToBuildCodeGenerator generator = new ConstructorWithObjectToBuildCodeGenerator();
 
     @Test
     void testGenerateNull() {
