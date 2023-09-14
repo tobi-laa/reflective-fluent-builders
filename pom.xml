@@ -70,7 +70,7 @@
         <jsr-330.version>1</jsr-330.version>
         <guice.version>6.0.0</guice.version>
         <sisu.version>0.9.0.M2</sisu.version>
-        <jakarta.xml.bind-api.version>4.0.0</jakarta.xml.bind-api.version>
+        <jakarta.xml.bind-api.version>4.0.1</jakarta.xml.bind-api.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <jakarta.el-api.version>5.0.1</jakarta.el-api.version>
