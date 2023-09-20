@@ -62,7 +62,7 @@
         <sonar.organization>tobias-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!-- versions of external dependencies -->
-        <lombok.version>1.18.28</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <maven-plugin-api.version>3.9.4</maven-plugin-api.version>
         <javapoet.version>1.13.0</javapoet.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
