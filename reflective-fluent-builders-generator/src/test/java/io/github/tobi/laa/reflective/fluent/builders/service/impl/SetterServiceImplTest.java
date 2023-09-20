@@ -2,6 +2,8 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.AccessibilityService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderPackageService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
@@ -27,6 +29,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
@@ -50,6 +53,12 @@ class SetterServiceImplTest {
 
     @Mock
     private ClassService classService;
+
+    @Mock
+    private AccessibilityService accessibilityService;
+
+    @Mock
+    private BuilderPackageService builderPackageService;
 
     @Mock
     private BuildersProperties properties;
@@ -127,6 +136,7 @@ class SetterServiceImplTest {
         }
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
         when(classService.collectFullClassHierarchy(clazz)).thenReturn(List.of(clazz));
+        doReturn(true).when(accessibilityService).isAccessibleFrom(any(Method.class), any());
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert
@@ -196,6 +206,7 @@ class SetterServiceImplTest {
         when(properties.getSetterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
         when(classService.collectFullClassHierarchy(any())).thenReturn(fullClassHierarchy);
+        doReturn(true).when(accessibilityService).isAccessibleFrom(any(Method.class), any());
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
         // Assert

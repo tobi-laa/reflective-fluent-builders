@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.reflect.TypeToken;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,6 +17,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 
 /**
  * <p>
@@ -37,15 +37,24 @@ class SetterServiceImpl implements SetterService {
     private final ClassService classService;
 
     @lombok.NonNull
+    private final AccessibilityService accessibilityService;
+
+    @lombok.NonNull
+    private final BuilderPackageService builderPackageService;
+
+    @lombok.NonNull
     private final BuildersProperties properties;
 
     @Override
     public SortedSet<Setter> gatherAllSetters(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
+        final var builderPackage = builderPackageService.resolveBuilderPackage(clazz);
         final var methods = classService.collectFullClassHierarchy(clazz) //
                 .stream() //
                 .map(Class::getDeclaredMethods) //
                 .flatMap(Arrays::stream) //
+                .filter(not(Method::isBridge)) //
+                .filter(method -> accessibilityService.isAccessibleFrom(method, builderPackage)) //
                 .collect(Collectors.toList());
         final var setters = methods.stream() //
                 .filter(this::isSetter) //
