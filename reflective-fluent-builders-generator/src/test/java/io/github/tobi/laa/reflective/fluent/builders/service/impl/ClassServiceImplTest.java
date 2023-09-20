@@ -303,6 +303,31 @@ class ClassServiceImplTest {
                 Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", ClassService.class));
     }
 
+    @Test
+    void testIsAbstractNull() {
+        // Arrange
+        final Class<?> clazz = null;
+        // Act
+        final ThrowingCallable isAbstract = () -> classServiceImpl.isAbstract(clazz);
+        // Assert
+        assertThatThrownBy(isAbstract).isExactlyInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testIsAbstract(final Class<?> clazz, final boolean expected) {
+        // Act
+        final boolean actual = classServiceImpl.isAbstract(clazz);
+        // Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> testIsAbstract() {
+        return Stream.of( //
+                Arguments.of(SimpleClass.class, false), //
+                Arguments.of(SimpleAbstractClass.class, true));
+    }
+
     @RequiredArgsConstructor
     private static class ThrowingClassLoader extends SecureClassLoader {
 
