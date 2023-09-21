@@ -95,7 +95,7 @@ public class ClassWithCollectionsBuilder<T, U> {
     return new MapMapWildObj();
   }
 
-  public ClassWithCollectionsBuilder deque(final Deque<?> deque) {
+  public ClassWithCollectionsBuilder deque(final Deque<Object> deque) {
     this.fieldValue.deque = deque;
     this.callSetterFor.deque = true;
     return this;
@@ -144,7 +144,7 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder mapWildObj(final Map<?, Object> mapWildObj) {
+  public ClassWithCollectionsBuilder mapWildObj(final Map<Object, Object> mapWildObj) {
     this.fieldValue.mapWildObj = mapWildObj;
     this.callSetterFor.mapWildObj = true;
     return this;
@@ -163,7 +163,7 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder sortedSetWild(final SortedSet<?> sortedSetWild) {
+  public ClassWithCollectionsBuilder sortedSetWild(final SortedSet<Object> sortedSetWild) {
     this.fieldValue.sortedSetWild = sortedSetWild;
     this.callSetterFor.sortedSetWild = true;
     return this;
@@ -239,7 +239,7 @@ public class ClassWithCollectionsBuilder<T, U> {
   }
 
   private class FieldValue {
-    Deque<?> deque;
+    Deque<Object> deque;
 
     float[] floats;
 
@@ -255,13 +255,13 @@ public class ClassWithCollectionsBuilder<T, U> {
 
     Map<T, U> mapTU;
 
-    Map<?, Object> mapWildObj;
+    Map<Object, Object> mapWildObj;
 
     MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams;
 
     Set<List> set;
 
-    SortedSet<?> sortedSetWild;
+    SortedSet<Object> sortedSetWild;
   }
 
   public class ArrayFloats {
