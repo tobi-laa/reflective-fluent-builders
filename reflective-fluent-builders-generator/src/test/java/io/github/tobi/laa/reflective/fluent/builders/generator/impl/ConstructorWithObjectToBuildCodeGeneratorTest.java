@@ -52,8 +52,8 @@ class ConstructorWithObjectToBuildCodeGeneratorTest {
                                         .build()) //
                                 .build(), //
                         "protected Constructor(\n" +
-                                "    final io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass objectToBuild) {\n" +
-                                "  this.objectToBuild = objectToBuild;\n" +
+                                "    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass> objectSupplier) {\n" +
+                                "  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);\n" +
                                 "}\n"),
                 Arguments.of(
                         BuilderMetadata.builder() //
@@ -65,8 +65,8 @@ class ConstructorWithObjectToBuildCodeGeneratorTest {
                                         .build()) //
                                 .build(), //
                         "protected Constructor(\n" +
-                                "    final io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy objectToBuild) {\n" +
-                                "  this.objectToBuild = objectToBuild;\n" +
+                                "    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy> objectSupplier) {\n" +
+                                "  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);\n" +
                                 "}\n"));
     }
 }

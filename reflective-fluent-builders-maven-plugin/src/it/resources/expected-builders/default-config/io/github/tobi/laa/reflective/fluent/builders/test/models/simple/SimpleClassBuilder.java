@@ -5,6 +5,7 @@ import java.lang.Object;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -18,27 +19,22 @@ public class SimpleClassBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private SimpleClass objectToBuild;
+  private Supplier<SimpleClass> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected SimpleClassBuilder(final SimpleClass objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected SimpleClassBuilder() {
-    // noop
+  protected SimpleClassBuilder(final Supplier<SimpleClass> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static SimpleClassBuilder newInstance() {
-    return new SimpleClassBuilder();
+    return new SimpleClassBuilder(SimpleClass::new);
   }
 
-  public static SimpleClassBuilder thatModifies(final SimpleClass objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new SimpleClassBuilder(objectToModify);
+  public static SimpleClassBuilder withSupplier(final Supplier<SimpleClass> supplier) {
+    return new SimpleClassBuilder(supplier);
   }
 
   public SimpleClassBuilder aString(final String aString) {
@@ -66,22 +62,20 @@ public class SimpleClassBuilder {
   }
 
   public SimpleClass build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new SimpleClass();
-    }
+    final SimpleClass objectToBuild = objectSupplier.get();
     if (this.callSetterFor.aString) {
-      this.objectToBuild.setAString(this.fieldValue.aString);
+      objectToBuild.setAString(this.fieldValue.aString);
     }
     if (this.callSetterFor.anInt) {
-      this.objectToBuild.setAnInt(this.fieldValue.anInt);
+      objectToBuild.setAnInt(this.fieldValue.anInt);
     }
     if (this.callSetterFor.booleanField) {
-      this.objectToBuild.setBooleanField(this.fieldValue.booleanField);
+      objectToBuild.setBooleanField(this.fieldValue.booleanField);
     }
     if (this.callSetterFor.setClass) {
-      this.objectToBuild.setSetClass(this.fieldValue.setClass);
+      objectToBuild.setSetClass(this.fieldValue.setClass);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

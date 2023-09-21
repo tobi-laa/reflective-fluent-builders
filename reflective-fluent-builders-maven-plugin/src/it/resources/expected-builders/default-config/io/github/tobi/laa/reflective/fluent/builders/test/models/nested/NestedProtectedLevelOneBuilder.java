@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,29 +16,24 @@ public class NestedProtectedLevelOneBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private TopLevelClass.NestedProtectedLevelOne objectToBuild;
+  private Supplier<TopLevelClass.NestedProtectedLevelOne> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
   protected NestedProtectedLevelOneBuilder(
-      final TopLevelClass.NestedProtectedLevelOne objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected NestedProtectedLevelOneBuilder() {
-    // noop
+      final Supplier<TopLevelClass.NestedProtectedLevelOne> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static NestedProtectedLevelOneBuilder newInstance() {
-    return new NestedProtectedLevelOneBuilder();
+    return new NestedProtectedLevelOneBuilder(TopLevelClass.NestedProtectedLevelOne::new);
   }
 
-  public static NestedProtectedLevelOneBuilder thatModifies(
-      final TopLevelClass.NestedProtectedLevelOne objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new NestedProtectedLevelOneBuilder(objectToModify);
+  public static NestedProtectedLevelOneBuilder withSupplier(
+      final Supplier<TopLevelClass.NestedProtectedLevelOne> supplier) {
+    return new NestedProtectedLevelOneBuilder(supplier);
   }
 
   public NestedProtectedLevelOneBuilder field(final int field) {
@@ -47,13 +43,11 @@ public class NestedProtectedLevelOneBuilder {
   }
 
   public TopLevelClass.NestedProtectedLevelOne build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new TopLevelClass.NestedProtectedLevelOne();
-    }
+    final TopLevelClass.NestedProtectedLevelOne objectToBuild = objectSupplier.get();
     if (this.callSetterFor.field) {
-      this.objectToBuild.setField(this.fieldValue.field);
+      objectToBuild.setField(this.fieldValue.field);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

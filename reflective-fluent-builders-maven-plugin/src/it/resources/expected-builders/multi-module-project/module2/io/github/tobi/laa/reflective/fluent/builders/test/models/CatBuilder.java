@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -16,27 +17,22 @@ public class CatBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Cat objectToBuild;
+  private Supplier<Cat> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected CatBuilder(final Cat objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected CatBuilder() {
-    // noop
+  protected CatBuilder(final Supplier<Cat> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static CatBuilder newInstance() {
-    return new CatBuilder();
+    return new CatBuilder(Cat::new);
   }
 
-  public static CatBuilder thatModifies(final Cat objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new CatBuilder(objectToModify);
+  public static CatBuilder withSupplier(final Supplier<Cat> supplier) {
+    return new CatBuilder(supplier);
   }
 
   public CatBuilder fur(final String fur) {
@@ -46,13 +42,11 @@ public class CatBuilder {
   }
 
   public Cat build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new Cat();
-    }
+    final Cat objectToBuild = objectSupplier.get();
     if (this.callSetterFor.fur) {
-      this.objectToBuild.setFur(this.fieldValue.fur);
+      objectToBuild.setFur(this.fieldValue.fur);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,19 +16,19 @@ public class PrivateConstructorBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private PrivateConstructor objectToBuild;
+  private Supplier<PrivateConstructor> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected PrivateConstructorBuilder(final PrivateConstructor objectToBuild) {
-    this.objectToBuild = objectToBuild;
+  protected PrivateConstructorBuilder(final Supplier<PrivateConstructor> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
-  public static PrivateConstructorBuilder thatModifies(final PrivateConstructor objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new PrivateConstructorBuilder(objectToModify);
+  public static PrivateConstructorBuilder withSupplier(
+      final Supplier<PrivateConstructor> supplier) {
+    return new PrivateConstructorBuilder(supplier);
   }
 
   public PrivateConstructorBuilder intField(final int intField) {
@@ -37,10 +38,11 @@ public class PrivateConstructorBuilder {
   }
 
   public PrivateConstructor build() {
+    final PrivateConstructor objectToBuild = objectSupplier.get();
     if (this.callSetterFor.intField) {
-      this.objectToBuild.setIntField(this.fieldValue.intField);
+      objectToBuild.setIntField(this.fieldValue.intField);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

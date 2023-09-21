@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,29 +16,24 @@ public class NestedPublicLevelThreeBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree objectToBuild;
+  private Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
   protected NestedPublicLevelThreeBuilder(
-      final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected NestedPublicLevelThreeBuilder() {
-    // noop
+      final Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static NestedPublicLevelThreeBuilder newInstance() {
-    return new NestedPublicLevelThreeBuilder();
+    return new NestedPublicLevelThreeBuilder(TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree::new);
   }
 
-  public static NestedPublicLevelThreeBuilder thatModifies(
-      final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new NestedPublicLevelThreeBuilder(objectToModify);
+  public static NestedPublicLevelThreeBuilder withSupplier(
+      final Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree> supplier) {
+    return new NestedPublicLevelThreeBuilder(supplier);
   }
 
   public NestedPublicLevelThreeBuilder field(final int field) {
@@ -47,13 +43,11 @@ public class NestedPublicLevelThreeBuilder {
   }
 
   public TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree();
-    }
+    final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree objectToBuild = objectSupplier.get();
     if (this.callSetterFor.field) {
-      this.objectToBuild.setField(this.fieldValue.field);
+      objectToBuild.setField(this.fieldValue.field);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierar
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,29 +16,24 @@ public class SecondSuperClassInDifferentPackageBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private SecondSuperClassInDifferentPackage objectToBuild;
+  private Supplier<SecondSuperClassInDifferentPackage> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
   protected SecondSuperClassInDifferentPackageBuilder(
-      final SecondSuperClassInDifferentPackage objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected SecondSuperClassInDifferentPackageBuilder() {
-    // noop
+      final Supplier<SecondSuperClassInDifferentPackage> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static SecondSuperClassInDifferentPackageBuilder newInstance() {
-    return new SecondSuperClassInDifferentPackageBuilder();
+    return new SecondSuperClassInDifferentPackageBuilder(SecondSuperClassInDifferentPackage::new);
   }
 
-  public static SecondSuperClassInDifferentPackageBuilder thatModifies(
-      final SecondSuperClassInDifferentPackage objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new SecondSuperClassInDifferentPackageBuilder(objectToModify);
+  public static SecondSuperClassInDifferentPackageBuilder withSupplier(
+      final Supplier<SecondSuperClassInDifferentPackage> supplier) {
+    return new SecondSuperClassInDifferentPackageBuilder(supplier);
   }
 
   public SecondSuperClassInDifferentPackageBuilder eight(final int eight) {
@@ -59,19 +55,17 @@ public class SecondSuperClassInDifferentPackageBuilder {
   }
 
   public SecondSuperClassInDifferentPackage build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new SecondSuperClassInDifferentPackage();
-    }
+    final SecondSuperClassInDifferentPackage objectToBuild = objectSupplier.get();
     if (this.callSetterFor.eight) {
-      this.objectToBuild.setEight(this.fieldValue.eight);
+      objectToBuild.setEight(this.fieldValue.eight);
     }
     if (this.callSetterFor.five) {
-      this.objectToBuild.setFive(this.fieldValue.five);
+      objectToBuild.setFive(this.fieldValue.five);
     }
     if (this.callSetterFor.four) {
-      this.objectToBuild.setFour(this.fieldValue.four);
+      objectToBuild.setFour(this.fieldValue.four);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

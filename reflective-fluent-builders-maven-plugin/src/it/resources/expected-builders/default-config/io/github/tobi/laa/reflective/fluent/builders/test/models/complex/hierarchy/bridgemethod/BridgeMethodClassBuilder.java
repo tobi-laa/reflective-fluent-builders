@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierar
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -16,27 +17,22 @@ public class BridgeMethodClassBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private BridgeMethodClass objectToBuild;
+  private Supplier<BridgeMethodClass> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected BridgeMethodClassBuilder(final BridgeMethodClass objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected BridgeMethodClassBuilder() {
-    // noop
+  protected BridgeMethodClassBuilder(final Supplier<BridgeMethodClass> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static BridgeMethodClassBuilder newInstance() {
-    return new BridgeMethodClassBuilder();
+    return new BridgeMethodClassBuilder(BridgeMethodClass::new);
   }
 
-  public static BridgeMethodClassBuilder thatModifies(final BridgeMethodClass objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new BridgeMethodClassBuilder(objectToModify);
+  public static BridgeMethodClassBuilder withSupplier(final Supplier<BridgeMethodClass> supplier) {
+    return new BridgeMethodClassBuilder(supplier);
   }
 
   public BridgeMethodClassBuilder something(final String something) {
@@ -46,13 +42,11 @@ public class BridgeMethodClassBuilder {
   }
 
   public BridgeMethodClass build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new BridgeMethodClass();
-    }
+    final BridgeMethodClass objectToBuild = objectSupplier.get();
     if (this.callSetterFor.something) {
-      this.objectToBuild.setSomething(this.fieldValue.something);
+      objectToBuild.setSomething(this.fieldValue.something);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

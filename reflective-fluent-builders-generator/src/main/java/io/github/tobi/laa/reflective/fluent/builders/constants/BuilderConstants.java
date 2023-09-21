@@ -23,10 +23,10 @@ public final class BuilderConstants {
 
     /**
      * <p>
-     * Name of the field which will hold the object to be built by a builder.
+     * Name of the field which will hold the factory method to instantiate the object to be built by a builder.
      * </p>
      */
-    public static final String OBJECT_TO_BUILD_FIELD_NAME = "objectToBuild";
+    public static final String OBJECT_SUPPLIER_FIELD_NAME = "objectSupplier";
 
     /**
      * <p>

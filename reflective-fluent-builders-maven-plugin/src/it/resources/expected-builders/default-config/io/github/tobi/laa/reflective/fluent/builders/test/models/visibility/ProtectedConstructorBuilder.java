@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,28 +16,23 @@ public class ProtectedConstructorBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private ProtectedConstructor objectToBuild;
+  private Supplier<ProtectedConstructor> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected ProtectedConstructorBuilder(final ProtectedConstructor objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected ProtectedConstructorBuilder() {
-    // noop
+  protected ProtectedConstructorBuilder(final Supplier<ProtectedConstructor> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static ProtectedConstructorBuilder newInstance() {
-    return new ProtectedConstructorBuilder();
+    return new ProtectedConstructorBuilder(ProtectedConstructor::new);
   }
 
-  public static ProtectedConstructorBuilder thatModifies(
-      final ProtectedConstructor objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new ProtectedConstructorBuilder(objectToModify);
+  public static ProtectedConstructorBuilder withSupplier(
+      final Supplier<ProtectedConstructor> supplier) {
+    return new ProtectedConstructorBuilder(supplier);
   }
 
   public ProtectedConstructorBuilder intField(final int intField) {
@@ -46,13 +42,11 @@ public class ProtectedConstructorBuilder {
   }
 
   public ProtectedConstructor build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new ProtectedConstructor();
-    }
+    final ProtectedConstructor objectToBuild = objectSupplier.get();
     if (this.callSetterFor.intField) {
-      this.objectToBuild.setIntField(this.fieldValue.intField);
+      objectToBuild.setIntField(this.fieldValue.intField);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,29 +16,24 @@ public class SettersWithDifferentVisibilityBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private SettersWithDifferentVisibility objectToBuild;
+  private Supplier<SettersWithDifferentVisibility> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
   protected SettersWithDifferentVisibilityBuilder(
-      final SettersWithDifferentVisibility objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected SettersWithDifferentVisibilityBuilder() {
-    // noop
+      final Supplier<SettersWithDifferentVisibility> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static SettersWithDifferentVisibilityBuilder newInstance() {
-    return new SettersWithDifferentVisibilityBuilder();
+    return new SettersWithDifferentVisibilityBuilder(SettersWithDifferentVisibility::new);
   }
 
-  public static SettersWithDifferentVisibilityBuilder thatModifies(
-      final SettersWithDifferentVisibility objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new SettersWithDifferentVisibilityBuilder(objectToModify);
+  public static SettersWithDifferentVisibilityBuilder withSupplier(
+      final Supplier<SettersWithDifferentVisibility> supplier) {
+    return new SettersWithDifferentVisibilityBuilder(supplier);
   }
 
   public SettersWithDifferentVisibilityBuilder packagePrivateSetter(
@@ -60,19 +56,17 @@ public class SettersWithDifferentVisibilityBuilder {
   }
 
   public SettersWithDifferentVisibility build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new SettersWithDifferentVisibility();
-    }
+    final SettersWithDifferentVisibility objectToBuild = objectSupplier.get();
     if (this.callSetterFor.packagePrivateSetter) {
-      this.objectToBuild.setPackagePrivateSetter(this.fieldValue.packagePrivateSetter);
+      objectToBuild.setPackagePrivateSetter(this.fieldValue.packagePrivateSetter);
     }
     if (this.callSetterFor.protectedSetter) {
-      this.objectToBuild.setProtectedSetter(this.fieldValue.protectedSetter);
+      objectToBuild.setProtectedSetter(this.fieldValue.protectedSetter);
     }
     if (this.callSetterFor.publicSetter) {
-      this.objectToBuild.setPublicSetter(this.fieldValue.publicSetter);
+      objectToBuild.setPublicSetter(this.fieldValue.publicSetter);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {
