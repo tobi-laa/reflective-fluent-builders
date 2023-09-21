@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -19,27 +20,22 @@ public class GenericParentBuilder<R, S, T> {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private GenericParent objectToBuild;
+  private Supplier<GenericParent> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected GenericParentBuilder(final GenericParent objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected GenericParentBuilder() {
-    // noop
+  protected GenericParentBuilder(final Supplier<GenericParent> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static GenericParentBuilder newInstance() {
-    return new GenericParentBuilder();
+    return new GenericParentBuilder(GenericParent::new);
   }
 
-  public static GenericParentBuilder thatModifies(final GenericParent objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new GenericParentBuilder(objectToModify);
+  public static GenericParentBuilder withSupplier(final Supplier<GenericParent> supplier) {
+    return new GenericParentBuilder(supplier);
   }
 
   public CollectionList list() {
@@ -75,22 +71,20 @@ public class GenericParentBuilder<R, S, T> {
   }
 
   public GenericParent build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new GenericParent();
-    }
+    final GenericParent objectToBuild = objectSupplier.get();
     if (this.callSetterFor.generic) {
-      this.objectToBuild.setGeneric(this.fieldValue.generic);
+      objectToBuild.setGeneric(this.fieldValue.generic);
     }
     if (this.callSetterFor.list) {
-      this.objectToBuild.setList(this.fieldValue.list);
+      objectToBuild.setList(this.fieldValue.list);
     }
     if (this.callSetterFor.map) {
-      this.objectToBuild.setMap(this.fieldValue.map);
+      objectToBuild.setMap(this.fieldValue.map);
     }
     if (this.callSetterFor.otherGeneric) {
-      this.objectToBuild.setOtherGeneric(this.fieldValue.otherGeneric);
+      objectToBuild.setOtherGeneric(this.fieldValue.otherGeneric);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

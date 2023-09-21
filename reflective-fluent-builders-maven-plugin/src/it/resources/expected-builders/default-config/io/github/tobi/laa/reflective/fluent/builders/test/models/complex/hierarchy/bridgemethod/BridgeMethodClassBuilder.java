@@ -4,7 +4,7 @@ import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
 import java.util.function.Supplier;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",

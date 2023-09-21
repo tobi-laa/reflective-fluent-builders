@@ -157,7 +157,7 @@ class SetterServiceImplTest {
 
     @SneakyThrows
     private static Stream<Arguments> testGatherAllSetters() {
-        final var setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
+        final Type setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
         return Stream.of( //
                 Arguments.of("set", null, false, SimpleClass.class, Visibility.PUBLIC, //
                         ImmutableSet.of( //
@@ -215,9 +215,9 @@ class SetterServiceImplTest {
         when(properties.getSetterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
         doReturn(fullClassHierarchy).when(classService).collectFullClassHierarchy(any());
-        lenient().doReturn(List.of(List.class)).when(classService).collectFullClassHierarchy(List.class);
-        lenient().doReturn(List.of(Map.class)).when(classService).collectFullClassHierarchy(Map.class);
-        lenient().doReturn(List.of(Set.class)).when(classService).collectFullClassHierarchy(Set.class);
+        lenient().doReturn(Collections.singletonList(List.class)).when(classService).collectFullClassHierarchy(List.class);
+        lenient().doReturn(Collections.singletonList(Map.class)).when(classService).collectFullClassHierarchy(Map.class);
+        lenient().doReturn(Collections.singletonList(Set.class)).when(classService).collectFullClassHierarchy(Set.class);
         doReturn(true).when(accessibilityService).isAccessibleFrom(any(Method.class), any());
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);

@@ -30,8 +30,8 @@ class TypeNameGeneratorImpl implements TypeNameGenerator {
     public TypeName generateTypeNameForParam(final Setter setter) {
         Objects.requireNonNull(setter);
         if (setter.getParamType() instanceof ParameterizedType) {
-            final var parameterizedType = (ParameterizedType) setter.getParamType();
-            final var rawType = (Class<?>) parameterizedType.getRawType();
+            final ParameterizedType parameterizedType = (ParameterizedType) setter.getParamType();
+            final Class<?> rawType = (Class<?>) parameterizedType.getRawType();
             final Type[] typeArgs = Arrays.stream(parameterizedType.getActualTypeArguments()).map(this::wildcardToUpperBound).toArray(Type[]::new);
             return ParameterizedTypeName.get(rawType, typeArgs);
         } else {

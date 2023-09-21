@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static java.util.function.Predicate.not;
+import static com.google.common.base.Predicates.not;
 
 /**
  * <p>
@@ -106,7 +106,7 @@ class SetterServiceImpl implements SetterService {
                     .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
-            final var collectionType = resolveCollectionType(clazz, paramType);
+            final Type collectionType = resolveCollectionType(clazz, paramType);
             return CollectionSetter.builder() //
                     .paramTypeArg(typeArg(collectionType, 0)) //
                     .methodName(method.getName()) //
@@ -116,7 +116,7 @@ class SetterServiceImpl implements SetterService {
                     .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
-            final var mapType = resolveMapType(clazz, paramType);
+            final Type mapType = resolveMapType(clazz, paramType);
             return MapSetter.builder() //
                     .keyType(typeArg(mapType, 0)) //
                     .valueType(typeArg(mapType, 1)) //
@@ -140,7 +140,7 @@ class SetterServiceImpl implements SetterService {
     @SuppressWarnings("java:S3252")
     private CollectionGetAndAdder toGetAndAdder(final Class<?> clazz, final Method method) {
         final Type paramType = resolveType(clazz, method.getGenericReturnType());
-        final var collectionType = resolveCollectionType(clazz, paramType);
+        final Type collectionType = resolveCollectionType(clazz, paramType);
         return CollectionGetAndAdder.builder() //
                 .paramTypeArg(typeArg(collectionType, 0)) //
                 .methodName(method.getName()) //

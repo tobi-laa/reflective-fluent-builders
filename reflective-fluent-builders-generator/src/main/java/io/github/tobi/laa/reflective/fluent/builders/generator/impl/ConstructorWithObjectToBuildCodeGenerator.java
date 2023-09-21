@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MethodCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 
@@ -27,7 +28,7 @@ class ConstructorWithObjectToBuildCodeGenerator implements MethodCodeGenerator {
     @Override
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
+        final TypeName supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
         return Optional.of(MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(supplierTypeName, OBJECT_SUPPLIER_FIELD_NAME, Modifier.FINAL)

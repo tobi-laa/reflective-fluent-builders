@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarc
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -16,27 +17,22 @@ public class ChildBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Child objectToBuild;
+  private Supplier<Child> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected ChildBuilder(final Child objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected ChildBuilder() {
-    // noop
+  protected ChildBuilder(final Supplier<Child> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static ChildBuilder newInstance() {
-    return new ChildBuilder();
+    return new ChildBuilder(Child::new);
   }
 
-  public static ChildBuilder thatModifies(final Child objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new ChildBuilder(objectToModify);
+  public static ChildBuilder withSupplier(final Supplier<Child> supplier) {
+    return new ChildBuilder(supplier);
   }
 
   public ChildBuilder childField(final String childField) {
@@ -52,16 +48,14 @@ public class ChildBuilder {
   }
 
   public Child build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new Child();
-    }
+    final Child objectToBuild = objectSupplier.get();
     if (this.callSetterFor.childField) {
-      this.objectToBuild.setChildField(this.fieldValue.childField);
+      objectToBuild.setChildField(this.fieldValue.childField);
     }
     if (this.callSetterFor.parentField) {
-      this.objectToBuild.setParentField(this.fieldValue.parentField);
+      objectToBuild.setParentField(this.fieldValue.parentField);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

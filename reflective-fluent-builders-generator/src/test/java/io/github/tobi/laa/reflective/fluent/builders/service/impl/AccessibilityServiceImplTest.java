@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.collect.ImmutableSet;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.TypeService;
@@ -20,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.*;
@@ -119,9 +119,9 @@ class AccessibilityServiceImplTest {
     void testIsTypeAccessibleFromNotAllExplodedTypesAccessible() {
         // Arrange
         final Type type = Object.class;
-        final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
-        final var packageName = "java.lang";
-        doReturn(Set.of(String.class, packagePrivate)).when(typeService).explodeType(type);
+        final Class<?> packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
+        final String packageName = "java.lang";
+        doReturn(ImmutableSet.of(String.class, packagePrivate)).when(typeService).explodeType(type);
         lenient().doReturn(PUBLIC).when(visibilityService).toVisibility(String.class.getModifiers());
         doReturn(PACKAGE_PRIVATE).when(visibilityService).toVisibility(packagePrivate.getModifiers());
         // Act
@@ -135,9 +135,9 @@ class AccessibilityServiceImplTest {
     void testIsTypeAccessibleFrom() {
         // Arrange
         final Type type = Object.class;
-        final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
-        final var packageName = "java.lang";
-        doReturn(Set.of(String.class, packagePrivate)).when(typeService).explodeType(type);
+        final Class<?> packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
+        final String packageName = "java.lang";
+        doReturn(ImmutableSet.of(String.class, packagePrivate)).when(typeService).explodeType(type);
         doReturn(PUBLIC).when(visibilityService).toVisibility(String.class.getModifiers());
         doReturn(PUBLIC).when(visibilityService).toVisibility(packagePrivate.getModifiers());
         // Act

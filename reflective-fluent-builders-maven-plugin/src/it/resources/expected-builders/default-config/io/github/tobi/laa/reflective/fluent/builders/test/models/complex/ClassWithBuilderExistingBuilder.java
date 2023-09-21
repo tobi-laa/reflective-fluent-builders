@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -15,20 +16,20 @@ public class ClassWithBuilderExistingBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private ClassWithBuilderExisting objectToBuild;
+  private Supplier<ClassWithBuilderExisting> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected ClassWithBuilderExistingBuilder(final ClassWithBuilderExisting objectToBuild) {
-    this.objectToBuild = objectToBuild;
+  protected ClassWithBuilderExistingBuilder(
+      final Supplier<ClassWithBuilderExisting> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
-  public static ClassWithBuilderExistingBuilder thatModifies(
-      final ClassWithBuilderExisting objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new ClassWithBuilderExistingBuilder(objectToModify);
+  public static ClassWithBuilderExistingBuilder withSupplier(
+      final Supplier<ClassWithBuilderExisting> supplier) {
+    return new ClassWithBuilderExistingBuilder(supplier);
   }
 
   public ClassWithBuilderExistingBuilder aField(final int aField) {
@@ -38,10 +39,11 @@ public class ClassWithBuilderExistingBuilder {
   }
 
   public ClassWithBuilderExisting build() {
+    final ClassWithBuilderExisting objectToBuild = objectSupplier.get();
     if (this.callSetterFor.aField) {
-      this.objectToBuild.setAField(this.fieldValue.aField);
+      objectToBuild.setAField(this.fieldValue.aField);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

@@ -5,6 +5,7 @@ import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -18,27 +19,22 @@ public class ClassWithGenericsBuilder<T> {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private ClassWithGenerics objectToBuild;
+  private Supplier<ClassWithGenerics> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected ClassWithGenericsBuilder() {
-    // noop
+  protected ClassWithGenericsBuilder(final Supplier<ClassWithGenerics> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static ClassWithGenericsBuilder newInstance() {
-    return new ClassWithGenericsBuilder();
+    return new ClassWithGenericsBuilder(ClassWithGenerics::new);
   }
 
-  public static ClassWithGenericsBuilder thatModifies(final ClassWithGenerics objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new ClassWithGenericsBuilder(objectToModify);
+  public static ClassWithGenericsBuilder withSupplier(final Supplier<ClassWithGenerics> supplier) {
+    return new ClassWithGenericsBuilder(supplier);
   }
 
   public ArrayFloats floats() {
@@ -64,19 +60,17 @@ public class ClassWithGenericsBuilder<T> {
   }
 
   public ClassWithGenerics build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new ClassWithGenerics();
-    }
+    final ClassWithGenerics objectToBuild = objectSupplier.get();
     if (this.callSetterFor.anInt) {
-      this.objectToBuild.setAnInt(this.fieldValue.anInt);
+      objectToBuild.setAnInt(this.fieldValue.anInt);
     }
     if (this.callSetterFor.floats) {
-      this.objectToBuild.setFloats(this.fieldValue.floats);
+      objectToBuild.setFloats(this.fieldValue.floats);
     }
     if (this.callSetterFor.t) {
-      this.objectToBuild.setT(this.fieldValue.t);
+      objectToBuild.setT(this.fieldValue.t);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

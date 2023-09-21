@@ -282,7 +282,7 @@ class BuilderMetadataServiceImplTest {
     @Test
     void testFilterOutNonBuildableClassesNonConstructableClasses() {
         // Arrange
-        final var classes = Set.of(Abstract.class, Annotation.class, Enum.class, Interface.class);
+        final Set<Class<?>> classes = ImmutableSet.of(Abstract.class, Annotation.class, Enum.class, Interface.class);
         doReturn(true).when(classService).isAbstract(Abstract.class);
         // Act
         final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);
@@ -293,7 +293,7 @@ class BuilderMetadataServiceImplTest {
     @Test
     void testFilterOutNonBuildableClassesInaccessibleClass() {
         // Arrange
-        final var classes = Set.of(SimpleClass.class, PackagePrivateConstructor.class);
+        final Set<Class<?>> classes = ImmutableSet.of(SimpleClass.class, PackagePrivateConstructor.class);
         doReturn(true).when(accessibilityService).isAccessibleFrom(eq(SimpleClass.class), any());
         doReturn(false).when(accessibilityService).isAccessibleFrom(eq(PackagePrivateConstructor.class), any());
         doReturn(false).when(classService).isAbstract(any());
@@ -306,7 +306,7 @@ class BuilderMetadataServiceImplTest {
     @Test
     void testFilterOutNonBuildableClassesNestedClasses() {
         // Arrange
-        final var classes = Set.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class);
+        final Set<Class<?>> classes = ImmutableSet.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class);
         doReturn(true).when(accessibilityService).isAccessibleFrom(any(Class.class), any());
         doReturn(false).when(classService).isAbstract(any());
         // Act

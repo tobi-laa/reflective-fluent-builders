@@ -50,7 +50,7 @@ class AccessibilityServiceImpl implements AccessibilityService {
     public boolean isAccessibleFrom(final Method method, final String packageName) {
         Objects.requireNonNull(method);
         Objects.requireNonNull(packageName);
-        final var visibility = visibilityService.toVisibility(method.getModifiers());
+        final Visibility visibility = visibilityService.toVisibility(method.getModifiers());
         return isAccessible(method.getDeclaringClass(), visibility, packageName) && //
                 isAccessibleFrom(method.getGenericReturnType(), packageName) && //
                 stream(method.getGenericParameterTypes()) //
@@ -65,7 +65,7 @@ class AccessibilityServiceImpl implements AccessibilityService {
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers, final String builderPackage) {
-        final var visibility = visibilityService.toVisibility(modifiers);
+        final Visibility visibility = visibilityService.toVisibility(modifiers);
         return isAccessible(clazz, visibility, builderPackage);
     }
 

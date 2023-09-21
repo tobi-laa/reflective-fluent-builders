@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -15,27 +16,22 @@ public class TopLevelClassBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private TopLevelClass objectToBuild;
+  private Supplier<TopLevelClass> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected TopLevelClassBuilder(final TopLevelClass objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected TopLevelClassBuilder() {
-    // noop
+  protected TopLevelClassBuilder(final Supplier<TopLevelClass> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static TopLevelClassBuilder newInstance() {
-    return new TopLevelClassBuilder();
+    return new TopLevelClassBuilder(TopLevelClass::new);
   }
 
-  public static TopLevelClassBuilder thatModifies(final TopLevelClass objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new TopLevelClassBuilder(objectToModify);
+  public static TopLevelClassBuilder withSupplier(final Supplier<TopLevelClass> supplier) {
+    return new TopLevelClassBuilder(supplier);
   }
 
   public TopLevelClassBuilder nestedNonStatic(final TopLevelClass.NestedNonStatic nestedNonStatic) {
@@ -65,22 +61,20 @@ public class TopLevelClassBuilder {
   }
 
   public TopLevelClass build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new TopLevelClass();
-    }
+    final TopLevelClass objectToBuild = objectSupplier.get();
     if (this.callSetterFor.nestedNonStatic) {
-      this.objectToBuild.setNestedNonStatic(this.fieldValue.nestedNonStatic);
+      objectToBuild.setNestedNonStatic(this.fieldValue.nestedNonStatic);
     }
     if (this.callSetterFor.nestedPackagePrivate) {
-      this.objectToBuild.setNestedPackagePrivate(this.fieldValue.nestedPackagePrivate);
+      objectToBuild.setNestedPackagePrivate(this.fieldValue.nestedPackagePrivate);
     }
     if (this.callSetterFor.nestedProtected) {
-      this.objectToBuild.setNestedProtected(this.fieldValue.nestedProtected);
+      objectToBuild.setNestedProtected(this.fieldValue.nestedProtected);
     }
     if (this.callSetterFor.nestedPublic) {
-      this.objectToBuild.setNestedPublic(this.fieldValue.nestedPublic);
+      objectToBuild.setNestedPublic(this.fieldValue.nestedPublic);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

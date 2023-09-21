@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -15,29 +16,24 @@ public class NestedPackagePrivateLevelOneBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private TopLevelClass.NestedPackagePrivateLevelOne objectToBuild;
+  private Supplier<TopLevelClass.NestedPackagePrivateLevelOne> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
   protected NestedPackagePrivateLevelOneBuilder(
-      final TopLevelClass.NestedPackagePrivateLevelOne objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected NestedPackagePrivateLevelOneBuilder() {
-    // noop
+      final Supplier<TopLevelClass.NestedPackagePrivateLevelOne> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static NestedPackagePrivateLevelOneBuilder newInstance() {
-    return new NestedPackagePrivateLevelOneBuilder();
+    return new NestedPackagePrivateLevelOneBuilder(TopLevelClass.NestedPackagePrivateLevelOne::new);
   }
 
-  public static NestedPackagePrivateLevelOneBuilder thatModifies(
-      final TopLevelClass.NestedPackagePrivateLevelOne objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new NestedPackagePrivateLevelOneBuilder(objectToModify);
+  public static NestedPackagePrivateLevelOneBuilder withSupplier(
+      final Supplier<TopLevelClass.NestedPackagePrivateLevelOne> supplier) {
+    return new NestedPackagePrivateLevelOneBuilder(supplier);
   }
 
   public NestedPackagePrivateLevelOneBuilder field(final int field) {
@@ -47,13 +43,11 @@ public class NestedPackagePrivateLevelOneBuilder {
   }
 
   public TopLevelClass.NestedPackagePrivateLevelOne build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new TopLevelClass.NestedPackagePrivateLevelOne();
-    }
+    final TopLevelClass.NestedPackagePrivateLevelOne objectToBuild = objectSupplier.get();
     if (this.callSetterFor.field) {
-      this.objectToBuild.setField(this.fieldValue.field);
+      objectToBuild.setField(this.fieldValue.field);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -15,29 +16,24 @@ public class NestedPublicLevelTwoBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo objectToBuild;
+  private Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
   protected NestedPublicLevelTwoBuilder(
-      final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected NestedPublicLevelTwoBuilder() {
-    // noop
+      final Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static NestedPublicLevelTwoBuilder newInstance() {
-    return new NestedPublicLevelTwoBuilder();
+    return new NestedPublicLevelTwoBuilder(TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo::new);
   }
 
-  public static NestedPublicLevelTwoBuilder thatModifies(
-      final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new NestedPublicLevelTwoBuilder(objectToModify);
+  public static NestedPublicLevelTwoBuilder withSupplier(
+      final Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo> supplier) {
+    return new NestedPublicLevelTwoBuilder(supplier);
   }
 
   public NestedPublicLevelTwoBuilder nested(
@@ -48,13 +44,11 @@ public class NestedPublicLevelTwoBuilder {
   }
 
   public TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo();
-    }
+    final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo objectToBuild = objectSupplier.get();
     if (this.callSetterFor.nested) {
-      this.objectToBuild.setNested(this.fieldValue.nested);
+      objectToBuild.setNested(this.fieldValue.nested);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

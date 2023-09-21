@@ -27,6 +27,6 @@ class BuilderPackageServiceImpl implements BuilderPackageService {
     @Override
     public String resolveBuilderPackage(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
-        return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
+        return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackage().getName());
     }
 }

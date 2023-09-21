@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.nested;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -15,28 +16,24 @@ public class NestedPublicLevelOneBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private TopLevelClass.NestedPublicLevelOne objectToBuild;
+  private Supplier<TopLevelClass.NestedPublicLevelOne> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected NestedPublicLevelOneBuilder(final TopLevelClass.NestedPublicLevelOne objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected NestedPublicLevelOneBuilder() {
-    // noop
+  protected NestedPublicLevelOneBuilder(
+      final Supplier<TopLevelClass.NestedPublicLevelOne> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static NestedPublicLevelOneBuilder newInstance() {
-    return new NestedPublicLevelOneBuilder();
+    return new NestedPublicLevelOneBuilder(TopLevelClass.NestedPublicLevelOne::new);
   }
 
-  public static NestedPublicLevelOneBuilder thatModifies(
-      final TopLevelClass.NestedPublicLevelOne objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new NestedPublicLevelOneBuilder(objectToModify);
+  public static NestedPublicLevelOneBuilder withSupplier(
+      final Supplier<TopLevelClass.NestedPublicLevelOne> supplier) {
+    return new NestedPublicLevelOneBuilder(supplier);
   }
 
   public NestedPublicLevelOneBuilder nested(
@@ -47,13 +44,11 @@ public class NestedPublicLevelOneBuilder {
   }
 
   public TopLevelClass.NestedPublicLevelOne build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new TopLevelClass.NestedPublicLevelOne();
-    }
+    final TopLevelClass.NestedPublicLevelOne objectToBuild = objectSupplier.get();
     if (this.callSetterFor.nested) {
-      this.objectToBuild.setNested(this.fieldValue.nested);
+      objectToBuild.setNested(this.fieldValue.nested);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

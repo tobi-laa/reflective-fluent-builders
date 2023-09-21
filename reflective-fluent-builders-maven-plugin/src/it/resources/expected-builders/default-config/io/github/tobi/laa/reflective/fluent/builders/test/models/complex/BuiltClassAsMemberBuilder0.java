@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -15,29 +16,24 @@ public class BuiltClassAsMemberBuilder0 {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild;
+  private Supplier<BuiltClassAsMemberBuilder.BuiltClassAsMember> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
   protected BuiltClassAsMemberBuilder0(
-      final BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected BuiltClassAsMemberBuilder0() {
-    // noop
+      final Supplier<BuiltClassAsMemberBuilder.BuiltClassAsMember> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static BuiltClassAsMemberBuilder0 newInstance() {
-    return new BuiltClassAsMemberBuilder0();
+    return new BuiltClassAsMemberBuilder0(BuiltClassAsMemberBuilder.BuiltClassAsMember::new);
   }
 
-  public static BuiltClassAsMemberBuilder0 thatModifies(
-      final BuiltClassAsMemberBuilder.BuiltClassAsMember objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new BuiltClassAsMemberBuilder0(objectToModify);
+  public static BuiltClassAsMemberBuilder0 withSupplier(
+      final Supplier<BuiltClassAsMemberBuilder.BuiltClassAsMember> supplier) {
+    return new BuiltClassAsMemberBuilder0(supplier);
   }
 
   public BuiltClassAsMemberBuilder0 aField(final int aField) {
@@ -47,13 +43,11 @@ public class BuiltClassAsMemberBuilder0 {
   }
 
   public BuiltClassAsMemberBuilder.BuiltClassAsMember build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new BuiltClassAsMemberBuilder.BuiltClassAsMember();
-    }
+    final BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild = objectSupplier.get();
     if (this.callSetterFor.aField) {
-      this.objectToBuild.setAField(this.fieldValue.aField);
+      objectToBuild.setAField(this.fieldValue.aField);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

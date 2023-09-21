@@ -4,6 +4,7 @@ import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.Generated;
 
 @Generated(
@@ -17,27 +18,22 @@ public class RelationsBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private PersonJaxb.Relations objectToBuild;
+  private Supplier<PersonJaxb.Relations> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected RelationsBuilder(final PersonJaxb.Relations objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected RelationsBuilder() {
-    // noop
+  protected RelationsBuilder(final Supplier<PersonJaxb.Relations> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static RelationsBuilder newInstance() {
-    return new RelationsBuilder();
+    return new RelationsBuilder(PersonJaxb.Relations::new);
   }
 
-  public static RelationsBuilder thatModifies(final PersonJaxb.Relations objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new RelationsBuilder(objectToModify);
+  public static RelationsBuilder withSupplier(final Supplier<PersonJaxb.Relations> supplier) {
+    return new RelationsBuilder(supplier);
   }
 
   public CollectionEntry entry() {
@@ -51,13 +47,11 @@ public class RelationsBuilder {
   }
 
   public PersonJaxb.Relations build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new PersonJaxb.Relations();
-    }
+    final PersonJaxb.Relations objectToBuild = objectSupplier.get();
     if (this.callSetterFor.entry && this.fieldValue.entry != null) {
       this.fieldValue.entry.forEach(objectToBuild.getEntry()::add);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

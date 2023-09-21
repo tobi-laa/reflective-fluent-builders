@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.FieldCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 
@@ -26,7 +27,7 @@ class ObjectSupplierFieldCodeGenerator implements FieldCodeGenerator {
     @Override
     public FieldSpec generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
+        final TypeName supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
         return FieldSpec.builder(supplierTypeName, OBJECT_SUPPLIER_FIELD_NAME, PRIVATE).build();
     }
 }
