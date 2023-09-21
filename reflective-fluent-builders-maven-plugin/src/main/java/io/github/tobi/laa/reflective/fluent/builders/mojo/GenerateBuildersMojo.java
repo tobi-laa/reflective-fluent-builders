@@ -297,7 +297,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * @param getAndAddEnabled Whether to support using a get-and-add paradigm in generated builders.
      * @since 1.0.0
      */
-    @Parameter(name = "getAndAddEnabled", defaultValue = "false")
+    @Parameter(name = "getAndAddEnabled", defaultValue = "true")
     @SuppressWarnings("unused")
     public void setGetAndAddEnabled(final boolean getAndAddEnabled) {
         params.setGetAndAddEnabled(getAndAddEnabled);

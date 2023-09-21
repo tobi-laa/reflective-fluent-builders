@@ -37,7 +37,6 @@
                             </packageName>
                         </include>
                     </includes>
-                    <getAndAddEnabled>true</getAndAddEnabled>
                 </configuration>
             </plugin>
         </plugins>
