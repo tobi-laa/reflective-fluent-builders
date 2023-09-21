@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  * cases where it is not possible (or very hard) to change the sources of said classes to generate builders directly.
  * </p>
  */
-@Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "generate-builders", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GenerateBuildersMojo extends AbstractMojo {
 
