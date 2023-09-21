@@ -5,6 +5,7 @@ import java.lang.SuppressWarnings;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -18,27 +19,22 @@ public class PetBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Pet objectToBuild;
+  private Supplier<Pet> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected PetBuilder(final Pet objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected PetBuilder() {
-    // noop
+  protected PetBuilder(final Supplier<Pet> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static PetBuilder newInstance() {
-    return new PetBuilder();
+    return new PetBuilder(Pet::new);
   }
 
-  public static PetBuilder thatModifies(final Pet objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new PetBuilder(objectToModify);
+  public static PetBuilder withSupplier(final Supplier<Pet> supplier) {
+    return new PetBuilder(supplier);
   }
 
   public CollectionSiblings siblings() {
@@ -70,22 +66,20 @@ public class PetBuilder {
   }
 
   public Pet build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new Pet();
-    }
+    final Pet objectToBuild = objectSupplier.get();
     if (this.callSetterFor.fullName) {
-      this.objectToBuild.setFullName(this.fieldValue.fullName);
+      objectToBuild.setFullName(this.fieldValue.fullName);
     }
     if (this.callSetterFor.owner) {
-      this.objectToBuild.setOwner(this.fieldValue.owner);
+      objectToBuild.setOwner(this.fieldValue.owner);
     }
     if (this.callSetterFor.siblings) {
-      this.objectToBuild.setSiblings(this.fieldValue.siblings);
+      objectToBuild.setSiblings(this.fieldValue.siblings);
     }
     if (this.callSetterFor.weight) {
-      this.objectToBuild.setWeight(this.fieldValue.weight);
+      objectToBuild.setWeight(this.fieldValue.weight);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

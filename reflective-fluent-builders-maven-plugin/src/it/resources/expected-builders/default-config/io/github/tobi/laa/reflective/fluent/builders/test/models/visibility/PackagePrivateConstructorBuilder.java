@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,28 +16,24 @@ public class PackagePrivateConstructorBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private PackagePrivateConstructor objectToBuild;
+  private Supplier<PackagePrivateConstructor> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected PackagePrivateConstructorBuilder(final PackagePrivateConstructor objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected PackagePrivateConstructorBuilder() {
-    // noop
+  protected PackagePrivateConstructorBuilder(
+      final Supplier<PackagePrivateConstructor> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static PackagePrivateConstructorBuilder newInstance() {
-    return new PackagePrivateConstructorBuilder();
+    return new PackagePrivateConstructorBuilder(PackagePrivateConstructor::new);
   }
 
-  public static PackagePrivateConstructorBuilder thatModifies(
-      final PackagePrivateConstructor objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new PackagePrivateConstructorBuilder(objectToModify);
+  public static PackagePrivateConstructorBuilder withSupplier(
+      final Supplier<PackagePrivateConstructor> supplier) {
+    return new PackagePrivateConstructorBuilder(supplier);
   }
 
   public PackagePrivateConstructorBuilder intField(final int intField) {
@@ -52,16 +49,14 @@ public class PackagePrivateConstructorBuilder {
   }
 
   public PackagePrivateConstructor build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new PackagePrivateConstructor();
-    }
+    final PackagePrivateConstructor objectToBuild = objectSupplier.get();
     if (this.callSetterFor.intField) {
-      this.objectToBuild.setIntField(this.fieldValue.intField);
+      objectToBuild.setIntField(this.fieldValue.intField);
     }
     if (this.callSetterFor.packagePrivate) {
-      this.objectToBuild.setPackagePrivate(this.fieldValue.packagePrivate);
+      objectToBuild.setPackagePrivate(this.fieldValue.packagePrivate);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

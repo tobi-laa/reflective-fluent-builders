@@ -6,6 +6,7 @@ import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -19,27 +20,22 @@ public class PersonJaxbBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private PersonJaxb objectToBuild;
+  private Supplier<PersonJaxb> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected PersonJaxbBuilder(final PersonJaxb objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected PersonJaxbBuilder() {
-    // noop
+  protected PersonJaxbBuilder(final Supplier<PersonJaxb> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static PersonJaxbBuilder newInstance() {
-    return new PersonJaxbBuilder();
+    return new PersonJaxbBuilder(PersonJaxb::new);
   }
 
-  public static PersonJaxbBuilder thatModifies(final PersonJaxb objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new PersonJaxbBuilder(objectToModify);
+  public static PersonJaxbBuilder withSupplier(final Supplier<PersonJaxb> supplier) {
+    return new PersonJaxbBuilder(supplier);
   }
 
   public CollectionAttributes attributes() {
@@ -91,17 +87,15 @@ public class PersonJaxbBuilder {
   }
 
   public PersonJaxb build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new PersonJaxb();
-    }
+    final PersonJaxb objectToBuild = objectSupplier.get();
     if (this.callSetterFor.age) {
-      this.objectToBuild.setAge(this.fieldValue.age);
+      objectToBuild.setAge(this.fieldValue.age);
     }
     if (this.callSetterFor.attributes && this.fieldValue.attributes != null) {
       this.fieldValue.attributes.forEach(objectToBuild.getAttributes()::add);
     }
     if (this.callSetterFor.married) {
-      this.objectToBuild.setMarried(this.fieldValue.married);
+      objectToBuild.setMarried(this.fieldValue.married);
     }
     if (this.callSetterFor.names && this.fieldValue.names != null) {
       this.fieldValue.names.forEach(objectToBuild.getNames()::add);
@@ -110,9 +104,9 @@ public class PersonJaxbBuilder {
       this.fieldValue.pets.forEach(objectToBuild.getPets()::add);
     }
     if (this.callSetterFor.relations) {
-      this.objectToBuild.setRelations(this.fieldValue.relations);
+      objectToBuild.setRelations(this.fieldValue.relations);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

@@ -5,6 +5,7 @@ import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -18,27 +19,22 @@ public class PetJaxbBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private PetJaxb objectToBuild;
+  private Supplier<PetJaxb> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected PetJaxbBuilder(final PetJaxb objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected PetJaxbBuilder() {
-    // noop
+  protected PetJaxbBuilder(final Supplier<PetJaxb> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static PetJaxbBuilder newInstance() {
-    return new PetJaxbBuilder();
+    return new PetJaxbBuilder(PetJaxb::new);
   }
 
-  public static PetJaxbBuilder thatModifies(final PetJaxb objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new PetJaxbBuilder(objectToModify);
+  public static PetJaxbBuilder withSupplier(final Supplier<PetJaxb> supplier) {
+    return new PetJaxbBuilder(supplier);
   }
 
   public CollectionSiblings siblings() {
@@ -70,22 +66,20 @@ public class PetJaxbBuilder {
   }
 
   public PetJaxb build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new PetJaxb();
-    }
+    final PetJaxb objectToBuild = objectSupplier.get();
     if (this.callSetterFor.fullName) {
-      this.objectToBuild.setFullName(this.fieldValue.fullName);
+      objectToBuild.setFullName(this.fieldValue.fullName);
     }
     if (this.callSetterFor.owner) {
-      this.objectToBuild.setOwner(this.fieldValue.owner);
+      objectToBuild.setOwner(this.fieldValue.owner);
     }
     if (this.callSetterFor.siblings && this.fieldValue.siblings != null) {
       this.fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);
     }
     if (this.callSetterFor.weight) {
-      this.objectToBuild.setWeight(this.fieldValue.weight);
+      objectToBuild.setWeight(this.fieldValue.weight);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

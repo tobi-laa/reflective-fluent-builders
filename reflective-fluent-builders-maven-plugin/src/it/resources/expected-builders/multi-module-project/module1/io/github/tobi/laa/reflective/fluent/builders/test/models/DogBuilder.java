@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -16,27 +17,22 @@ public class DogBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Dog objectToBuild;
+  private Supplier<Dog> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected DogBuilder(final Dog objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected DogBuilder() {
-    // noop
+  protected DogBuilder(final Supplier<Dog> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static DogBuilder newInstance() {
-    return new DogBuilder();
+    return new DogBuilder(Dog::new);
   }
 
-  public static DogBuilder thatModifies(final Dog objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new DogBuilder(objectToModify);
+  public static DogBuilder withSupplier(final Supplier<Dog> supplier) {
+    return new DogBuilder(supplier);
   }
 
   public DogBuilder name(final String name) {
@@ -46,13 +42,11 @@ public class DogBuilder {
   }
 
   public Dog build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new Dog();
-    }
+    final Dog objectToBuild = objectSupplier.get();
     if (this.callSetterFor.name) {
-      this.objectToBuild.setName(this.fieldValue.name);
+      objectToBuild.setName(this.fieldValue.name);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

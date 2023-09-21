@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.visibility;
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,27 +16,22 @@ public class PackagePrivateBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private PackagePrivate objectToBuild;
+  private Supplier<PackagePrivate> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected PackagePrivateBuilder(final PackagePrivate objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected PackagePrivateBuilder() {
-    // noop
+  protected PackagePrivateBuilder(final Supplier<PackagePrivate> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static PackagePrivateBuilder newInstance() {
-    return new PackagePrivateBuilder();
+    return new PackagePrivateBuilder(PackagePrivate::new);
   }
 
-  public static PackagePrivateBuilder thatModifies(final PackagePrivate objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new PackagePrivateBuilder(objectToModify);
+  public static PackagePrivateBuilder withSupplier(final Supplier<PackagePrivate> supplier) {
+    return new PackagePrivateBuilder(supplier);
   }
 
   public PackagePrivateBuilder intField(final int intField) {
@@ -45,13 +41,11 @@ public class PackagePrivateBuilder {
   }
 
   public PackagePrivate build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new PackagePrivate();
-    }
+    final PackagePrivate objectToBuild = objectSupplier.get();
     if (this.callSetterFor.intField) {
-      this.objectToBuild.setIntField(this.fieldValue.intField);
+      objectToBuild.setIntField(this.fieldValue.intField);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

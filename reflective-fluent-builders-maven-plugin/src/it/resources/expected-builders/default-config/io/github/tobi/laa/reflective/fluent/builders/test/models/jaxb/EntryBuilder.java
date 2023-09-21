@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -16,27 +17,22 @@ public class EntryBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private PersonJaxb.Relations.Entry objectToBuild;
+  private Supplier<PersonJaxb.Relations.Entry> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected EntryBuilder(final PersonJaxb.Relations.Entry objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected EntryBuilder() {
-    // noop
+  protected EntryBuilder(final Supplier<PersonJaxb.Relations.Entry> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static EntryBuilder newInstance() {
-    return new EntryBuilder();
+    return new EntryBuilder(PersonJaxb.Relations.Entry::new);
   }
 
-  public static EntryBuilder thatModifies(final PersonJaxb.Relations.Entry objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new EntryBuilder(objectToModify);
+  public static EntryBuilder withSupplier(final Supplier<PersonJaxb.Relations.Entry> supplier) {
+    return new EntryBuilder(supplier);
   }
 
   public EntryBuilder key(final String key) {
@@ -52,16 +48,14 @@ public class EntryBuilder {
   }
 
   public PersonJaxb.Relations.Entry build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new PersonJaxb.Relations.Entry();
-    }
+    final PersonJaxb.Relations.Entry objectToBuild = objectSupplier.get();
     if (this.callSetterFor.key) {
-      this.objectToBuild.setKey(this.fieldValue.key);
+      objectToBuild.setKey(this.fieldValue.key);
     }
     if (this.callSetterFor.value) {
-      this.objectToBuild.setValue(this.fieldValue.value);
+      objectToBuild.setValue(this.fieldValue.value);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

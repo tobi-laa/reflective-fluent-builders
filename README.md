@@ -45,14 +45,6 @@ To use the maven plugin, all you need to do (at a minimum) is to tell it which p
     <groupId>io.github.tobi-laa</groupId>
     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
     <version><!-- insert latest version --></version>
-    <executions>
-        <execution>
-            <phase>generate-test-sources</phase>
-            <goals>
-                <goal>generate-builders</goal>
-            </goals>
-        </execution>
-    </executions>
     <configuration>
         <includes>
             <include>
@@ -140,14 +132,6 @@ This could be achieved by doing the following:
     <groupId>io.github.tobi-laa</groupId>
     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
     <version><!-- insert latest version --></version>
-    <executions>
-        <execution>
-            <phase>generate-test-sources</phase>
-            <goals>
-                <goal>generate-builders</goal>
-            </goals>
-        </execution>
-    </executions>
     <configuration>
         <includes>
             <include>

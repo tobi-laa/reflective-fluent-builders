@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierar
 
 import java.lang.SuppressWarnings;
 import java.util.Objects;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -15,27 +16,23 @@ public class ClassWithHierarchyBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private ClassWithHierarchy objectToBuild;
+  private Supplier<ClassWithHierarchy> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected ClassWithHierarchyBuilder(final ClassWithHierarchy objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected ClassWithHierarchyBuilder() {
-    // noop
+  protected ClassWithHierarchyBuilder(final Supplier<ClassWithHierarchy> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static ClassWithHierarchyBuilder newInstance() {
-    return new ClassWithHierarchyBuilder();
+    return new ClassWithHierarchyBuilder(ClassWithHierarchy::new);
   }
 
-  public static ClassWithHierarchyBuilder thatModifies(final ClassWithHierarchy objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new ClassWithHierarchyBuilder(objectToModify);
+  public static ClassWithHierarchyBuilder withSupplier(
+      final Supplier<ClassWithHierarchy> supplier) {
+    return new ClassWithHierarchyBuilder(supplier);
   }
 
   public ClassWithHierarchyBuilder one(final int one) {
@@ -51,16 +48,14 @@ public class ClassWithHierarchyBuilder {
   }
 
   public ClassWithHierarchy build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new ClassWithHierarchy();
-    }
+    final ClassWithHierarchy objectToBuild = objectSupplier.get();
     if (this.callSetterFor.one) {
-      this.objectToBuild.setOne(this.fieldValue.one);
+      objectToBuild.setOne(this.fieldValue.one);
     }
     if (this.callSetterFor.three) {
-      this.objectToBuild.setThree(this.fieldValue.three);
+      objectToBuild.setThree(this.fieldValue.three);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

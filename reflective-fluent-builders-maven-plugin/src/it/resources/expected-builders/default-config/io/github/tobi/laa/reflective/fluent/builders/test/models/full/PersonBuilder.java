@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -23,27 +24,22 @@ public class PersonBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Person objectToBuild;
+  private Supplier<Person> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected PersonBuilder(final Person objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected PersonBuilder() {
-    // noop
+  protected PersonBuilder(final Supplier<Person> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static PersonBuilder newInstance() {
-    return new PersonBuilder();
+    return new PersonBuilder(Person::new);
   }
 
-  public static PersonBuilder thatModifies(final Person objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new PersonBuilder(objectToModify);
+  public static PersonBuilder withSupplier(final Supplier<Person> supplier) {
+    return new PersonBuilder(supplier);
   }
 
   public ArrayNames names() {
@@ -105,31 +101,29 @@ public class PersonBuilder {
   }
 
   public Person build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new Person();
-    }
+    final Person objectToBuild = objectSupplier.get();
     if (this.callSetterFor.age) {
-      this.objectToBuild.setAge(this.fieldValue.age);
+      objectToBuild.setAge(this.fieldValue.age);
     }
     if (this.callSetterFor.attributes) {
-      this.objectToBuild.setAttributes(this.fieldValue.attributes);
+      objectToBuild.setAttributes(this.fieldValue.attributes);
     }
     if (this.callSetterFor.married) {
-      this.objectToBuild.setMarried(this.fieldValue.married);
+      objectToBuild.setMarried(this.fieldValue.married);
     }
     if (this.callSetterFor.married0) {
-      this.objectToBuild.setMarried(this.fieldValue.married0);
+      objectToBuild.setMarried(this.fieldValue.married0);
     }
     if (this.callSetterFor.names) {
-      this.objectToBuild.setNames(this.fieldValue.names);
+      objectToBuild.setNames(this.fieldValue.names);
     }
     if (this.callSetterFor.pets) {
-      this.objectToBuild.setPets(this.fieldValue.pets);
+      objectToBuild.setPets(this.fieldValue.pets);
     }
     if (this.callSetterFor.relations) {
-      this.objectToBuild.setRelations(this.fieldValue.relations);
+      objectToBuild.setRelations(this.fieldValue.relations);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {

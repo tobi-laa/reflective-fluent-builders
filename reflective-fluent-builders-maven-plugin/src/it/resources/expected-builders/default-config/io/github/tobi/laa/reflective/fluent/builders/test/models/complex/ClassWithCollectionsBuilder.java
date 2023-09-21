@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -31,28 +32,23 @@ public class ClassWithCollectionsBuilder<T, U> {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private ClassWithCollections objectToBuild;
+  private Supplier<ClassWithCollections> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
   private final FieldValue fieldValue = new FieldValue();
 
-  protected ClassWithCollectionsBuilder(final ClassWithCollections objectToBuild) {
-    this.objectToBuild = objectToBuild;
-  }
-
-  protected ClassWithCollectionsBuilder() {
-    // noop
+  protected ClassWithCollectionsBuilder(final Supplier<ClassWithCollections> objectSupplier) {
+    this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
   public static ClassWithCollectionsBuilder newInstance() {
-    return new ClassWithCollectionsBuilder();
+    return new ClassWithCollectionsBuilder(ClassWithCollections::new);
   }
 
-  public static ClassWithCollectionsBuilder thatModifies(
-      final ClassWithCollections objectToModify) {
-    Objects.requireNonNull(objectToModify);
-    return new ClassWithCollectionsBuilder(objectToModify);
+  public static ClassWithCollectionsBuilder withSupplier(
+      final Supplier<ClassWithCollections> supplier) {
+    return new ClassWithCollectionsBuilder(supplier);
   }
 
   public ArrayFloats floats() {
@@ -170,46 +166,44 @@ public class ClassWithCollectionsBuilder<T, U> {
   }
 
   public ClassWithCollections build() {
-    if (this.objectToBuild == null) {
-      this.objectToBuild = new ClassWithCollections();
-    }
+    final ClassWithCollections objectToBuild = objectSupplier.get();
     if (this.callSetterFor.deque) {
-      this.objectToBuild.setDeque(this.fieldValue.deque);
+      objectToBuild.setDeque(this.fieldValue.deque);
     }
     if (this.callSetterFor.floats) {
-      this.objectToBuild.setFloats(this.fieldValue.floats);
+      objectToBuild.setFloats(this.fieldValue.floats);
     }
     if (this.callSetterFor.ints) {
-      this.objectToBuild.setInts(this.fieldValue.ints);
+      objectToBuild.setInts(this.fieldValue.ints);
     }
     if (this.callSetterFor.list) {
-      this.objectToBuild.setList(this.fieldValue.list);
+      objectToBuild.setList(this.fieldValue.list);
     }
     if (this.callSetterFor.listWithTwoParams) {
-      this.objectToBuild.setListWithTwoParams(this.fieldValue.listWithTwoParams);
+      objectToBuild.setListWithTwoParams(this.fieldValue.listWithTwoParams);
     }
     if (this.callSetterFor.map) {
-      this.objectToBuild.setMap(this.fieldValue.map);
+      objectToBuild.setMap(this.fieldValue.map);
     }
     if (this.callSetterFor.mapNoTypeArgs) {
-      this.objectToBuild.setMapNoTypeArgs(this.fieldValue.mapNoTypeArgs);
+      objectToBuild.setMapNoTypeArgs(this.fieldValue.mapNoTypeArgs);
     }
     if (this.callSetterFor.mapTU) {
-      this.objectToBuild.setMapTU(this.fieldValue.mapTU);
+      objectToBuild.setMapTU(this.fieldValue.mapTU);
     }
     if (this.callSetterFor.mapWildObj) {
-      this.objectToBuild.setMapWildObj(this.fieldValue.mapWildObj);
+      objectToBuild.setMapWildObj(this.fieldValue.mapWildObj);
     }
     if (this.callSetterFor.mapWithThreeParams) {
-      this.objectToBuild.setMapWithThreeParams(this.fieldValue.mapWithThreeParams);
+      objectToBuild.setMapWithThreeParams(this.fieldValue.mapWithThreeParams);
     }
     if (this.callSetterFor.set) {
-      this.objectToBuild.setSet(this.fieldValue.set);
+      objectToBuild.setSet(this.fieldValue.set);
     }
     if (this.callSetterFor.sortedSetWild) {
-      this.objectToBuild.setSortedSetWild(this.fieldValue.sortedSetWild);
+      objectToBuild.setSortedSetWild(this.fieldValue.sortedSetWild);
     }
-    return this.objectToBuild;
+    return objectToBuild;
   }
 
   private class CallSetterFor {
