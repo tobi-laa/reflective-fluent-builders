@@ -82,7 +82,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(collectionSetter.getParamType().getName());
+                .contains(collectionSetter.getParamType().getTypeName());
     }
 
     private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {
@@ -195,7 +195,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(mapSetter.getParamType().getName());
+                .contains(mapSetter.getParamType().getTypeName());
     }
 
     private static Stream<MapSetter> testGenerateMapInitializerCodeGenerationException() {

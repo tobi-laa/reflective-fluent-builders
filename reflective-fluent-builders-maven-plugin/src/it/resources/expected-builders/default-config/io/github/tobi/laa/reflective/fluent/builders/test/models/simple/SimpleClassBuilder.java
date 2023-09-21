@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.simple;
 
 import java.lang.Class;
+import java.lang.Object;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Objects;
@@ -58,7 +59,7 @@ public class SimpleClassBuilder {
     return this;
   }
 
-  public SimpleClassBuilder setClass(final Class<?> setClass) {
+  public SimpleClassBuilder setClass(final Class<Object> setClass) {
     this.fieldValue.setClass = setClass;
     this.callSetterFor.setClass = true;
     return this;
@@ -100,6 +101,6 @@ public class SimpleClassBuilder {
 
     boolean booleanField;
 
-    Class<?> setClass;
+    Class<Object> setClass;
   }
 }

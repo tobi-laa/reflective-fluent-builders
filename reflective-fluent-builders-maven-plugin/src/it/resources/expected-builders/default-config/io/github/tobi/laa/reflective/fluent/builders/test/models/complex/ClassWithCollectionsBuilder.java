@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
+import java.lang.Boolean;
 import java.lang.Float;
 import java.lang.Integer;
 import java.lang.Object;
@@ -112,9 +113,16 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder list(final List<Object> list) {
+  public ClassWithCollectionsBuilder list(final List list) {
     this.fieldValue.list = list;
     this.callSetterFor.list = true;
+    return this;
+  }
+
+  public ClassWithCollectionsBuilder listWithTwoParams(
+      final ListWithTwoParams<String, Integer> listWithTwoParams) {
+    this.fieldValue.listWithTwoParams = listWithTwoParams;
+    this.callSetterFor.listWithTwoParams = true;
     return this;
   }
 
@@ -124,7 +132,7 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder mapNoTypeArgs(final Map<Object, Object> mapNoTypeArgs) {
+  public ClassWithCollectionsBuilder mapNoTypeArgs(final Map mapNoTypeArgs) {
     this.fieldValue.mapNoTypeArgs = mapNoTypeArgs;
     this.callSetterFor.mapNoTypeArgs = true;
     return this;
@@ -139,6 +147,13 @@ public class ClassWithCollectionsBuilder<T, U> {
   public ClassWithCollectionsBuilder mapWildObj(final Map<Object, Object> mapWildObj) {
     this.fieldValue.mapWildObj = mapWildObj;
     this.callSetterFor.mapWildObj = true;
+    return this;
+  }
+
+  public ClassWithCollectionsBuilder mapWithThreeParams(
+      final MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams) {
+    this.fieldValue.mapWithThreeParams = mapWithThreeParams;
+    this.callSetterFor.mapWithThreeParams = true;
     return this;
   }
 
@@ -170,6 +185,9 @@ public class ClassWithCollectionsBuilder<T, U> {
     if (this.callSetterFor.list) {
       this.objectToBuild.setList(this.fieldValue.list);
     }
+    if (this.callSetterFor.listWithTwoParams) {
+      this.objectToBuild.setListWithTwoParams(this.fieldValue.listWithTwoParams);
+    }
     if (this.callSetterFor.map) {
       this.objectToBuild.setMap(this.fieldValue.map);
     }
@@ -181,6 +199,9 @@ public class ClassWithCollectionsBuilder<T, U> {
     }
     if (this.callSetterFor.mapWildObj) {
       this.objectToBuild.setMapWildObj(this.fieldValue.mapWildObj);
+    }
+    if (this.callSetterFor.mapWithThreeParams) {
+      this.objectToBuild.setMapWithThreeParams(this.fieldValue.mapWithThreeParams);
     }
     if (this.callSetterFor.set) {
       this.objectToBuild.setSet(this.fieldValue.set);
@@ -200,6 +221,8 @@ public class ClassWithCollectionsBuilder<T, U> {
 
     boolean list;
 
+    boolean listWithTwoParams;
+
     boolean map;
 
     boolean mapNoTypeArgs;
@@ -207,6 +230,8 @@ public class ClassWithCollectionsBuilder<T, U> {
     boolean mapTU;
 
     boolean mapWildObj;
+
+    boolean mapWithThreeParams;
 
     boolean set;
 
@@ -220,15 +245,19 @@ public class ClassWithCollectionsBuilder<T, U> {
 
     Collection<Integer> ints;
 
-    List<Object> list;
+    List list;
+
+    ListWithTwoParams<String, Integer> listWithTwoParams;
 
     Map<String, Object> map;
 
-    Map<Object, Object> mapNoTypeArgs;
+    Map mapNoTypeArgs;
 
     Map<T, U> mapTU;
 
     Map<Object, Object> mapWildObj;
+
+    MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams;
 
     Set<List> set;
 

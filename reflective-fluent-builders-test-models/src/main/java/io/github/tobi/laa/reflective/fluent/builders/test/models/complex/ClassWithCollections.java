@@ -24,4 +24,10 @@ public class ClassWithCollections<T, U> {
     private Map<?, Object> mapWildObj;
 
     private Map mapNoTypeArgs;
+
+    private ListWithTwoParams<String, Integer> listWithTwoParams;
+
+    private MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams;
+
+
 }
