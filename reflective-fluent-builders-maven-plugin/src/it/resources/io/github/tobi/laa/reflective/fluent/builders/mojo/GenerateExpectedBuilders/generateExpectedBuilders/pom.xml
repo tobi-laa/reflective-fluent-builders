@@ -39,7 +39,6 @@
                             <target>${project.basedir}/${it.resources.directory}/expected-builders/default-config
                             </target>
                             <addCompileSourceRoot>false</addCompileSourceRoot>
-                            <getAndAddEnabled>true</getAndAddEnabled>
                         </configuration>
                     </execution>
                     <execution>
