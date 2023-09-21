@@ -1,10 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 
 import javax.inject.Named;
@@ -26,20 +23,7 @@ class TypeNameGeneratorImpl implements TypeNameGenerator {
     @Override
     public TypeName generateTypeNameForParam(final Setter setter) {
         Objects.requireNonNull(setter);
-        if (setter instanceof CollectionSetter) {
-            final CollectionSetter collectionSetter = (CollectionSetter) setter;
-            return ParameterizedTypeName.get( //
-                    collectionSetter.getParamType(), //
-                    wildcardToUpperBound(collectionSetter.getParamTypeArg()));
-        } else if (setter instanceof MapSetter) {
-            final MapSetter mapSetter = (MapSetter) setter;
-            return ParameterizedTypeName.get( //
-                    mapSetter.getParamType(), //
-                    wildcardToUpperBound(mapSetter.getKeyType()), //
-                    wildcardToUpperBound(mapSetter.getValueType()));
-        } else {
-            return TypeName.get(setter.getParamType());
-        }
+        return TypeName.get(setter.getParamType());
     }
 
     @Override

@@ -68,7 +68,7 @@ public class PersonBuilder {
     return this;
   }
 
-  public PersonBuilder attributes(final List<Object> attributes) {
+  public PersonBuilder attributes(final List attributes) {
     this.fieldValue.attributes = attributes;
     this.callSetterFor.attributes = true;
     return this;
@@ -151,7 +151,7 @@ public class PersonBuilder {
   private class FieldValue {
     int age;
 
-    List<Object> attributes;
+    List attributes;
 
     boolean married;
 

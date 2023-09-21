@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 
+import java.lang.Boolean;
 import java.lang.Float;
 import java.lang.Integer;
 import java.lang.Object;
@@ -94,7 +95,7 @@ public class ClassWithCollectionsBuilder<T, U> {
     return new MapMapWildObj();
   }
 
-  public ClassWithCollectionsBuilder deque(final Deque<Object> deque) {
+  public ClassWithCollectionsBuilder deque(final Deque<?> deque) {
     this.fieldValue.deque = deque;
     this.callSetterFor.deque = true;
     return this;
@@ -112,14 +113,14 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder list(final List<Object> list) {
+  public ClassWithCollectionsBuilder list(final List list) {
     this.fieldValue.list = list;
     this.callSetterFor.list = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder listWithTwoParams(
-      final ClassWithCollections.ListWithTwoParams<String, Integer> listWithTwoParams) {
+      final ListWithTwoParams<String, Integer> listWithTwoParams) {
     this.fieldValue.listWithTwoParams = listWithTwoParams;
     this.callSetterFor.listWithTwoParams = true;
     return this;
@@ -131,7 +132,7 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder mapNoTypeArgs(final Map<Object, Object> mapNoTypeArgs) {
+  public ClassWithCollectionsBuilder mapNoTypeArgs(final Map mapNoTypeArgs) {
     this.fieldValue.mapNoTypeArgs = mapNoTypeArgs;
     this.callSetterFor.mapNoTypeArgs = true;
     return this;
@@ -143,14 +144,14 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder mapWildObj(final Map<Object, Object> mapWildObj) {
+  public ClassWithCollectionsBuilder mapWildObj(final Map<?, Object> mapWildObj) {
     this.fieldValue.mapWildObj = mapWildObj;
     this.callSetterFor.mapWildObj = true;
     return this;
   }
 
   public ClassWithCollectionsBuilder mapWithThreeParams(
-      final ClassWithCollections.MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams) {
+      final MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams) {
     this.fieldValue.mapWithThreeParams = mapWithThreeParams;
     this.callSetterFor.mapWithThreeParams = true;
     return this;
@@ -162,7 +163,7 @@ public class ClassWithCollectionsBuilder<T, U> {
     return this;
   }
 
-  public ClassWithCollectionsBuilder sortedSetWild(final SortedSet<Object> sortedSetWild) {
+  public ClassWithCollectionsBuilder sortedSetWild(final SortedSet<?> sortedSetWild) {
     this.fieldValue.sortedSetWild = sortedSetWild;
     this.callSetterFor.sortedSetWild = true;
     return this;
@@ -238,29 +239,29 @@ public class ClassWithCollectionsBuilder<T, U> {
   }
 
   private class FieldValue {
-    Deque<Object> deque;
+    Deque<?> deque;
 
     float[] floats;
 
     Collection<Integer> ints;
 
-    List<Object> list;
+    List list;
 
-    ClassWithCollections.ListWithTwoParams<String, Integer> listWithTwoParams;
+    ListWithTwoParams<String, Integer> listWithTwoParams;
 
     Map<String, Object> map;
 
-    Map<Object, Object> mapNoTypeArgs;
+    Map mapNoTypeArgs;
 
     Map<T, U> mapTU;
 
-    Map<Object, Object> mapWildObj;
+    Map<?, Object> mapWildObj;
 
-    ClassWithCollections.MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams;
+    MapWithThreeParams<String, Integer, Boolean> mapWithThreeParams;
 
     Set<List> set;
 
-    SortedSet<Object> sortedSetWild;
+    SortedSet<?> sortedSetWild;
   }
 
   public class ArrayFloats {
