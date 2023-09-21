@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 public class MapSetter extends AbstractSetter {
 
     @lombok.NonNull
-    private final Class<?> paramType;
+    private final Type paramType;
 
     /**
      * <p>

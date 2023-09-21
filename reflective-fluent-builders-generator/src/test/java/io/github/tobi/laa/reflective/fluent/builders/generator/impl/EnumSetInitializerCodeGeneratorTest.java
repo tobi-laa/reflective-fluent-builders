@@ -87,7 +87,7 @@ class EnumSetInitializerCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(collectionSetter.getParamType().getName());
+                .contains(collectionSetter.getParamType().getTypeName());
     }
 
     private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {

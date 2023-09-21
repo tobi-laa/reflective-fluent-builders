@@ -60,7 +60,7 @@ class TypeNameGeneratorImplTest {
                         CollectionSetter.builder() //
                                 .methodName("setDeque") //
                                 .paramName("deque") //
-                                .paramType(Deque.class) //
+                                .paramType(TypeUtils.parameterize(Deque.class, Object.class)) //
                                 .paramTypeArg(TypeUtils.wildcardType() //
                                         .withUpperBounds(Object.class) //
                                         .build()) //
@@ -73,7 +73,7 @@ class TypeNameGeneratorImplTest {
                         CollectionSetter.builder() //
                                 .methodName("setList") //
                                 .paramName("list") //
-                                .paramType(List.class) //
+                                .paramType(TypeUtils.parameterize(List.class, Character.class)) //
                                 .paramTypeArg(Character.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -85,6 +85,7 @@ class TypeNameGeneratorImplTest {
                                 .methodName("setList") //
                                 .paramName("list") //
                                 .paramType(List.class) //
+                                .paramType(TypeUtils.parameterize(List.class, TypeUtils.parameterize(Map.class, String.class, Object.class))) //
                                 .paramTypeArg(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -106,7 +107,7 @@ class TypeNameGeneratorImplTest {
                         MapSetter.builder() //
                                 .methodName("setMap") //
                                 .paramName("map") //
-                                .paramType(Map.class) //
+                                .paramType(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
                                 .keyType(String.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
@@ -118,7 +119,7 @@ class TypeNameGeneratorImplTest {
                         MapSetter.builder() //
                                 .methodName("setMap") //
                                 .paramName("map") //
-                                .paramType(SortedMap.class) //
+                                .paramType(TypeUtils.parameterize(SortedMap.class, String.class, Object.class)) //
                                 .keyType(String.class) //
                                 .valueType(TypeUtils.wildcardType() //
                                         .withUpperBounds(Object.class) //

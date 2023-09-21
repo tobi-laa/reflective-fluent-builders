@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 
-import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.OBJECT_TO_BUILD_FIELD_NAME;
+import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.OBJECT_SUPPLIER_FIELD_NAME;
 
 /**
  * <p>
@@ -24,6 +24,8 @@ import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderCon
 @Singleton
 class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
 
+    private static final String OBJECT_TO_BUILD_FIELD_NAME = "objectToBuild";
+
     @Override
     public MethodSpec generateBuildMethod(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
@@ -31,12 +33,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("build")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(clazz);
-        if (builderMetadata.getBuiltType().isAccessibleNonArgsConstructor()) {
-            methodBuilder
-                    .beginControlFlow("if (this.$L == null)", OBJECT_TO_BUILD_FIELD_NAME)
-                    .addStatement("this.$L = new $T()", OBJECT_TO_BUILD_FIELD_NAME, clazz)
-                    .endControlFlow();
-        }
+        methodBuilder.addStatement("final $T $L = $L.get()", clazz, OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
         for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
             if (setter instanceof CollectionGetAndAdder) {
                 methodBuilder
@@ -55,7 +52,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                 methodBuilder
                         .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
                         .addStatement(
-                                "this.$L.$L(this.$L.$L)",
+                                "$L.$L(this.$L.$L)",
                                 OBJECT_TO_BUILD_FIELD_NAME,
                                 setter.getMethodName(),
                                 FieldValue.FIELD_NAME,
@@ -63,7 +60,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
             }
             methodBuilder.endControlFlow();
         }
-        methodBuilder.addStatement("return this.$L", OBJECT_TO_BUILD_FIELD_NAME);
+        methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);
         return methodBuilder.build();
     }
 }

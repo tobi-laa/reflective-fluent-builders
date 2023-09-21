@@ -90,7 +90,7 @@ class NewInstanceFactoryMethodCodeGeneratorTest {
                         String.format(
                                 "public static %1$s newInstance(\n" +
                                         "    ) {\n" +
-                                        "  return new %1$s();\n" +
+                                        "  return new %1$s(io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass::new);\n" +
                                         "}\n", MockType.class.getName().replace('$', '.'))));
     }
 

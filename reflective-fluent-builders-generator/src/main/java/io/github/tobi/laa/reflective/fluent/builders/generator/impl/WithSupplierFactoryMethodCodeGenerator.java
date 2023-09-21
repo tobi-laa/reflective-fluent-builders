@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MethodCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
@@ -13,17 +14,17 @@ import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * <p>
- * Generates a {@code thatModifies} factory method for a builder in cases where the object to be built has an accessible
- * no-args constructor.
+ * Generates a {@code withSupplier} factory method for a builder.
  * </p>
  */
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-class ThatModifiesFactoryMethodCodeGenerator implements MethodCodeGenerator {
+class WithSupplierFactoryMethodCodeGenerator implements MethodCodeGenerator {
 
     @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
@@ -32,12 +33,12 @@ class ThatModifiesFactoryMethodCodeGenerator implements MethodCodeGenerator {
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        return Optional.of(MethodSpec.methodBuilder("thatModifies")
+        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
+        return Optional.of(MethodSpec.methodBuilder("withSupplier")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(builderClassName)
-                .addParameter(builderMetadata.getBuiltType().getType(), "objectToModify", Modifier.FINAL)
-                .addStatement("$T.requireNonNull(objectToModify)", Objects.class)
-                .addStatement("return new $T(objectToModify)", builderClassName)
+                .addParameter(supplierTypeName, "supplier", Modifier.FINAL)
+                .addStatement("return new $T(supplier)", builderClassName)
                 .build());
     }
 }

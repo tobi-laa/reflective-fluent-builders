@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import com.squareup.javapoet.CodeBlock;
 import com.sun.net.httpserver.Headers;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
@@ -15,6 +16,7 @@ import javax.print.attribute.standard.PrinterStateReasons;
 import javax.script.SimpleBindings;
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
@@ -77,14 +79,14 @@ class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCod
     public boolean isApplicable(final CollectionSetter collectionSetter) {
         Objects.requireNonNull(collectionSetter);
         return SUPPORTED_COLLECTIONS.stream() //
-                .anyMatch(type -> collectionSetter.getParamType().isAssignableFrom(type));
+                .anyMatch(type -> getRawType(collectionSetter.getParamType()).isAssignableFrom(type));
     }
 
     @Override
     public CodeBlock generateCollectionInitializer(final CollectionSetter collectionSetter) {
         Objects.requireNonNull(collectionSetter);
         return SUPPORTED_COLLECTIONS.stream() //
-                .filter(type -> collectionSetter.getParamType().isAssignableFrom(type)) //
+                .filter(type -> getRawType(collectionSetter.getParamType()).isAssignableFrom(type)) //
                 .map(type -> CodeBlock.builder().add("new $T<>()", type).build()) //
                 .findFirst() //
                 .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + collectionSetter + " is not supported."));
@@ -94,16 +96,20 @@ class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCod
     public boolean isApplicable(final MapSetter mapSetter) {
         Objects.requireNonNull(mapSetter);
         return SUPPORTED_MAPS.stream() //
-                .anyMatch(type -> mapSetter.getParamType().isAssignableFrom(type));
+                .anyMatch(type -> getRawType(mapSetter.getParamType()).isAssignableFrom(type));
     }
 
     @Override
     public CodeBlock generateMapInitializer(final MapSetter mapSetter) {
         Objects.requireNonNull(mapSetter);
         return SUPPORTED_MAPS.stream() //
-                .filter(type -> mapSetter.getParamType().isAssignableFrom(type)) //
+                .filter(type -> getRawType(mapSetter.getParamType()).isAssignableFrom(type)) //
                 .map(type -> CodeBlock.builder().add("new $T<>()", type).build()) //
                 .findFirst() //
                 .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + mapSetter + " is not supported."));
+    }
+
+    private Class<?> getRawType(final Type type) {
+        return TypeToken.of(type).getRawType();
     }
 }

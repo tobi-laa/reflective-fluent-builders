@@ -78,6 +78,7 @@ class JavaFileGeneratorIT {
                         "import java.util.ArrayList;\n" +
                         "import java.util.List;\n" +
                         "import java.util.Objects;\n" +
+                        "import java.util.function.Supplier;\n" +
                         "import javax.annotation.Generated;\n" +
                         "\n" +
                         "@Generated(\n" +
@@ -91,27 +92,22 @@ class JavaFileGeneratorIT {
                         "  @SuppressWarnings(\"unused\")\n" +
                         "  private boolean ______generatedByReflectiveFluentBuildersGenerator;\n" +
                         "\n" +
-                        "  private ClassWithGenerics objectToBuild;\n" +
+                        "  private Supplier<ClassWithGenerics> objectSupplier;\n" +
                         "\n" +
                         "  private final CallSetterFor callSetterFor = new CallSetterFor();\n" +
                         "\n" +
                         "  private final FieldValue fieldValue = new FieldValue();\n" +
                         "\n" +
-                        "  protected ClassWithGenericsBuilder(final ClassWithGenerics objectToBuild) {\n" +
-                        "    this.objectToBuild = objectToBuild;\n" +
-                        "  }\n" +
-                        "\n" +
-                        "  protected ClassWithGenericsBuilder() {\n" +
-                        "    // noop\n" +
+                        "  protected ClassWithGenericsBuilder(final Supplier<ClassWithGenerics> objectSupplier) {\n" +
+                        "    this.objectSupplier = Objects.requireNonNull(objectSupplier);\n" +
                         "  }\n" +
                         "\n" +
                         "  public static ClassWithGenericsBuilder newInstance() {\n" +
-                        "    return new ClassWithGenericsBuilder();\n" +
+                        "    return new ClassWithGenericsBuilder(ClassWithGenerics::new);\n" +
                         "  }\n" +
                         "\n" +
-                        "  public static ClassWithGenericsBuilder thatModifies(final ClassWithGenerics objectToModify) {\n" +
-                        "    Objects.requireNonNull(objectToModify);\n" +
-                        "    return new ClassWithGenericsBuilder(objectToModify);\n" +
+                        "  public static ClassWithGenericsBuilder withSupplier(final Supplier<ClassWithGenerics> supplier) {\n" +
+                        "    return new ClassWithGenericsBuilder(supplier);\n" +
                         "  }\n" +
                         "\n" +
                         "  public ArrayFloats floats() {\n" +
@@ -137,19 +133,17 @@ class JavaFileGeneratorIT {
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenerics build() {\n" +
-                        "    if (this.objectToBuild == null) {\n" +
-                        "      this.objectToBuild = new ClassWithGenerics();\n" +
-                        "    }\n" +
+                        "    final ClassWithGenerics objectToBuild = objectSupplier.get();\n" +
                         "    if (this.callSetterFor.anInt) {\n" +
-                        "      this.objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
+                        "      objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
                         "    }\n" +
                         "    if (this.callSetterFor.floats) {\n" +
-                        "      this.objectToBuild.setFloats(this.fieldValue.floats);\n" +
+                        "      objectToBuild.setFloats(this.fieldValue.floats);\n" +
                         "    }\n" +
                         "    if (this.callSetterFor.t) {\n" +
-                        "      this.objectToBuild.setT(this.fieldValue.t);\n" +
+                        "      objectToBuild.setT(this.fieldValue.t);\n" +
                         "    }\n" +
-                        "    return this.objectToBuild;\n" +
+                        "    return objectToBuild;\n" +
                         "  }\n" +
                         "\n" +
                         "  private class CallSetterFor {\n" +

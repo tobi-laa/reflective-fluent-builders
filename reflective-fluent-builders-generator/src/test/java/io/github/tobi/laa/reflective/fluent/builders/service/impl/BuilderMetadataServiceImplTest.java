@@ -7,10 +7,10 @@ import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.AccessibilityService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderPackageService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.TypeService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
@@ -35,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -55,7 +56,7 @@ class BuilderMetadataServiceImplTest {
     private BuilderMetadataServiceImpl builderService;
 
     @Mock
-    private VisibilityService visibilityService;
+    private AccessibilityService accessibilityService;
 
     @Mock
     private SetterService setterService;
@@ -64,7 +65,7 @@ class BuilderMetadataServiceImplTest {
     private ClassService classService;
 
     @Mock
-    private TypeService typeService;
+    private BuilderPackageService builderPackageService;
 
     @Mock
     private BuildersProperties properties;
@@ -80,17 +81,16 @@ class BuilderMetadataServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix,
-                                    final Visibility[] visibility, final SortedSet<Setter> setters,
+                                    final boolean accessibleConstructor, final SortedSet<Setter> setters,
                                     final Class<?> clazz, final Path location,
                                     final Optional<Class<?>>[] existingBuilderClasses, final BuilderMetadata expected) {
         // Arrange
-        when(properties.getBuilderPackage()).thenReturn(builderPackage);
+        doReturn(builderPackage).when(builderPackageService).resolveBuilderPackage(clazz);
         when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
-        when(visibilityService.toVisibility(anyInt())).thenReturn(visibility[0], remove(visibility, 0));
+        doReturn(accessibleConstructor).when(accessibilityService).isAccessibleFrom(any(Constructor.class), any());
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
         when(classService.determineClassLocation(clazz)).thenReturn(Optional.ofNullable(location));
         when(classService.loadClass(anyString())).thenReturn(existingBuilderClasses[0], remove(existingBuilderClasses, 0));
-        lenient().when(typeService.explodeType(any())).then(invocation -> singleton(invocation.getArguments()[0]));
         // Act
         final BuilderMetadata actual = builderService.collectBuilderMetadata(clazz);
         // Assert
@@ -112,10 +112,10 @@ class BuilderMetadataServiceImplTest {
         final Path anotherPath = Paths.get("another/path");
         return Stream.of( //
                 Arguments.of( //
-                        "<PACKAGE_NAME>", //
+                        "io.github.tobi.laa.reflective.fluent.builders.test.models.simple", //
                         "Builder", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
-                        ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, protectedSetterFromAbstractClass, packagePrivateSetterFromAbstractClass, publicSetter, setterNameCollision1, setterNameCollision2), //
+                        true, //
+                        ImmutableSortedSet.of(packagePrivateSetter, protectedSetter, protectedSetterFromAbstractClass, publicSetter, setterNameCollision1, setterNameCollision2), //
                         SimpleClass.class, //
                         null, //
                         new Optional[]{Optional.empty()}, //
@@ -135,10 +135,10 @@ class BuilderMetadataServiceImplTest {
                                         .build()) //
                                 .build()), //
                 Arguments.of( //
-                        "<PACKAGE_NAME>.builder", //
+                        "io.github.tobi.laa.reflective.fluent.builders.test.models.complex.builder", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
-                        ImmutableSortedSet.of(privateSetter, packagePrivateSetter, protectedSetter, publicSetter), //
+                        false, //
+                        ImmutableSortedSet.of(publicSetter), //
                         ClassWithCollections.class, //
                         aPath, //
                         new Optional[]{Optional.empty()}, //
@@ -153,18 +153,10 @@ class BuilderMetadataServiceImplTest {
                                         .build()) //
                                 .build()), //
                 Arguments.of( //
-                        "<PACKAGE_NAME>.builder", //
+                        "io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.builder", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
-                        ImmutableSortedSet.of(
-                                publicSetter, //
-                                SimpleSetter.builder() //
-                                        .methodName("setPackagePrivate") //
-                                        .paramName("packagePrivate") //
-                                        .paramType(packagePrivate) //
-                                        .visibility(Visibility.PUBLIC) //
-                                        .declaringClass(PackagePrivateConstructor.class) //
-                                        .build()), //
+                        false, //
+                        ImmutableSortedSet.of(publicSetter), //
                         PackagePrivateConstructor.class, //
                         anotherPath, //
                         new Optional[]{Optional.empty()}, //
@@ -179,9 +171,9 @@ class BuilderMetadataServiceImplTest {
                                         .build()) //
                                 .build()), //
                 Arguments.of( //
-                        "<PACKAGE_NAME>", //
+                        "io.github.tobi.laa.reflective.fluent.builders.test.models.visibility", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PACKAGE_PRIVATE, Visibility.PUBLIC, Visibility.PACKAGE_PRIVATE}, //
+                        true, //
                         ImmutableSortedSet.of(
                                 publicSetter, //
                                 SimpleSetter.builder() //
@@ -214,9 +206,8 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "io.github.tobi.laa.reflective.fluent.builders.test.models.visibility", //
                         "", //
-                        new Visibility[]{Visibility.PACKAGE_PRIVATE, Visibility.PACKAGE_PRIVATE, Visibility.PRIVATE, Visibility.PACKAGE_PRIVATE}, //
+                        true, //
                         ImmutableSortedSet.of(
-                                publicSetter, //
                                 SimpleSetter.builder() //
                                         .methodName("setPackagePrivate") //
                                         .paramName("packagePrivate") //
@@ -246,8 +237,8 @@ class BuilderMetadataServiceImplTest {
                 Arguments.of( //
                         "the.builder.package", //
                         "MyBuilderSuffix", //
-                        new Visibility[]{Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC}, //
-                        ImmutableSortedSet.of(privateSetter, protectedSetter), //
+                        true, //
+                        Collections.emptySortedSet(), //
                         SimpleClassNoSetPrefix.class, //
                         aPath, //
                         new Optional[]{Optional.of(ClassWithoutMarkerField.class), Optional.empty()}, //
@@ -261,9 +252,9 @@ class BuilderMetadataServiceImplTest {
                                         .build()) //
                                 .build()), //
                 Arguments.of( //
-                        "builders.<PACKAGE_NAME>", //
+                        "builders.io.github.tobi.laa.reflective.fluent.builders.test.models.simple", //
                         "Builder", //
-                        new Visibility[]{Visibility.PUBLIC}, //
+                        false, //
                         Collections.emptySortedSet(), //
                         SimpleClassNoDefaultConstructor.class, //
                         anotherPath, //
@@ -288,47 +279,40 @@ class BuilderMetadataServiceImplTest {
         assertThrows(NullPointerException.class, filterOutNonBuildableClasses);
     }
 
-    @ParameterizedTest
-    @MethodSource
-    void testFilterOutNonBuildableClasses(final String builderPackage, final Visibility classVisibility,
-                                          final Set<Class<?>> classes, final Set<Class<?>> expected) {
+    @Test
+    void testFilterOutNonBuildableClassesNonConstructableClasses() {
         // Arrange
-        lenient().when(properties.getBuilderPackage()).thenReturn(builderPackage);
-        lenient().when(visibilityService.toVisibility(anyInt())).thenReturn(classVisibility);
+        final var classes = Set.of(Abstract.class, Annotation.class, Enum.class, Interface.class);
+        doReturn(true).when(classService).isAbstract(Abstract.class);
         // Act
         final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);
         // Assert
-        assertEquals(expected, actual);
+        assertThat(actual).isEmpty();
     }
 
-    @SneakyThrows
-    private static Stream<Arguments> testFilterOutNonBuildableClasses() {
-        return Stream.of( //
-                Arguments.of( //
-                        "<PACKAGE_NAME>", //
-                        Visibility.PUBLIC, //
-                        ImmutableSet.of(Abstract.class, Annotation.class, Enum.class, Interface.class),
-                        Collections.emptySet()), //
-                Arguments.of( //
-                        "<PACKAGE_NAME>", //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Collections.singleton(SimpleClass.class),
-                        Collections.singleton(SimpleClass.class)), //
-                Arguments.of( //
-                        SimpleClass.class.getPackage().getName(), //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Collections.singleton(SimpleClass.class),
-                        Collections.singleton(SimpleClass.class)), //
-                Arguments.of( //
-                        "<PACKAGE_NAME>.builder", //
-                        Visibility.PACKAGE_PRIVATE, //
-                        Collections.singleton(SimpleClass.class),
-                        Collections.emptySet()),
-                Arguments.of( //
-                        "<PACKAGE_NAME>", //
-                        Visibility.PUBLIC, //
-                        ImmutableSet.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class),
-                        ImmutableSet.of(TopLevelClass.NestedPublicLevelOne.class)));
+    @Test
+    void testFilterOutNonBuildableClassesInaccessibleClass() {
+        // Arrange
+        final var classes = Set.of(SimpleClass.class, PackagePrivateConstructor.class);
+        doReturn(true).when(accessibilityService).isAccessibleFrom(eq(SimpleClass.class), any());
+        doReturn(false).when(accessibilityService).isAccessibleFrom(eq(PackagePrivateConstructor.class), any());
+        doReturn(false).when(classService).isAbstract(any());
+        // Act
+        final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);
+        // Assert
+        assertThat(actual).containsExactly(SimpleClass.class);
+    }
+
+    @Test
+    void testFilterOutNonBuildableClassesNestedClasses() {
+        // Arrange
+        final var classes = Set.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class);
+        doReturn(true).when(accessibilityService).isAccessibleFrom(any(Class.class), any());
+        doReturn(false).when(classService).isAbstract(any());
+        // Act
+        final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);
+        // Assert
+        assertThat(actual).containsExactly(TopLevelClass.NestedPublicLevelOne.class);
     }
 
     @Test

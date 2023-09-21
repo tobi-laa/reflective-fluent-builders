@@ -20,8 +20,138 @@ If however one of these conditions applies to your situation, this maven plugin 
 - You want to generate builders for **generated sources** such as `JAXB`-annotated classes generated from an `XML` schema
 - You want to generate builders for your classes in **test scope only**
 
+# Generator usage
+If you are only interested in using the maven plugin, skip to the [corresponding section](#maven-plugin-usage). However, if for some reaseon you want to use the generator directly in one of your projects,
+these are the steps you have to follow:
+1. Include the maven dependency:
+    ```xml
+    <dependency>
+        <groupId>io.github.tobi-laa</groupId>
+        <artifactId>reflective-fluent-builders-generator</artifactId>
+        <version><!-- insert latest version --></version>
+    </dependency>
+    ```
+2. Instantiate all JSR-330-annotated components from the package `io.github.tobi.laa.reflective.fluent.builders` with a dependency injection framework of your choice.
+3. _Manually_ add instances of the following classes as they are needed by some components:
+    * `io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties`
+    * `java.time.Clock`
+    * `java.lang.ClassLoader`
+4. The relevant components to inject whereever you need them are `BuilderMetadataService` and `JavaFileGenerator`.
+
 # Maven Plugin usage
-TODO add short description and a few examples
+To use the maven plugin, all you need to do (at a minimum) is to tell it which packages and/or classes you want builders generated for. A small example might look like this:
+```xml
+<plugin>
+    <groupId>io.github.tobi-laa</groupId>
+    <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+    <version><!-- insert latest version --></version>
+    <configuration>
+        <includes>
+            <include>
+                <packageName>i.want.builders.for.this.package</packageName>
+            </include>
+            <include>
+                <className>i.also.want.a.builder.ForThisClass</className>
+            </include>
+        </includes>
+    </configuration>
+</plugin>
+```
+
+A caveat when using the plugin is that all classes for which you desire builders need to be compiled already as reflection is used for scanning packages and classes, so depending on your usecase you need
+to decide during which phase of the maven build to execute the plugin.
+Refer also to the [default lifecycle](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#default-lifecycle).
+This will of course not be a problem if you are solely generating builders for classes from third party libraries.
+
+If you want to generate builders in compile scope for classes whose sources are located within the same module, you could try an approach like this:
+```xml
+<plugin>
+    <groupId>io.github.tobi-laa</groupId>
+    <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+    <version><!-- insert latest version --></version>
+    <executions>
+        <execution>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>generate-builders</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <includes>
+            <include>
+                <packageName>i.want.builders.for.this.package</packageName>
+            </include>
+        </includes>
+    </configuration>
+</plugin>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <executions>
+        <!-- the default compilation -->
+        <execution>
+            <phase>compile</phase>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+        </execution>
+        <!-- compilation of the generated builders -->
+        <execution>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+It is also possible to specify exclusions. For instance, let us assume you use a _logical_ rather than a _functional_ naming convention within your application like so:
+```
+com.example.app.dog
+↳ Dog
+↳ DogEntity
+↳ DogService
+↳ DogMapper
+↳ DogRepository
+
+com.example.app.cat
+↳ Cat
+↳ CatEntity
+↳ CatService
+↳ CatMapper
+↳ CatRepository
+```
+
+If you were going to generate builders for this application, you would probably want to exclude all the services, mappers and repositories.
+This could be achieved by doing the following:
+
+```xml
+<plugin>
+    <groupId>io.github.tobi-laa</groupId>
+    <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
+    <version><!-- insert latest version --></version>
+    <configuration>
+        <includes>
+            <include>
+                <packageName>com.example.app</packageName>
+            </include>
+        </includes>
+        <excludes>
+            <exclude>
+                <classRegex>.+Service</classRegex>
+            </exclude>
+            <exclude>
+                <classRegex>.+Mapper</classRegex>
+            </exclude>
+            <exclude>
+                <classRegex>.+Repository</classRegex>
+            </exclude>
+        </excludes>
+    </configuration>
+</plugin>
+```
 
 Full documentation of the maven plugin and its parameters can be found
 [here](https://tobias-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/plugin-info.html).

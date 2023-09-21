@@ -72,4 +72,14 @@ public interface ClassService {
      *                             load {@code className}.
      */
     Optional<Class<?>> loadClass(final String className);
+
+    /**
+     * <p>
+     * Checks whether the given class is abstract.
+     * </p>
+     *
+     * @param clazz The class for which to check whether it is an abstract class. Must not be {@code null}.
+     * @return {@code true} if {@code clazz} is abstract, {@code false} otherwise.
+     */
+    boolean isAbstract(final Class<?> clazz);
 }
