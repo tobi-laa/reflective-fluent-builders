@@ -1,6 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
-import com.google.common.reflect.ClassPath;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassGraphException;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
@@ -11,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -67,16 +69,20 @@ class ClassServiceImpl implements ClassService {
     @Override
     public Set<Class<?>> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
-        try {
-            return ClassPath.from(classLoaderProvider.get()) //
-                    .getTopLevelClassesRecursive(packageName) //
-                    .stream() //
-                    .map(ClassPath.ClassInfo::load) //
+        try (final ScanResult scanResult = new ClassGraph()
+                .overrideClassLoaders(classLoaderProvider.get())
+                .enableAllInfo()
+                .acceptPackages(packageName)
+                .scan()) {
+            //
+            return scanResult.getAllClasses()
+                    .stream()
+                    .map(ClassInfo::loadClass)
                     .flatMap(clazz -> Stream.concat(
                             Stream.of(clazz),
                             collectStaticInnerClassesRecursively(clazz).stream()))
                     .collect(Collectors.toUnmodifiableSet());
-        } catch (final IOException e) {
+        } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
     }

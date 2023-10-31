@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
-import com.google.common.reflect.ClassPath;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassGraphException;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
@@ -23,11 +24,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
@@ -45,7 +45,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -132,12 +131,17 @@ class ClassServiceImplTest {
         assertThrows(NullPointerException.class, collectClassesRecursively);
     }
 
+    @SuppressWarnings("unused")
     @Test
     void testCollectClassesRecursivelyReflectionException() {
-        try (final MockedStatic<ClassPath> classPath = mockStatic(ClassPath.class)) {
-            // Arrange
-            final var cause = new IOException("Thrown in unit test");
-            classPath.when(() -> ClassPath.from(any())).thenThrow(cause);
+        // Arrange
+        final var cause = classGraphException("Thrown in unit test");
+        try (final var classGraph = mockConstruction(
+                ClassGraph.class,
+                withSettings().defaultAnswer(InvocationOnMock::getMock),
+                (mock, ctx) -> {
+                    doThrow(cause).when(mock).scan();
+                })) {
             // Act
             final ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
             // Assert
@@ -146,6 +150,13 @@ class ClassServiceImplTest {
                     .hasMessage("Error while attempting to collect classes recursively.")
                     .hasCause(cause);
         }
+    }
+
+    @SneakyThrows
+    private ClassGraphException classGraphException(final String message) {
+        final var constructor = ClassGraphException.class.getDeclaredConstructor(String.class);
+        constructor.setAccessible(true);
+        return constructor.newInstance(message);
     }
 
     @ParameterizedTest
