@@ -102,8 +102,8 @@ class ClassServiceImpl implements ClassService {
         return clazz.getProtectionDomain().getCodeSource();
     }
 
+    // Exception should never occur
     @SneakyThrows(URISyntaxException.class)
-        // should never occur
     Path getLocationAsPath(final CodeSource codeSource) {
         return Paths.get(codeSource.getLocation().toURI());
     }
