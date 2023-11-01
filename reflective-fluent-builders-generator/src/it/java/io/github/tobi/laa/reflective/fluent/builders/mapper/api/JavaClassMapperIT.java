@@ -111,7 +111,6 @@ class JavaClassMapperIT {
 
         @Override
         public Stream<Arguments> provideArguments(final ExtensionContext extensionContext) {
-            final JavaClass object = javaClass(Object.class).build();
             final JavaClass serializable = javaClass(Serializable.class).type(INTERFACE).build();
             final JavaClass comparable = javaClass(Comparable.class).type(INTERFACE).build();
             final JavaClass charSequence = javaClass(CharSequence.class).type(INTERFACE).build();
@@ -184,6 +183,7 @@ class JavaClassMapperIT {
             return JavaClass.builder()
                     .name(clazz.getName())
                     .simpleName(clazz.getSimpleName())
+                    .packageName(clazz.getPackage().getName())
                     .classSupplier(() -> clazz)
                     .isStatic(Modifier.isStatic(clazz.getModifiers()))
                     .innerClass(clazz.isMemberClass() || clazz.isAnonymousClass())

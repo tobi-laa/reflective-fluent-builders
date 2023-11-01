@@ -28,6 +28,9 @@ public class JavaClass {
     private final String simpleName;
 
     @lombok.NonNull
+    private final String packageName;
+
+    @lombok.NonNull
     @Getter(AccessLevel.PRIVATE)
     @ToString.Exclude
     private final Supplier<Class<?>> classSupplier;
