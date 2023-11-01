@@ -4,9 +4,8 @@ import io.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
-import io.github.tobi.laa.reflective.fluent.builders.sisu.SisuTest;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -14,12 +13,11 @@ import java.lang.reflect.TypeVariable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SisuTest
-@RequiredArgsConstructor(onConstructor_ = @Inject)
+@IntegrationTest
 class JavaFileGeneratorIT {
 
-    @lombok.NonNull
-    private final JavaFileGenerator javaFileGenerator;
+    @Inject
+    private JavaFileGenerator javaFileGenerator;
 
     @Test
     void testGenerateJavaFile() {

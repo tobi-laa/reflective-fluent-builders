@@ -128,12 +128,15 @@ class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public Optional<Class<?>> loadClass(String className) {
-        try {
-            return Optional.of(Class.forName(className, false, classLoaderProvider.get()));
-        } catch (final ClassNotFoundException e) {
-            return Optional.empty();
-        } catch (final LinkageError | SecurityException e) {
+    public Optional<ClassInfo> loadClass(String className) {
+        try (final ScanResult scanResult = new ClassGraph()
+                .overrideClassLoaders(classLoaderProvider.get())
+                .enableAllInfo()
+                .acceptClasses(className)
+                .scan()) {
+            //
+            return scanResult.getAllClasses().stream().findFirst();
+        } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to load class " + className + '.', e);
         }
     }

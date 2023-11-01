@@ -1,6 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.google.common.collect.ImmutableSortedSet;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
@@ -30,6 +33,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.JUnitException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -82,7 +86,7 @@ class BuilderMetadataServiceImplTest {
     void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix,
                                     final boolean accessibleConstructor, final SortedSet<Setter> setters,
                                     final Class<?> clazz, final Path location,
-                                    final Optional<Class<?>>[] existingBuilderClasses, final BuilderMetadata expected) {
+                                    final Optional<ClassInfo>[] existingBuilderClasses, final BuilderMetadata expected) {
         // Arrange
         doReturn(builderPackage).when(builderPackageService).resolveBuilderPackage(clazz);
         when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
@@ -214,7 +218,7 @@ class BuilderMetadataServiceImplTest {
                                         .build()), //
                         PackagePrivateConstructor.class, //
                         null, //
-                        new Optional[]{Optional.of(ClassWithMarkerField.class)}, //
+                        new Optional[]{Optional.of(classInfo(ClassWithMarkerField.class))}, //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
                                 .name("PackagePrivateConstructor") //
@@ -238,7 +242,7 @@ class BuilderMetadataServiceImplTest {
                         Collections.emptySortedSet(), //
                         SimpleClassNoSetPrefix.class, //
                         aPath, //
-                        new Optional[]{Optional.of(ClassWithoutMarkerField.class), Optional.empty()}, //
+                        new Optional[]{Optional.of(classInfo(ClassWithoutMarkerField.class)), Optional.empty()}, //
                         BuilderMetadata.builder() //
                                 .packageName("the.builder.package") //
                                 .name("SimpleClassNoSetPrefixMyBuilderSuffix0") //
@@ -255,7 +259,7 @@ class BuilderMetadataServiceImplTest {
                         Collections.emptySortedSet(), //
                         SimpleClassNoDefaultConstructor.class, //
                         anotherPath, //
-                        new Optional[]{Optional.of(ClassWithoutMarkerField.class), Optional.of(ClassWithoutMarkerField.class), Optional.empty()}, //
+                        new Optional[]{Optional.of(classInfo(ClassWithoutMarkerField.class)), Optional.of(classInfo(ClassWithoutMarkerField.class)), Optional.empty()}, //
                         BuilderMetadata.builder() //
                                 .packageName("builders.io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassNoDefaultConstructorBuilder1") //
@@ -266,6 +270,16 @@ class BuilderMetadataServiceImplTest {
                                         .build()) //
                                 .build()) //
         );
+    }
+
+    private static ClassInfo classInfo(final Class<?> clazz) {
+        try (final ScanResult scanResult = new ClassGraph()
+                .enableAllInfo()
+                .acceptClasses(clazz.getName())
+                .scan()) {
+            //
+            return scanResult.getAllClasses().stream().findFirst().orElseThrow(() -> new JUnitException(""));
+        }
     }
 
     @Test

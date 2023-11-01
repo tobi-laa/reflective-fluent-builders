@@ -108,6 +108,7 @@
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <spring-boot-starter-test.version>2.7.17</spring-boot-starter-test.version>
     </properties>
     <modules>
         <module>reflective-fluent-builders-test-models</module>
@@ -249,6 +250,12 @@
                 <groupId>io.github.java-diff-utils</groupId>
                 <artifactId>java-diff-utils</artifactId>
                 <version>${java-diff-utils.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot-starter-test.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

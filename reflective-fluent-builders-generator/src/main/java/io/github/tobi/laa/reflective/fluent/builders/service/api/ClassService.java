@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 
 import java.nio.file.Path;
@@ -71,7 +72,7 @@ public interface ClassService {
      * @throws ReflectionException If an error (<em>not</em> {@link ClassNotFoundException}) occurs while attempting to
      *                             load {@code className}.
      */
-    Optional<Class<?>> loadClass(final String className);
+    Optional<ClassInfo> loadClass(final String className);
 
     /**
      * <p>

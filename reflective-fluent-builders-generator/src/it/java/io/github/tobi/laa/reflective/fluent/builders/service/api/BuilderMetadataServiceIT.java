@@ -1,9 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
-import io.github.tobi.laa.reflective.fluent.builders.sisu.SisuTest;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithBuilderExisting;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -11,12 +10,11 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SisuTest
-@RequiredArgsConstructor(onConstructor_ = @Inject)
+@IntegrationTest
 class BuilderMetadataServiceIT {
 
-    @lombok.NonNull
-    private final BuilderMetadataService builderMetadataService;
+    @Inject
+    private BuilderMetadataService builderMetadataService;
 
     @Test
     void testFilterOutConfiguredExcludesWithDefaultConfig() {
