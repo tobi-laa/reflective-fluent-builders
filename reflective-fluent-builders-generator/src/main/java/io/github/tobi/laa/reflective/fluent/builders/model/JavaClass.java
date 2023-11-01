@@ -1,11 +1,12 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.With;
+import lombok.*;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * <p>
@@ -13,23 +14,47 @@ import java.util.Optional;
  * </p>
  */
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 @With
+@RequiredArgsConstructor
 public class JavaClass {
 
     @lombok.NonNull
-    private final Class<?> clazz;
+    @EqualsAndHashCode.Include
+    private final String name;
+
+    @lombok.NonNull
+    private final String simpleName;
+
+    @lombok.NonNull
+    @Getter(AccessLevel.PRIVATE)
+    private final Supplier<Class<?>> classSupplier;
+
+    // inner class so field is not exposed in Lombok-generated builder
+    private final ClassWrapper classWrapper = new ClassWrapper();
 
     @lombok.NonNull
     private final Visibility visibility;
 
-    private final boolean isAbstract;
+    @lombok.NonNull
+    private final JavaType type;
 
     private final boolean isStatic;
+
+    private final boolean innerClass;
+
+    private final boolean outerClass;
 
     private final Path classLocation;
 
     private final Path sourceLocation;
+
+    private final JavaClass superclass;
+
+    @lombok.NonNull
+    @Singular("addInterface")
+    private final Set<JavaClass> interfaces;
 
     /**
      * <p>
@@ -61,61 +86,35 @@ public class JavaClass {
 
     /**
      * <p>
-     * Determines if this {@code JavaClass} object represents an interface type.
+     * Returns the {@code JavaClass} representing the direct superclass of this {@code JavaClass}.
      * </p>
      *
-     * @return {@code true} if this {@code JavaClass} object represents an interface; {@code false} otherwise.
-     * @see Class#isInterface()
+     * @return The direct superclass of the class represented by this {@code JavaClass} object.
      */
-    public boolean isInterface() {
-        return clazz.isInterface();
+    public Optional<JavaClass> getSuperclass() {
+        return Optional.ofNullable(superclass);
     }
 
     /**
      * <p>
-     * Returns {@code true} if the underlying class is an anonymous class.
+     * Loads the underlying class using the {@link Supplier}.
+     * </p>
+     * <p>
+     * Calling this method multiple times will <em>not</em> load the class multiple times but instead return the same
+     * instance.
      * </p>
      *
-     * @return {@code true} if this class is an anonymous class.
-     * @see Class#isAnonymousClass()
+     * @return The underlying class.
+     * @throws NullPointerException If the {@link Supplier} returns {@code null}.
      */
-    public boolean isAnonymousClass() {
-        return clazz.isAnonymousClass();
+    public Class<?> loadClass() {
+        if (classWrapper.clazz == null) {
+            classWrapper.clazz = Objects.requireNonNull(classSupplier.get());
+        }
+        return classWrapper.clazz;
     }
 
-    /**
-     * <p>
-     * Returns true if this class was declared as an enum in the source code.
-     * </p>
-     *
-     * @return true if this class was declared as an enum in the source code
-     * @see Class#isEnum()
-     */
-    public boolean isEnum() {
-        return clazz.isEnum();
-    }
-
-    /**
-     * <p>
-     * Determines if this {@code JavaClass} object represents a primitive type.
-     * </p>
-     *
-     * @return true if this class represents a primitive type
-     * @see Class#isPrimitive()
-     */
-    public boolean isPrimitive() {
-        return clazz.isPrimitive();
-    }
-
-    /**
-     * <p>
-     * Returns {@code true} if the underlying class is a member class.
-     * </p>
-     *
-     * @return {@code true} if this class is a member class.
-     * @see Class#isMemberClass()
-     */
-    public boolean isMemberClass() {
-        return clazz.isMemberClass();
+    private static class ClassWrapper {
+        private Class<?> clazz;
     }
 }

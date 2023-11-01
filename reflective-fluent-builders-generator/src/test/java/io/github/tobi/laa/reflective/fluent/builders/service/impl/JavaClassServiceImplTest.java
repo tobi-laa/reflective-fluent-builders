@@ -2,11 +2,12 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassGraphException;
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
+import io.github.tobi.laa.reflective.fluent.builders.mapper.api.JavaClassMapper;
 import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
@@ -38,6 +39,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static io.github.tobi.laa.reflective.fluent.builders.model.JavaType.*;
 import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.util.function.Predicate.not;
@@ -52,14 +54,14 @@ class JavaClassServiceImplTest {
     private JavaClassServiceImpl classServiceImpl;
 
     @Mock
-    private VisibilityService visibilityService;
+    private JavaClassMapper mapper;
 
     @Mock
     private BuildersProperties properties;
 
     @BeforeEach
     void init() {
-        classServiceImpl = new JavaClassServiceImpl(visibilityService, properties, ClassLoader::getSystemClassLoader);
+        classServiceImpl = new JavaClassServiceImpl(mapper, properties, ClassLoader::getSystemClassLoader);
     }
 
     @Test
@@ -80,36 +82,41 @@ class JavaClassServiceImplTest {
         // Act
         final List<JavaClass> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
-        assertThat(actual).map(JavaClass::getClazz).isEqualTo(expected);
+        assertThat(actual).map(JavaClass::loadClass).isEqualTo(expected);
     }
 
     private static Stream<Arguments> testCollectFullClassHierarchy() {
         final var javaClass = JavaClass.builder()
-                .clazz(ClassWithHierarchy.class)
+                .classSupplier(() -> ClassWithHierarchy.class)
                 .visibility(PUBLIC)
+                .type(CLASS)
                 .superclass(JavaClass.builder()
-                        .clazz(FirstSuperClass.class)
+                        .classSupplier(() -> FirstSuperClass.class)
                         .visibility(PUBLIC)
+                        .type(CLASS)
                         .superclass(JavaClass.builder()
-                                .clazz(SecondSuperClassInDifferentPackage.class)
+                                .classSupplier(() -> SecondSuperClassInDifferentPackage.class)
                                 .visibility(PUBLIC)
                                 .superclass(JavaClass.builder()
-                                        .clazz(TopLevelSuperClass.class)
+                                        .classSupplier(() -> TopLevelSuperClass.class)
                                         .visibility(PUBLIC)
-                                        .isAbstract(true)
+                                        .type(ABSTRACT_CLASS)
                                         .superclass(JavaClass.builder()
-                                                .clazz(Object.class)
+                                                .classSupplier(() -> Object.class)
+                                                .type(CLASS)
                                                 .visibility(PUBLIC)
                                                 .build())
-                                        .anInterface(JavaClass.builder()
-                                                .clazz(AnotherInterface.class)
+                                        .addInterface(JavaClass.builder()
+                                                .classSupplier(() -> AnotherInterface.class)
+                                                .type(INTERFACE)
                                                 .visibility(PUBLIC)
                                                 .build())
                                         .build())
                                 .build())
                         .build())
-                .anInterface(JavaClass.builder()
-                        .clazz(AnInterface.class)
+                .addInterface(JavaClass.builder()
+                        .classSupplier(() -> AnInterface.class)
+                        .type(INTERFACE)
                         .visibility(PUBLIC)
                         .build())
                 .build();
@@ -127,7 +134,7 @@ class JavaClassServiceImplTest {
                                 Object.class)), //
                 Arguments.of( //
                         javaClass, //
-                        Set.<Predicate<JavaClass>>of(clazz -> clazz.getClazz().equals(Object.class)), //
+                        Set.<Predicate<JavaClass>>of(clazz -> clazz.getName().equals(Object.class.getName())), //
                         List.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class, //
@@ -138,8 +145,8 @@ class JavaClassServiceImplTest {
                 Arguments.of( //
                         javaClass, //
                         Set.<Predicate<JavaClass>>of(
-                                clazz -> clazz.getClazz().equals(Object.class),
-                                clazz -> clazz.getClazz().equals(AnInterface.class)), //
+                                clazz -> clazz.getName().equals(Object.class.getName()),
+                                clazz -> clazz.getName().equals(AnInterface.class.getName())), //
                         List.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -148,14 +155,14 @@ class JavaClassServiceImplTest {
                                 AnotherInterface.class)), //
                 Arguments.of( //
                         javaClass, //
-                        Set.<Predicate<JavaClass>>of(clazz -> clazz.getClazz().equals(FirstSuperClass.class)), //
+                        Set.<Predicate<JavaClass>>of(clazz -> clazz.getName().equals(FirstSuperClass.class.getName())), //
                         List.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
     }
 
     private static JavaClass asJavaClass(final Class<?> clazz) {
-        return JavaClass.builder().clazz(clazz).visibility(PUBLIC).build();
+        return JavaClass.builder().classSupplier(() -> clazz).type(CLASS).visibility(PUBLIC).build();
     }
 
     @Test
@@ -200,18 +207,21 @@ class JavaClassServiceImplTest {
     @MethodSource
     void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
         // Arrange
-        doReturn(PUBLIC).when(visibilityService).toVisibility(anyInt());
+        doAnswer(invocation -> {
+            final ClassInfo classInfo = (ClassInfo) invocation.getArguments()[0];
+            return asJavaClass(classInfo.loadClass());
+        }).when(mapper).map(any(ClassInfo.class));
         // Act
         final Set<JavaClass> actual = classServiceImpl.collectClassesRecursively(packageName);
         // Assert
         assertThat(actual)
                 .filteredOn(not(this::isTestClass))
-                .<Class<?>>map(JavaClass::getClazz)
+                .<Class<?>>map(JavaClass::loadClass)
                 .containsExactlyInAnyOrderElementsOf(expected);
     }
 
     private boolean isTestClass(final JavaClass clazz) {
-        return Arrays.stream(clazz.getClazz().getDeclaredMethods())
+        return Arrays.stream(clazz.loadClass().getDeclaredMethods())
                 .map(Method::getDeclaredAnnotations)
                 .flatMap(Arrays::stream)
                 .map(Annotation::annotationType)
@@ -264,7 +274,7 @@ class JavaClassServiceImplTest {
         // Arrange
         final String className = null;
         final var classLoader = spy(getSystemClassLoader());
-        classServiceImpl = new JavaClassServiceImpl(visibilityService, properties, () -> classLoader);
+        classServiceImpl = new JavaClassServiceImpl(mapper, properties, () -> classLoader);
         // Act
         final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
         // Assert
@@ -308,11 +318,11 @@ class JavaClassServiceImplTest {
     @MethodSource
     void testLoadClass(final String className, final Class<?> expected) {
         // Arrange
-        doReturn(PUBLIC).when(visibilityService).toVisibility(anyInt());
+        doReturn(asJavaClass(expected)).when(mapper).map(any(ClassInfo.class));
         // Act
         final Optional<JavaClass> actual = classServiceImpl.loadClass(className);
         // Assert
-        assertThat(actual).map(JavaClass::getClazz).get().isEqualTo(expected);
+        assertThat(actual).map(JavaClass::loadClass).get().isEqualTo(expected);
     }
 
     private static Stream<Arguments> testLoadClass() {

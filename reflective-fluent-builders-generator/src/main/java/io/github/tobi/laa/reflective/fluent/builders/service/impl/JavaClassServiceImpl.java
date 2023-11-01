@@ -5,10 +5,10 @@ import io.github.classgraph.ClassGraphException;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
+import io.github.tobi.laa.reflective.fluent.builders.mapper.api.JavaClassMapper;
 import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * <p>
@@ -44,7 +43,7 @@ import static java.util.stream.Collectors.toSet;
 class JavaClassServiceImpl implements JavaClassService {
 
     @lombok.NonNull
-    private final VisibilityService visibilityService;
+    private final JavaClassMapper mapper;
 
     @lombok.NonNull
     private final BuildersProperties properties;
@@ -83,7 +82,7 @@ class JavaClassServiceImpl implements JavaClassService {
                     .flatMap(clazz -> Stream.concat(
                             Stream.of(clazz),
                             collectStaticInnerClassesRecursively(clazz).stream()))
-                    .map(this::toJavaClass)
+                    .map(mapper::map)
                     .collect(Collectors.toUnmodifiableSet());
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
@@ -94,19 +93,6 @@ class JavaClassServiceImpl implements JavaClassService {
         return new ClassGraph()
                 .overrideClassLoaders(classLoaderProvider.get())
                 .enableAllInfo();
-    }
-
-    private JavaClass toJavaClass(final ClassInfo clazz) {
-        return JavaClass.builder()
-                .clazz(clazz.loadClass())
-                .visibility(visibilityService.toVisibility(clazz.getModifiers()))
-                .isAbstract(clazz.isAbstract())
-                .isStatic(clazz.isStatic())
-                .classLocation(classLocation(clazz))
-                .sourceLocation(sourceLocation(clazz))
-                .superclass(superclass(clazz))
-                .interfaces(clazz.getInterfaces().stream().map(this::toJavaClass).collect(toSet()))
-                .build();
     }
 
     private Path classLocation(final ClassInfo clazz) {
@@ -122,7 +108,7 @@ class JavaClassServiceImpl implements JavaClassService {
     }
 
     private JavaClass superclass(final ClassInfo clazz) {
-        return Optional.ofNullable(clazz.getSuperclass()).map(this::toJavaClass).orElse(null);
+        return Optional.ofNullable(clazz.getSuperclass()).map(mapper::map).orElse(null);
     }
 
     private Set<ClassInfo> collectStaticInnerClassesRecursively(final ClassInfo clazz) {
@@ -160,7 +146,7 @@ class JavaClassServiceImpl implements JavaClassService {
     @Override
     public Optional<JavaClass> loadClass(final String className) {
         try (final ScanResult scanResult = classGraph().acceptClasses(className).scan()) {
-            return scanResult.getAllClasses().stream().map(this::toJavaClass).findFirst();
+            return scanResult.getAllClasses().stream().map(mapper::map).findFirst();
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to load class " + className + '.', e);
         }
