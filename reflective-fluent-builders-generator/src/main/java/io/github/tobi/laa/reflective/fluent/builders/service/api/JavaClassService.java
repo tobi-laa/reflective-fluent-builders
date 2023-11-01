@@ -1,7 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.resource.OptionalResource;
+import io.github.tobi.laa.reflective.fluent.builders.model.resource.Resource;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,16 +38,17 @@ public interface JavaClassService {
 
     /**
      * <p>
-     * Collects all classes within the package {@code pack} and all its sub-packages.
+     * Collects all classes within the package {@code packageName} and all its sub-packages.
      * </p>
      *
      * @param packageName The package from which to start class collection. Must not be {@code null}.
-     * @return All classes within the package {@code pack} and all its sub-packages.
+     * @return All classes within the package {@code packageName} and all its sub-packages wrapped within a
+     * {@link Resource}.
      * @throws ReflectionException If an error occurs while
      *                             accessing classes in
      *                             {@code packageName}.
      */
-    Set<JavaClass> collectClassesRecursively(final String packageName);
+    Resource<Set<JavaClass>> collectClassesRecursively(final String packageName);
 
     /**
      * <p>
@@ -55,9 +58,9 @@ public interface JavaClassService {
      *
      * @param className Fully qualified name of the class to attempt to load. Must not be {@code null}.
      * @return The class with the fully qualified {@code className} if it exists on the current classpath, otherwise an
-     * {@link Optional#empty() empty Optional}.
+     * {@link Optional#empty() empty Optional} wrapped within a {@link Resource}.
      * @throws ReflectionException If an error (<em>not</em> {@link ClassNotFoundException}) occurs while attempting to
      *                             load {@code className}.
      */
-    Optional<JavaClass> loadClass(final String className);
+    OptionalResource<JavaClass> loadClass(final String className);
 }

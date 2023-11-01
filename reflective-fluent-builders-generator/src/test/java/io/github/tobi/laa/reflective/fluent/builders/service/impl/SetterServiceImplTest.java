@@ -1,10 +1,11 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
-import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.AccessibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderPackageService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
@@ -55,7 +56,7 @@ class SetterServiceImplTest {
     private VisibilityService visibilityService;
 
     @Mock
-    private ClassService classService;
+    private JavaClassService javaClassService;
 
     @Mock
     private AccessibilityService accessibilityService;
@@ -138,7 +139,7 @@ class SetterServiceImplTest {
             when(properties.getGetterPrefix()).thenReturn(getterPrefix);
         }
         when(visibilityService.toVisibility(anyInt())).thenReturn(mockVisibility);
-        when(classService.collectFullClassHierarchy(clazz)).thenReturn(List.of(clazz));
+        // when(classService.collectFullClassHierarchy(clazz)).thenReturn(List.of(clazz));
         doReturn(true).when(accessibilityService).isAccessibleFrom(any(Method.class), any());
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);
@@ -212,10 +213,10 @@ class SetterServiceImplTest {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn("set");
         when(visibilityService.toVisibility(anyInt())).thenReturn(Visibility.PROTECTED);
-        doReturn(fullClassHierarchy).when(classService).collectFullClassHierarchy(any());
-        lenient().doReturn(List.of(List.class)).when(classService).collectFullClassHierarchy(List.class);
-        lenient().doReturn(List.of(Map.class)).when(classService).collectFullClassHierarchy(Map.class);
-        lenient().doReturn(List.of(Set.class)).when(classService).collectFullClassHierarchy(Set.class);
+        doReturn(fullClassHierarchy).when(javaClassService).collectFullClassHierarchy(any());
+        // lenient().doReturn(List.of(List.class)).when(classService).collectFullClassHierarchy(List.class);
+        // lenient().doReturn(List.of(Map.class)).when(classService).collectFullClassHierarchy(Map.class);
+        // lenient().doReturn(List.of(Set.class)).when(classService).collectFullClassHierarchy(Set.class);
         doReturn(true).when(accessibilityService).isAccessibleFrom(any(Method.class), any());
         // Act
         final Set<Setter> actual = setterService.gatherAllSetters(clazz);

@@ -1,4 +1,4 @@
-package io.github.tobi.laa.reflective.fluent.builders.model;
+package io.github.tobi.laa.reflective.fluent.builders.model.method;
 
 import java.lang.reflect.Type;
 
@@ -7,16 +7,7 @@ import java.lang.reflect.Type;
  * Represents a single setter of a class for which a builder is going to be generated.
  * </p>
  */
-public interface Setter extends Comparable<Setter> {
-
-    /**
-     * <p>
-     * The name of the setter method, for instance {@code setAge}.
-     * </p>
-     *
-     * @return The name of the method.
-     */
-    String getMethodName();
+public interface Setter extends Comparable<Setter>, JavaMethod {
 
     /**
      * <p>
@@ -35,25 +26,6 @@ public interface Setter extends Comparable<Setter> {
      * @return The name of the setter method's single parameter.
      */
     String getParamName();
-
-    /**
-     * <p>
-     * The visibility of the setter method, for instance {@code PUBLIC}.
-     * </p>
-     *
-     * @return The visibility of the setter method.
-     */
-    Visibility getVisibility();
-
-    /**
-     * <p>
-     * The class within which this setter is defined. This is particularly important for setters inherited from super
-     * classes or interfaces.
-     * </p>
-     *
-     * @return The class within which this setter is defined.
-     */
-    Class<?> getDeclaringClass();
 
     /**
      * <p>

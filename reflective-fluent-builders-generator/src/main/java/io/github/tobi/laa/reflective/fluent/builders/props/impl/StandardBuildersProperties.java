@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.props.impl;
 
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,9 +38,9 @@ public class StandardBuildersProperties implements BuildersProperties {
 
     @lombok.NonNull
     @ToString.Exclude
-    private Set<Predicate<Class<?>>> excludes = Set.of( //
-            clazz -> clazz.getSimpleName().endsWith("Builder"), //
-            clazz -> clazz.getSimpleName().endsWith("BuilderImpl"));
+    private Set<Predicate<JavaClass>> excludes = Set.of( //
+            clazz -> clazz.loadClass().getSimpleName().endsWith("Builder"), //
+            clazz -> clazz.loadClass().getSimpleName().endsWith("BuilderImpl"));
 
     @lombok.NonNull
     private StandardHierarchyCollection hierarchyCollection = new StandardHierarchyCollection();
@@ -50,6 +51,6 @@ public class StandardBuildersProperties implements BuildersProperties {
 
         @lombok.NonNull
         @ToString.Exclude
-        private Set<Predicate<Class<?>>> excludes = Set.of(Object.class::equals);
+        private Set<Predicate<JavaClass>> excludes = Set.of(clazz -> clazz.loadClass().equals(Object.class));
     }
 }

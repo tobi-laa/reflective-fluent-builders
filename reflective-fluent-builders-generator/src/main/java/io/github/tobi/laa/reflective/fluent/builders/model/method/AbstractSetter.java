@@ -1,4 +1,4 @@
-package io.github.tobi.laa.reflective.fluent.builders.model;
+package io.github.tobi.laa.reflective.fluent.builders.model.method;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
@@ -17,19 +17,10 @@ import static java.util.Objects.compare;
  */
 @SuperBuilder(toBuilder = true)
 @Data
-public abstract class AbstractSetter implements Setter {
-
-    @lombok.NonNull
-    private final String methodName;
+public abstract class AbstractSetter extends GenericJavaMethod implements Setter {
 
     @lombok.NonNull
     private final String paramName;
-
-    @lombok.NonNull
-    private final Visibility visibility;
-
-    @lombok.NonNull
-    private final Class<?> declaringClass;
 
     @Override
     public int compareTo(final Setter other) {

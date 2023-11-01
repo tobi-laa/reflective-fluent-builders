@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 
 /**
@@ -20,5 +21,5 @@ public interface BuilderPackageService {
      * @param clazz The class for which the resolve the builder package. Must not be {@code null}.
      * @return The package which is configured to contain the builder for {@code clazz}.
      */
-    String resolveBuilderPackage(final Class<?> clazz);
+    String resolveBuilderPackage(final JavaClass clazz);
 }

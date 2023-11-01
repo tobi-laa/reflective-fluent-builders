@@ -8,7 +8,9 @@ import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
-import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.jupiter.api.Test;

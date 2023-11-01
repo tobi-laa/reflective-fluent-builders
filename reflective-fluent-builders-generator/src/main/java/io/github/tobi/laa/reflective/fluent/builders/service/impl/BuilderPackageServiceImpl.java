@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderPackageService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ class BuilderPackageServiceImpl implements BuilderPackageService {
     private final BuildersProperties properties;
 
     @Override
-    public String resolveBuilderPackage(final Class<?> clazz) {
+    public String resolveBuilderPackage(final JavaClass clazz) {
         Objects.requireNonNull(clazz);
         return properties.getBuilderPackage().replace(PACKAGE_PLACEHOLDER, clazz.getPackageName());
     }

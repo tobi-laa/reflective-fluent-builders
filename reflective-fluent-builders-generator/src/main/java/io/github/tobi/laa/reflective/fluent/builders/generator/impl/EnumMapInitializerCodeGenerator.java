@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializerCodeGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.MapSetter;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

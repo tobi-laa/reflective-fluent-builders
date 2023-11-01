@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import io.github.tobi.laa.reflective.fluent.builders.model.method.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

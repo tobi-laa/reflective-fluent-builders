@@ -1,5 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import io.github.tobi.laa.reflective.fluent.builders.model.method.CollectionGetAndAdder;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.CollectionSetter;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import org.junit.jupiter.api.Test;

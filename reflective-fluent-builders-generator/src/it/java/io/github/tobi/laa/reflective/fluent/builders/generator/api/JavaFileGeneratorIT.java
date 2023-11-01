@@ -1,10 +1,10 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
 import com.google.inject.Guice;
-import io.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.ArraySetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
 import lombok.SneakyThrows;
 import org.eclipse.sisu.space.SpaceModule;
@@ -45,7 +45,7 @@ class JavaFileGeneratorIT {
                                 .paramName("anInt") //
                                 .paramType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
-                                .declaringClass(ClassWithGenerics.class) //
+                                .declaringClass(null) //
                                 .build()) //
                         .setter(ArraySetter.builder() //
                                 .methodName("setFloats") //
@@ -53,14 +53,14 @@ class JavaFileGeneratorIT {
                                 .paramType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithGenerics.class) //
+                                .declaringClass(null) //
                                 .build()) //
                         .setter(SimpleSetter.builder() //
                                 .methodName("setT") //
                                 .paramName("t") //
                                 .paramType(typeVariableT()) //
                                 .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithGenerics.class) //
+                                .declaringClass(null) //
                                 .build()) //
                         .build()) //
                 .build();

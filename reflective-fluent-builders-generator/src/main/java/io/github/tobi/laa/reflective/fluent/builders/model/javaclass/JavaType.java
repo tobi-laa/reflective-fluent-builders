@@ -1,4 +1,4 @@
-package io.github.tobi.laa.reflective.fluent.builders.model;
+package io.github.tobi.laa.reflective.fluent.builders.model.javaclass;
 
 /**
  * <p>

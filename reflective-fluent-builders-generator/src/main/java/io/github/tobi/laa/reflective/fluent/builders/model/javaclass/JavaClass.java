@@ -1,5 +1,8 @@
-package io.github.tobi.laa.reflective.fluent.builders.model;
+package io.github.tobi.laa.reflective.fluent.builders.model.javaclass;
 
+import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.GenericJavaMethod;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.JavaMethod;
 import lombok.*;
 
 import java.nio.file.Path;
@@ -16,7 +19,6 @@ import java.util.function.Supplier;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
-@With
 @RequiredArgsConstructor
 public class JavaClass {
 
@@ -58,8 +60,27 @@ public class JavaClass {
     private final JavaClass superclass;
 
     @lombok.NonNull
-    @Singular("addInterface")
     private final Set<JavaClass> interfaces;
+
+    @lombok.NonNull
+    private final Set<JavaMethod> methods;
+
+    private JavaClass(final String name,
+                      final String simpleName,
+                      final String packageName,
+                      final Supplier<Class<?>> classSupplier,
+                      final Visibility visibility,
+                      final JavaType type,
+                      final boolean isStatic,
+                      final boolean innerClass,
+                      final boolean outerClass,
+                      final Path classLocation,
+                      final Path sourceLocation,
+                      final JavaClass superclass,
+                      @Singular("addInterface") final Set<JavaClass> interfaces,
+                      @Singular final Set<GenericJavaMethod.GenericJavaMethodBuilder> methods) {
+        this(name, simpleName, packageName, classSupplier, visibility, type, isStatic, innerClass, outerClass, classLocation, sourceLocation, superclass, interfaces, methods.stream().map(Gener));
+    }
 
     /**
      * <p>

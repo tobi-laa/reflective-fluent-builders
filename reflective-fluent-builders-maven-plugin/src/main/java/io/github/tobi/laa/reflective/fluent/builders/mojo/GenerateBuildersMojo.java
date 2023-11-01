@@ -5,7 +5,7 @@ import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -56,7 +56,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     private final JavaFileGenerator javaFileGenerator;
 
     @lombok.NonNull
-    private final ClassService classService;
+    private final JavaClassService javaClassService;
 
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
@@ -108,7 +108,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         for (final var include : params.getIncludes()) {
             if (include.getPackageName() != null) {
                 getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
-                allClasses.addAll(classService.collectClassesRecursively(include.getPackageName().trim()));
+                allClasses.addAll(javaClassService.collectClassesRecursively(include.getPackageName().trim()));
             } else {
                 getLog().info("Add class " + include.getClassName() + '.');
                 allClasses.add(loadClass(include.getClassName()));

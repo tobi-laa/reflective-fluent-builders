@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 
 import java.util.Collection;
@@ -22,8 +23,9 @@ public interface BuilderMetadataService {
      * @param clazz The class for which the metadata for generating a builder should be collected. Must not be
      *              {@code null}.
      * @return Metadata necessary for generating a builder for {@code clazz}.
+     * @throws ReflectionException If an error occurs while accessing classes via reflection.
      */
-    BuilderMetadata collectBuilderMetadata(final Class<?> clazz);
+    BuilderMetadata collectBuilderMetadata(final JavaClass clazz);
 
     /**
      * <p>
@@ -48,7 +50,7 @@ public interface BuilderMetadataService {
      * @return {@code classes} but without all classes for which it is not possible to generate builders. Never
      * {@code null}.
      */
-    Set<Class<?>> filterOutNonBuildableClasses(final Set<Class<?>> classes);
+    Set<Class<?>> filterOutNonBuildableClasses(final Set<JavaClass> classes);
 
     /**
      * <p>
@@ -59,7 +61,7 @@ public interface BuilderMetadataService {
      * @return {@code classes} but without all configured excludes. Never {@code null}.
      * @see BuildersProperties#getExcludes()
      */
-    Set<Class<?>> filterOutConfiguredExcludes(final Set<Class<?>> classes);
+    Set<Class<?>> filterOutConfiguredExcludes(final Set<JavaClass> classes);
 
     /**
      * <p>

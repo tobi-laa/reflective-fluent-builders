@@ -1,15 +1,15 @@
 package io.github.tobi.laa.reflective.fluent.builders.mapper.impl;
 
 import io.github.classgraph.ClassInfo;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaType;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static io.github.tobi.laa.reflective.fluent.builders.model.JavaType.CLASS;
-import static io.github.tobi.laa.reflective.fluent.builders.model.JavaType.*;
+import static io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType.CLASS;
+import static io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;

@@ -8,7 +8,9 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassN
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
-import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;

@@ -1,6 +1,10 @@
-package io.github.tobi.laa.reflective.fluent.builders.model;
+package io.github.tobi.laa.reflective.fluent.builders.model.method;
+
+import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 
 import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 /**
  * <p>
@@ -12,12 +16,17 @@ public interface JavaMethod {
 
     /**
      * <p>
-     * The underlying {@link Method}.
+     * Loads the underlying {@link Method} using the {@link Supplier}.
+     * </p>
+     * <p>
+     * Calling this method multiple times should <em>not</em> load the {@link Method} multiple times but instead return
+     * the same instance.
      * </p>
      *
-     * @return The underlying method.
+     * @return The underlying {@link Method}.
+     * @throws NullPointerException If the {@link Supplier} returns {@code null}.
      */
-    Method getMethod();
+    Method loadMethod();
 
     /**
      * <p>
@@ -45,5 +54,5 @@ public interface JavaMethod {
      *
      * @return The class within which this method is defined.
      */
-    Class<?> getDeclaringClass();
+    JavaClass getDeclaringClass();
 }

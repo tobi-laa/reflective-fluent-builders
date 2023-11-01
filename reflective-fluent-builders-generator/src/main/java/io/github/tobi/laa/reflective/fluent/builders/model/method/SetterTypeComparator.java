@@ -1,4 +1,4 @@
-package io.github.tobi.laa.reflective.fluent.builders.model;
+package io.github.tobi.laa.reflective.fluent.builders.model.method;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -11,7 +11,7 @@ import java.util.Comparator;
  * </p>
  */
 class SetterTypeComparator implements Comparator<Type> {
-    
+
     @Override
     public int compare(final Type a, final Type b) {
         if (a == null) {

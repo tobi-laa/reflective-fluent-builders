@@ -2,13 +2,14 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.google.common.collect.ImmutableSortedSet;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.AccessibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderPackageService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
@@ -35,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -42,7 +44,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singleton;
-import static org.apache.commons.lang3.ArrayUtils.remove;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -61,7 +62,7 @@ class BuilderMetadataServiceImplTest {
     private SetterService setterService;
 
     @Mock
-    private ClassService classService;
+    private JavaClassService javaClassService;
 
     @Mock
     private BuilderPackageService builderPackageService;
@@ -88,8 +89,7 @@ class BuilderMetadataServiceImplTest {
         when(properties.getBuilderSuffix()).thenReturn(builderSuffix);
         doReturn(accessibleConstructor).when(accessibilityService).isAccessibleFrom(any(Constructor.class), any());
         when(setterService.gatherAllSetters(clazz)).thenReturn(setters);
-        when(classService.determineClassLocation(clazz)).thenReturn(Optional.ofNullable(location));
-        when(classService.loadClass(anyString())).thenReturn(existingBuilderClasses[0], remove(existingBuilderClasses, 0));
+        // when(classService.loadClass(anyString())).thenReturn(existingBuilderClasses[0], remove(existingBuilderClasses, 0));
         // Act
         final BuilderMetadata actual = builderService.collectBuilderMetadata(clazz);
         // Assert
@@ -98,12 +98,54 @@ class BuilderMetadataServiceImplTest {
 
     @SneakyThrows
     private static Stream<Arguments> testCollectBuilderMetadata() {
-        final Setter packagePrivateSetter = SimpleSetter.builder().methodName("setPack").paramName("pack").paramType(char.class).visibility(Visibility.PACKAGE_PRIVATE).declaringClass(SimpleClass.class).build();
-        final Setter protectedSetter = SimpleSetter.builder().methodName("setProt").paramName("prot").paramType(Object.class).visibility(Visibility.PROTECTED).declaringClass(SimpleClass.class).build();
-        final Setter protectedSetterFromAbstractClass = SimpleSetter.builder().methodName("setProtAbst").paramName("protAbst").paramType(Object.class).visibility(Visibility.PROTECTED).declaringClass(SimpleAbstractClass.class).build();
-        final Setter publicSetter = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(int.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
-        final Setter setterNameCollision1 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(Object.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
-        final Setter setterNameCollision2 = SimpleSetter.builder().methodName("setPub").paramName("pub").paramType(String.class).visibility(Visibility.PUBLIC).declaringClass(SimpleClass.class).build();
+        final Setter packagePrivateSetter = SimpleSetter.builder()
+                .methodName("setPack")
+                .method(mock(Method.class))
+                .paramName("pack")
+                .paramType(char.class)
+                .visibility(Visibility.PACKAGE_PRIVATE)
+                .declaringClass(SimpleClass.class)
+                .build();
+        final Setter protectedSetter = SimpleSetter.builder()
+                .methodName("setProt")
+                .method(mock(Method.class))
+                .paramName("prot")
+                .paramType(Object.class)
+                .visibility(Visibility.PROTECTED)
+                .declaringClass(SimpleClass.class)
+                .build();
+        final Setter protectedSetterFromAbstractClass = SimpleSetter.builder()
+                .methodName("setProtAbst")
+                .method(mock(Method.class))
+                .paramName("protAbst")
+                .paramType(Object.class)
+                .visibility(Visibility.PROTECTED)
+                .declaringClass(SimpleAbstractClass.class)
+                .build();
+        final Setter publicSetter = SimpleSetter.builder()
+                .methodName("setPub")
+                .method(mock(Method.class))
+                .paramName("pub")
+                .paramType(int.class)
+                .visibility(Visibility.PUBLIC)
+                .declaringClass(SimpleClass.class)
+                .build();
+        final Setter setterNameCollision1 = SimpleSetter.builder()
+                .methodName("setPub")
+                .method(mock(Method.class))
+                .paramName("pub")
+                .paramType(Object.class)
+                .visibility(Visibility.PUBLIC)
+                .declaringClass(SimpleClass.class)
+                .build();
+        final Setter setterNameCollision2 = SimpleSetter.builder()
+                .methodName("setPub")
+                .method(mock(Method.class))
+                .paramName("pub")
+                .paramType(String.class)
+                .visibility(Visibility.PUBLIC)
+                .declaringClass(SimpleClass.class)
+                .build();
         final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
         final var aPath = Paths.get("");
         final var anotherPath = Paths.get("another/path");
@@ -193,6 +235,7 @@ class BuilderMetadataServiceImplTest {
                                         .setter(publicSetter) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("setPackagePrivate") //
+                                                .method(mock(Method.class))
                                                 .paramName("packagePrivate") //
                                                 .paramType(packagePrivate) //
                                                 .visibility(Visibility.PUBLIC) //
@@ -207,6 +250,7 @@ class BuilderMetadataServiceImplTest {
                         ImmutableSortedSet.of(
                                 SimpleSetter.builder() //
                                         .methodName("setPackagePrivate") //
+                                        .method(mock(Method.class))
                                         .paramName("packagePrivate") //
                                         .paramType(packagePrivate) //
                                         .visibility(Visibility.PUBLIC) //
@@ -224,6 +268,7 @@ class BuilderMetadataServiceImplTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("setPackagePrivate") //
+                                                .method(mock(Method.class))
                                                 .paramName("packagePrivate") //
                                                 .paramType(packagePrivate) //
                                                 .visibility(Visibility.PUBLIC) //
@@ -280,7 +325,6 @@ class BuilderMetadataServiceImplTest {
     void testFilterOutNonBuildableClassesNonConstructableClasses() {
         // Arrange
         final var classes = Set.of(Abstract.class, Annotation.class, Enum.class, Interface.class);
-        doReturn(true).when(classService).isAbstract(Abstract.class);
         // Act
         final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);
         // Assert
@@ -293,7 +337,6 @@ class BuilderMetadataServiceImplTest {
         final var classes = Set.of(SimpleClass.class, PackagePrivateConstructor.class);
         doReturn(true).when(accessibilityService).isAccessibleFrom(eq(SimpleClass.class), any());
         doReturn(false).when(accessibilityService).isAccessibleFrom(eq(PackagePrivateConstructor.class), any());
-        doReturn(false).when(classService).isAbstract(any());
         // Act
         final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);
         // Assert
@@ -305,7 +348,6 @@ class BuilderMetadataServiceImplTest {
         // Arrange
         final var classes = Set.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class);
         doReturn(true).when(accessibilityService).isAccessibleFrom(any(Class.class), any());
-        doReturn(false).when(classService).isAbstract(any());
         // Act
         final Set<Class<?>> actual = builderService.filterOutNonBuildableClasses(classes);
         // Assert
@@ -322,9 +364,9 @@ class BuilderMetadataServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testFilterOutConfiguredExcludes(final Set<Predicate<Class<?>>> excludes, final Set<Class<?>> classes, final Set<Class<?>> expected) {
+    void testFilterOutConfiguredExcludes(final Set<Predicate<JavaClass>> excludes, final Set<Class<?>> classes, final Set<Class<?>> expected) {
         // Arrange
-        lenient().when(properties.getExcludes()).thenReturn(excludes);
+        lenient().doReturn(excludes).when(properties).getExcludes();
         // Act
         final Set<Class<?>> actual = builderService.filterOutConfiguredExcludes(classes);
         // Assert
@@ -343,15 +385,15 @@ class BuilderMetadataServiceImplTest {
                         Set.of(SimpleClass.class), //
                         Set.of(SimpleClass.class)), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(cl -> cl.getPackageName().equals(Complex.class.getPackageName())), //
+                        Set.<Predicate<JavaClass>>of(cl -> cl.getPackageName().equals(Complex.class.getPackageName())), //
                         Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
                         Set.of(SimpleClass.class)), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(SimpleClass.class::equals), //
+                        Set.<Predicate<JavaClass>>of(cl -> SimpleClass.class.getName().equals(cl.getName())), //
                         Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
                         Set.of(ClassWithCollections.class, ClassWithGenerics.class)), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(cl -> cl.getName().endsWith("Generics")), //
+                        Set.<Predicate<JavaClass>>of(cl -> cl.getName().endsWith("Generics")), //
                         Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
                         Set.of(SimpleClass.class, ClassWithCollections.class)));
     }

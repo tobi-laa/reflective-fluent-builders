@@ -5,7 +5,7 @@ import io.github.classgraph.ClassGraphException;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.mapper.api.JavaClassMapper;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
@@ -39,8 +39,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static io.github.tobi.laa.reflective.fluent.builders.model.JavaType.*;
 import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
+import static io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType.*;
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;

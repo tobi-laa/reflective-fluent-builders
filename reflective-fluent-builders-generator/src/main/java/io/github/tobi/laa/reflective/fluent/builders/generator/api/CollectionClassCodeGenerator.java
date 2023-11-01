@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.Setter;
 
 /**
  * <p>

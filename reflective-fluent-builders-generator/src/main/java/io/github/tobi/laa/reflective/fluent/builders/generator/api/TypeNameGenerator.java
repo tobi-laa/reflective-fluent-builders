@@ -1,7 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
 import com.squareup.javapoet.TypeName;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.Setter;
 
 import java.lang.reflect.Type;
 

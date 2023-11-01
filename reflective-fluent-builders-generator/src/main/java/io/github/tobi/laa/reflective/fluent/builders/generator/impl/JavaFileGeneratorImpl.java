@@ -6,7 +6,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.*;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.Setter;
 
 import javax.inject.Inject;
 import javax.inject.Named;

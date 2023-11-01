@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.mapper.impl;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.mapper.api.JavaClassMapper;
 import io.github.tobi.laa.reflective.fluent.builders.mapper.api.JavaTypeMapper;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import org.mapstruct.*;
 
@@ -16,13 +16,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * <p>
  * Implements {@link JavaClassMapper} via MapStruct.
  * </p>
  */
-@Mapper(config = Config.class, uses = {VisibilityService.class, JavaTypeMapper.class, ClassSupplierMapper.class})
+@Mapper(config = Config.class, uses = {VisibilityService.class, JavaTypeMapper.class})
 abstract class StandardJavaClassMapper implements JavaClassMapper {
 
     @BeforeMapping
@@ -38,6 +39,10 @@ abstract class StandardJavaClassMapper implements JavaClassMapper {
     @Mapping(target = "classSupplier", source = "name")
     @Mapping(target = "superclass")
     public abstract JavaClass map(final ClassInfo classInfo);
+
+    Supplier<Class<?>> classSupplier(final ClassInfo classInfo) {
+        return classInfo::loadClass;
+    }
 
     Path classLocation(final ClassInfo clazz) {
         return Optional.ofNullable(clazz)

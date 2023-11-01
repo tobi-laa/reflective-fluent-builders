@@ -6,7 +6,11 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.mapper.api.JavaClassMapper;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.resource.OptionalResource;
+import io.github.tobi.laa.reflective.fluent.builders.model.resource.Resource;
+import io.github.tobi.laa.reflective.fluent.builders.model.resource.WrappingOptionalResource;
+import io.github.tobi.laa.reflective.fluent.builders.model.resource.WrappingResource;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
 import lombok.RequiredArgsConstructor;
@@ -73,17 +77,20 @@ class JavaClassServiceImpl implements JavaClassService {
     }
 
     @Override
-    public Set<JavaClass> collectClassesRecursively(final String packageName) {
+    public Resource<Set<JavaClass>> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
-        try (final ScanResult scanResult = classGraph().acceptPackages(packageName).scan()) {
-            //
-            return scanResult.getAllClasses()
-                    .stream()
-                    .flatMap(clazz -> Stream.concat(
-                            Stream.of(clazz),
-                            collectStaticInnerClassesRecursively(clazz).stream()))
-                    .map(mapper::map)
-                    .collect(Collectors.toUnmodifiableSet());
+        try {
+            final ScanResult scanResult = classGraph().acceptPackages(packageName).scan();
+            return WrappingResource.<Set<JavaClass>>builder()
+                    .content(scanResult.getAllClasses()
+                            .stream()
+                            .flatMap(clazz -> Stream.concat(
+                                    Stream.of(clazz),
+                                    collectStaticInnerClassesRecursively(clazz).stream()))
+                            .map(mapper::map)
+                            .collect(Collectors.toUnmodifiableSet()))
+                    .closeable(scanResult)
+                    .build();
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
@@ -101,6 +108,19 @@ class JavaClassServiceImpl implements JavaClassService {
                 .map(File::toPath)
                 .map(path -> resolveClassFileIfNecessary(path, clazz.loadClass()))
                 .orElse(null);
+    }
+
+    private Path resolveClassFileIfNecessary(final Path path, final Class<?> clazz) {
+        if (Files.isDirectory(path)) {
+            Path classFile = path;
+            for (final String subdir : clazz.getPackageName().split("\\.")) {
+                classFile = classFile.resolve(subdir);
+            }
+            classFile = classFile.resolve(clazz.getSimpleName() + ".class");
+            return classFile;
+        } else {
+            return path;
+        }
     }
 
     private Path sourceLocation(final ClassInfo clazz) {
@@ -130,23 +150,14 @@ class JavaClassServiceImpl implements JavaClassService {
         return Paths.get(codeSource.getLocation().toURI());
     }
 
-    private Path resolveClassFileIfNecessary(final Path path, final Class<?> clazz) {
-        if (Files.isDirectory(path)) {
-            Path classFile = path;
-            for (final String subdir : clazz.getPackageName().split("\\.")) {
-                classFile = classFile.resolve(subdir);
-            }
-            classFile = classFile.resolve(clazz.getSimpleName() + ".class");
-            return classFile;
-        } else {
-            return path;
-        }
-    }
-
     @Override
-    public Optional<JavaClass> loadClass(final String className) {
-        try (final ScanResult scanResult = classGraph().acceptClasses(className).scan()) {
-            return scanResult.getAllClasses().stream().map(mapper::map).findFirst();
+    public OptionalResource<JavaClass> loadClass(final String className) {
+        try {
+            final ScanResult scanResult = classGraph().acceptClasses(className).scan();
+            final var builder = WrappingOptionalResource.<JavaClass>builder()
+                    .closeable(scanResult);
+            scanResult.getAllClasses().stream().map(mapper::map).findFirst().ifPresent(builder::content);
+            return builder.build();
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to load class " + className + '.', e);
         }

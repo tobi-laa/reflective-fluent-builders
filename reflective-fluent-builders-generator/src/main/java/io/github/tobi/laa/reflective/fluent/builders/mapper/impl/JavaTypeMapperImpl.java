@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.mapper.impl;
 import com.google.common.collect.ImmutableSet;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.mapper.api.JavaTypeMapper;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaType;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.github.tobi.laa.reflective.fluent.builders.model.JavaType.*;
+import static io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType.*;
 
 /**
  * <p>

@@ -10,9 +10,9 @@ import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationExc
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionClassCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
-import io.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.ArraySetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.Setter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ClassUtils;
 

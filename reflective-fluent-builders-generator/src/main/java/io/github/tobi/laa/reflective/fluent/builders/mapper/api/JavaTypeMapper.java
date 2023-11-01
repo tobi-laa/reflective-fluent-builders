@@ -1,7 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.mapper.api;
 
 import io.github.classgraph.ClassInfo;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaType;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType;
 
 /**
  * <p>

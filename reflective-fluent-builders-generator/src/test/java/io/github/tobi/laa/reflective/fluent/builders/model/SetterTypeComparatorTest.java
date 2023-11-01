@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import io.github.tobi.laa.reflective.fluent.builders.model.method.SetterTypeComparator;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

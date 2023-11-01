@@ -5,7 +5,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.Marker;
-import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.sisu.SisuExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static io.github.tobi.laa.reflective.fluent.builders.model.JavaType.CLASS;
-import static io.github.tobi.laa.reflective.fluent.builders.model.JavaType.*;
 import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
+import static io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType.CLASS;
+import static io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaType.*;
 import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SisuExtension.class)

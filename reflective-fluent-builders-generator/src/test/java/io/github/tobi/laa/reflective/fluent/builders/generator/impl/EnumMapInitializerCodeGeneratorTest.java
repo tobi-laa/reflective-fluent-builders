@@ -2,8 +2,8 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.MapSetter;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;

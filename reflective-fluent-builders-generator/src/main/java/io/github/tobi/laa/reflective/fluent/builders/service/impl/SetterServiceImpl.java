@@ -2,7 +2,8 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.reflect.TypeToken;
-import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ class SetterServiceImpl implements SetterService {
     private final VisibilityService visibilityService;
 
     @lombok.NonNull
-    private final ClassService classService;
+    private final JavaClassService javaClassService;
 
     @lombok.NonNull
     private final AccessibilityService accessibilityService;
@@ -49,8 +50,9 @@ class SetterServiceImpl implements SetterService {
     public SortedSet<Setter> gatherAllSetters(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
         final var builderPackage = builderPackageService.resolveBuilderPackage(clazz);
-        final var methods = classService.collectFullClassHierarchy(clazz) //
+        final var methods = javaClassService.collectFullClassHierarchy(null) //
                 .stream() //
+                .map(JavaClass::loadClass)
                 .map(Class::getDeclaredMethods) //
                 .flatMap(Arrays::stream) //
                 .filter(not(Method::isBridge)) //
@@ -102,7 +104,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(paramType) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
+                    .declaringClass(null) //
                     .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
             final var collectionType = resolveCollectionType(clazz, paramType);
@@ -112,7 +114,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(paramType) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
+                    .declaringClass(null) //
                     .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
             final var mapType = resolveMapType(clazz, paramType);
@@ -123,7 +125,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(paramType) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
+                    .declaringClass(null) //
                     .build();
         } else {
             return SimpleSetter.builder() //
@@ -131,7 +133,7 @@ class SetterServiceImpl implements SetterService {
                     .paramType(paramType) //
                     .paramName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
+                    .declaringClass(null) //
                     .build();
         }
     }
@@ -146,7 +148,7 @@ class SetterServiceImpl implements SetterService {
                 .paramType(paramType) //
                 .paramName(dropGetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                .declaringClass(method.getDeclaringClass()) //
+                .declaringClass(null) //
                 .build();
     }
 

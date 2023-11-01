@@ -1,5 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import io.github.tobi.laa.reflective.fluent.builders.model.method.AbstractSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.ArraySetter;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import lombok.experimental.SuperBuilder;

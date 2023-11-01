@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.Setter;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

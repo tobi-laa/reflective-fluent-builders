@@ -12,8 +12,8 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIni
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.CollectionSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.Setter;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

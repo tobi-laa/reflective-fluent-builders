@@ -1,8 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.props.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
+import io.github.tobi.laa.reflective.fluent.builders.model.javaclass.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
 
 import java.util.Set;
@@ -83,7 +84,7 @@ public interface BuildersProperties {
      * @return Predicates denoting classes to be excluded when generating builders. Never {@code null}.
      * @see BuilderMetadataService#filterOutConfiguredExcludes(Set)
      */
-    Set<Predicate<Class<?>>> getExcludes();
+    Set<Predicate<JavaClass>> getExcludes();
 
     /**
      * <p>
@@ -104,8 +105,8 @@ public interface BuildersProperties {
          * </p>
          *
          * @return Predicates denoting classes to be excluded from the hierarchy collection. Never {@code null}.
-         * @see ClassService#collectFullClassHierarchy(Class)
+         * @see JavaClassService#collectFullClassHierarchy(JavaClass)
          */
-        Set<Predicate<Class<?>>> getExcludes();
+        Set<Predicate<JavaClass>> getExcludes();
     }
 }

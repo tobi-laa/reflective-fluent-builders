@@ -6,8 +6,8 @@ import com.sun.net.httpserver.Headers;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializerCodeGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.CollectionSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.method.MapSetter;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

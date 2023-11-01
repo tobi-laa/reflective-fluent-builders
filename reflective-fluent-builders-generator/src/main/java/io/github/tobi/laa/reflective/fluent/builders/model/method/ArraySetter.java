@@ -1,4 +1,4 @@
-package io.github.tobi.laa.reflective.fluent.builders.model;
+package io.github.tobi.laa.reflective.fluent.builders.model.method;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,29 +9,29 @@ import java.lang.reflect.Type;
 
 /**
  * <p>
- * The setter of a {@link java.util.Collection collection}, so for instance a list or a set.
+ * The setter of an array.
  * </p>
  */
 @SuperBuilder(toBuilder = true)
 @Data
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @ToString(callSuper = true)
-public class CollectionSetter extends AbstractSetter {
+public class ArraySetter extends AbstractSetter {
 
     @lombok.NonNull
     private final Type paramType;
 
     /**
      * <p>
-     * The type of the elements within the collection being set by the setter method's single parameter, for
-     * instance {@code Integer.class}.
+     * The type of the elements within the array being set by the setter method's single parameter, for instance
+     * {@code int.class}.
      * </p>
      */
     @lombok.NonNull
-    private final Type paramTypeArg;
+    private final Type paramComponentType;
 
     @Override
-    public CollectionSetter withParamName(final String paramName) {
+    public ArraySetter withParamName(final String paramName) {
         return toBuilder().paramName(paramName).build();
     }
 }
