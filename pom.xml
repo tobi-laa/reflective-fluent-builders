@@ -79,6 +79,7 @@
         <jakarta.el.version>5.0.0-M1</jakarta.el.version>
         <plexus-build-api.version>1.2.0</plexus-build-api.version>
         <slf4j.version>2.0.7</slf4j.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <!-- versions of testing dependencies -->
         <junit-jupiter.version>5.10.0</junit-jupiter.version>
         <junit-pioneer.version>2.1.0</junit-pioneer.version>
@@ -201,6 +202,11 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-build-api</artifactId>
                 <version>${plexus-build-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
             </dependency>
             <!-- testing dependencies -->
             <dependency>
@@ -337,6 +343,11 @@
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
                                 <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>

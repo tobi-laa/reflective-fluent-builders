@@ -29,9 +29,11 @@ public class JavaClass {
 
     @lombok.NonNull
     @Getter(AccessLevel.PRIVATE)
+    @ToString.Exclude
     private final Supplier<Class<?>> classSupplier;
 
     // inner class so field is not exposed in Lombok-generated builder
+    @ToString.Exclude
     private final ClassWrapper classWrapper = new ClassWrapper();
 
     @lombok.NonNull
@@ -81,7 +83,7 @@ public class JavaClass {
      * @return <em>Relative</em> path pointing to where the source is located on the filesystem.
      */
     public Optional<Path> getSourceLocation() {
-        return Optional.ofNullable(classLocation);
+        return Optional.ofNullable(sourceLocation);
     }
 
     /**

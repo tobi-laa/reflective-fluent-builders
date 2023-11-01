@@ -47,6 +47,7 @@ these are the steps you have to follow:
  ** `io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties`
  ** `java.time.Clock`
  ** `java.lang.ClassLoader`
+ ** `java.nio.file.FileSystem`
 . The relevant components to inject whereever you need them are `BuilderMetadataService` and `JavaFileGenerator`.
 
 = Maven Plugin usage
