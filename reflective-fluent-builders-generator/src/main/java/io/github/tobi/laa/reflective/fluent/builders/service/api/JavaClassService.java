@@ -1,8 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
+import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -12,7 +12,7 @@ import java.util.Set;
  * Offers methods for dealing with reflection related to classes and packages.
  * </p>
  */
-public interface ClassService {
+public interface JavaClassService {
 
     /**
      * <p>
@@ -32,7 +32,7 @@ public interface ClassService {
      * @param clazz The class for which the full class hierarchy should be collected. Must not be {@code null}.
      * @return The full class hierarchy of {@code clazz}. Never {@code null}.
      */
-    List<Class<?>> collectFullClassHierarchy(final Class<?> clazz);
+    List<JavaClass> collectFullClassHierarchy(final JavaClass clazz);
 
     /**
      * <p>
@@ -45,19 +45,7 @@ public interface ClassService {
      *                             accessing classes in
      *                             {@code packageName}.
      */
-    Set<Class<?>> collectClassesRecursively(final String packageName);
-
-    /**
-     * <p>
-     * Determines the location of the file that contains the given {@code clazz}. If it stems from an external
-     * dependency, this will point to a {@code jar} file. For local class files, it will point to the corresponding
-     * {@code class} file.
-     * </p>
-     *
-     * @param clazz The class for which to determine its location on the filesystem. Must not be {@code null.}
-     * @return The location of the file that contains {@code clazz}, if it could be determined.
-     */
-    Optional<Path> determineClassLocation(final Class<?> clazz);
+    Set<JavaClass> collectClassesRecursively(final String packageName);
 
     /**
      * <p>
@@ -71,15 +59,5 @@ public interface ClassService {
      * @throws ReflectionException If an error (<em>not</em> {@link ClassNotFoundException}) occurs while attempting to
      *                             load {@code className}.
      */
-    Optional<Class<?>> loadClass(final String className);
-
-    /**
-     * <p>
-     * Checks whether the given class is abstract.
-     * </p>
-     *
-     * @param clazz The class for which to check whether it is an abstract class. Must not be {@code null}.
-     * @return {@code true} if {@code clazz} is abstract, {@code false} otherwise.
-     */
-    boolean isAbstract(final Class<?> clazz);
+    Optional<JavaClass> loadClass(final String className);
 }

@@ -45,5 +45,5 @@ public interface JavaMethod {
      *
      * @return The class within which this method is defined.
      */
-    JavaClass getDeclaringClass();
+    Class<?> getDeclaringClass();
 }

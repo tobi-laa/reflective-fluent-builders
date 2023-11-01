@@ -3,8 +3,10 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassGraphException;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
+import io.github.tobi.laa.reflective.fluent.builders.model.JavaClass;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
@@ -12,7 +14,6 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevel
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,32 +33,33 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.security.CodeSource;
-import java.security.SecureClassLoader;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.PUBLIC;
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ClassServiceImplTest {
+class JavaClassServiceImplTest {
 
-    private ClassServiceImpl classServiceImpl;
+    private JavaClassServiceImpl classServiceImpl;
+
+    @Mock
+    private VisibilityService visibilityService;
 
     @Mock
     private BuildersProperties properties;
 
     @BeforeEach
     void init() {
-        classServiceImpl = new ClassServiceImpl(properties, ClassLoader::getSystemClassLoader);
+        classServiceImpl = new JavaClassServiceImpl(visibilityService, properties, ClassLoader::getSystemClassLoader);
     }
 
     @Test
@@ -70,21 +72,50 @@ class ClassServiceImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final List<Class<?>> expected) {
+    void testCollectFullClassHierarchy(final JavaClass clazz, final Set<Predicate<JavaClass>> excludes, final List<Class<?>> expected) {
         // Arrange
         final var hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
         when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
         when(hierarchyCollection.getExcludes()).thenReturn(excludes);
         // Act
-        final List<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
+        final List<JavaClass> actual = classServiceImpl.collectFullClassHierarchy(clazz);
         // Assert
-        assertEquals(expected, actual);
+        assertThat(actual).map(JavaClass::getClazz).isEqualTo(expected);
     }
 
     private static Stream<Arguments> testCollectFullClassHierarchy() {
+        final var javaClass = JavaClass.builder()
+                .clazz(ClassWithHierarchy.class)
+                .visibility(PUBLIC)
+                .superclass(JavaClass.builder()
+                        .clazz(FirstSuperClass.class)
+                        .visibility(PUBLIC)
+                        .superclass(JavaClass.builder()
+                                .clazz(SecondSuperClassInDifferentPackage.class)
+                                .visibility(PUBLIC)
+                                .superclass(JavaClass.builder()
+                                        .clazz(TopLevelSuperClass.class)
+                                        .visibility(PUBLIC)
+                                        .isAbstract(true)
+                                        .superclass(JavaClass.builder()
+                                                .clazz(Object.class)
+                                                .visibility(PUBLIC)
+                                                .build())
+                                        .anInterface(JavaClass.builder()
+                                                .clazz(AnotherInterface.class)
+                                                .visibility(PUBLIC)
+                                                .build())
+                                        .build())
+                                .build())
+                        .build())
+                .anInterface(JavaClass.builder()
+                        .clazz(AnInterface.class)
+                        .visibility(PUBLIC)
+                        .build())
+                .build();
         return Stream.of( //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
+                        javaClass, //
                         Collections.emptySet(), //
                         List.of( //
                                 ClassWithHierarchy.class, //
@@ -95,8 +126,8 @@ class ClassServiceImplTest {
                                 AnotherInterface.class, //
                                 Object.class)), //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
-                        Set.<Predicate<Class<?>>>of(Object.class::equals), //
+                        javaClass, //
+                        Set.<Predicate<JavaClass>>of(clazz -> clazz.getClazz().equals(Object.class)), //
                         List.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class, //
@@ -105,8 +136,10 @@ class ClassServiceImplTest {
                                 TopLevelSuperClass.class, //
                                 AnotherInterface.class)), //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
-                        Set.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
+                        javaClass, //
+                        Set.<Predicate<JavaClass>>of(
+                                clazz -> clazz.getClazz().equals(Object.class),
+                                clazz -> clazz.getClazz().equals(AnInterface.class)), //
                         List.of( //
                                 ClassWithHierarchy.class, //
                                 FirstSuperClass.class, //
@@ -114,11 +147,15 @@ class ClassServiceImplTest {
                                 TopLevelSuperClass.class, //
                                 AnotherInterface.class)), //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
-                        Set.<Predicate<Class<?>>>of(FirstSuperClass.class::equals), //
+                        javaClass, //
+                        Set.<Predicate<JavaClass>>of(clazz -> clazz.getClazz().equals(FirstSuperClass.class)), //
                         List.of( //
                                 ClassWithHierarchy.class, //
                                 AnInterface.class)));
+    }
+
+    private static JavaClass asJavaClass(final Class<?> clazz) {
+        return JavaClass.builder().clazz(clazz).visibility(PUBLIC).build();
     }
 
     @Test
@@ -162,14 +199,19 @@ class ClassServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
+        // Arrange
+        doReturn(PUBLIC).when(visibilityService).toVisibility(anyInt());
         // Act
-        final Set<Class<?>> actual = classServiceImpl.collectClassesRecursively(packageName);
+        final Set<JavaClass> actual = classServiceImpl.collectClassesRecursively(packageName);
         // Assert
-        assertThat(actual).filteredOn(not(this::isTestClass)).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual)
+                .filteredOn(not(this::isTestClass))
+                .<Class<?>>map(JavaClass::getClazz)
+                .containsExactlyInAnyOrderElementsOf(expected);
     }
 
-    private boolean isTestClass(final Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredMethods())
+    private boolean isTestClass(final JavaClass clazz) {
+        return Arrays.stream(clazz.getClazz().getDeclaredMethods())
                 .map(Method::getDeclaredAnnotations)
                 .flatMap(Arrays::stream)
                 .map(Annotation::annotationType)
@@ -204,48 +246,6 @@ class ClassServiceImplTest {
     }
 
     @Test
-    void testDetermineClassLocationNull() {
-        // Arrange
-        final Class<?> clazz = null;
-        // Act
-        final Executable determineClassLocation = () -> classServiceImpl.determineClassLocation(clazz);
-        // Assert
-        assertThrows(NullPointerException.class, determineClassLocation);
-    }
-
-    @Test
-    void testDetermineClassLocationCodeSourceNull() {
-        // Arrange
-        final var clazz = String.class;
-        // Act
-        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
-        // Assert
-        assertThat(actual).isEmpty();
-    }
-
-    @Test
-    void testDetermineClassLocationFromJar() {
-        // Arrange
-        final var clazz = Test.class;
-        // Act
-        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
-        // Assert
-        assertThat(actual).isPresent();
-        assertThat(actual.get()).isRegularFile().hasExtension("jar");
-    }
-
-    @Test
-    void testDetermineClassLocationFromClassFile() {
-        // Arrange
-        final var clazz = getClass();
-        // Act
-        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
-        // Assert
-        assertThat(actual).isPresent();
-        assertThat(actual.get()).isRegularFile().hasExtension("class");
-    }
-
-    @Test
     @SneakyThrows
     void testGetLocationAsPathURISyntaxException() {
         // Arrange
@@ -264,7 +264,7 @@ class ClassServiceImplTest {
         // Arrange
         final String className = null;
         final var classLoader = spy(getSystemClassLoader());
-        classServiceImpl = new ClassServiceImpl(properties, () -> classLoader);
+        classServiceImpl = new JavaClassServiceImpl(visibilityService, properties, () -> classLoader);
         // Act
         final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
         // Assert
@@ -272,29 +272,34 @@ class ClassServiceImplTest {
         verifyNoInteractions(classLoader);
     }
 
-    @ParameterizedTest
-    @ValueSource(classes = {LinkageError.class, SecurityException.class})
+    @Test
     @SneakyThrows
-    void testLoadClassException(final Class<? extends Throwable> causeType) {
+    void testLoadClassException() {
         // Arrange
+        final var cause = classGraphException("Thrown in unit test");
         final var className = "does.not.matter";
-        final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
-        final var classLoader = new ThrowingClassLoader(cause);
-        classServiceImpl = new ClassServiceImpl(properties, () -> classLoader);
-        // Act
-        final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
-        // Assert
-        assertThatThrownBy(loadClass) //
-                .isExactlyInstanceOf(ReflectionException.class) //
-                .hasMessage("Error while attempting to load class does.not.matter.") //
-                .hasCause(cause);
+        try (final var classGraph = mockConstruction(
+                ClassGraph.class,
+                withSettings().defaultAnswer(InvocationOnMock::getMock),
+                (mock, ctx) -> {
+                    doThrow(cause).when(mock).scan();
+                })) {
+            // Act
+            final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
+            // Assert
+            assertThatThrownBy(loadClass) //
+                    .isExactlyInstanceOf(ReflectionException.class) //
+                    .hasMessage("Error while attempting to load class does.not.matter.") //
+                    .hasCause(cause);
+        }
+
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"this.class.exists.not", "io.github.tobi.laa.reflective.fluent.builders.mojo.GenerateBuildersMojo"})
     void testLoadClassEmpty(final String className) {
         // Act
-        final Optional<Class<?>> actual = classServiceImpl.loadClass(className);
+        final Optional<JavaClass> actual = classServiceImpl.loadClass(className);
         // Assert
         assertThat(actual).isEmpty();
     }
@@ -302,52 +307,17 @@ class ClassServiceImplTest {
     @ParameterizedTest
     @MethodSource
     void testLoadClass(final String className, final Class<?> expected) {
+        // Arrange
+        doReturn(PUBLIC).when(visibilityService).toVisibility(anyInt());
         // Act
-        final Optional<Class<?>> actual = classServiceImpl.loadClass(className);
+        final Optional<JavaClass> actual = classServiceImpl.loadClass(className);
         // Assert
-        assertThat(actual).get().isEqualTo(expected);
+        assertThat(actual).map(JavaClass::getClazz).get().isEqualTo(expected);
     }
 
     private static Stream<Arguments> testLoadClass() {
         return Stream.of( //
                 Arguments.of("java.lang.String", String.class), //
-                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", ClassService.class));
-    }
-
-    @Test
-    void testIsAbstractNull() {
-        // Arrange
-        final Class<?> clazz = null;
-        // Act
-        final ThrowingCallable isAbstract = () -> classServiceImpl.isAbstract(clazz);
-        // Assert
-        assertThatThrownBy(isAbstract).isExactlyInstanceOf(NullPointerException.class);
-    }
-
-    @ParameterizedTest
-    @MethodSource
-    void testIsAbstract(final Class<?> clazz, final boolean expected) {
-        // Act
-        final boolean actual = classServiceImpl.isAbstract(clazz);
-        // Assert
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    private static Stream<Arguments> testIsAbstract() {
-        return Stream.of( //
-                Arguments.of(SimpleClass.class, false), //
-                Arguments.of(SimpleAbstractClass.class, true));
-    }
-
-    @RequiredArgsConstructor
-    private static class ThrowingClassLoader extends SecureClassLoader {
-
-        private final Throwable exception;
-
-        @SneakyThrows
-        @Override
-        public Class<?> loadClass(final String name) {
-            throw exception;
-        }
+                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", JavaClassService.class));
     }
 }
