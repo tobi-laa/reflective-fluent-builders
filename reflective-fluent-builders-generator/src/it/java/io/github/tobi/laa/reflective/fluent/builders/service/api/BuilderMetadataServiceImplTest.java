@@ -1,4 +1,4 @@
-package io.github.tobi.laa.reflective.fluent.builders.service.impl;
+package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import com.google.common.collect.ImmutableSortedSet;
 import io.github.classgraph.ClassGraph;
@@ -9,10 +9,7 @@ import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.AccessibilityService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderPackageService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
@@ -28,16 +25,14 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Int
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.JUnitException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.inject.Inject;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,25 +47,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@IntegrationTest
 class BuilderMetadataServiceImplTest {
 
-    @InjectMocks
-    private BuilderMetadataServiceImpl builderService;
+    @Inject
+    private BuilderMetadataService builderService;
 
-    @Mock
+    @MockBean
     private AccessibilityService accessibilityService;
 
-    @Mock
+    @MockBean
     private SetterService setterService;
 
-    @Mock
+    @MockBean
     private ClassService classService;
 
-    @Mock
+    @MockBean
     private BuilderPackageService builderPackageService;
 
-    @Mock
+    @MockBean
     private BuildersProperties properties;
 
     @Test

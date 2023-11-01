@@ -1,22 +1,18 @@
-package io.github.tobi.laa.reflective.fluent.builders.service.impl;
+package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.TypeService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.SettersWithDifferentVisibility;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.inject.Inject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -30,19 +26,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class AccessibilityServiceImplTest {
+@IntegrationTest
+class AccessibilityServiceIT {
 
-    @InjectMocks
-    private AccessibilityServiceImpl accessibilityService;
+    @Inject
+    private AccessibilityService accessibilityService;
 
-    @Mock
+    @MockBean
     private VisibilityService visibilityService;
 
-    @Mock
+    @MockBean
     private TypeService typeService;
 
-    @Mock
+    @MockBean
     private ClassService classService;
 
     @ParameterizedTest

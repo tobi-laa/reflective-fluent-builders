@@ -1,11 +1,8 @@
-package io.github.tobi.laa.reflective.fluent.builders.service.impl;
+package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.AccessibilityService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderPackageService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ListWithTwoParams;
@@ -23,15 +20,13 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleCl
 import lombok.SneakyThrows;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -45,25 +40,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class SetterServiceImplTest {
+@IntegrationTest
+class SetterServiceIT {
 
-    @InjectMocks
-    private SetterServiceImpl setterService;
+    @Inject
+    private SetterService setterService;
 
-    @Mock
+    @MockBean
     private VisibilityService visibilityService;
 
-    @Mock
+    @MockBean
     private ClassService classService;
 
-    @Mock
+    @MockBean
     private AccessibilityService accessibilityService;
 
-    @Mock
+    @MockBean
     private BuilderPackageService builderPackageService;
 
-    @Mock
+    @MockBean
     private BuildersProperties properties;
 
     @Test

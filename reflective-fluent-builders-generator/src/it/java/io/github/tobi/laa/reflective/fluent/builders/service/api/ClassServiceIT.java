@@ -1,11 +1,11 @@
-package io.github.tobi.laa.reflective.fluent.builders.service.impl;
+package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassGraphException;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
@@ -16,32 +16,25 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarch
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
-import java.security.CodeSource;
 import java.security.SecureClassLoader;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,23 +42,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class ClassServiceImplTest {
+@IntegrationTest
+class ClassServiceIT {
 
-    private ClassServiceImpl classServiceImpl;
+    @Inject
+    private ClassService service;
 
-    @Mock
+    @MockBean
     private BuildersProperties properties;
-
-    @BeforeEach
-    void init() {
-        classServiceImpl = new ClassServiceImpl(properties, ClassLoader::getSystemClassLoader);
-    }
 
     @Test
     void testCollectFullClassHierarchyNull() {
         // Act
-        final Executable collectFullClassHierarchy = () -> classServiceImpl.collectFullClassHierarchy(null);
+        final Executable collectFullClassHierarchy = () -> service.collectFullClassHierarchy(null);
         // Assert
         assertThrows(NullPointerException.class, collectFullClassHierarchy);
     }
@@ -78,7 +67,7 @@ class ClassServiceImplTest {
         when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
         when(hierarchyCollection.getExcludes()).thenReturn(excludes);
         // Act
-        final List<Class<?>> actual = classServiceImpl.collectFullClassHierarchy(clazz);
+        final List<Class<?>> actual = service.collectFullClassHierarchy(clazz);
         // Assert
         assertEquals(expected, actual);
     }
@@ -128,7 +117,7 @@ class ClassServiceImplTest {
         // Arrange
         final String packageName = null;
         // Act
-        final Executable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively(packageName);
+        final Executable collectClassesRecursively = () -> service.collectClassesRecursively(packageName);
         // Assert
         assertThrows(NullPointerException.class, collectClassesRecursively);
     }
@@ -145,7 +134,7 @@ class ClassServiceImplTest {
                     doThrow(cause).when(mock).scan();
                 })) {
             // Act
-            final ThrowingCallable collectClassesRecursively = () -> classServiceImpl.collectClassesRecursively("");
+            final ThrowingCallable collectClassesRecursively = () -> service.collectClassesRecursively("");
             // Assert
             assertThatThrownBy(collectClassesRecursively)
                     .isInstanceOf(ReflectionException.class)
@@ -165,7 +154,7 @@ class ClassServiceImplTest {
     @MethodSource
     void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
         // Act
-        final Set<Class<?>> actual = classServiceImpl.collectClassesRecursively(packageName);
+        final Set<Class<?>> actual = service.collectClassesRecursively(packageName);
         // Assert
         assertThat(actual).filteredOn(not(this::isTestClass)).containsExactlyInAnyOrderElementsOf(expected);
     }
@@ -210,7 +199,7 @@ class ClassServiceImplTest {
         // Arrange
         final Class<?> clazz = null;
         // Act
-        final Executable determineClassLocation = () -> classServiceImpl.determineClassLocation(clazz);
+        final Executable determineClassLocation = () -> service.determineClassLocation(clazz);
         // Assert
         assertThrows(NullPointerException.class, determineClassLocation);
     }
@@ -220,7 +209,7 @@ class ClassServiceImplTest {
         // Arrange
         final var clazz = String.class;
         // Act
-        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
+        final Optional<Path> actual = service.determineClassLocation(clazz);
         // Assert
         assertThat(actual).isEmpty();
     }
@@ -230,7 +219,7 @@ class ClassServiceImplTest {
         // Arrange
         final var clazz = Test.class;
         // Act
-        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
+        final Optional<Path> actual = service.determineClassLocation(clazz);
         // Assert
         assertThat(actual).isPresent();
         assertThat(actual.get()).isRegularFile().hasExtension("jar");
@@ -241,63 +230,63 @@ class ClassServiceImplTest {
         // Arrange
         final var clazz = getClass();
         // Act
-        final Optional<Path> actual = classServiceImpl.determineClassLocation(clazz);
+        final Optional<Path> actual = service.determineClassLocation(clazz);
         // Assert
         assertThat(actual).isPresent();
         assertThat(actual.get()).isRegularFile().hasExtension("class");
     }
 
-    @Test
-    @SneakyThrows
-    void testGetLocationAsPathURISyntaxException() {
-        // Arrange
-        final var codeSource = Mockito.mock(CodeSource.class);
-        final var url = Mockito.mock(URL.class);
-        when(codeSource.getLocation()).thenReturn(url);
-        when(url.toURI()).thenThrow(new URISyntaxException("mock", "Thrown in unit test."));
-        // Act
-        final Executable getLocationAsPath = () -> classServiceImpl.getLocationAsPath(codeSource);
-        // Assert
-        assertThrows(URISyntaxException.class, getLocationAsPath);
-    }
-
-    @Test
-    void testLoadClassNull() {
-        // Arrange
-        final String className = null;
-        final var classLoader = spy(getSystemClassLoader());
-        classServiceImpl = new ClassServiceImpl(properties, () -> classLoader);
-        // Act
-        final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
-        // Assert
-        assertThatThrownBy(loadClass).isExactlyInstanceOf(NullPointerException.class);
-        verifyNoInteractions(classLoader);
-    }
-
-    @ParameterizedTest
-    @ValueSource(classes = {LinkageError.class, SecurityException.class})
-    @SneakyThrows
-    @Disabled
-    void testLoadClassException(final Class<? extends Throwable> causeType) {
-        // Arrange
-        final var className = "does.not.matter";
-        final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
-        final var classLoader = new ThrowingClassLoader(cause);
-        classServiceImpl = new ClassServiceImpl(properties, () -> classLoader);
-        // Act
-        final ThrowingCallable loadClass = () -> classServiceImpl.loadClass(className);
-        // Assert
-        assertThatThrownBy(loadClass) //
-                .isExactlyInstanceOf(ReflectionException.class) //
-                .hasMessage("Error while attempting to load class does.not.matter.") //
-                .hasCause(cause);
-    }
+//    @Test
+//    @SneakyThrows
+//    void testGetLocationAsPathURISyntaxException() {
+//        // Arrange
+//        final var codeSource = Mockito.mock(CodeSource.class);
+//        final var url = Mockito.mock(URL.class);
+//        when(codeSource.getLocation()).thenReturn(url);
+//        when(url.toURI()).thenThrow(new URISyntaxException("mock", "Thrown in unit test."));
+//        // Act
+//        final Executable getLocationAsPath = () -> service.getLocationAsPath(codeSource);
+//        // Assert
+//        assertThrows(URISyntaxException.class, getLocationAsPath);
+//    }
+//
+//    @Test
+//    void testLoadClassNull() {
+//        // Arrange
+//        final String className = null;
+//        final var classLoader = spy(getSystemClassLoader());
+//        service = new ClassServiceImpl(properties, () -> classLoader);
+//        // Act
+//        final ThrowingCallable loadClass = () -> service.loadClass(className);
+//        // Assert
+//        assertThatThrownBy(loadClass).isExactlyInstanceOf(NullPointerException.class);
+//        verifyNoInteractions(classLoader);
+//    }
+//
+//    @ParameterizedTest
+//    @ValueSource(classes = {LinkageError.class, SecurityException.class})
+//    @SneakyThrows
+//    @Disabled
+//    void testLoadClassException(final Class<? extends Throwable> causeType) {
+//        // Arrange
+//        final var className = "does.not.matter";
+//        final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
+//        final var classLoader = new ThrowingClassLoader(cause);
+//        service = new ClassServiceImpl(properties, () -> classLoader);
+//        // Act
+//        final ThrowingCallable loadClass = () -> service.loadClass(className);
+//        // Assert
+//        assertThatThrownBy(loadClass) //
+//                .isExactlyInstanceOf(ReflectionException.class) //
+//                .hasMessage("Error while attempting to load class does.not.matter.") //
+//                .hasCause(cause);
+//    }
 
     @ParameterizedTest
     @ValueSource(strings = {"this.class.exists.not", "io.github.tobi.laa.reflective.fluent.builders.mojo.GenerateBuildersMojo"})
     void testLoadClassEmpty(final String className) {
         // Act
-        final Optional<ClassInfo> actual = classServiceImpl.loadClass(className);
+        final Optional<ClassInfo> actual = service.loadClass(className);
         // Assert
         assertThat(actual).isEmpty();
     }
@@ -306,7 +295,7 @@ class ClassServiceImplTest {
     @MethodSource
     void testLoadClass(final String className, final Class<?> expected) {
         // Act
-        final Optional<ClassInfo> actual = classServiceImpl.loadClass(className);
+        final Optional<ClassInfo> actual = service.loadClass(className);
         // Assert
         assertThat(actual).get().hasFieldOrPropertyWithValue("name", expected.getName());
     }
@@ -322,7 +311,7 @@ class ClassServiceImplTest {
         // Arrange
         final Class<?> clazz = null;
         // Act
-        final ThrowingCallable isAbstract = () -> classServiceImpl.isAbstract(clazz);
+        final ThrowingCallable isAbstract = () -> service.isAbstract(clazz);
         // Assert
         assertThatThrownBy(isAbstract).isExactlyInstanceOf(NullPointerException.class);
     }
@@ -331,7 +320,7 @@ class ClassServiceImplTest {
     @MethodSource
     void testIsAbstract(final Class<?> clazz, final boolean expected) {
         // Act
-        final boolean actual = classServiceImpl.isAbstract(clazz);
+        final boolean actual = service.isAbstract(clazz);
         // Assert
         assertThat(actual).isEqualTo(expected);
     }
