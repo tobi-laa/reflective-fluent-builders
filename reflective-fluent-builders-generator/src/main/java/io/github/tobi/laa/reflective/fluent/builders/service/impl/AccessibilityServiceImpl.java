@@ -2,7 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.AccessibilityService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.JavaClassService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.TypeService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.VisibilityService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
@@ -30,7 +31,7 @@ class AccessibilityServiceImpl implements AccessibilityService {
     private final TypeService typeService;
 
     @lombok.NonNull
-    private final ClassService classService;
+    private final JavaClassService javaClassService;
 
     @Override
     public boolean isAccessibleFrom(final Class<?> clazz, final String packageName) {
@@ -70,8 +71,9 @@ class AccessibilityServiceImpl implements AccessibilityService {
     }
 
     private boolean isAccessible(final Class<?> clazz, final Visibility visibility, final String builderPackage) {
+        final boolean isAbstract = Modifier.isAbstract(clazz.getModifiers());
         return visibility == PUBLIC || //
-                visibility == PACKAGE_PRIVATE && !classService.isAbstract(clazz) && builderPackage.equals(clazz.getPackage().getName()) || //
+                visibility == PACKAGE_PRIVATE && !isAbstract && builderPackage.equals(clazz.getPackage().getName()) || //
                 visibility == PROTECTED && builderPackage.equals(clazz.getPackage().getName());
     }
 }
