@@ -1,32 +1,22 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
-import com.google.inject.Guice;
+import io.github.tobi.laa.reflective.fluent.builders.sisu.SisuTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithBuilderExisting;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
-import lombok.SneakyThrows;
-import org.eclipse.sisu.space.SpaceModule;
-import org.eclipse.sisu.space.URLClassSpace;
-import org.eclipse.sisu.wire.WireModule;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SisuTest
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class BuilderMetadataServiceIT {
 
-    private BuilderMetadataService builderMetadataService;
-
-    @BeforeEach
-    @SneakyThrows
-    void init() {
-        final var classloader = getClass().getClassLoader();
-        final var injector = Guice.createInjector(
-                new WireModule(
-                        new SpaceModule(new URLClassSpace(classloader))));
-        builderMetadataService = (BuilderMetadataService) injector.getInstance(Class.forName("io.github.tobi.laa.reflective.fluent.builders.service.impl.BuilderMetadataServiceImpl"));
-    }
+    @lombok.NonNull
+    private final BuilderMetadataService builderMetadataService;
 
     @Test
     void testFilterOutConfiguredExcludesWithDefaultConfig() {
