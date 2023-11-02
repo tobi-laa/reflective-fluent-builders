@@ -5,6 +5,7 @@ import io.github.classgraph.ClassGraphException;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
@@ -13,7 +14,6 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevel
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
@@ -22,17 +22,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
-import java.security.SecureClassLoader;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
@@ -48,8 +47,11 @@ class ClassServiceIT {
     @Inject
     private ClassService service;
 
-    @MockBean
+    @SpyBean
     private BuildersProperties properties;
+
+    @SpyBean
+    private ClassLoader classLoader;
 
     @Test
     void testCollectFullClassHierarchyNull() {
@@ -63,9 +65,9 @@ class ClassServiceIT {
     @MethodSource
     void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final List<Class<?>> expected) {
         // Arrange
-        final var hierarchyCollection = Mockito.mock(BuildersProperties.HierarchyCollection.class);
-        when(properties.getHierarchyCollection()).thenReturn(hierarchyCollection);
-        when(hierarchyCollection.getExcludes()).thenReturn(excludes);
+        final var hierarchyCollection = new StandardBuildersProperties.StandardHierarchyCollection();
+        hierarchyCollection.setExcludes(excludes);
+        doReturn(hierarchyCollection).when(properties).getHierarchyCollection();
         // Act
         final List<Class<?>> actual = service.collectFullClassHierarchy(clazz);
         // Assert
@@ -122,7 +124,7 @@ class ClassServiceIT {
         assertThrows(NullPointerException.class, collectClassesRecursively);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "resource"})
     @Test
     void testCollectClassesRecursivelyReflectionException() {
         // Arrange
@@ -156,7 +158,10 @@ class ClassServiceIT {
         // Act
         final Set<Class<?>> actual = service.collectClassesRecursively(packageName);
         // Assert
-        assertThat(actual).filteredOn(not(this::isTestClass)).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual)
+                .filteredOn(not(this::isTestClass))
+                .map(Class::getName)
+                .containsExactlyInAnyOrderElementsOf(expected.stream().map(Class::getName).collect(Collectors.toSet()));
     }
 
     private boolean isTestClass(final Class<?> clazz) {
@@ -236,51 +241,39 @@ class ClassServiceIT {
         assertThat(actual.get()).isRegularFile().hasExtension("class");
     }
 
-//    @Test
-//    @SneakyThrows
-//    void testGetLocationAsPathURISyntaxException() {
-//        // Arrange
-//        final var codeSource = Mockito.mock(CodeSource.class);
-//        final var url = Mockito.mock(URL.class);
-//        when(codeSource.getLocation()).thenReturn(url);
-//        when(url.toURI()).thenThrow(new URISyntaxException("mock", "Thrown in unit test."));
-//        // Act
-//        final Executable getLocationAsPath = () -> service.getLocationAsPath(codeSource);
-//        // Assert
-//        assertThrows(URISyntaxException.class, getLocationAsPath);
-//    }
-//
-//    @Test
-//    void testLoadClassNull() {
-//        // Arrange
-//        final String className = null;
-//        final var classLoader = spy(getSystemClassLoader());
-//        service = new ClassServiceImpl(properties, () -> classLoader);
-//        // Act
-//        final ThrowingCallable loadClass = () -> service.loadClass(className);
-//        // Assert
-//        assertThatThrownBy(loadClass).isExactlyInstanceOf(NullPointerException.class);
-//        verifyNoInteractions(classLoader);
-//    }
-//
-//    @ParameterizedTest
-//    @ValueSource(classes = {LinkageError.class, SecurityException.class})
-//    @SneakyThrows
-//    @Disabled
-//    void testLoadClassException(final Class<? extends Throwable> causeType) {
-//        // Arrange
-//        final var className = "does.not.matter";
-//        final var cause = causeType.getDeclaredConstructor(String.class).newInstance("Thrown in unit test.");
-//        final var classLoader = new ThrowingClassLoader(cause);
-//        service = new ClassServiceImpl(properties, () -> classLoader);
-//        // Act
-//        final ThrowingCallable loadClass = () -> service.loadClass(className);
-//        // Assert
-//        assertThatThrownBy(loadClass) //
-//                .isExactlyInstanceOf(ReflectionException.class) //
-//                .hasMessage("Error while attempting to load class does.not.matter.") //
-//                .hasCause(cause);
-//    }
+    @Test
+    void testLoadClassNull() {
+        // Arrange
+        final String className = null;
+        // Act
+        final ThrowingCallable loadClass = () -> service.loadClass(className);
+        // Assert
+        assertThatThrownBy(loadClass).isExactlyInstanceOf(NullPointerException.class);
+        verifyNoInteractions(classLoader);
+    }
+
+    @Test
+    @SneakyThrows
+    @SuppressWarnings({"unused", "resource"})
+    void testLoadClassException() {
+        // Arrange
+        final var className = "does.not.matter";
+        final var cause = classGraphException("Thrown in unit test.");
+        try (final var classGraph = mockConstruction(
+                ClassGraph.class,
+                withSettings().defaultAnswer(InvocationOnMock::getMock),
+                (mock, ctx) -> {
+                    doThrow(cause).when(mock).scan();
+                })) {
+            // Act
+            final ThrowingCallable loadClass = () -> service.loadClass(className);
+            // Assert
+            assertThatThrownBy(loadClass) //
+                    .isInstanceOf(ReflectionException.class)
+                    .hasMessage("Error while attempting to load class does.not.matter.") //
+                    .hasCause(cause);
+        }
+    }
 
     @ParameterizedTest
     @ValueSource(strings = {"this.class.exists.not", "io.github.tobi.laa.reflective.fluent.builders.mojo.GenerateBuildersMojo"})
@@ -329,17 +322,5 @@ class ClassServiceIT {
         return Stream.of( //
                 Arguments.of(SimpleClass.class, false), //
                 Arguments.of(SimpleAbstractClass.class, true));
-    }
-
-    @RequiredArgsConstructor
-    private static class ThrowingClassLoader extends SecureClassLoader {
-
-        private final Throwable exception;
-
-        @SneakyThrows
-        @Override
-        public Class<?> loadClass(final String name) {
-            throw exception;
-        }
     }
 }
