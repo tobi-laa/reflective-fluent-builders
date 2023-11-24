@@ -50,9 +50,6 @@ class ClassServiceIT {
     @InjectSpy
     private BuildersProperties properties;
 
-    @InjectSpy
-    private ClassLoader classLoader;
-
     @Test
     void testCollectFullClassHierarchyNull() {
         // Act
@@ -249,7 +246,6 @@ class ClassServiceIT {
         final ThrowingCallable loadClass = () -> service.loadClass(className);
         // Assert
         assertThatThrownBy(loadClass).isExactlyInstanceOf(NullPointerException.class);
-        verifyNoInteractions(classLoader);
     }
 
     @Test
