@@ -1,45 +1,30 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
-import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.SettersWithDifferentVisibility;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.*;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.*;
-import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
 
 @IntegrationTest
 class AccessibilityServiceIT {
 
     @Inject
     private AccessibilityService accessibilityService;
-
-    @MockBean
-    private VisibilityService visibilityService;
-
-    @MockBean
-    private TypeService typeService;
-
-    @MockBean
-    private ClassService classService;
 
     @ParameterizedTest
     @MethodSource
@@ -48,7 +33,6 @@ class AccessibilityServiceIT {
         final ThrowingCallable isAccessibleFrom = () -> accessibilityService.isAccessibleFrom(clazz, packageName);
         // Assert
         assertThatThrownBy(isAccessibleFrom).isExactlyInstanceOf(NullPointerException.class);
-        verifyNoInteractions(visibilityService, typeService, classService);
     }
 
     private static Stream<Arguments> testIsClassAccessibleFromNull() {
@@ -60,37 +44,29 @@ class AccessibilityServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testIsClassAccessibleFrom(final Class<?> clazz, final String packageName, final Visibility visibility, final boolean isAbstract, final boolean expected) {
-        // Arrange
-        doReturn(visibility).when(visibilityService).toVisibility(anyInt());
-        lenient().doReturn(isAbstract).when(classService).isAbstract(clazz);
+    void testIsClassAccessibleFrom(final Class<?> clazz, final String packageName, final boolean expected) {
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(clazz, packageName);
         // Assert
         assertThat(actual).isEqualTo(expected);
     }
 
+    @SneakyThrows
     private static Stream<Arguments> testIsClassAccessibleFrom() {
+        final var packageName = Visibility.class.getPackageName();
+        final var privateClass = Class.forName(InnerPrivateClass.class.getName() + "$PrivateInnerClass");
+        final var packagePrivateClass = Class.forName(packageName + ".PackagePrivate");
+        final var packagePrivateAbstractClass = Class.forName(packageName + ".PackagePrivateAbstract");
         return Stream.of( //
-                Arguments.of(String.class, "java.lang", PRIVATE, false, false), //
-                Arguments.of(String.class, "java.lang", Visibility.PACKAGE_PRIVATE, false, true), //
-                Arguments.of(String.class, "java.lang", Visibility.PROTECTED, false, true), //
-                Arguments.of(String.class, "java.lang", PUBLIC, false, true), //
+                Arguments.of(privateClass, packageName, false), //
+                Arguments.of(packagePrivateClass, packageName, true), //
+                Arguments.of(packagePrivateAbstractClass, packageName, false), //
+                Arguments.of(Public.class, packageName, true), //
                 //
-                Arguments.of(String.class, "java.lang", PRIVATE, true, false), //
-                Arguments.of(String.class, "java.lang", Visibility.PACKAGE_PRIVATE, true, false), //
-                Arguments.of(String.class, "java.lang", Visibility.PROTECTED, true, true), //
-                Arguments.of(String.class, "java.lang", PUBLIC, true, true),
-                //
-                Arguments.of(String.class, "a.weird.package", PRIVATE, false, false), //
-                Arguments.of(String.class, "a.weird.package", Visibility.PACKAGE_PRIVATE, false, false), //
-                Arguments.of(String.class, "a.weird.package", Visibility.PROTECTED, false, false), //
-                Arguments.of(String.class, "a.weird.package", PUBLIC, false, true), //
-                //
-                Arguments.of(String.class, "a.weird.package", PRIVATE, true, false), //
-                Arguments.of(String.class, "a.weird.package", Visibility.PACKAGE_PRIVATE, true, false), //
-                Arguments.of(String.class, "a.weird.package", Visibility.PROTECTED, true, false), //
-                Arguments.of(String.class, "a.weird.package", PUBLIC, true, true));
+                Arguments.of(privateClass, "a.weird.package", false), //
+                Arguments.of(packagePrivateClass, "a.weird.package", false), //
+                Arguments.of(packagePrivateAbstractClass, "a.weird.package", false), //
+                Arguments.of(Public.class, "a.weird.package", true));
     }
 
     @ParameterizedTest
@@ -100,7 +76,6 @@ class AccessibilityServiceIT {
         final ThrowingCallable isAccessibleFrom = () -> accessibilityService.isAccessibleFrom(type, packageName);
         // Assert
         assertThatThrownBy(isAccessibleFrom).isExactlyInstanceOf(NullPointerException.class);
-        verifyNoInteractions(visibilityService, typeService, classService);
     }
 
     private static Stream<Arguments> testIsTypeAccessibleFromNull() {
@@ -114,12 +89,9 @@ class AccessibilityServiceIT {
     @SneakyThrows
     void testIsTypeAccessibleFromNotAllExplodedTypesAccessible() {
         // Arrange
-        final Type type = Object.class;
-        final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
-        final var packageName = "java.lang";
-        doReturn(Set.of(String.class, packagePrivate)).when(typeService).explodeType(type);
-        lenient().doReturn(PUBLIC).when(visibilityService).toVisibility(String.class.getModifiers());
-        doReturn(PACKAGE_PRIVATE).when(visibilityService).toVisibility(packagePrivate.getModifiers());
+        final var privateClass = Class.forName(InnerPrivateClass.class.getName() + "$PrivateInnerClass");
+        final Type type = TypeUtils.parameterize(List.class, privateClass);
+        final var packageName = Visibility.class.getPackageName();
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(type, packageName);
         // Assert
@@ -130,12 +102,8 @@ class AccessibilityServiceIT {
     @SneakyThrows
     void testIsTypeAccessibleFrom() {
         // Arrange
-        final Type type = Object.class;
-        final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
-        final var packageName = "java.lang";
-        doReturn(Set.of(String.class, packagePrivate)).when(typeService).explodeType(type);
-        doReturn(PUBLIC).when(visibilityService).toVisibility(String.class.getModifiers());
-        doReturn(PUBLIC).when(visibilityService).toVisibility(packagePrivate.getModifiers());
+        final Type type = TypeUtils.parameterize(List.class, String.class);
+        final var packageName = Visibility.class.getPackageName();
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(type, packageName);
         // Assert
@@ -149,7 +117,6 @@ class AccessibilityServiceIT {
         final ThrowingCallable isAccessibleFrom = () -> accessibilityService.isAccessibleFrom(method, packageName);
         // Assert
         assertThatThrownBy(isAccessibleFrom).isExactlyInstanceOf(NullPointerException.class);
-        verifyNoInteractions(visibilityService, typeService, classService);
     }
 
     @SneakyThrows
@@ -166,7 +133,6 @@ class AccessibilityServiceIT {
         // Arrange
         final Method method = SettersWithDifferentVisibility.class.getDeclaredMethod("setPrivateSetter", int.class);
         final String packageName = "does.not.matter";
-        doReturn(PRIVATE).when(visibilityService).toVisibility(method.getModifiers());
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(method, packageName);
         // Assert
@@ -177,12 +143,8 @@ class AccessibilityServiceIT {
     @SneakyThrows
     void testIsMethodAccessiblePublicMethodButInaccessibleReturnType() {
         // Arrange
-        final Class<?> privateClass = Class.forName(PackagePrivateConstructor.class.getName() + "$PrivateClass");
         final Method method = PackagePrivateConstructor.class.getDeclaredMethod("getPrivateClass");
         final String packageName = "does.not.matter";
-        doReturn(PRIVATE).when(visibilityService).toVisibility(privateClass.getModifiers());
-        doReturn(PUBLIC).when(visibilityService).toVisibility(method.getModifiers());
-        doReturn(singleton(privateClass)).when(typeService).explodeType(privateClass);
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(method, packageName);
         // Assert
@@ -196,11 +158,6 @@ class AccessibilityServiceIT {
         final Class<?> privateClass = Class.forName(PackagePrivateConstructor.class.getName() + "$PrivateClass");
         final Method method = PackagePrivateConstructor.class.getDeclaredMethod("setPrivateClass", privateClass);
         final String packageName = "does.not.matter";
-        doReturn(PRIVATE).when(visibilityService).toVisibility(privateClass.getModifiers());
-        doReturn(PUBLIC).when(visibilityService).toVisibility(method.getModifiers());
-        doReturn(PUBLIC).when(visibilityService).toVisibility(void.class.getModifiers());
-        doReturn(singleton(void.class)).when(typeService).explodeType(void.class);
-        doReturn(singleton(privateClass)).when(typeService).explodeType(privateClass);
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(method, packageName);
         // Assert
@@ -213,7 +170,6 @@ class AccessibilityServiceIT {
         // Arrange
         final Method method = Object.class.getDeclaredMethod("toString");
         final String packageName = "does.not.matter";
-        doReturn(PUBLIC).when(visibilityService).toVisibility(method.getModifiers());
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(method, packageName);
         // Assert
@@ -227,7 +183,6 @@ class AccessibilityServiceIT {
         final ThrowingCallable isAccessibleFrom = () -> accessibilityService.isAccessibleFrom(constructor, packageName);
         // Assert
         assertThatThrownBy(isAccessibleFrom).isExactlyInstanceOf(NullPointerException.class);
-        verifyNoInteractions(visibilityService, typeService, classService);
     }
 
     @SneakyThrows
@@ -241,11 +196,9 @@ class AccessibilityServiceIT {
     @ParameterizedTest
     @MethodSource
     @SneakyThrows
-    void testIsConstructorAccessibleFrom(final Class<?> clazz, final String packageName, final Visibility visibility, final boolean isAbstract, final boolean expected) {
+    void testIsConstructorAccessibleFrom(final Class<?> clazz, final String packageName, final boolean expected) {
         // Arrange
         final Constructor<?> constructor = clazz.getDeclaredConstructor();
-        doReturn(visibility).when(visibilityService).toVisibility(anyInt());
-        lenient().doReturn(isAbstract).when(classService).isAbstract(clazz);
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(constructor, packageName);
         // Assert
