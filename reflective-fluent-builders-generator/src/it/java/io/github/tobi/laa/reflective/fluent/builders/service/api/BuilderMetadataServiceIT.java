@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.service.api;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.test.InjectSpy;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevelClass;
@@ -20,7 +21,6 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import javax.inject.Inject;
 import java.lang.reflect.Type;
@@ -53,7 +53,7 @@ class BuilderMetadataServiceIT {
     @Inject
     private BuilderMetadataService service;
 
-    @SpyBean
+    @InjectSpy
     private BuildersProperties properties;
 
     @Test

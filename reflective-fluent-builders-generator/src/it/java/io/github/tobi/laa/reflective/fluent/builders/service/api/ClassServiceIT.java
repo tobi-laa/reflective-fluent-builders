@@ -6,6 +6,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.test.InjectSpy;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
@@ -23,7 +24,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.invocation.InvocationOnMock;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
@@ -47,10 +47,10 @@ class ClassServiceIT {
     @Inject
     private ClassService service;
 
-    @SpyBean
+    @InjectSpy
     private BuildersProperties properties;
 
-    @SpyBean
+    @InjectSpy
     private ClassLoader classLoader;
 
     @Test
