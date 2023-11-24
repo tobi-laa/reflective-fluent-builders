@@ -99,7 +99,7 @@
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-core.version>3.9.5</maven-core.version>
         <jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
-        <maven-site-plugin.version>4.0.0-M11</maven-site-plugin.version>
+        <maven-site-plugin.version>4.0.0-M12</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.5.0</maven-project-info-reports-plugin.version>
         <maven-plugin-report-plugin.version>3.10.2</maven-plugin-report-plugin.version>
         <maven-scm-publish-plugin.version>3.2.1</maven-scm-publish-plugin.version>
