@@ -1,5 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.FieldInfo;
+import io.github.classgraph.FieldInfoList;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
@@ -10,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,15 +72,15 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean builderAlreadyExists(final String builderClassName) {
-        final Optional<Class<?>> builderClass = classService.loadClass(builderClassName);
+        final Optional<ClassInfo> builderClass = classService.loadClass(builderClassName);
         if (builderClass.isEmpty()) {
             return false;
         } else {
             return builderClass
                     .stream() //
-                    .map(Class::getDeclaredFields) //
-                    .flatMap(Arrays::stream) //
-                    .map(Field::getName) //
+                    .map(ClassInfo::getDeclaredFieldInfo) //
+                    .flatMap(FieldInfoList::stream) //
+                    .map(FieldInfo::getName) //
                     .noneMatch(GENERATED_BUILDER_MARKER_FIELD_NAME::equals);
         }
     }

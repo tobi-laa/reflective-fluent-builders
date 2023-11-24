@@ -4,6 +4,7 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.GeneralCodingRules.*;
 
 /**
@@ -43,4 +44,11 @@ class CodingRules {
     @ArchTest
     private final ArchRule noFieldInjection = NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
 
+    @ArchTest
+    private final ArchRule noGuavaReflection = noClasses() //
+            .should() //
+            .dependOnClassesThat() //
+            .haveFullyQualifiedName("com.google.common.reflect.ClassPath") //
+            .as("Guava's ClassPath should not be used.") //
+            .because("The Guava documentation says to use ClassGraph instead.");
 }
