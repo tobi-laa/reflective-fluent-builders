@@ -45,6 +45,11 @@ import static org.mockito.Mockito.lenient;
 @IntegrationTest
 class BuilderMetadataServiceIT {
 
+    private static final Path TEST_MODELS_TARGET_DIR = Paths.get("").toAbsolutePath()
+            .getParent()
+            .resolve("reflective-fluent-builders-test-models")
+            .resolve("target");
+
     @Inject
     private BuilderMetadataService service;
 
@@ -72,9 +77,15 @@ class BuilderMetadataServiceIT {
         assertThat(actual)
                 .usingRecursiveComparison()
                 .withEqualsForType(
-                        (a, b) -> ((Type) a).getTypeName().equals(((Type) b).getTypeName()),
+                        (a, b) -> a.getTypeName().equals(b.getTypeName()),
                         Type.class)
+                .ignoringFields("builtType.location")
                 .isEqualTo(expected);
+        assertThat(actual.getBuiltType().getLocation()).get().satisfiesAnyOf(
+                location -> assertThat(Optional.of(location)).isEqualTo(expected.getBuiltType().getLocation()),
+                location -> assertThat(location)
+                        .hasParent(TEST_MODELS_TARGET_DIR)
+                        .asString().matches(".+/reflective-fluent-builders-test-models-.+-SNAPSHOT.jar"));
     }
 
     @SneakyThrows
@@ -238,11 +249,7 @@ class BuilderMetadataServiceIT {
     }
 
     private static Path classLocation(final Class<?> clazz) {
-        Path classLocation = Paths.get("").toAbsolutePath()
-                .getParent()
-                .resolve("reflective-fluent-builders-test-models")
-                .resolve("target")
-                .resolve("classes");
+        Path classLocation = TEST_MODELS_TARGET_DIR.resolve("classes");
         for (final String dir : clazz.getPackageName().split("\\.")) {
             classLocation = classLocation.resolve(dir);
         }
