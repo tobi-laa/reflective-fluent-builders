@@ -104,6 +104,21 @@ class GenerateBuildersMojoIT {
 
     @Nested
     @MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
+    class WithJdt {
+
+        @MavenTest
+        void packageSimple(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
+        }
+    }
+
+    @Nested
+    @MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
     class WithDebugLogging {
 
         @MavenTest
