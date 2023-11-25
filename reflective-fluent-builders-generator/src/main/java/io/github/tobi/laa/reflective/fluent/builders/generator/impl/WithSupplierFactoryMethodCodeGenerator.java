@@ -32,7 +32,7 @@ class WithSupplierFactoryMethodCodeGenerator implements MethodCodeGenerator {
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
+        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType().loadClass());
         return Optional.of(MethodSpec.methodBuilder("withSupplier")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(builderClassName)

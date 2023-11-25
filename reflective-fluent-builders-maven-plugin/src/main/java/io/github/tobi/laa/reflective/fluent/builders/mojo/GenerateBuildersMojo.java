@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.google.common.collect.Sets;
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
@@ -96,15 +97,15 @@ public class GenerateBuildersMojo extends AbstractMojo {
         }
     }
 
-    private Set<Class<?>> collectAndFilterClasses() throws MojoExecutionException {
+    private Set<ClassInfo> collectAndFilterClasses() throws MojoExecutionException {
         final var allClasses = collectClasses();
         final var filteredClasses = filterClasses(allClasses);
         getLog().info("Found " + filteredClasses.size() + " classes for which to generate builders.");
         return filteredClasses;
     }
 
-    private Set<Class<?>> collectClasses() throws MojoExecutionException {
-        final var allClasses = new HashSet<Class<?>>();
+    private Set<ClassInfo> collectClasses() throws MojoExecutionException {
+        final var allClasses = new HashSet<ClassInfo>();
         for (final var include : params.getIncludes()) {
             if (include.getPackageName() != null) {
                 getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
@@ -117,15 +118,11 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return allClasses;
     }
 
-    private Class<?> loadClass(final String className) throws MojoExecutionException {
-        try {
-            return classLoaderProvider.get().loadClass(className);
-        } catch (final ClassNotFoundException e) {
-            throw new MojoExecutionException("Unable to load class " + className, e);
-        }
+    private ClassInfo loadClass(final String className) throws MojoExecutionException {
+        return classService.loadClass(className).orElseThrow(() -> new MojoExecutionException("Unable to load class " + className));
     }
 
-    private Set<Class<?>> filterClasses(final Set<Class<?>> classes) {
+    private Set<ClassInfo> filterClasses(final Set<ClassInfo> classes) {
         final var buildableClasses = builderMetadataService.filterOutNonBuildableClasses(classes);
         final var filteredClasses = builderMetadataService.filterOutConfiguredExcludes(buildableClasses);
         if (getLog().isDebugEnabled()) {
@@ -150,7 +147,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         }
     }
 
-    private Set<BuilderMetadata> collectNonEmptyBuilderMetadata(final Set<Class<?>> buildableClasses) {
+    private Set<BuilderMetadata> collectNonEmptyBuilderMetadata(final Set<ClassInfo> buildableClasses) {
         final var allMetadata = buildableClasses.stream() //
                 .map(builderMetadataService::collectBuilderMetadata) //
                 .collect(Collectors.toSet());

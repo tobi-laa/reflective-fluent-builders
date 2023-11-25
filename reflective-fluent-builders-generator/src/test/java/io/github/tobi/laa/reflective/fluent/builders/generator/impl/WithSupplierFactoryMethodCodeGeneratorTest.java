@@ -4,10 +4,12 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,6 +28,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WithSupplierFactoryMethodCodeGeneratorTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     @InjectMocks
     private WithSupplierFactoryMethodCodeGenerator generator;
@@ -64,7 +69,7 @@ class WithSupplierFactoryMethodCodeGeneratorTest {
                                 .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -80,7 +85,7 @@ class WithSupplierFactoryMethodCodeGeneratorTest {
                                 .packageName("a.whole.different.pack") //
                                 .name("AnotherBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(ClassWithHierarchy.class) //
+                                        .type(classInfo.get(ClassWithHierarchy.class)) //
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build(), //

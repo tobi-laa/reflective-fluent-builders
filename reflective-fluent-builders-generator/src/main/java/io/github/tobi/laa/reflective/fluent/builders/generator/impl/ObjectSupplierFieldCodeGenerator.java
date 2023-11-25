@@ -26,7 +26,7 @@ class ObjectSupplierFieldCodeGenerator implements FieldCodeGenerator {
     @Override
     public FieldSpec generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
+        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType().loadClass());
         return FieldSpec.builder(supplierTypeName, OBJECT_SUPPLIER_FIELD_NAME, PRIVATE).build();
     }
 }

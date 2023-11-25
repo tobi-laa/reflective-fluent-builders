@@ -1,7 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.InjectSpy;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
@@ -21,6 +23,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleCl
 import lombok.SneakyThrows;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,6 +45,9 @@ import static org.mockito.Mockito.when;
 
 @IntegrationTest
 class SetterServiceIT {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     @Inject
     private SetterService setterService;
@@ -113,7 +119,7 @@ class SetterServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testGatherAllSetters(final String setterPrefix, final String getterPrefix, final boolean getAndAddEnabled, final Class<?> clazz, final Set<Setter> expected) {
+    void testGatherAllSetters(final String setterPrefix, final String getterPrefix, final boolean getAndAddEnabled, final ClassInfo clazz, final Set<Setter> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         when(properties.isGetAndAddEnabled()).thenReturn(getAndAddEnabled);
@@ -136,17 +142,17 @@ class SetterServiceIT {
     private static Stream<Arguments> testGatherAllSetters() {
         final var setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
         return Stream.of( //
-                Arguments.of("set", null, false, SimpleClass.class, //
+                Arguments.of("set", null, false, classInfo.get(SimpleClass.class), //
                         Set.of( //
                                 SimpleSetter.builder().methodName("setAnInt").paramName("anInt").paramType(int.class).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 SimpleSetter.builder().methodName("setAString").paramName("aString").paramType(String.class).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 SimpleSetter.builder().methodName("setBooleanField").paramName("booleanField").paramType(boolean.class).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 SimpleSetter.builder().methodName("setSetClass").paramName("setClass").paramType(parameterize(Class.class, wildcardType().withUpperBounds(Object.class).build())).visibility(PUBLIC).declaringClass(SimpleClass.class).build())), //
-                Arguments.of("", null, false, SimpleClassNoSetPrefix.class, //
+                Arguments.of("", null, false, classInfo.get(SimpleClassNoSetPrefix.class), //
                         Set.of( //
                                 SimpleSetter.builder().methodName("anInt").paramName("anInt").paramType(int.class).visibility(PACKAGE_PRIVATE).declaringClass(SimpleClassNoSetPrefix.class).build(), //
                                 SimpleSetter.builder().methodName("aString").paramName("aString").paramType(String.class).visibility(PACKAGE_PRIVATE).declaringClass(SimpleClassNoSetPrefix.class).build())), //
-                Arguments.of("set", "get", false, ClassWithCollections.class, //
+                Arguments.of("set", "get", false, classInfo.get(ClassWithCollections.class), //
                         Set.of( //
                                 CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(parameterize(Collection.class, Integer.class)).paramTypeArg(Integer.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
@@ -160,23 +166,23 @@ class SetterServiceIT {
                                 MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 CollectionSetter.builder().methodName("setListWithTwoParams").paramName("listWithTwoParams").paramType(parameterize(ListWithTwoParams.class, String.class, Integer.class)).paramTypeArg(parameterize(Map.class, String.class, Integer.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 MapSetter.builder().methodName("setMapWithThreeParams").paramName("mapWithThreeParams").paramType(parameterize(MapWithThreeParams.class, String.class, Integer.class, Boolean.class)).keyType(String.class).valueType(parameterize(Map.class, Integer.class, Boolean.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())), //
-                Arguments.of("set", "get", false, PetJaxb.class, //
+                Arguments.of("set", "get", false, classInfo.get(PetJaxb.class), //
                         Set.of( //
                                 SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build())),
-                Arguments.of("set", "get", true, PetJaxb.class, //
+                Arguments.of("set", "get", true, classInfo.get(PetJaxb.class), //
                         Set.of( //
                                 SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 CollectionGetAndAdder.builder().methodName("getSiblings").paramName("siblings").paramType(parameterize(List.class, PetJaxb.class)).paramTypeArg(PetJaxb.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build())),
-                Arguments.of("set", "myPrefix", true, PetJaxb.class, //
+                Arguments.of("set", "myPrefix", true, classInfo.get(PetJaxb.class), //
                         Set.of( //
                                 SimpleSetter.builder().methodName("setFullName").paramName("fullName").paramType(String.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 SimpleSetter.builder().methodName("setWeight").paramName("weight").paramType(float.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 SimpleSetter.builder().methodName("setOwner").paramName("owner").paramType(PersonJaxb.class).visibility(PUBLIC).declaringClass(PetJaxb.class).build())), //
-                Arguments.of("set", "get", true, GetAndAdd.class, //
+                Arguments.of("set", "get", true, classInfo.get(GetAndAdd.class), //
                         Set.of( //
                                 CollectionSetter.builder().methodName("setListGetterAndSetter").paramName("listGetterAndSetter").paramType(parameterize(List.class, String.class)).paramTypeArg(String.class).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 CollectionGetAndAdder.builder().methodName("getListNoSetter").paramName("listNoSetter").paramType(parameterize(List.class, String.class)).paramTypeArg(String.class).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
@@ -187,7 +193,7 @@ class SetterServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testGatherAllSettersForClassWithHierarchy(final Class<?> clazz, final Set<Setter> expected) {
+    void testGatherAllSettersForClassWithHierarchy(final ClassInfo clazz, final Set<Setter> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn("set");
         // Act
@@ -205,7 +211,7 @@ class SetterServiceIT {
     private static Stream<Arguments> testGatherAllSettersForClassWithHierarchy() {
         return Stream.of( //
                 Arguments.of(
-                        ClassWithHierarchy.class,
+                        classInfo.get(ClassWithHierarchy.class),
                         Set.of( //
                                 SimpleSetter.builder().methodName("setOne").paramName("one").paramType(int.class).visibility(PUBLIC).declaringClass(ClassWithHierarchy.class).build(), //
                                 SimpleSetter.builder().methodName("setTwo").paramName("two").paramType(int.class).visibility(PACKAGE_PRIVATE).declaringClass(FirstSuperClass.class).build(), //
@@ -214,14 +220,14 @@ class SetterServiceIT {
                                 SimpleSetter.builder().methodName("setSeven").paramName("seven").paramType(int.class).visibility(PROTECTED).declaringClass(TopLevelSuperClass.class).build(), //
                                 SimpleSetter.builder().methodName("setEight").paramName("eight").paramType(int.class).visibility(PUBLIC).declaringClass(AnotherInterface.class).build())), //
                 Arguments.of(
-                        GenericChild.class,
+                        classInfo.get(GenericChild.class),
                         Set.of( //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(parameterize(List.class, String.class)).paramTypeArg(String.class).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(parameterize(Map.class, typeVariableS(), typeVariableT())).keyType(typeVariableS()).valueType(typeVariableT()).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 SimpleSetter.builder().methodName("setGeneric").paramName("generic").paramType(parameterize(Generic.class, typeVariableT())).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 SimpleSetter.builder().methodName("setOtherGeneric").paramName("otherGeneric").paramType(parameterize(Generic.class, String.class)).visibility(PUBLIC).declaringClass(GenericParent.class).build())), //
                 Arguments.of(
-                        GenericGrandChild.class,
+                        classInfo.get(GenericGrandChild.class),
                         Set.of( //
                                 CollectionSetter.builder().methodName("setList").paramName("list").paramType(parameterize(List.class, String.class)).paramTypeArg(String.class).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 MapSetter.builder().methodName("setMap").paramName("map").paramType(parameterize(Map.class, Long.class, Boolean.class)).keyType(Long.class).valueType(Boolean.class).visibility(PUBLIC).declaringClass(GenericGrandChild.class).build(), //

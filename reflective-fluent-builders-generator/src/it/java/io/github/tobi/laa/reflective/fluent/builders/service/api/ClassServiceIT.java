@@ -6,6 +6,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.props.impl.StandardBuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.InjectSpy;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
@@ -18,6 +19,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarch
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -44,6 +46,9 @@ import static org.mockito.Mockito.*;
 @IntegrationTest
 class ClassServiceIT {
 
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
+
     @Inject
     private ClassService service;
 
@@ -60,13 +65,13 @@ class ClassServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectFullClassHierarchy(final Class<?> clazz, final Set<Predicate<Class<?>>> excludes, final List<Class<?>> expected) {
+    void testCollectFullClassHierarchy(final ClassInfo clazz, final Set<Predicate<Class<?>>> excludes, final List<ClassInfo> expected) {
         // Arrange
         final var hierarchyCollection = new StandardBuildersProperties.StandardHierarchyCollection();
         hierarchyCollection.setExcludes(excludes);
         doReturn(hierarchyCollection).when(properties).getHierarchyCollection();
         // Act
-        final List<Class<?>> actual = service.collectFullClassHierarchy(clazz);
+        final List<ClassInfo> actual = service.collectFullClassHierarchy(clazz);
         // Assert
         assertEquals(expected, actual);
     }
@@ -74,41 +79,40 @@ class ClassServiceIT {
     private static Stream<Arguments> testCollectFullClassHierarchy() {
         return Stream.of( //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
+                        classInfo.get(ClassWithHierarchy.class.getName()), //
                         Collections.emptySet(), //
                         List.of( //
-                                ClassWithHierarchy.class, //
-                                AnInterface.class, //
-                                FirstSuperClass.class, //
-                                SecondSuperClassInDifferentPackage.class, //
-                                TopLevelSuperClass.class, //
-                                AnotherInterface.class, //
-                                Object.class)), //
+                                classInfo.get(ClassWithHierarchy.class.getName()), //
+                                classInfo.get(AnInterface.class.getName()), //
+                                classInfo.get(FirstSuperClass.class.getName()), //
+                                classInfo.get(SecondSuperClassInDifferentPackage.class.getName()), //
+                                classInfo.get(TopLevelSuperClass.class.getName()), //
+                                classInfo.get(AnotherInterface.class.getName()))), //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
+                        classInfo.get(ClassWithHierarchy.class.getName()), //
                         Set.<Predicate<Class<?>>>of(Object.class::equals), //
                         List.of( //
-                                ClassWithHierarchy.class, //
-                                AnInterface.class, //
-                                FirstSuperClass.class, //
-                                SecondSuperClassInDifferentPackage.class, //
-                                TopLevelSuperClass.class, //
-                                AnotherInterface.class)), //
+                                classInfo.get(ClassWithHierarchy.class.getName()), //
+                                classInfo.get(AnInterface.class.getName()), //
+                                classInfo.get(FirstSuperClass.class.getName()), //
+                                classInfo.get(SecondSuperClassInDifferentPackage.class.getName()), //
+                                classInfo.get(TopLevelSuperClass.class.getName()), //
+                                classInfo.get(AnotherInterface.class.getName()))), //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
+                        classInfo.get(ClassWithHierarchy.class.getName()), //
                         Set.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
                         List.of( //
-                                ClassWithHierarchy.class, //
-                                FirstSuperClass.class, //
-                                SecondSuperClassInDifferentPackage.class, //
-                                TopLevelSuperClass.class, //
-                                AnotherInterface.class)), //
+                                classInfo.get(ClassWithHierarchy.class.getName()), //
+                                classInfo.get(FirstSuperClass.class.getName()), //
+                                classInfo.get(SecondSuperClassInDifferentPackage.class.getName()), //
+                                classInfo.get(TopLevelSuperClass.class.getName()), //
+                                classInfo.get(AnotherInterface.class.getName()))), //
                 Arguments.of( //
-                        ClassWithHierarchy.class, //
+                        classInfo.get(ClassWithHierarchy.class.getName()), //
                         Set.<Predicate<Class<?>>>of(FirstSuperClass.class::equals), //
                         List.of( //
-                                ClassWithHierarchy.class, //
-                                AnInterface.class)));
+                                classInfo.get(ClassWithHierarchy.class.getName()), //
+                                classInfo.get(AnInterface.class.getName()))));
     }
 
     @Test
@@ -129,9 +133,7 @@ class ClassServiceIT {
         try (final var classGraph = mockConstruction(
                 ClassGraph.class,
                 withSettings().defaultAnswer(InvocationOnMock::getMock),
-                (mock, ctx) -> {
-                    doThrow(cause).when(mock).scan();
-                })) {
+                (mock, ctx) -> doThrow(cause).when(mock).scan())) {
             // Act
             final ThrowingCallable collectClassesRecursively = () -> service.collectClassesRecursively("");
             // Assert
@@ -151,18 +153,18 @@ class ClassServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectClassesRecursively(final String packageName, final Set<Class<?>> expected) {
+    void testCollectClassesRecursively(final String packageName, final Set<ClassInfo> expected) {
         // Act
-        final Set<Class<?>> actual = service.collectClassesRecursively(packageName);
+        final Set<ClassInfo> actual = service.collectClassesRecursively(packageName);
         // Assert
         assertThat(actual)
                 .filteredOn(not(this::isTestClass))
-                .map(Class::getName)
-                .containsExactlyInAnyOrderElementsOf(expected.stream().map(Class::getName).collect(Collectors.toSet()));
+                .map(ClassInfo::getName)
+                .containsExactlyInAnyOrderElementsOf(expected.stream().map(ClassInfo::getName).collect(Collectors.toSet()));
     }
 
-    private boolean isTestClass(final Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredMethods())
+    private boolean isTestClass(final ClassInfo clazz) {
+        return Arrays.stream(clazz.loadClass().getDeclaredMethods())
                 .map(Method::getDeclaredAnnotations)
                 .flatMap(Arrays::stream)
                 .map(Annotation::annotationType)
@@ -171,29 +173,32 @@ class ClassServiceIT {
 
     @SneakyThrows
     private static Stream<Arguments> testCollectClassesRecursively() {
+        final Class<?> clazz = Class.forName(TopLevelClass.class.getName() + "$NestedPrivateLevelOne");
+        final Class<?> clazz1 = Class.forName(TopLevelClass.class.getName() + "$NestedPackagePrivateLevelOne");
+        final Class<?> clazz2 = Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne");
         return Stream.of( //
                 Arguments.of(
                         Simple.class.getPackageName(), //
                         Set.of( //
-                                Child.class, //
-                                Parent.class, //
-                                Simple.class, //
-                                SimpleAbstractClass.class, //
-                                SimpleClass.class, //
-                                SimpleClassNoDefaultConstructor.class, //
-                                SimpleClassNoSetPrefix.class)),
+                                classInfo.get(Child.class.getName()), //
+                                classInfo.get(Parent.class.getName()), //
+                                classInfo.get(Simple.class.getName()), //
+                                classInfo.get(SimpleAbstractClass.class.getName()), //
+                                classInfo.get(SimpleClass.class.getName()), //
+                                classInfo.get(SimpleClassNoDefaultConstructor.class.getName()), //
+                                classInfo.get(SimpleClassNoSetPrefix.class.getName()))),
                 Arguments.of(
                         NestedMarker.class.getPackageName(), //
                         Set.of( //
-                                NestedMarker.class, //
-                                TopLevelClass.class, //
-                                TopLevelClass.NestedPublicLevelOne.class, //
-                                Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne"), //
-                                Class.forName(TopLevelClass.class.getName() + "$NestedPackagePrivateLevelOne"), //
-                                Class.forName(TopLevelClass.class.getName() + "$NestedPrivateLevelOne"), //
-                                TopLevelClass.NestedNonStatic.class, //
-                                TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.class, //
-                                TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree.class)));
+                                classInfo.get(NestedMarker.class.getName()), //
+                                classInfo.get(TopLevelClass.class.getName()), //
+                                classInfo.get(TopLevelClass.NestedPublicLevelOne.class.getName()), //
+                                classInfo.get(clazz2.getName()), //
+                                classInfo.get(clazz1.getName()), //
+                                classInfo.get(clazz.getName()), //
+                                classInfo.get(TopLevelClass.NestedNonStatic.class.getName()), //
+                                classInfo.get(TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.class.getName()), //
+                                classInfo.get(TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree.class.getName()))));
     }
 
     @Test
@@ -258,9 +263,7 @@ class ClassServiceIT {
         try (final var classGraph = mockConstruction(
                 ClassGraph.class,
                 withSettings().defaultAnswer(InvocationOnMock::getMock),
-                (mock, ctx) -> {
-                    doThrow(cause).when(mock).scan();
-                })) {
+                (mock, ctx) -> doThrow(cause).when(mock).scan())) {
             // Act
             final ThrowingCallable loadClass = () -> service.loadClass(className);
             // Assert

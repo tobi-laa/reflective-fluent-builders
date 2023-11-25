@@ -2,8 +2,10 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.AnnotationSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 
 import java.time.Clock;
@@ -14,6 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GeneratedAnnotationCodeGeneratorTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     private final GeneratedAnnotationCodeGenerator generator = new GeneratedAnnotationCodeGenerator(Clock.fixed(Instant.parse("3333-03-13T00:00:00.00Z"), ZoneId.of("UTC")));
 
@@ -34,7 +39,7 @@ class GeneratedAnnotationCodeGeneratorTest {
                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                 .name("SimpleClassBuilder") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
-                        .type(SimpleClass.class) //
+                        .type(classInfo.get(SimpleClass.class)) //
                         .accessibleNonArgsConstructor(true) //
                         .build()) //
                 .build();

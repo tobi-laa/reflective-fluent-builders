@@ -33,7 +33,7 @@ public interface ClassService {
      * @param clazz The class for which the full class hierarchy should be collected. Must not be {@code null}.
      * @return The full class hierarchy of {@code clazz}. Never {@code null}.
      */
-    List<Class<?>> collectFullClassHierarchy(final Class<?> clazz);
+    List<ClassInfo> collectFullClassHierarchy(final ClassInfo clazz);
 
     /**
      * <p>
@@ -46,7 +46,7 @@ public interface ClassService {
      *                             accessing classes in
      *                             {@code packageName}.
      */
-    Set<Class<?>> collectClassesRecursively(final String packageName);
+    Set<ClassInfo> collectClassesRecursively(final String packageName);
 
     /**
      * <p>

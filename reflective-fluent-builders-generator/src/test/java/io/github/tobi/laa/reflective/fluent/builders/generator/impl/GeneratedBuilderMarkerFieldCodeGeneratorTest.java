@@ -2,13 +2,18 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.FieldSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.GENERATED_BUILDER_MARKER_FIELD_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GeneratedBuilderMarkerFieldCodeGeneratorTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     private final GeneratedBuilderMarkerFieldCodeGenerator generator = new GeneratedBuilderMarkerFieldCodeGenerator();
 
@@ -19,7 +24,7 @@ class GeneratedBuilderMarkerFieldCodeGeneratorTest {
                 .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                 .name("SimpleClassBuilder") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
-                        .type(SimpleClass.class) //
+                        .type(classInfo.get(SimpleClass.class)) //
                         .accessibleNonArgsConstructor(true) //
                         .build()) //
                 .build();

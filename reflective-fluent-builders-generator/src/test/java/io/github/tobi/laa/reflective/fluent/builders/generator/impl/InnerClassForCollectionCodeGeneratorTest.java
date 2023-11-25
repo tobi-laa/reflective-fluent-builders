@@ -9,6 +9,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIni
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -16,6 +17,7 @@ import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,6 +41,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InnerClassForCollectionCodeGeneratorTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     private InnerClassForCollectionCodeGenerator generator;
 
@@ -153,7 +158,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -190,7 +195,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -206,7 +211,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -223,7 +228,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -260,7 +265,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -294,7 +299,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -335,7 +340,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
