@@ -5,6 +5,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata.BuiltType;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import jakarta.validation.ConstraintViolation;
@@ -33,6 +34,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.function.Predicate.not;
 
 /**
  * <p>
@@ -180,16 +183,23 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private boolean buildContextHasDelta(final Set<BuilderMetadata> builderMetadata) {
-        return determineBuiltTypeClassLocations(builderMetadata).anyMatch(mavenBuild::hasDelta);
+        return determineSourceOrJarLocations(builderMetadata).anyMatch(mavenBuild::hasDelta);
     }
 
-    private Stream<File> determineBuiltTypeClassLocations(final Set<BuilderMetadata> builderMetadata) {
+    private Stream<File> determineSourceOrJarLocations(final Set<BuilderMetadata> builderMetadata) {
         return builderMetadata.stream() //
                 .map(BuilderMetadata::getBuiltType) //
-                .map(BuilderMetadata.BuiltType::getLocation) //
-                .filter(Optional::isPresent) //
-                .map(Optional::get) //
+                .map(this::determineSourceOrClassLocation) //
+                .flatMap(Optional::stream)
                 .map(Path::toFile);
+    }
+
+    private Optional<Path> determineSourceOrClassLocation(final BuiltType type) {
+        return determineSourceLocation(type).or(type::getLocation).filter(not(mavenBuild::containsClassFile));
+    }
+
+    private Optional<Path> determineSourceLocation(final BuiltType type) {
+        return type.getSourceFile().flatMap(source -> mavenBuild.resolveSourceFile(type.getType().getPackageName(), source));
     }
 
     private void generateAndWriteBuildersToTarget(Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
@@ -211,7 +221,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
-        determineBuiltTypeClassLocations(builderMetadata).forEach(mavenBuild::refresh);
+        determineSourceOrJarLocations(builderMetadata).forEach(mavenBuild::refresh);
     }
 
     private void logNoGenerationNecessary() {

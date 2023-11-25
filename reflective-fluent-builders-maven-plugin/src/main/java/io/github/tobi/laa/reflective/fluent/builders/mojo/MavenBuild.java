@@ -14,8 +14,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.Boolean.parseBoolean;
@@ -91,5 +96,24 @@ class MavenBuild extends AbstractLogEnabled {
         } else {
             return mavenProject.getCompileClasspathElements();
         }
+    }
+
+    Optional<Path> resolveSourceFile(final String packageName, final Path sourceFile) {
+        return mavenProject.getCompileSourceRoots()
+                .stream()
+                .map(Paths::get)
+                .map(path -> path.resolve(javaNameToPath(packageName)))
+                .map(path -> path.resolve(sourceFile))
+                .filter(Files::isRegularFile)
+                .findFirst();
+    }
+
+    private String javaNameToPath(final String name) {
+        return name.replace(".", FileSystems.getDefault().getSeparator());
+    }
+
+    boolean containsClassFile(final Path classLocation) {
+        final Path target = Paths.get(mavenProject.getBuild().getOutputDirectory());
+        return classLocation.startsWith(target);
     }
 }
