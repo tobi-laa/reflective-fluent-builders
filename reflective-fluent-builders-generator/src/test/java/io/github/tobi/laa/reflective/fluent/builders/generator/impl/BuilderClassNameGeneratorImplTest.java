@@ -2,8 +2,10 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.ClassName;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,6 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BuilderClassNameGeneratorImplTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     private final BuilderClassNameGeneratorImpl generator = new BuilderClassNameGeneratorImpl();
 
@@ -44,7 +49,7 @@ class BuilderClassNameGeneratorImplTest {
                                 .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -54,7 +59,7 @@ class BuilderClassNameGeneratorImplTest {
                                 .packageName("a.whole.different.pack") //
                                 .name("AnotherBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //

@@ -1,8 +1,10 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.InjectSpy;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.*;
@@ -17,6 +19,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.unbuildable.Int
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -29,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.PACKAGE_PRIVATE;
@@ -50,6 +54,9 @@ class BuilderMetadataServiceIT {
             .resolve("reflective-fluent-builders-test-models")
             .resolve("target");
 
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
+
     @Inject
     private BuilderMetadataService service;
 
@@ -66,7 +73,7 @@ class BuilderMetadataServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix, final String setterPrefix, final Class<?> clazz, final BuilderMetadata expected) {
+    void testCollectBuilderMetadata(final String builderPackage, final String builderSuffix, final String setterPrefix, final ClassInfo clazz, final BuilderMetadata expected) {
         // Arrange
         doReturn(builderPackage).when(properties).getBuilderPackage();
         doReturn(builderSuffix).when(properties).getBuilderSuffix();
@@ -97,12 +104,12 @@ class BuilderMetadataServiceIT {
                         "io.github.tobi.laa.reflective.fluent.builders.test.models.simple", //
                         "Builder", //
                         "set", //
-                        SimpleClass.class, //
+                        classInfo.get(SimpleClass.class.getName()), //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class.getName())) //
                                         .location(classLocation(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder()
@@ -139,12 +146,12 @@ class BuilderMetadataServiceIT {
                         "io.github.tobi.laa.reflective.fluent.builders.test.models.complex.builder", //
                         "", //
                         "set", //
-                        ClassWithCollections.class, //
+                        classInfo.get(ClassWithCollections.class.getName()), //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.complex.builder") //
                                 .name("ClassWithCollections") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(ClassWithCollections.class) //
+                                        .type(classInfo.get(ClassWithCollections.class.getName())) //
                                         .location(classLocation(ClassWithCollections.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(parameterize(Collection.class, Integer.class)).paramTypeArg(Integer.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
@@ -165,12 +172,12 @@ class BuilderMetadataServiceIT {
                         "io.github.tobi.laa.reflective.fluent.builders.test.models.visibility", //
                         "", //
                         "set", //
-                        PackagePrivateConstructor.class, //
+                        classInfo.get(PackagePrivateConstructor.class.getName()), //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility") //
                                 .name("PackagePrivateConstructor0") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(PackagePrivateConstructor.class) //
+                                        .type(classInfo.get(PackagePrivateConstructor.class.getName())) //
                                         .location(classLocation(PackagePrivateConstructor.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
@@ -193,12 +200,12 @@ class BuilderMetadataServiceIT {
                         BuilderConstants.PACKAGE_PLACEHOLDER, //
                         "Builder", //
                         "set", //
-                        SimpleClassNoSetPrefix.class, //
+                        classInfo.get(SimpleClassNoSetPrefix.class.getName()), //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassNoSetPrefixBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClassNoSetPrefix.class) //
+                                        .type(classInfo.get(SimpleClassNoSetPrefix.class.getName())) //
                                         .location(classLocation(SimpleClassNoSetPrefix.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
@@ -207,12 +214,12 @@ class BuilderMetadataServiceIT {
                         BuilderConstants.PACKAGE_PLACEHOLDER, //
                         "MyBuilderSuffix", //
                         "", //
-                        SimpleClassNoSetPrefix.class, //
+                        classInfo.get(SimpleClassNoSetPrefix.class.getName()), //
                         BuilderMetadata.builder() //
                                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassNoSetPrefixMyBuilderSuffix") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClassNoSetPrefix.class) //
+                                        .type(classInfo.get(SimpleClassNoSetPrefix.class.getName())) //
                                         .location(classLocation(SimpleClassNoSetPrefix.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
@@ -235,12 +242,12 @@ class BuilderMetadataServiceIT {
                         "builders.io.github.tobi.laa.reflective.fluent.builders.test.models.simple", //
                         "Builder", //
                         "set", //
-                        SimpleClassNoDefaultConstructor.class, //
+                        classInfo.get(SimpleClassNoDefaultConstructor.class.getName()), //
                         BuilderMetadata.builder() //
                                 .packageName("builders.io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassNoDefaultConstructorBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClassNoDefaultConstructor.class) //
+                                        .type(classInfo.get(SimpleClassNoDefaultConstructor.class.getName())) //
                                         .location(classLocation(SimpleClassNoDefaultConstructor.class)) //
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
@@ -267,9 +274,11 @@ class BuilderMetadataServiceIT {
     @Test
     void testFilterOutNonBuildableClassesNonConstructableClasses() {
         // Arrange
-        final var classes = Set.of(Abstract.class, Annotation.class, Enum.class, Interface.class);
+        final var classes = Stream.of(Abstract.class, Annotation.class, Enum.class, Interface.class)
+                .map(clazz -> classInfo.get(clazz.getName()))
+                .collect(Collectors.toSet());
         // Act
-        final Set<Class<?>> actual = service.filterOutNonBuildableClasses(classes);
+        final Set<ClassInfo> actual = service.filterOutNonBuildableClasses(classes);
         // Assert
         assertThat(actual).isEmpty();
     }
@@ -278,24 +287,28 @@ class BuilderMetadataServiceIT {
     @SneakyThrows
     void testFilterOutNonBuildableClassesInaccessibleClass() {
         // Arrange
-        final var classes = Set.of(
-                SimpleClass.class,
-                Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate"));
+        final var classes = Stream.of(
+                        SimpleClass.class,
+                        Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate"))
+                .map(clazz -> classInfo.get(clazz.getName()))
+                .collect(Collectors.toSet());
         doReturn("a.package").when(properties).getBuilderPackage();
         // Act
-        final Set<Class<?>> actual = service.filterOutNonBuildableClasses(classes);
+        final Set<ClassInfo> actual = service.filterOutNonBuildableClasses(classes);
         // Assert
-        assertThat(actual).containsExactly(SimpleClass.class);
+        assertThat(actual).containsExactly(classInfo.get(SimpleClass.class.getName()));
     }
 
     @Test
     void testFilterOutNonBuildableClassesNestedClasses() {
         // Arrange
-        final var classes = Set.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class);
+        final var classes = Stream.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class)
+                .map(clazz -> classInfo.get(clazz.getName()))
+                .collect(Collectors.toSet());
         // Act
-        final Set<Class<?>> actual = service.filterOutNonBuildableClasses(classes);
+        final Set<ClassInfo> actual = service.filterOutNonBuildableClasses(classes);
         // Assert
-        assertThat(actual).containsExactly(TopLevelClass.NestedPublicLevelOne.class);
+        assertThat(actual).containsExactly(classInfo.get(TopLevelClass.NestedPublicLevelOne.class.getName()));
     }
 
     @Test
@@ -308,11 +321,11 @@ class BuilderMetadataServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testFilterOutConfiguredExcludes(final Set<Predicate<Class<?>>> excludes, final Set<Class<?>> classes, final Set<Class<?>> expected) {
+    void testFilterOutConfiguredExcludes(final Set<Predicate<Class<?>>> excludes, final Set<ClassInfo> classes, final Set<ClassInfo> expected) {
         // Arrange
         lenient().when(properties.getExcludes()).thenReturn(excludes);
         // Act
-        final Set<Class<?>> actual = service.filterOutConfiguredExcludes(classes);
+        final Set<ClassInfo> actual = service.filterOutConfiguredExcludes(classes);
         // Assert
         assertEquals(expected, actual);
     }
@@ -326,20 +339,33 @@ class BuilderMetadataServiceIT {
                         Collections.emptySet()), //
                 Arguments.of( //
                         Collections.emptySet(), //
-                        Set.of(SimpleClass.class), //
-                        Set.of(SimpleClass.class)), //
+                        Set.of(classInfo.get(SimpleClass.class.getName())), //
+                        Set.of(classInfo.get(SimpleClass.class.getName()))), //
                 Arguments.of( //
                         Set.<Predicate<Class<?>>>of(cl -> cl.getPackageName().equals(Complex.class.getPackageName())), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
-                        Set.of(SimpleClass.class)), //
+                        Set.of(
+                                classInfo.get(SimpleClass.class.getName()),
+                                classInfo.get(ClassWithCollections.class.getName()),
+                                classInfo.get(ClassWithGenerics.class.getName())), //
+                        Set.of(classInfo.get(SimpleClass.class.getName()))), //
                 Arguments.of( //
                         Set.<Predicate<Class<?>>>of(SimpleClass.class::equals), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
-                        Set.of(ClassWithCollections.class, ClassWithGenerics.class)), //
+                        Set.of(
+                                classInfo.get(SimpleClass.class.getName()),
+                                classInfo.get(ClassWithCollections.class.getName()),
+                                classInfo.get(ClassWithGenerics.class.getName())), //
+                        Set.of(
+                                classInfo.get(ClassWithCollections.class.getName()),
+                                classInfo.get(ClassWithGenerics.class.getName()))), //
                 Arguments.of( //
                         Set.<Predicate<Class<?>>>of(cl -> cl.getName().endsWith("Generics")), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class, ClassWithGenerics.class), //
-                        Set.of(SimpleClass.class, ClassWithCollections.class)));
+                        Set.of(
+                                classInfo.get(SimpleClass.class.getName()),
+                                classInfo.get(ClassWithCollections.class.getName()),
+                                classInfo.get(ClassWithGenerics.class.getName())), //
+                        Set.of(
+                                classInfo.get(SimpleClass.class.getName()),
+                                classInfo.get(ClassWithCollections.class.getName()))));
     }
 
     @Test
@@ -370,7 +396,7 @@ class BuilderMetadataServiceIT {
                                         .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //
                                         .builtType(BuilderMetadata.BuiltType.builder() //
-                                                .type(SimpleClass.class) //
+                                                .type(classInfo.get(SimpleClass.class.getName())) //
                                                 .accessibleNonArgsConstructor(true) //
                                                 .build()) //
                                         .build()),
@@ -381,7 +407,7 @@ class BuilderMetadataServiceIT {
                                         .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //
                                         .builtType(BuilderMetadata.BuiltType.builder() //
-                                                .type(SimpleClass.class) //
+                                                .type(classInfo.get(SimpleClass.class.getName())) //
                                                 .accessibleNonArgsConstructor(true) //
                                                 .build()) //
                                         .build(),
@@ -389,7 +415,7 @@ class BuilderMetadataServiceIT {
                                         .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //
                                         .builtType(BuilderMetadata.BuiltType.builder() //
-                                                .type(SimpleClass.class) //
+                                                .type(classInfo.get(SimpleClass.class.getName())) //
                                                 .accessibleNonArgsConstructor(true) //
                                                 .setter(SimpleSetter.builder() //
                                                         .methodName("setPub") //
@@ -405,7 +431,7 @@ class BuilderMetadataServiceIT {
                                         .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //
                                         .builtType(BuilderMetadata.BuiltType.builder() //
-                                                .type(SimpleClass.class) //
+                                                .type(classInfo.get(SimpleClass.class.getName())) //
                                                 .accessibleNonArgsConstructor(true) //
                                                 .setter(SimpleSetter.builder() //
                                                         .methodName("setPub") //
@@ -422,12 +448,12 @@ class BuilderMetadataServiceIT {
     void testFilterOutConfiguredExcludesWithDefaultConfig() {
         // Act
         final var filteredClasses = service.filterOutConfiguredExcludes(Set.of( //
-                SimpleClass.class, //
-                ClassWithBuilderExisting.class, //
-                ClassWithBuilderExisting.ClassWithBuilderExistingBuilder.class, //
-                HasTheSuffixBuilderImpl.class));
+                classInfo.get(SimpleClass.class.getName()), //
+                classInfo.get(ClassWithBuilderExisting.class.getName()), //
+                classInfo.get(ClassWithBuilderExisting.ClassWithBuilderExistingBuilder.class.getName()), //
+                classInfo.get(HasTheSuffixBuilderImpl.class.getName())));
         // Assert
-        assertThat(filteredClasses).contains(SimpleClass.class, ClassWithBuilderExisting.class);
+        assertThat(filteredClasses).contains(classInfo.get(SimpleClass.class.getName()), classInfo.get(ClassWithBuilderExisting.class.getName()));
     }
 
     private static TypeVariable<?> typeVariableT() {

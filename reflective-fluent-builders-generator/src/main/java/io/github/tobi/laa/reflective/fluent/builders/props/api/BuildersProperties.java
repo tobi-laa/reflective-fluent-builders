@@ -104,7 +104,7 @@ public interface BuildersProperties {
          * </p>
          *
          * @return Predicates denoting classes to be excluded from the hierarchy collection. Never {@code null}.
-         * @see ClassService#collectFullClassHierarchy(Class)
+         * @see ClassService#collectFullClassHierarchy(io.github.classgraph.ClassInfo)
          */
         Set<Predicate<Class<?>>> getExcludes();
     }

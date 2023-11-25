@@ -2,10 +2,12 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BuildMethodCodeGeneratorImplTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     private final BuildMethodCodeGeneratorImpl generator = new BuildMethodCodeGeneratorImpl();
 
@@ -48,7 +53,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .packageName("com.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                 .name("SimpleClassBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("setAnInt") //
@@ -84,7 +89,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .packageName("a.whole.different.pack") //
                                 .name("AnotherBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(ClassWithHierarchy.class) //
+                                        .type(classInfo.get(ClassWithHierarchy.class)) //
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(MapSetter.builder() //
                                                 .methodName("setSortedMap") //
@@ -122,7 +127,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .packageName(PetJaxb.class.getPackageName()) //
                                 .name("PetJaxbBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(PetJaxb.class) //
+                                        .type(classInfo.get(PetJaxb.class)) //
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(CollectionGetAndAdder.builder() //
                                                 .methodName("getSiblings") //

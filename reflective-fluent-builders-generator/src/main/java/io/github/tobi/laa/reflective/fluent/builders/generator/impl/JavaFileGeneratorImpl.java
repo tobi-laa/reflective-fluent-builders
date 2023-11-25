@@ -98,7 +98,7 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
 
     private TypeSpec.Builder generateTypeSpec(final BuilderMetadata builderMetadata, final ClassName builderClassName) {
         final var builder = TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
-        for (final var typeParam : builderMetadata.getBuiltType().getType().getTypeParameters()) {
+        for (final var typeParam : builderMetadata.getBuiltType().getType().loadClass().getTypeParameters()) {
             builder.addTypeVariable(TypeVariableName.get(typeParam));
         }
         return builder;

@@ -32,8 +32,8 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
         final var clazz = builderMetadata.getBuiltType().getType();
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("build")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(clazz);
-        methodBuilder.addStatement("final $T $L = $L.get()", clazz, OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
+                .returns(clazz.loadClass());
+        methodBuilder.addStatement("final $T $L = $L.get()", clazz.loadClass(), OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
         for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
             if (setter instanceof CollectionGetAndAdder) {
                 methodBuilder

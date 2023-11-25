@@ -5,13 +5,13 @@ import com.tngtech.archunit.core.importer.Location;
 
 /**
  * <p>
- * Exclude the module {@code reflective-fluent-builders-test-models} which may contain all sorts of weird constructs.
+ * Exclude {@link ArchUnitTests} itself.
  * </p>
  */
-class ExcludeTestModels implements ImportOption {
+class DoNotIncludeSelf implements ImportOption {
 
     @Override
     public boolean includes(final Location location) {
-        return !location.contains("reflective-fluent-builders-test-models");
+        return !location.contains(ArchUnitTests.class.getSimpleName());
     }
 }

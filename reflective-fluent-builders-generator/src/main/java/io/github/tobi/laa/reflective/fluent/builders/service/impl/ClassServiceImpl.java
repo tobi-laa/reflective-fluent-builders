@@ -31,7 +31,7 @@ import static java.util.function.Predicate.not;
  * Standard implementation of {@link ClassService}.
  * </p>
  * <p>
- * Classes to be excluded from the {@link #collectFullClassHierarchy(Class) hierarchy collection} can be provided via
+ * Classes to be excluded from the {@link #collectFullClassHierarchy(ClassInfo) hierarchy collection} can be provided via
  * the constructor.
  * </p>
  */
@@ -47,27 +47,33 @@ class ClassServiceImpl implements ClassService {
     private final Provider<ClassLoader> classLoaderProvider;
 
     @Override
-    public List<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
+    public List<ClassInfo> collectFullClassHierarchy(final ClassInfo clazz) {
         Objects.requireNonNull(clazz);
-        final List<Class<?>> classHierarchy = new ArrayList<>();
-        for (var i = clazz; i != null; i = i.getSuperclass()) {
-            if (excludeFromHierarchyCollection(i)) {
+        final List<ClassInfo> classHierarchy = new ArrayList<>();
+        for (var c = clazz; c != null; c = c.getSuperclass()) {
+            final var currentClass = c;
+            if (excludeFromHierarchyCollection(currentClass)) {
                 break;
             }
-            classHierarchy.add(i);
-            Arrays.stream(i.getInterfaces()) //
+            classHierarchy.add(currentClass);
+            currentClass.getInterfaces().stream() //
+                    .filter(i -> isDirectInterface(i, currentClass)) //
                     .filter(not(this::excludeFromHierarchyCollection)) //
                     .forEach(classHierarchy::add);
         }
         return classHierarchy.stream().distinct().collect(Collectors.toUnmodifiableList());
     }
 
-    private boolean excludeFromHierarchyCollection(final Class<?> clazz) {
-        return properties.getHierarchyCollection().getExcludes().stream().anyMatch(p -> p.test(clazz));
+    private boolean isDirectInterface(final ClassInfo anInterface, final ClassInfo clazz) {
+        return Arrays.asList(clazz.loadClass().getInterfaces()).contains(anInterface.loadClass());
+    }
+
+    private boolean excludeFromHierarchyCollection(final ClassInfo clazz) {
+        return properties.getHierarchyCollection().getExcludes().stream().anyMatch(p -> p.test(clazz.loadClass()));
     }
 
     @Override
-    public Set<Class<?>> collectClassesRecursively(final String packageName) {
+    public Set<ClassInfo> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
         try (final ScanResult scanResult = new ClassGraph()
                 .overrideClassLoaders(classLoaderProvider.get())
@@ -77,7 +83,7 @@ class ClassServiceImpl implements ClassService {
             //
             return scanResult.getAllClasses()
                     .stream()
-                    .map(ClassInfo::loadClass)
+                    .map(this::loadEagerly)
                     .flatMap(clazz -> Stream.concat(
                             Stream.of(clazz),
                             collectStaticInnerClassesRecursively(clazz).stream()))
@@ -87,9 +93,9 @@ class ClassServiceImpl implements ClassService {
         }
     }
 
-    private Set<Class<?>> collectStaticInnerClassesRecursively(final Class<?> clazz) {
-        final Set<Class<?>> innerStaticClasses = new HashSet<>();
-        for (final Class<?> innerClass : clazz.getDeclaredClasses()) {
+    private Set<ClassInfo> collectStaticInnerClassesRecursively(final ClassInfo clazz) {
+        final Set<ClassInfo> innerStaticClasses = new HashSet<>();
+        for (final ClassInfo innerClass : clazz.getInnerClasses()) {
             innerStaticClasses.add(innerClass);
             innerStaticClasses.addAll(collectStaticInnerClassesRecursively(innerClass));
         }
@@ -128,17 +134,25 @@ class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public Optional<ClassInfo> loadClass(String className) {
+    public Optional<ClassInfo> loadClass(final String className) {
+        Objects.requireNonNull(className);
         try (final ScanResult scanResult = new ClassGraph()
                 .overrideClassLoaders(classLoaderProvider.get())
                 .enableAllInfo()
                 .acceptClasses(className)
                 .scan()) {
             //
-            return scanResult.getAllClasses().stream().findFirst();
+            return scanResult.getAllClasses().stream().findFirst().map(this::loadEagerly);
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to load class " + className + '.', e);
         }
+    }
+
+    private ClassInfo loadEagerly(final ClassInfo classInfo) {
+        classInfo.loadClass();
+        classInfo.getSuperclasses().loadClasses();
+        classInfo.getInterfaces().loadClasses();
+        return classInfo;
     }
 
     @Override

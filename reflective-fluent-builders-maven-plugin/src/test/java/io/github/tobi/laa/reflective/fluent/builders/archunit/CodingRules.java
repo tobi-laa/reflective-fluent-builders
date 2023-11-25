@@ -51,4 +51,13 @@ class CodingRules {
             .haveFullyQualifiedName("com.google.common.reflect.ClassPath") //
             .as("Guava's ClassPath should not be used.") //
             .because("The Guava documentation says to use ClassGraph instead.");
+
+    @ArchTest
+    private final ArchRule noSpringOutsideDedicatedPackage =
+            noClasses()
+                    .that().resideOutsideOfPackage("io.github.tobi.laa.reflective.fluent.builders.test")
+                    .should().dependOnClassesThat().resideInAPackage("org.springframework..")
+                    .as("Spring should not be used directly in tests.")
+                    .because("The project relies on JSR-330 for dependency injection, not Spring. " +
+                            "Usage of Spring should thus be hidden by custom test support classes.");
 }

@@ -4,9 +4,11 @@ import io.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Inject;
 import java.lang.reflect.TypeVariable;
@@ -15,6 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @IntegrationTest
 class JavaFileGeneratorIT {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     @Inject
     private JavaFileGenerator javaFileGenerator;
@@ -26,7 +31,7 @@ class JavaFileGeneratorIT {
                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.complex") //
                 .name("ClassWithGenericsBuilder") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
-                        .type(ClassWithGenerics.class) //
+                        .type(classInfo.get(ClassWithGenerics.class)) //
                         .accessibleNonArgsConstructor(true) //
                         .setter(SimpleSetter.builder() //
                                 .methodName("setAnInt") //

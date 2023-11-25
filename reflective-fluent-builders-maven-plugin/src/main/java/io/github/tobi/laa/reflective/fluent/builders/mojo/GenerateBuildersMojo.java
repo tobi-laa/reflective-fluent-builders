@@ -1,9 +1,11 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.google.common.collect.Sets;
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata.BuiltType;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
 import jakarta.validation.ConstraintViolation;
@@ -32,6 +34,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.function.Predicate.not;
 
 /**
  * <p>
@@ -96,15 +100,15 @@ public class GenerateBuildersMojo extends AbstractMojo {
         }
     }
 
-    private Set<Class<?>> collectAndFilterClasses() throws MojoExecutionException {
+    private Set<ClassInfo> collectAndFilterClasses() throws MojoExecutionException {
         final var allClasses = collectClasses();
         final var filteredClasses = filterClasses(allClasses);
         getLog().info("Found " + filteredClasses.size() + " classes for which to generate builders.");
         return filteredClasses;
     }
 
-    private Set<Class<?>> collectClasses() throws MojoExecutionException {
-        final var allClasses = new HashSet<Class<?>>();
+    private Set<ClassInfo> collectClasses() throws MojoExecutionException {
+        final var allClasses = new HashSet<ClassInfo>();
         for (final var include : params.getIncludes()) {
             if (include.getPackageName() != null) {
                 getLog().info("Scan package " + include.getPackageName() + " recursively for classes.");
@@ -117,15 +121,11 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return allClasses;
     }
 
-    private Class<?> loadClass(final String className) throws MojoExecutionException {
-        try {
-            return classLoaderProvider.get().loadClass(className);
-        } catch (final ClassNotFoundException e) {
-            throw new MojoExecutionException("Unable to load class " + className, e);
-        }
+    private ClassInfo loadClass(final String className) throws MojoExecutionException {
+        return classService.loadClass(className).orElseThrow(() -> new MojoExecutionException("Unable to load class " + className));
     }
 
-    private Set<Class<?>> filterClasses(final Set<Class<?>> classes) {
+    private Set<ClassInfo> filterClasses(final Set<ClassInfo> classes) {
         final var buildableClasses = builderMetadataService.filterOutNonBuildableClasses(classes);
         final var filteredClasses = builderMetadataService.filterOutConfiguredExcludes(buildableClasses);
         if (getLog().isDebugEnabled()) {
@@ -150,7 +150,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         }
     }
 
-    private Set<BuilderMetadata> collectNonEmptyBuilderMetadata(final Set<Class<?>> buildableClasses) {
+    private Set<BuilderMetadata> collectNonEmptyBuilderMetadata(final Set<ClassInfo> buildableClasses) {
         final var allMetadata = buildableClasses.stream() //
                 .map(builderMetadataService::collectBuilderMetadata) //
                 .collect(Collectors.toSet());
@@ -183,16 +183,23 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private boolean buildContextHasDelta(final Set<BuilderMetadata> builderMetadata) {
-        return determineBuiltTypeClassLocations(builderMetadata).anyMatch(mavenBuild::hasDelta);
+        return determineSourceOrJarLocations(builderMetadata).anyMatch(mavenBuild::hasDelta);
     }
 
-    private Stream<File> determineBuiltTypeClassLocations(final Set<BuilderMetadata> builderMetadata) {
+    private Stream<File> determineSourceOrJarLocations(final Set<BuilderMetadata> builderMetadata) {
         return builderMetadata.stream() //
                 .map(BuilderMetadata::getBuiltType) //
-                .map(BuilderMetadata.BuiltType::getLocation) //
-                .filter(Optional::isPresent) //
-                .map(Optional::get) //
+                .map(this::determineSourceOrClassLocation) //
+                .flatMap(Optional::stream)
                 .map(Path::toFile);
+    }
+
+    private Optional<Path> determineSourceOrClassLocation(final BuiltType type) {
+        return determineSourceLocation(type).or(type::getLocation).filter(not(mavenBuild::containsClassFile));
+    }
+
+    private Optional<Path> determineSourceLocation(final BuiltType type) {
+        return type.getSourceFile().flatMap(source -> mavenBuild.resolveSourceFile(type.getType().getPackageName(), source));
     }
 
     private void generateAndWriteBuildersToTarget(Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
@@ -214,7 +221,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
-        determineBuiltTypeClassLocations(builderMetadata).forEach(mavenBuild::refresh);
+        determineSourceOrJarLocations(builderMetadata).forEach(mavenBuild::refresh);
     }
 
     private void logNoGenerationNecessary() {
