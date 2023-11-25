@@ -41,15 +41,31 @@ public class ClassWithGenericsBuilder<T> {
     return new ArrayFloats();
   }
 
+  public CollectionList list() {
+    return new CollectionList();
+  }
+
   public ClassWithGenericsBuilder anInt(final int anInt) {
     this.fieldValue.anInt = anInt;
     this.callSetterFor.anInt = true;
     return this;
   }
 
+  public ClassWithGenericsBuilder bar(final ClassWithGenerics.Foo<T> bar) {
+    this.fieldValue.bar = bar;
+    this.callSetterFor.bar = true;
+    return this;
+  }
+
   public ClassWithGenericsBuilder floats(final float[] floats) {
     this.fieldValue.floats = floats;
     this.callSetterFor.floats = true;
+    return this;
+  }
+
+  public ClassWithGenericsBuilder list(final List<T> list) {
+    this.fieldValue.list = list;
+    this.callSetterFor.list = true;
     return this;
   }
 
@@ -64,8 +80,14 @@ public class ClassWithGenericsBuilder<T> {
     if (this.callSetterFor.anInt) {
       objectToBuild.setAnInt(this.fieldValue.anInt);
     }
+    if (this.callSetterFor.bar) {
+      objectToBuild.setBar(this.fieldValue.bar);
+    }
     if (this.callSetterFor.floats) {
       objectToBuild.setFloats(this.fieldValue.floats);
+    }
+    if (this.callSetterFor.list) {
+      objectToBuild.setList(this.fieldValue.list);
     }
     if (this.callSetterFor.t) {
       objectToBuild.setT(this.fieldValue.t);
@@ -76,7 +98,11 @@ public class ClassWithGenericsBuilder<T> {
   private class CallSetterFor {
     boolean anInt;
 
+    boolean bar;
+
     boolean floats;
+
+    boolean list;
 
     boolean t;
   }
@@ -84,7 +110,11 @@ public class ClassWithGenericsBuilder<T> {
   private class FieldValue {
     int anInt;
 
+    ClassWithGenerics.Foo<T> bar;
+
     float[] floats;
+
+    List<T> list;
 
     T t;
   }
@@ -108,6 +138,21 @@ public class ClassWithGenericsBuilder<T> {
           ClassWithGenericsBuilder.this.fieldValue.floats[i] = this.list.get(i);
         }
       }
+      return ClassWithGenericsBuilder.this;
+    }
+  }
+
+  public class CollectionList {
+    public CollectionList add(final T item) {
+      if (ClassWithGenericsBuilder.this.fieldValue.list == null) {
+        ClassWithGenericsBuilder.this.fieldValue.list = new ArrayList<>();
+      }
+      ClassWithGenericsBuilder.this.fieldValue.list.add(item);
+      ClassWithGenericsBuilder.this.callSetterFor.list = true;
+      return this;
+    }
+
+    public ClassWithGenericsBuilder and() {
       return ClassWithGenericsBuilder.this;
     }
   }
