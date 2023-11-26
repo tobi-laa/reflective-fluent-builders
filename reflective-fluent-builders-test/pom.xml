@@ -1,14 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.tobi-laa</groupId>
         <artifactId>reflective-fluent-builders</artifactId>
         <version>1.7.0-SNAPSHOT</version>
     </parent>
-    <artifactId>reflective-fluent-builders-test-models</artifactId>
+    <artifactId>reflective-fluent-builders-test</artifactId>
     <packaging>jar</packaging>
-    <description>Holds exemplary model classes to be used in the various unit as well as integration tests across this
-        project.
+    <description>Common test classes or helpers to be used in the various unit as well as integration tests across this
+        project. Also holds exemplary model classes.
     </description>
     <properties>
         <!-- the module is solely used for tests and should thus never be deployed -->
@@ -29,6 +30,18 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
     <build>

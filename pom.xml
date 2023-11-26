@@ -112,7 +112,7 @@
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
     </properties>
     <modules>
-        <module>reflective-fluent-builders-test-models</module>
+        <module>reflective-fluent-builders-test</module>
         <module>reflective-fluent-builders-generator</module>
         <module>reflective-fluent-builders-maven-plugin</module>
     </modules>
@@ -208,6 +208,12 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>

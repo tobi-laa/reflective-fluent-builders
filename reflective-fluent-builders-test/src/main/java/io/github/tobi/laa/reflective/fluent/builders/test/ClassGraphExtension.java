@@ -7,7 +7,7 @@ import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.Marker;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
+ExtensionContext
 import java.util.Optional;
 
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
@@ -28,7 +28,7 @@ public class ClassGraphExtension implements BeforeAllCallback {
 
     @Override
     public void beforeAll(final ExtensionContext extensionContext) {
-        allClasses = extensionContext.getStore(create(NAMESPACE))
+        allClasses = extensionContext.getStore(Namespace.create(NAMESPACE))
                 .getOrComputeIfAbsent(ALL_CLASSES_ID, key -> loadAllClasses(), ClassInfoList.class);
     }
 
@@ -44,11 +44,10 @@ public class ClassGraphExtension implements BeforeAllCallback {
         }
     }
 
-    private ClassInfo loadEagerly(final ClassInfo classInfo) {
+    private void loadEagerly(final ClassInfo classInfo) {
         classInfo.loadClass();
         classInfo.getSuperclasses().loadClasses();
         classInfo.getInterfaces().loadClasses();
-        return classInfo;
     }
 
     /**
