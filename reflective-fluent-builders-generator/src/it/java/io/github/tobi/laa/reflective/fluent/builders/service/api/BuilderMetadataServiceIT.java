@@ -51,7 +51,7 @@ class BuilderMetadataServiceIT {
 
     private static final Path TEST_MODELS_TARGET_DIR = Paths.get("").toAbsolutePath()
             .getParent()
-            .resolve("reflective-fluent-builders-test-models")
+            .resolve("reflective-fluent-builders-test")
             .resolve("target");
 
     @RegisterExtension
@@ -92,7 +92,7 @@ class BuilderMetadataServiceIT {
                 location -> assertThat(Optional.of(location)).isEqualTo(expected.getBuiltType().getLocation()),
                 location -> assertThat(location)
                         .hasParent(TEST_MODELS_TARGET_DIR)
-                        .asString().matches(".+/reflective-fluent-builders-test-models-.+-SNAPSHOT.jar"));
+                        .asString().matches(".+/reflective-fluent-builders-test-.+-SNAPSHOT.jar"));
     }
 
     @SneakyThrows

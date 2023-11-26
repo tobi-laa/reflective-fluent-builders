@@ -7,10 +7,9 @@ import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.Marker;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-ExtensionContext
-import java.util.Optional;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 
-import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
+import java.util.Optional;
 
 /**
  * <p>

@@ -139,7 +139,7 @@ class GenerateBuildersMojoIT {
                             "Generate builder for class " + Parent.class.getName());
             final var reflectiveFluentBuildersTestModels = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
                     "io.github.tobi-laa", //
-                    "reflective-fluent-builders-test-models", //
+                    "reflective-fluent-builders-test", //
                     System.getProperty("project.version"));
             final var jakartaXmlBindApi = projectResultHelper.resolveMavenArtifact(result.getMavenProjectResult(), //
                     "jakarta.xml.bind", //
@@ -158,7 +158,8 @@ class GenerateBuildersMojoIT {
                                     "includes=[Include(super=AbstractIncludeExclude(packageName=io.github.tobi.laa.reflective.fluent.builders.test.models.simple, className=null))], " +
                                     "excludes=null, " +
                                     "target=" + targetDirectory + ", " +
-                                    "addCompileSourceRoot=true)", //
+                                    "addCompileSourceRoot=true, " +
+                                    "deleteOrphanedBuilders=true)", //
                             "Attempt to add " + outputDirectory + " to ClassLoader.", //
                             "Attempt to add " + reflectiveFluentBuildersTestModels + " to ClassLoader.", //
                             "Attempt to add " + jakartaXmlBindApi + " to ClassLoader.", //
