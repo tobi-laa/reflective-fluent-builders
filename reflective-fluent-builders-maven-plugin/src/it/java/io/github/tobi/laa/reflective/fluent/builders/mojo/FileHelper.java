@@ -2,7 +2,6 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import lombok.SneakyThrows;
 
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -14,6 +13,12 @@ import java.util.List;
  * </p>
  */
 class FileHelper {
+
+    private final JavaFileHelper javaFileHelper;
+
+    FileHelper() {
+        this.javaFileHelper = new JavaFileHelper();
+    }
 
     @SneakyThrows
     List<Path> findFilesRecursively(final Path directory) {
@@ -27,14 +32,10 @@ class FileHelper {
     }
 
     Path resolveJavaFile(final Path directory, final String className) {
-        return directory.resolve(javaNameToPath(className) + ".java");
+        return directory.resolve(javaFileHelper.javaNameToPath(className) + ".java");
     }
 
     List<Path> findJavaFiles(final Path directory, final Package pack) {
-        return findFilesRecursively(directory.resolve(javaNameToPath(pack.getName())));
-    }
-
-    private String javaNameToPath(final String name) {
-        return name.replace(".", FileSystems.getDefault().getSeparator());
+        return findFilesRecursively(directory.resolve(javaFileHelper.javaNameToPath(pack.getName())));
     }
 }
