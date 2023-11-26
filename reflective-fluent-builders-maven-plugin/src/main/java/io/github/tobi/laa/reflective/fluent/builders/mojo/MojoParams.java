@@ -55,6 +55,8 @@ public class MojoParams implements BuildersProperties {
 
     private boolean addCompileSourceRoot;
 
+    private boolean deleteOrphanedBuilders;
+
     @lombok.NonNull
     @ToString.Exclude
     private final MavenBuild mavenBuild;

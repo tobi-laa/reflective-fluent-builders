@@ -64,6 +64,12 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
 
+    @lombok.NonNull
+    private final JavaFileHelper javaFileHelper;
+
+    @lombok.NonNull
+    private final OrphanDeleter orphanDeleter;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         logMavenParams();
@@ -72,6 +78,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
         createTargetDirectory();
         generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
+        deleteOrphanedBuilders(nonEmptyBuilderMetadata);
         refreshBuildContext(nonEmptyBuilderMetadata);
         addCompileSourceRoot();
         closeClassLoader();
@@ -170,12 +177,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private Path resolveBuilderFile(final BuilderMetadata builderMetadata) {
-        Path builderFile = params.getTarget().toPath();
-        for (final String subdir : builderMetadata.getPackageName().split("\\.")) {
-            builderFile = builderFile.resolve(subdir);
-        }
-        builderFile = builderFile.resolve(builderMetadata.getName() + ".java");
-        return builderFile;
+        return params.getTarget().toPath()
+                .resolve(javaFileHelper.javaNameToPath(builderMetadata.getPackageName()))
+                .resolve(builderMetadata.getName() + ".java");
     }
 
     private boolean buildContextHasDelta(final BuilderMetadata builderMetadata) {
@@ -212,6 +216,16 @@ public class GenerateBuildersMojo extends AbstractMojo {
             }
         } else {
             getLog().info("Builder for class " + className + " already exists and is up to date.");
+        }
+    }
+
+    private void deleteOrphanedBuilders(final Set<BuilderMetadata> metadata) throws MojoFailureException {
+        if (params.isDeleteOrphanedBuilders()) {
+            try {
+                orphanDeleter.deleteOrphanedBuilders(params.getTarget().toPath(), metadata);
+            } catch (final IOException e) {
+                throw new MojoFailureException("Could not delete orphaned builders.", e);
+            }
         }
     }
 
@@ -475,6 +489,28 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @SuppressWarnings("unused")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
         params.setAddCompileSourceRoot(addCompileSourceRoot);
+    }
+
+    /**
+     * <p>
+     * Specifies whether to delete orphaned builders from the {@link #setTarget(File) target directory}.
+     * </p>
+     * <p>
+     * A builder is considered orphaned if it would no longer be generated during a clean build, be it due to a class
+     * having been deleted or renamed or due to the configuration having been changed.
+     * </p>
+     * <p>
+     * As this is the behaviour that most projects will want, the default is {@code true}.
+     * </p>
+     *
+     * @param deleteOrphanedBuilders Specifies whether to delete orphaned builders from the
+     *                               {@link #setTarget(File) target directory}.
+     * @since 1.7.0
+     */
+    @Parameter(name = "deleteOrphanedBuilders", defaultValue = "true")
+    @SuppressWarnings("unused")
+    public void setDeleteOrphanedBuilders(final boolean deleteOrphanedBuilders) {
+        params.setDeleteOrphanedBuilders(deleteOrphanedBuilders);
     }
 
     /**
