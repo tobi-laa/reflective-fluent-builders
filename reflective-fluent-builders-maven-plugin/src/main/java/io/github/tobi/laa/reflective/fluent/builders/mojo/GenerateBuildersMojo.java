@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 
@@ -71,14 +70,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
         validateParams();
         final var classes = collectAndFilterClasses();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
-        if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
-            createTargetDirectory();
-            generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
-            addCompileSourceRoot();
-            refreshBuildContext(nonEmptyBuilderMetadata);
-        } else {
-            logNoGenerationNecessary();
-        }
+        createTargetDirectory();
+        generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
+        refreshBuildContext(nonEmptyBuilderMetadata);
+        addCompileSourceRoot();
         closeClassLoader();
     }
 
@@ -163,14 +158,15 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return nonEmptyMetadata;
     }
 
-    private boolean isGenerationNecessary(final Set<BuilderMetadata> builderMetadata) {
+    private boolean isGenerationNecessary(final BuilderMetadata builderMetadata) {
         return !mavenBuild.isIncremental() || //
-                !allBuilderFilesExist(builderMetadata) || //
+                !builderFileExist(builderMetadata) || //
                 buildContextHasDelta(builderMetadata);
     }
 
-    private boolean allBuilderFilesExist(final Set<BuilderMetadata> builderMetadata) {
-        return builderMetadata.stream().map(this::resolveBuilderFile).allMatch(Files::exists);
+    private boolean builderFileExist(final BuilderMetadata builderMetadata) {
+        final var builderFile = resolveBuilderFile(builderMetadata);
+        return Files.exists(builderFile);
     }
 
     private Path resolveBuilderFile(final BuilderMetadata builderMetadata) {
@@ -182,16 +178,12 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return builderFile;
     }
 
-    private boolean buildContextHasDelta(final Set<BuilderMetadata> builderMetadata) {
-        return determineSourceOrJarLocations(builderMetadata).anyMatch(mavenBuild::hasDelta);
+    private boolean buildContextHasDelta(final BuilderMetadata builderMetadata) {
+        return determineSourceOrClassLocation(builderMetadata).map(mavenBuild::hasDelta).orElse(true);
     }
 
-    private Stream<File> determineSourceOrJarLocations(final Set<BuilderMetadata> builderMetadata) {
-        return builderMetadata.stream() //
-                .map(BuilderMetadata::getBuiltType) //
-                .map(this::determineSourceOrClassLocation) //
-                .flatMap(Optional::stream)
-                .map(Path::toFile);
+    private Optional<File> determineSourceOrClassLocation(final BuilderMetadata builderMetadata) {
+        return determineSourceOrClassLocation(builderMetadata.getBuiltType()).map(Path::toFile);
     }
 
     private Optional<Path> determineSourceOrClassLocation(final BuiltType type) {
@@ -202,15 +194,24 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return type.getSourceFile().flatMap(source -> mavenBuild.resolveSourceFile(type.getType().getPackageName(), source));
     }
 
-    private void generateAndWriteBuildersToTarget(Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
+    private void generateAndWriteBuildersToTarget(final Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
         for (final var metadata : nonEmptyBuilderMetadata) {
-            getLog().info("Generate builder for class " + metadata.getBuiltType().getType().getName());
+            generateAndWriteBuilderToTarget(metadata);
+        }
+    }
+
+    private void generateAndWriteBuilderToTarget(final BuilderMetadata metadata) throws MojoFailureException {
+        final var className = metadata.getBuiltType().getType().getName();
+        if (isGenerationNecessary(metadata)) {
+            getLog().info("Generate builder for class " + className);
             final var javaFile = javaFileGenerator.generateJavaFile(metadata);
             try {
                 javaFile.writeTo(params.getTarget());
             } catch (final IOException e) {
-                throw new MojoFailureException("Could not create file for builder for " + metadata.getBuiltType().getType().getName() + '.', e);
+                throw new MojoFailureException("Could not create file for builder for " + className + '.', e);
             }
+        } else {
+            getLog().info("Builder for class " + className + " already exists and is up to date.");
         }
     }
 
@@ -221,11 +222,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
-        determineSourceOrJarLocations(builderMetadata).forEach(mavenBuild::refresh);
-    }
-
-    private void logNoGenerationNecessary() {
-        getLog().info("All builders are up-to-date, skipping generation.");
+        builderMetadata.stream()
+                .map(this::determineSourceOrClassLocation)
+                .flatMap(Optional::stream)
+                .forEach(mavenBuild::refresh);
     }
 
     /**

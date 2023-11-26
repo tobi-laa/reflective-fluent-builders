@@ -425,7 +425,10 @@ class GenerateBuildersMojoIT {
                             "Generate builder for class " + Child.class.getName(), //
                             "Generate builder for class " + SimpleClass.class.getName(), //
                             "Generate builder for class " + Parent.class.getName())
-                    .doesNotContain("All builders are up-to-date, skipping generation.");
+                    .doesNotContain( //
+                            "Builder for class " + Child.class.getName() + " already exists and is up to date.", //
+                            "Builder for class " + SimpleClass.class.getName() + " already exists and is up to date.", //
+                            "Builder for class " + Parent.class.getName() + " already exists and is up to date.");
             assertThat(result).out().warn().isEmpty();
         }
 
@@ -448,7 +451,10 @@ class GenerateBuildersMojoIT {
                             "Generate builder for class " + Child.class.getName(), //
                             "Generate builder for class " + SimpleClass.class.getName(), //
                             "Generate builder for class " + Parent.class.getName())
-                    .doesNotContain("All builders are up-to-date, skipping generation.");
+                    .doesNotContain( //
+                            "Builder for class " + Child.class.getName() + " already exists and is up to date.", //
+                            "Builder for class " + SimpleClass.class.getName() + " already exists and is up to date.", //
+                            "Builder for class " + Parent.class.getName() + " already exists and is up to date.");
             assertThat(result).out().warn().isEmpty();
         }
 
@@ -466,15 +472,17 @@ class GenerateBuildersMojoIT {
                     .out() //
                     .info() //
                     .doesNotContain( //
-                            "Make sure target directory " + targetDirectory + " exists.", //
                             "Generate builder for class " + Child.class.getName(), //
                             "Generate builder for class " + SimpleClass.class.getName(), //
                             "Generate builder for class " + Parent.class.getName())
                     .contains( //
                             "Scan package " + Simple.class.getPackage().getName() + " recursively for classes.", //
                             "Found 5 classes for which to generate builders.", //
-                            "All builders are up-to-date, skipping generation.");
-            assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
+                            "Make sure target directory " + targetDirectory + " exists.", //
+                            "Builder for class " + Child.class.getName() + " already exists and is up to date.", //
+                            "Builder for class " + SimpleClass.class.getName() + " already exists and is up to date.", //
+                            "Builder for class " + Parent.class.getName() + " already exists and is up to date.");
+            assertThat(result).out().warn().isEmpty();
         }
     }
 
