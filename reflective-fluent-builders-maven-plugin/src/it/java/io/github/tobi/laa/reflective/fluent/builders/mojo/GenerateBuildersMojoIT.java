@@ -546,5 +546,28 @@ class GenerateBuildersMojoIT {
                             "Deleting orphaned builder directory " + orphanedFile.getParent());
             assertThat(result).out().warn().isEmpty();
         }
+
+        @MavenTest
+        void orphanRemovalDeactivated(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(expectedBuilders(Simple.class.getPackage(), false))
+                    .has(expectedBuilder(Complex.class.getPackageName() + ".ClassWithCollectionsBuilder", false));
+            final var targetDirectory = projectResultHelper
+                    .getGeneratedSourcesDir(result.getMavenProjectResult())
+                    .resolve("builders");
+            final var orphanedFile = fileHelper
+                    .resolveJavaFile(targetDirectory, Complex.class.getName())
+                    .resolveSibling("ClassWithCollectionsBuilder.java");
+            assertThat(result) //
+                    .out() //
+                    .info() //
+                    .doesNotContain( //
+                            "Deleting orphaned builder file " + orphanedFile, //
+                            "Deleting orphaned builder directory " + orphanedFile.getParent());
+            assertThat(result).out().warn().isEmpty();
+        }
     }
 }

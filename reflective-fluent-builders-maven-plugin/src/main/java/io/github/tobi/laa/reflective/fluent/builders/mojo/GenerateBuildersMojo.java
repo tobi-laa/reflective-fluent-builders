@@ -221,11 +221,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private void deleteOrphanedBuilders(final Set<BuilderMetadata> metadata) throws MojoFailureException {
         if (params.isDeleteOrphanedBuilders()) {
-            try {
-                orphanDeleter.deleteOrphanedBuilders(params.getTarget().toPath(), metadata);
-            } catch (final IOException e) {
-                throw new MojoFailureException("Could not delete orphaned builders.", e);
-            }
+            orphanDeleter.deleteOrphanedBuilders(params.getTarget().toPath(), metadata);
         }
     }
 

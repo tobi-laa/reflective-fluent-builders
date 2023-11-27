@@ -8,6 +8,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.Simple;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import lombok.SneakyThrows;
 import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.codehaus.plexus.build.BuildContext;
@@ -124,12 +125,12 @@ class OrphanDeleterIT {
     }
 
     @Test
-    void givenNonEmptyTarget_fileDeletionException_deletingOrphans_throwsIOException() {
+    void givenNonEmptyTarget_fileDeletionException_deletingOrphans_throwsMojoFailureException() {
         givenNonEmptyTarget();
         givenMetadata(emptySet());
         givenDeleteThrowsException();
         whenCallingDeleteOrphans();
-        thenIOExceptionIsThrown();
+        thenMojoFailureExceptionIsThrown();
     }
 
     private void givenTarget(final Path target) {
@@ -170,8 +171,11 @@ class OrphanDeleterIT {
         assertThatThrownBy(deleteOrphans).isInstanceOf(NullPointerException.class);
     }
 
-    private void thenIOExceptionIsThrown() {
-        assertThatThrownBy(deleteOrphans).isInstanceOf(IOException.class);
+    private void thenMojoFailureExceptionIsThrown() {
+        assertThatThrownBy(deleteOrphans)
+                .isInstanceOf(MojoFailureException.class)
+                .hasMessage("Could not delete orphaned builders.")
+                .hasCauseExactlyInstanceOf(IOException.class);
     }
 
     private void thenEverythingIsDeleted() {

@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import lombok.RequiredArgsConstructor;
+import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import javax.inject.Inject;
@@ -37,15 +38,19 @@ class OrphanDeleter extends AbstractLogEnabled {
      * @param target   The target directory in which builder files reside. Must not be {@code null}.
      * @param metadata The metadata of all builders that should be generated to compare against the content of
      *                 {@code target}. Must not be {@code null}.
-     * @throws IOException If an I/O error occurs.
+     * @throws MojoFailureException If an I/O error occurs.
      */
-    void deleteOrphanedBuilders(final Path target, final Set<BuilderMetadata> metadata) throws IOException {
+    void deleteOrphanedBuilders(final Path target, final Set<BuilderMetadata> metadata) throws MojoFailureException {
         Objects.requireNonNull(target);
         Objects.requireNonNull(metadata);
         final var expectedJavaNames = metadata.stream()
                 .map(m -> m.getPackageName() + '.' + m.getName())
                 .collect(Collectors.toSet());
-        Files.walkFileTree(target, new OrphanDeletingVisitor(target, expectedJavaNames));
+        try {
+            Files.walkFileTree(target, new OrphanDeletingVisitor(target, expectedJavaNames));
+        } catch (final IOException e) {
+            throw new MojoFailureException("Could not delete orphaned builders.", e);
+        }
     }
 
     @RequiredArgsConstructor
