@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassGraphException;
 import io.github.classgraph.ClassInfo;
@@ -51,8 +52,8 @@ class ClassServiceImpl implements ClassService {
     public List<ClassInfo> collectFullClassHierarchy(final ClassInfo clazz) {
         Objects.requireNonNull(clazz);
         final List<ClassInfo> classHierarchy = new ArrayList<>();
-        for (var c = clazz; c != null; c = c.getSuperclass()) {
-            final var currentClass = c;
+        for (ClassInfo c = clazz; c != null; c = c.getSuperclass()) {
+            final ClassInfo currentClass = c;
             if (excludeFromHierarchyCollection(currentClass)) {
                 break;
             }
@@ -88,7 +89,7 @@ class ClassServiceImpl implements ClassService {
                     .flatMap(clazz -> Stream.concat(
                             Stream.of(clazz),
                             collectStaticInnerClassesRecursively(clazz).stream()))
-                    .collect(Collectors.toUnmodifiableSet());
+                    .collect(ImmutableSet.toImmutableSet());
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }

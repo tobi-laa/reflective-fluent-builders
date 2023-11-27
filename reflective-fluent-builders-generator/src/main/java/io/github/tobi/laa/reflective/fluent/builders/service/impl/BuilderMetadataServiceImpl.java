@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.base.Predicate;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.FieldInfo;
 import io.github.classgraph.FieldInfoList;
@@ -14,8 +15,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Predicates.not;
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.GENERATED_BUILDER_MARKER_FIELD_NAME;
@@ -49,7 +50,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     @Override
     public BuilderMetadata collectBuilderMetadata(final ClassInfo classInfo) {
         Objects.requireNonNull(classInfo);
-        final var clazz = classInfo.loadClass();
+        final Class<?> clazz = classInfo.loadClass();
         final String builderPackage = builderPackageService.resolveBuilderPackage(clazz);
         return BuilderMetadata.builder() //
                 .packageName(builderPackage) //
@@ -75,13 +76,13 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
 
     private boolean builderAlreadyExists(final String builderClassName) {
         final Optional<ClassInfo> builderClass = classService.loadClass(builderClassName);
-        if (builderClass.isEmpty()) {
+        if (!builderClass.isPresent()) {
             return false;
         } else {
             return builderClass
-                    .stream() //
                     .map(ClassInfo::getDeclaredFieldInfo) //
-                    .flatMap(FieldInfoList::stream) //
+                    .map(FieldInfoList::stream) //
+                    .orElseGet(Stream::empty)
                     .map(FieldInfo::getName) //
                     .noneMatch(GENERATED_BUILDER_MARKER_FIELD_NAME::equals);
         }

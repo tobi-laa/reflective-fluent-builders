@@ -420,13 +420,8 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-<<<<<<< HEAD
-                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
-            final Path targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
-=======
                     .has(expectedBuilders(Simple.class.getPackage(), false));
-            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
->>>>>>> main
+            final Path targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
                     .info() //
@@ -538,10 +533,10 @@ class GenerateBuildersMojoIT {
                     .hasTarget() //
                     .has(expectedBuilders(Simple.class.getPackage(), false))
                     .doesNotHave(expectedBuilders(Complex.class.getPackage(), false));
-            final var targetDirectory = projectResultHelper
+            final Path targetDirectory = projectResultHelper
                     .getGeneratedSourcesDir(result.getMavenProjectResult())
                     .resolve("builders");
-            final var orphanedFile = fileHelper
+            final Path orphanedFile = fileHelper
                     .resolveJavaFile(targetDirectory, Complex.class.getName())
                     .resolveSibling("ClassWithCollectionsBuilder.java");
             assertThat(result) //
@@ -561,10 +556,10 @@ class GenerateBuildersMojoIT {
                     .hasTarget() //
                     .has(expectedBuilders(Simple.class.getPackage(), false))
                     .has(expectedBuilder(Complex.class.getPackageName() + ".ClassWithCollectionsBuilder", false));
-            final var targetDirectory = projectResultHelper
+            final Path targetDirectory = projectResultHelper
                     .getGeneratedSourcesDir(result.getMavenProjectResult())
                     .resolve("builders");
-            final var orphanedFile = fileHelper
+            final Path orphanedFile = fileHelper
                     .resolveJavaFile(targetDirectory, Complex.class.getName())
                     .resolveSibling("ClassWithCollectionsBuilder.java");
             assertThat(result) //

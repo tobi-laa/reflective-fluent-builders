@@ -50,7 +50,7 @@ class SetterServiceImpl implements SetterService {
     @Override
     public SortedSet<Setter> gatherAllSetters(final ClassInfo classInfo) {
         Objects.requireNonNull(classInfo);
-        final var clazz = classInfo.loadClass();
+        final Class<?> clazz = classInfo.loadClass();
         final String builderPackage = builderPackageService.resolveBuilderPackage(clazz);
         final List<Method> methods = classService.collectFullClassHierarchy(classInfo) //
                 .stream() //

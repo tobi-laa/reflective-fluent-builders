@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 
+import com.google.common.collect.ImmutableSet;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
@@ -98,8 +99,8 @@ class BuilderMetadataServiceIT {
 
     @SneakyThrows
     private static Stream<Arguments> testCollectBuilderMetadata() {
-        final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
-        final var setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
+        final Class<?> packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
+        final Type setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
         return Stream.of( //
                 Arguments.of( //
                         "io.github.tobi.laa.reflective.fluent.builders.test.models.simple", //
@@ -258,7 +259,7 @@ class BuilderMetadataServiceIT {
 
     private static Path classLocation(final Class<?> clazz) {
         Path classLocation = TEST_MODELS_TARGET_DIR.resolve("classes");
-        for (final String dir : clazz.getPackageName().split("\\.")) {
+        for (final String dir : clazz.getPackage().getName().split("\\.")) {
             classLocation = classLocation.resolve(dir);
         }
         return classLocation.resolve(clazz.getSimpleName() + ".class");
@@ -275,7 +276,7 @@ class BuilderMetadataServiceIT {
     @Test
     void testFilterOutNonBuildableClassesNonConstructableClasses() {
         // Arrange
-        final var classes = Stream.of(Abstract.class, Annotation.class, Enum.class, Interface.class)
+        final Set<ClassInfo> classes = Stream.of(Abstract.class, Annotation.class, Enum.class, Interface.class)
                 .map(clazz -> classInfo.get(clazz.getName()))
                 .collect(Collectors.toSet());
         // Act
@@ -288,7 +289,7 @@ class BuilderMetadataServiceIT {
     @SneakyThrows
     void testFilterOutNonBuildableClassesInaccessibleClass() {
         // Arrange
-        final var classes = Stream.of(
+        final Set<ClassInfo> classes = Stream.of(
                         SimpleClass.class,
                         Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate"))
                 .map(clazz -> classInfo.get(clazz.getName()))
@@ -303,7 +304,7 @@ class BuilderMetadataServiceIT {
     @Test
     void testFilterOutNonBuildableClassesNestedClasses() {
         // Arrange
-        final var classes = Stream.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class)
+        final Set<ClassInfo> classes = Stream.of(TopLevelClass.NestedPublicLevelOne.class, TopLevelClass.NestedNonStatic.class)
                 .map(clazz -> classInfo.get(clazz.getName()))
                 .collect(Collectors.toSet());
         // Act
@@ -340,31 +341,31 @@ class BuilderMetadataServiceIT {
                         Collections.emptySet()), //
                 Arguments.of( //
                         Collections.emptySet(), //
-                        Set.of(classInfo.get(SimpleClass.class.getName())), //
-                        Set.of(classInfo.get(SimpleClass.class.getName()))), //
+                        ImmutableSet.of(classInfo.get(SimpleClass.class.getName())), //
+                        ImmutableSet.of(classInfo.get(SimpleClass.class.getName()))), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(cl -> cl.getPackageName().equals(Complex.class.getPackageName())), //
-                        Set.of(
+                        ImmutableSet.<Predicate<Class<?>>>of(cl -> cl.getPackage().getName().equals(Complex.class.getPackage().getName())), //
+                        ImmutableSet.of(
                                 classInfo.get(SimpleClass.class.getName()),
                                 classInfo.get(ClassWithCollections.class.getName()),
                                 classInfo.get(ClassWithGenerics.class.getName())), //
-                        Set.of(classInfo.get(SimpleClass.class.getName()))), //
+                        ImmutableSet.of(classInfo.get(SimpleClass.class.getName()))), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(SimpleClass.class::equals), //
-                        Set.of(
+                        ImmutableSet.<Predicate<Class<?>>>of(SimpleClass.class::equals), //
+                        ImmutableSet.of(
                                 classInfo.get(SimpleClass.class.getName()),
                                 classInfo.get(ClassWithCollections.class.getName()),
                                 classInfo.get(ClassWithGenerics.class.getName())), //
-                        Set.of(
+                        ImmutableSet.of(
                                 classInfo.get(ClassWithCollections.class.getName()),
                                 classInfo.get(ClassWithGenerics.class.getName()))), //
                 Arguments.of( //
-                        Set.<Predicate<Class<?>>>of(cl -> cl.getName().endsWith("Generics")), //
-                        Set.of(
+                        ImmutableSet.<Predicate<Class<?>>>of(cl -> cl.getName().endsWith("Generics")), //
+                        ImmutableSet.of(
                                 classInfo.get(SimpleClass.class.getName()),
                                 classInfo.get(ClassWithCollections.class.getName()),
                                 classInfo.get(ClassWithGenerics.class.getName())), //
-                        Set.of(
+                        ImmutableSet.of(
                                 classInfo.get(SimpleClass.class.getName()),
                                 classInfo.get(ClassWithCollections.class.getName()))));
     }
@@ -403,7 +404,7 @@ class BuilderMetadataServiceIT {
                                         .build()),
                         Collections.emptySet()),
                 Arguments.of(
-                        Set.of( //
+                        ImmutableSet.of( //
                                 BuilderMetadata.builder() //
                                         .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.simple") //
                                         .name("SimpleClassBuilder") //
@@ -448,7 +449,7 @@ class BuilderMetadataServiceIT {
     @Test
     void testFilterOutConfiguredExcludesWithDefaultConfig() {
         // Act
-        final Set<Class<?>> filteredClasses = service.filterOutConfiguredExcludes(Set.of( //
+        final Set<ClassInfo> filteredClasses = service.filterOutConfiguredExcludes(ImmutableSet.of( //
                 classInfo.get(SimpleClass.class.getName()), //
                 classInfo.get(ClassWithBuilderExisting.class.getName()), //
                 classInfo.get(ClassWithBuilderExisting.ClassWithBuilderExistingBuilder.class.getName()), //

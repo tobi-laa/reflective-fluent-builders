@@ -58,10 +58,10 @@ class AccessibilityServiceIT {
 
     @SneakyThrows
     private static Stream<Arguments> testIsClassAccessibleFrom() {
-        final var packageName = Visibility.class.getPackageName();
-        final var privateClass = Class.forName(InnerPrivateClass.class.getName() + "$PrivateInnerClass");
-        final var packagePrivateClass = Class.forName(packageName + ".PackagePrivate");
-        final var packagePrivateAbstractClass = Class.forName(packageName + ".PackagePrivateAbstract");
+        final String packageName = Visibility.class.getPackage().getName();
+        final Class<?> privateClass = Class.forName(InnerPrivateClass.class.getName() + "$PrivateInnerClass");
+        final Class<?> packagePrivateClass = Class.forName(packageName + ".PackagePrivate");
+        final Class<?> packagePrivateAbstractClass = Class.forName(packageName + ".PackagePrivateAbstract");
         return Stream.of( //
                 Arguments.of(privateClass, packageName, false), //
                 Arguments.of(packagePrivateClass, packageName, true), //
@@ -96,7 +96,7 @@ class AccessibilityServiceIT {
         // Arrange
         final Class<?> privateClass = Class.forName(InnerPrivateClass.class.getName() + "$PrivateInnerClass");
         final Type type = TypeUtils.parameterize(List.class, privateClass);
-        final String packageName = Visibility.class.getPackageName();
+        final String packageName = Visibility.class.getPackage().getName();
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(type, packageName);
         // Assert
@@ -108,7 +108,7 @@ class AccessibilityServiceIT {
     void testIsTypeAccessibleFrom() {
         // Arrange
         final Type type = TypeUtils.parameterize(List.class, String.class);
-        final var packageName = Visibility.class.getPackageName();
+        final String packageName = Visibility.class.getPackage().getName();
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(type, packageName);
         // Assert
