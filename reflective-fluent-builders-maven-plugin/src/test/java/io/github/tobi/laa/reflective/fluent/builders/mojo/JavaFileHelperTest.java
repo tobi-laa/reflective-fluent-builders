@@ -5,6 +5,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.TopLevel
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,6 +33,17 @@ class JavaFileHelperTest {
 
     private Path actualPath;
     private String actualJavaName;
+
+    @BeforeEach
+    void resetTestData() {
+        givenClass = null;
+        givenPackage = null;
+        givenJavaName = null;
+        givenPath = null;
+        method = null;
+        actualPath = null;
+        actualJavaName = null;
+    }
 
     @Test
     void givenClassNull_whenCallingClassToPath_throwsNullPointerException() {

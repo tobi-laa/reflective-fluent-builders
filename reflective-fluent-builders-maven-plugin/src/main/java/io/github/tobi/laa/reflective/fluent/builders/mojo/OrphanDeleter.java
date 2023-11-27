@@ -68,7 +68,7 @@ class OrphanDeleter extends AbstractLogEnabled {
 
         @Override
         public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
-            if (isEmptyDir(dir)) {
+            if (isEmptyDir(dir) && !dir.equals(target)) {
                 getLogger().info("Deleting orphaned builder directory " + dir);
                 Files.delete(dir);
             }
