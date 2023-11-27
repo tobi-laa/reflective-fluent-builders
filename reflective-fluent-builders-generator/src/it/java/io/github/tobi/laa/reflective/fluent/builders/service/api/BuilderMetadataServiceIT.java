@@ -92,7 +92,7 @@ class BuilderMetadataServiceIT {
                 location -> assertThat(Optional.of(location)).isEqualTo(expected.getBuiltType().getLocation()),
                 location -> assertThat(location)
                         .hasParent(TEST_MODELS_TARGET_DIR)
-                        .asString().matches(".+/reflective-fluent-builders-test-.+-SNAPSHOT.jar"));
+                        .asString().matches(".+/reflective-fluent-builders-test-.+.jar"));
     }
 
     @SneakyThrows
