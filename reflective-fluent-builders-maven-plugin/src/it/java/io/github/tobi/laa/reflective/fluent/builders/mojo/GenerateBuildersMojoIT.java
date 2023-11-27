@@ -555,7 +555,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(expectedBuilders(Simple.class.getPackage(), false))
-                    .has(expectedBuilder(Complex.class.getPackageName() + ".ClassWithCollectionsBuilder", false));
+                    .has(expectedBuilder(Complex.class.getPackage().getName() + ".ClassWithCollectionsBuilder", false));
             final Path targetDirectory = projectResultHelper
                     .getGeneratedSourcesDir(result.getMavenProjectResult())
                     .resolve("builders");
