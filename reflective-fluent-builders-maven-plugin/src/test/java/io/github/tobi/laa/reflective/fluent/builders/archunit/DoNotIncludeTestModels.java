@@ -12,6 +12,6 @@ class DoNotIncludeTestModels implements ImportOption {
 
     @Override
     public boolean includes(final Location location) {
-        return !location.contains("reflective-fluent-builders-test-models");
+        return !location.contains("reflective-fluent-builders-test");
     }
 }

@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 
@@ -65,20 +64,23 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @lombok.NonNull
     private final BuilderMetadataService builderMetadataService;
 
+    @lombok.NonNull
+    private final JavaFileHelper javaFileHelper;
+
+    @lombok.NonNull
+    private final OrphanDeleter orphanDeleter;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         logMavenParams();
         validateParams();
         final var classes = collectAndFilterClasses();
         final var nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
-        if (isGenerationNecessary(nonEmptyBuilderMetadata)) {
-            createTargetDirectory();
-            generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
-            addCompileSourceRoot();
-            refreshBuildContext(nonEmptyBuilderMetadata);
-        } else {
-            logNoGenerationNecessary();
-        }
+        createTargetDirectory();
+        generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
+        deleteOrphanedBuilders(nonEmptyBuilderMetadata);
+        refreshBuildContext(nonEmptyBuilderMetadata);
+        addCompileSourceRoot();
         closeClassLoader();
     }
 
@@ -163,35 +165,29 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return nonEmptyMetadata;
     }
 
-    private boolean isGenerationNecessary(final Set<BuilderMetadata> builderMetadata) {
+    private boolean isGenerationNecessary(final BuilderMetadata builderMetadata) {
         return !mavenBuild.isIncremental() || //
-                !allBuilderFilesExist(builderMetadata) || //
+                !builderFileExist(builderMetadata) || //
                 buildContextHasDelta(builderMetadata);
     }
 
-    private boolean allBuilderFilesExist(final Set<BuilderMetadata> builderMetadata) {
-        return builderMetadata.stream().map(this::resolveBuilderFile).allMatch(Files::exists);
+    private boolean builderFileExist(final BuilderMetadata builderMetadata) {
+        final var builderFile = resolveBuilderFile(builderMetadata);
+        return Files.exists(builderFile);
     }
 
     private Path resolveBuilderFile(final BuilderMetadata builderMetadata) {
-        Path builderFile = params.getTarget().toPath();
-        for (final String subdir : builderMetadata.getPackageName().split("\\.")) {
-            builderFile = builderFile.resolve(subdir);
-        }
-        builderFile = builderFile.resolve(builderMetadata.getName() + ".java");
-        return builderFile;
+        return params.getTarget().toPath()
+                .resolve(javaFileHelper.javaNameToPath(builderMetadata.getPackageName()))
+                .resolve(builderMetadata.getName() + ".java");
     }
 
-    private boolean buildContextHasDelta(final Set<BuilderMetadata> builderMetadata) {
-        return determineSourceOrJarLocations(builderMetadata).anyMatch(mavenBuild::hasDelta);
+    private boolean buildContextHasDelta(final BuilderMetadata builderMetadata) {
+        return determineSourceOrClassLocation(builderMetadata).map(mavenBuild::hasDelta).orElse(true);
     }
 
-    private Stream<File> determineSourceOrJarLocations(final Set<BuilderMetadata> builderMetadata) {
-        return builderMetadata.stream() //
-                .map(BuilderMetadata::getBuiltType) //
-                .map(this::determineSourceOrClassLocation) //
-                .flatMap(Optional::stream)
-                .map(Path::toFile);
+    private Optional<File> determineSourceOrClassLocation(final BuilderMetadata builderMetadata) {
+        return determineSourceOrClassLocation(builderMetadata.getBuiltType()).map(Path::toFile);
     }
 
     private Optional<Path> determineSourceOrClassLocation(final BuiltType type) {
@@ -202,15 +198,30 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return type.getSourceFile().flatMap(source -> mavenBuild.resolveSourceFile(type.getType().getPackageName(), source));
     }
 
-    private void generateAndWriteBuildersToTarget(Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
+    private void generateAndWriteBuildersToTarget(final Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
         for (final var metadata : nonEmptyBuilderMetadata) {
-            getLog().info("Generate builder for class " + metadata.getBuiltType().getType().getName());
+            generateAndWriteBuilderToTarget(metadata);
+        }
+    }
+
+    private void generateAndWriteBuilderToTarget(final BuilderMetadata metadata) throws MojoFailureException {
+        final var className = metadata.getBuiltType().getType().getName();
+        if (isGenerationNecessary(metadata)) {
+            getLog().info("Generate builder for class " + className);
             final var javaFile = javaFileGenerator.generateJavaFile(metadata);
             try {
                 javaFile.writeTo(params.getTarget());
             } catch (final IOException e) {
-                throw new MojoFailureException("Could not create file for builder for " + metadata.getBuiltType().getType().getName() + '.', e);
+                throw new MojoFailureException("Could not create file for builder for " + className + '.', e);
             }
+        } else {
+            getLog().info("Builder for class " + className + " already exists and is up to date.");
+        }
+    }
+
+    private void deleteOrphanedBuilders(final Set<BuilderMetadata> metadata) throws MojoFailureException {
+        if (params.isDeleteOrphanedBuilders()) {
+            orphanDeleter.deleteOrphanedBuilders(params.getTarget().toPath(), metadata);
         }
     }
 
@@ -221,11 +232,10 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
-        determineSourceOrJarLocations(builderMetadata).forEach(mavenBuild::refresh);
-    }
-
-    private void logNoGenerationNecessary() {
-        getLog().info("All builders are up-to-date, skipping generation.");
+        builderMetadata.stream()
+                .map(this::determineSourceOrClassLocation)
+                .flatMap(Optional::stream)
+                .forEach(mavenBuild::refresh);
     }
 
     /**
@@ -475,6 +485,28 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @SuppressWarnings("unused")
     public void setAddCompileSourceRoot(final boolean addCompileSourceRoot) {
         params.setAddCompileSourceRoot(addCompileSourceRoot);
+    }
+
+    /**
+     * <p>
+     * Specifies whether to delete orphaned builders from the {@link #setTarget(File) target directory}.
+     * </p>
+     * <p>
+     * A builder is considered orphaned if it would no longer be generated during a clean build, be it due to a class
+     * having been deleted or renamed or due to the configuration having been changed.
+     * </p>
+     * <p>
+     * As this is the behaviour that most projects will want, the default is {@code true}.
+     * </p>
+     *
+     * @param deleteOrphanedBuilders Specifies whether to delete orphaned builders from the
+     *                               {@link #setTarget(File) target directory}.
+     * @since 1.7.0
+     */
+    @Parameter(name = "deleteOrphanedBuilders", defaultValue = "true")
+    @SuppressWarnings("unused")
+    public void setDeleteOrphanedBuilders(final boolean deleteOrphanedBuilders) {
+        params.setDeleteOrphanedBuilders(deleteOrphanedBuilders);
     }
 
     /**

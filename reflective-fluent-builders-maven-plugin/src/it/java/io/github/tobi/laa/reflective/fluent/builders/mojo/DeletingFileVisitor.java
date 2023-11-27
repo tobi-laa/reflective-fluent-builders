@@ -9,7 +9,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * <p>
- * {@link java.nio.file.FileVisitor} that deletes all files and directories it traverses..
+ * {@link java.nio.file.FileVisitor} that deletes all files and directories it traverses.
  * </p>
  */
 class DeletingFileVisitor extends SimpleFileVisitor<Path> {
