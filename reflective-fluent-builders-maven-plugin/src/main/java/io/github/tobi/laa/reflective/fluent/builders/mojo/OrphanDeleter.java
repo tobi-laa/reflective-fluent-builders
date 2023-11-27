@@ -43,7 +43,7 @@ class OrphanDeleter extends AbstractLogEnabled {
     void deleteOrphanedBuilders(final Path target, final Set<BuilderMetadata> metadata) throws MojoFailureException {
         Objects.requireNonNull(target);
         Objects.requireNonNull(metadata);
-        final var expectedJavaNames = metadata.stream()
+        final Set<String> expectedJavaNames = metadata.stream()
                 .map(m -> m.getPackageName() + '.' + m.getName())
                 .collect(Collectors.toSet());
         try {
@@ -62,8 +62,8 @@ class OrphanDeleter extends AbstractLogEnabled {
 
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-            final var pathToBuilder = target.relativize(file);
-            final var builderJavaName = javaFileHelper.pathToJavaName(pathToBuilder);
+            final Path pathToBuilder = target.relativize(file);
+            final String builderJavaName = javaFileHelper.pathToJavaName(pathToBuilder);
             if (!expectedJavaNames.contains(builderJavaName)) {
                 getLogger().info("Deleting orphaned builder file " + file);
                 Files.delete(file);

@@ -33,8 +33,8 @@ class JavaFileHelper {
      */
     Path classToPath(final Class<?> clazz) {
         Objects.requireNonNull(clazz);
-        final var className = clazz.getName().replace(clazz.getPackageName() + ".", "");
-        return javaNameToPath(clazz.getPackageName()).resolve(className + ".class");
+        final String className = clazz.getName().replace(clazz.getPackage().getName() + ".", "");
+        return javaNameToPath(clazz.getPackage().getName()).resolve(className + ".class");
     }
 
     /**
@@ -92,7 +92,7 @@ class JavaFileHelper {
      */
     String pathToJavaName(final Path path) {
         Objects.requireNonNull(path);
-        final var pathNoExtension = path.resolveSibling(getNameWithoutExtension(path.getFileName().toString()));
+        final Path pathNoExtension = path.resolveSibling(getNameWithoutExtension(path.getFileName().toString()));
         return Streams.stream(pathNoExtension).map(Path::toString).collect(Collectors.joining("."));
     }
 }

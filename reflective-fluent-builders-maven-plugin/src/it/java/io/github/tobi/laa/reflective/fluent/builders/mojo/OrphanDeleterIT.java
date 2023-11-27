@@ -150,7 +150,7 @@ class OrphanDeleterIT {
 
     private void givenMetadataForSimpleClassBuilder() {
         givenMetadata(Collections.singleton(BuilderMetadata.builder()
-                .packageName(Simple.class.getPackageName())
+                .packageName(Simple.class.getPackage().getName())
                 .name("SimpleClassBuilder")
                 .builtType(BuilderMetadata.BuiltType.builder()
                         .type(classInfo.get(SimpleClass.class))
@@ -205,7 +205,7 @@ class OrphanDeleterIT {
         public Stream<Arguments> provideArguments(final ExtensionContext context) {
             return Stream.of(
                     Arguments.of(null, null),
-                    Arguments.of(null, Set.of()),
+                    Arguments.of(null, Collections.emptySet()),
                     Arguments.of(Paths.get(""), null));
         }
     }
