@@ -1,5 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.FieldInfo;
+import io.github.classgraph.FieldInfoList;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
@@ -10,10 +13,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Predicates.not;
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.GENERATED_BUILDER_MARKER_FIELD_NAME;
@@ -45,17 +47,18 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private final BuildersProperties properties;
 
     @Override
-    public BuilderMetadata collectBuilderMetadata(final Class<?> clazz) {
-        Objects.requireNonNull(clazz);
+    public BuilderMetadata collectBuilderMetadata(final ClassInfo classInfo) {
+        Objects.requireNonNull(classInfo);
+        final var clazz = classInfo.loadClass();
         final String builderPackage = builderPackageService.resolveBuilderPackage(clazz);
         return BuilderMetadata.builder() //
                 .packageName(builderPackage) //
                 .name(builderClassName(clazz, builderPackage)) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
-                        .type(clazz) //
+                        .type(classInfo) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz, builderPackage)) //
-                        .setters(gatherSettersAndAvoidNameCollisions(clazz))
+                        .setters(gatherSettersAndAvoidNameCollisions(classInfo))
                         .build()) //
                 .build();
     }
@@ -71,15 +74,15 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     private boolean builderAlreadyExists(final String builderClassName) {
-        final Optional<Class<?>> builderClass = classService.loadClass(builderClassName);
-        if (!builderClass.isPresent()) {
+        final Optional<ClassInfo> builderClass = classService.loadClass(builderClassName);
+        if (builderClass.isEmpty()) {
             return false;
         } else {
             return builderClass
-                    .map(Class::getDeclaredFields) //
-                    .map(Arrays::stream) //
-                    .orElseGet(Stream::empty) //
-                    .map(Field::getName) //
+                    .stream() //
+                    .map(ClassInfo::getDeclaredFieldInfo) //
+                    .flatMap(FieldInfoList::stream) //
+                    .map(FieldInfo::getName) //
                     .noneMatch(GENERATED_BUILDER_MARKER_FIELD_NAME::equals);
         }
     }
@@ -92,7 +95,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .anyMatch(count -> count == 0);
     }
 
-    private SortedSet<Setter> gatherSettersAndAvoidNameCollisions(final Class<?> clazz) {
+    private SortedSet<Setter> gatherSettersAndAvoidNameCollisions(final ClassInfo clazz) {
         final SortedSet<Setter> setters = setterService.gatherAllSetters(clazz);
         return avoidNameCollisions(setters);
     }
@@ -116,30 +119,34 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     }
 
     @Override
-    public Set<Class<?>> filterOutNonBuildableClasses(final Set<Class<?>> classes) {
+    public Set<ClassInfo> filterOutNonBuildableClasses(final Set<ClassInfo> classes) {
         Objects.requireNonNull(classes);
         return classes //
                 .stream() //
-                .filter(not(Class::isInterface)) //
-                .filter(not(Class::isAnonymousClass)) //
-                .filter(not(Class::isEnum)) //
-                .filter(not(Class::isPrimitive)) //
-                .filter(not(classService::isAbstract)) //
-                .filter(not(clazz -> clazz.isMemberClass() && !isStatic(clazz.getModifiers()))) //
-                .filter(clazz -> accessibilityService.isAccessibleFrom(clazz, builderPackageService.resolveBuilderPackage(clazz))) //
+                .filter(not(ClassInfo::isInterface)) //
+                .filter(not(clazz(Class::isAnonymousClass)))
+                .filter(not(ClassInfo::isEnum)) //
+                .filter(not(clazz(Class::isPrimitive)))
+                .filter(not(ClassInfo::isAbstract)) //
+                .filter(not(clazz(c -> c.isMemberClass() && !isStatic(c.getModifiers())))) //
+                .filter(clazz(c -> accessibilityService.isAccessibleFrom(c, builderPackageService.resolveBuilderPackage(c)))) //
                 .collect(Collectors.toSet());
     }
 
+    private Predicate<ClassInfo> clazz(final Predicate<Class<?>> wrapped) {
+        return classInfo -> wrapped.test(classInfo.loadClass());
+    }
+
     @Override
-    public Set<Class<?>> filterOutConfiguredExcludes(final Set<Class<?>> classes) {
+    public Set<ClassInfo> filterOutConfiguredExcludes(final Set<ClassInfo> classes) {
         Objects.requireNonNull(classes);
-        return classes.stream().filter(not(this::exclude)).collect(Collectors.toSet());
+        return classes.stream().filter(not(clazz(this::exclude))).collect(Collectors.toSet());
     }
 
     private boolean exclude(final Class<?> clazz) {
         return properties.getExcludes().stream().anyMatch(p -> p.test(clazz));
     }
-    
+
     @Override
     public Set<BuilderMetadata> filterOutEmptyBuilders(final Collection<BuilderMetadata> builderMetadata) {
         Objects.requireNonNull(builderMetadata);

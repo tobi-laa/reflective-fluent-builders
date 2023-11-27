@@ -1,9 +1,11 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import io.github.classgraph.ClassInfo;
 import lombok.Data;
 import lombok.Singular;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.SortedSet;
 
@@ -30,18 +32,34 @@ public class BuilderMetadata {
     public static class BuiltType {
 
         @lombok.NonNull
-        private final Class<?> type;
+        private final ClassInfo type;
+
+        private final Path location;
+
+        private final Path sourceFile;
 
         /**
          * <p>
          * Where the built type is located on the filesystem. Might point to a {@code class} or a {@code jar} file but
-         * might also be {@code null}.
+         * might also be absent.
          * </p>
+         *
+         * @return The location of the built type or {@link Optional#empty()} if the location is unknown.
          */
-        private final Path location;
-
         public Optional<Path> getLocation() {
             return Optional.ofNullable(location);
+        }
+
+        /**
+         * <p>
+         * The <em>name</em> of the source file of the built type such as {@code BuilderMetadata.class} or
+         * {@code INeedToTry.kt}. Might be {@code null}.
+         * </p>
+         *
+         * @return The name of the source file of the built type or {@link Optional#empty()} if the name is unknown.
+         */
+        public Optional<Path> getSourceFile() {
+            return Optional.of(type).map(ClassInfo::getSourceFile).map(Paths::get);
         }
 
         private final boolean accessibleNonArgsConstructor;

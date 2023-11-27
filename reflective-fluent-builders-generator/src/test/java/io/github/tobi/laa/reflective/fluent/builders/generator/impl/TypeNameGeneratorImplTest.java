@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.reflect.TypeUtils.wildcardType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -61,7 +62,7 @@ class TypeNameGeneratorImplTest {
                                 .methodName("setDeque") //
                                 .paramName("deque") //
                                 .paramType(TypeUtils.parameterize(Deque.class, Object.class)) //
-                                .paramTypeArg(TypeUtils.wildcardType() //
+                                .paramTypeArg(wildcardType() //
                                         .withUpperBounds(Object.class) //
                                         .build()) //
                                 .visibility(Visibility.PRIVATE) //
@@ -121,7 +122,7 @@ class TypeNameGeneratorImplTest {
                                 .paramName("map") //
                                 .paramType(TypeUtils.parameterize(SortedMap.class, String.class, Object.class)) //
                                 .keyType(String.class) //
-                                .valueType(TypeUtils.wildcardType() //
+                                .valueType(wildcardType() //
                                         .withUpperBounds(Object.class) //
                                         .build()) //
                                 .visibility(Visibility.PRIVATE) //
@@ -154,6 +155,7 @@ class TypeNameGeneratorImplTest {
         return Stream.of(
                 Arguments.of(int.class, "int"),
                 Arguments.of(String.class, "java.lang.String"),
-                Arguments.of(TypeUtils.wildcardType().build(), "java.lang.Object"));
+                Arguments.of(wildcardType().withUpperBounds(String.class).build(), "java.lang.String"),
+                Arguments.of(wildcardType().build(), "java.lang.Object"));
     }
 }

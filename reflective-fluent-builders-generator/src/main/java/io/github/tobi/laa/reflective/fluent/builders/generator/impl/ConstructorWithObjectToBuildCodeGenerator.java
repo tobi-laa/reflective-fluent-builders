@@ -28,7 +28,7 @@ class ConstructorWithObjectToBuildCodeGenerator implements MethodCodeGenerator {
     @Override
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final TypeName supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType());
+        final TypeName supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType().loadClass());
         return Optional.of(MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(supplierTypeName, OBJECT_SUPPLIER_FIELD_NAME, Modifier.FINAL)

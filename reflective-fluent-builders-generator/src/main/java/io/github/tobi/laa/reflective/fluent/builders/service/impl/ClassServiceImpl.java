@@ -2,8 +2,10 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.ClassPath;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassGraphException;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
@@ -14,7 +16,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -31,7 +32,7 @@ import static com.google.common.base.Predicates.not;
  * Standard implementation of {@link ClassService}.
  * </p>
  * <p>
- * Classes to be excluded from the {@link #collectFullClassHierarchy(Class) hierarchy collection} can be provided via
+ * Classes to be excluded from the {@link #collectFullClassHierarchy(ClassInfo) hierarchy collection} can be provided via
  * the constructor.
  * </p>
  */
@@ -47,45 +48,55 @@ class ClassServiceImpl implements ClassService {
     private final Provider<ClassLoader> classLoaderProvider;
 
     @Override
-    public List<Class<?>> collectFullClassHierarchy(final Class<?> clazz) {
+    public List<ClassInfo> collectFullClassHierarchy(final ClassInfo clazz) {
         Objects.requireNonNull(clazz);
-        final List<Class<?>> classHierarchy = new ArrayList<>();
-        for (Class<?> i = clazz; i != null; i = i.getSuperclass()) {
-            if (excludeFromHierarchyCollection(i)) {
+        final List<ClassInfo> classHierarchy = new ArrayList<>();
+        for (var c = clazz; c != null; c = c.getSuperclass()) {
+            final var currentClass = c;
+            if (excludeFromHierarchyCollection(currentClass)) {
                 break;
             }
-            classHierarchy.add(i);
-            Arrays.stream(i.getInterfaces()) //
+            classHierarchy.add(currentClass);
+            currentClass.getInterfaces().stream() //
+                    .filter(i -> isDirectInterface(i, currentClass)) //
                     .filter(not(this::excludeFromHierarchyCollection)) //
                     .forEach(classHierarchy::add);
         }
         return classHierarchy.stream().distinct().collect(ImmutableList.toImmutableList());
     }
 
-    private boolean excludeFromHierarchyCollection(final Class<?> clazz) {
-        return properties.getHierarchyCollection().getExcludes().stream().anyMatch(p -> p.test(clazz));
+    private boolean isDirectInterface(final ClassInfo anInterface, final ClassInfo clazz) {
+        return Arrays.asList(clazz.loadClass().getInterfaces()).contains(anInterface.loadClass());
+    }
+
+    private boolean excludeFromHierarchyCollection(final ClassInfo clazz) {
+        return properties.getHierarchyCollection().getExcludes().stream().anyMatch(p -> p.test(clazz.loadClass()));
     }
 
     @Override
-    public Set<Class<?>> collectClassesRecursively(final String packageName) {
+    public Set<ClassInfo> collectClassesRecursively(final String packageName) {
         Objects.requireNonNull(packageName);
-        try {
-            return ClassPath.from(classLoaderProvider.get()) //
-                    .getTopLevelClassesRecursive(packageName) //
-                    .stream() //
-                    .map(ClassPath.ClassInfo::load) //
+        try (final ScanResult scanResult = new ClassGraph()
+                .overrideClassLoaders(classLoaderProvider.get())
+                .enableAllInfo()
+                .acceptPackages(packageName)
+                .scan()) {
+            //
+            return scanResult.getAllClasses()
+                    .stream()
+                    .map(this::loadEagerly)
                     .flatMap(clazz -> Stream.concat(
                             Stream.of(clazz),
                             collectStaticInnerClassesRecursively(clazz).stream()))
-                    .collect(ImmutableSet.toImmutableSet());
-        } catch (final IOException e) {
+                    .collect(Collectors.toUnmodifiableSet());
+        } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
     }
 
-    private Set<Class<?>> collectStaticInnerClassesRecursively(final Class<?> clazz) {
-        final Set<Class<?>> innerStaticClasses = new HashSet<>();
-        for (final Class<?> innerClass : clazz.getDeclaredClasses()) {
+    private Set<ClassInfo> collectStaticInnerClassesRecursively(final ClassInfo clazz) {
+        final Set<ClassInfo> innerStaticClasses = new HashSet<>();
+        for (final ClassInfo innerClass : clazz.getInnerClasses()) {
             innerStaticClasses.add(innerClass);
             innerStaticClasses.addAll(collectStaticInnerClassesRecursively(innerClass));
         }
@@ -104,8 +115,8 @@ class ClassServiceImpl implements ClassService {
         return clazz.getProtectionDomain().getCodeSource();
     }
 
+    // Exception should never occur
     @SneakyThrows(URISyntaxException.class)
-        // should never occur
     Path getLocationAsPath(final CodeSource codeSource) {
         return Paths.get(codeSource.getLocation().toURI());
     }
@@ -124,14 +135,25 @@ class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public Optional<Class<?>> loadClass(String className) {
-        try {
-            return Optional.of(Class.forName(className, false, classLoaderProvider.get()));
-        } catch (final ClassNotFoundException e) {
-            return Optional.empty();
-        } catch (final LinkageError | SecurityException e) {
+    public Optional<ClassInfo> loadClass(final String className) {
+        Objects.requireNonNull(className);
+        try (final ScanResult scanResult = new ClassGraph()
+                .overrideClassLoaders(classLoaderProvider.get())
+                .enableAllInfo()
+                .acceptClasses(className)
+                .scan()) {
+            //
+            return scanResult.getAllClasses().stream().findFirst().map(this::loadEagerly);
+        } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to load class " + className + '.', e);
         }
+    }
+
+    private ClassInfo loadEagerly(final ClassInfo classInfo) {
+        classInfo.loadClass();
+        classInfo.getSuperclasses().loadClasses();
+        classInfo.getInterfaces().loadClasses();
+        return classInfo;
     }
 
     @Override

@@ -14,11 +14,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
-import java.lang.reflect.TypeVariable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
 
 import static com.google.common.collect.ImmutableSortedSet.copyOf;
-import static java.util.Arrays.stream;
 
 /**
  * <p>
@@ -99,9 +100,9 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
 
     private TypeSpec.Builder generateTypeSpec(final BuilderMetadata builderMetadata, final ClassName builderClassName) {
         final TypeSpec.Builder builder = TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
-        stream(builderMetadata.getBuiltType().getType().getTypeParameters())
-                .map(TypeVariableName::get)
-                .forEach(builder::addTypeVariable);
+        for (final var typeParam : builderMetadata.getBuiltType().getType().loadClass().getTypeParameters()) {
+            builder.addTypeVariable(TypeVariableName.get(typeParam));
+        }
         return builder;
     }
 

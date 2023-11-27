@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 
 import java.util.SortedSet;
@@ -19,7 +20,7 @@ public interface SetterService {
      * @param clazz The class for which to gather all setters. Must not be {@code null}.
      * @return All setters of {@code clazz}.
      */
-    SortedSet<Setter> gatherAllSetters(final Class<?> clazz);
+    SortedSet<Setter> gatherAllSetters(final ClassInfo clazz);
 
     /**
      * <p>

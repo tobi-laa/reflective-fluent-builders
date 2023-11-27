@@ -1,37 +1,30 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+
 import com.squareup.javapoet.JavaFile;
 import io.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
-import lombok.SneakyThrows;
-import org.eclipse.sisu.space.SpaceModule;
-import org.eclipse.sisu.space.URLClassSpace;
-import org.eclipse.sisu.wire.WireModule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import javax.inject.Inject;
 import java.lang.reflect.TypeVariable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@IntegrationTest
 class JavaFileGeneratorIT {
 
-    private JavaFileGenerator javaFileGenerator;
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
-    @BeforeEach
-    @SneakyThrows
-    void init() {
-        final ClassLoader classloader = getClass().getClassLoader();
-        final Injector injector = Guice.createInjector(
-                new WireModule(
-                        new SpaceModule(new URLClassSpace(classloader))));
-        javaFileGenerator = (JavaFileGenerator) injector.getInstance(Class.forName("io.github.tobi.laa.reflective.fluent.builders.generator.impl.JavaFileGeneratorImpl"));
-    }
+    @Inject
+    private JavaFileGenerator javaFileGenerator;
 
     @Test
     void testGenerateJavaFile() {
@@ -40,7 +33,7 @@ class JavaFileGeneratorIT {
                 .packageName("io.github.tobi.laa.reflective.fluent.builders.test.models.complex") //
                 .name("ClassWithGenericsBuilder") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
-                        .type(ClassWithGenerics.class) //
+                        .type(classInfo.get(ClassWithGenerics.class)) //
                         .accessibleNonArgsConstructor(true) //
                         .setter(SimpleSetter.builder() //
                                 .methodName("setAnInt") //

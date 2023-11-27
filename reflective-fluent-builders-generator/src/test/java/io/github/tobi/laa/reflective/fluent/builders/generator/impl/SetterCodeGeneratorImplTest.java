@@ -7,11 +7,13 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassN
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,6 +34,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SetterCodeGeneratorImplTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     @InjectMocks
     private SetterCodeGeneratorImpl generator;
@@ -63,7 +68,7 @@ class SetterCodeGeneratorImplTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
@@ -110,7 +115,7 @@ class SetterCodeGeneratorImplTest {
                 .packageName("ignored") //
                 .name("Ignored") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
-                        .type(SimpleClass.class) //
+                        .type(classInfo.get(SimpleClass.class)) //
                         .accessibleNonArgsConstructor(true) //
                         .build()) //
                 .build();

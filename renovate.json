@@ -9,6 +9,11 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true,
       "automergeType": "pr"
+    },
+    {
+      "description": "Group all plugins from the Maven Project and MojoHaus",
+      "matchPackageNames": ["org.apache.maven.plugins", "org.codehaus.mojo"],
+      "groupName": "standard_maven_plugins"
     }
   ],
   "ignorePaths": ["**/src/it/resources/**"]

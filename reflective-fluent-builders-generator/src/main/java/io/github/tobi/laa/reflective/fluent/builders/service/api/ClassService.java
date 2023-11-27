@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.exception.ReflectionException;
 
 import java.nio.file.Path;
@@ -32,7 +33,7 @@ public interface ClassService {
      * @param clazz The class for which the full class hierarchy should be collected. Must not be {@code null}.
      * @return The full class hierarchy of {@code clazz}. Never {@code null}.
      */
-    List<Class<?>> collectFullClassHierarchy(final Class<?> clazz);
+    List<ClassInfo> collectFullClassHierarchy(final ClassInfo clazz);
 
     /**
      * <p>
@@ -45,7 +46,7 @@ public interface ClassService {
      *                             accessing classes in
      *                             {@code packageName}.
      */
-    Set<Class<?>> collectClassesRecursively(final String packageName);
+    Set<ClassInfo> collectClassesRecursively(final String packageName);
 
     /**
      * <p>
@@ -71,7 +72,7 @@ public interface ClassService {
      * @throws ReflectionException If an error (<em>not</em> {@link ClassNotFoundException}) occurs while attempting to
      *                             load {@code className}.
      */
-    Optional<Class<?>> loadClass(final String className);
+    Optional<ClassInfo> loadClass(final String className);
 
     /**
      * <p>

@@ -2,8 +2,9 @@ package io.github.tobi.laa.reflective.fluent.builders.archunit;
 
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.GeneralCodingRules.*;
 
 /**
@@ -41,6 +42,27 @@ class CodingRules {
     private final ArchRule noJodatime = NO_CLASSES_SHOULD_USE_JODATIME;
 
     @ArchTest
-    private final ArchRule noFieldInjection = NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
+    private final ArchRule noFieldInjection =
+            noFields().that().areDeclaredInClassesThat().areNotAnnotatedWith(IntegrationTest.class)
+                    .should(BE_ANNOTATED_WITH_AN_INJECTION_ANNOTATION)
+                    .as("no classes should use field injection")
+                    .because("field injection is considered harmful; use constructor injection or setter injection instead; "
+                            + "see https://stackoverflow.com/q/39890849 for detailed explanations");
 
+    @ArchTest
+    private final ArchRule noGuavaReflection = noClasses() //
+            .should() //
+            .dependOnClassesThat() //
+            .haveFullyQualifiedName("com.google.common.reflect.ClassPath") //
+            .as("Guava's ClassPath should not be used.") //
+            .because("The Guava documentation says to use ClassGraph instead.");
+
+    @ArchTest
+    private final ArchRule noSpringOutsideDedicatedPackage =
+            noClasses()
+                    .that().resideOutsideOfPackage("io.github.tobi.laa.reflective.fluent.builders.test")
+                    .should().dependOnClassesThat().resideInAPackage("org.springframework..")
+                    .as("Spring should not be used directly in tests.")
+                    .because("The project relies on JSR-330 for dependency injection, not Spring. " +
+                            "Usage of Spring should thus be hidden by custom test support classes.");
 }

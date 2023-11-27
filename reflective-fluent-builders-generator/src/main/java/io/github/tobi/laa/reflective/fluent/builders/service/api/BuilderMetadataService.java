@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 
@@ -23,7 +24,7 @@ public interface BuilderMetadataService {
      *              {@code null}.
      * @return Metadata necessary for generating a builder for {@code clazz}.
      */
-    BuilderMetadata collectBuilderMetadata(final Class<?> clazz);
+    BuilderMetadata collectBuilderMetadata(final ClassInfo clazz);
 
     /**
      * <p>
@@ -48,7 +49,7 @@ public interface BuilderMetadataService {
      * @return {@code classes} but without all classes for which it is not possible to generate builders. Never
      * {@code null}.
      */
-    Set<Class<?>> filterOutNonBuildableClasses(final Set<Class<?>> classes);
+    Set<ClassInfo> filterOutNonBuildableClasses(final Set<ClassInfo> classes);
 
     /**
      * <p>
@@ -59,7 +60,7 @@ public interface BuilderMetadataService {
      * @return {@code classes} but without all configured excludes. Never {@code null}.
      * @see BuildersProperties#getExcludes()
      */
-    Set<Class<?>> filterOutConfiguredExcludes(final Set<Class<?>> classes);
+    Set<ClassInfo> filterOutConfiguredExcludes(final Set<ClassInfo> classes);
 
     /**
      * <p>

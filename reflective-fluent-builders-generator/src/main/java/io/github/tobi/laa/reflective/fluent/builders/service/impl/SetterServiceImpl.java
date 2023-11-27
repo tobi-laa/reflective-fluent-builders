@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.reflect.TypeToken;
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
@@ -47,11 +48,13 @@ class SetterServiceImpl implements SetterService {
     private final BuildersProperties properties;
 
     @Override
-    public SortedSet<Setter> gatherAllSetters(final Class<?> clazz) {
-        Objects.requireNonNull(clazz);
+    public SortedSet<Setter> gatherAllSetters(final ClassInfo classInfo) {
+        Objects.requireNonNull(classInfo);
+        final var clazz = classInfo.loadClass();
         final String builderPackage = builderPackageService.resolveBuilderPackage(clazz);
-        final List<Method> methods = classService.collectFullClassHierarchy(clazz) //
+        final List<Method> methods = classService.collectFullClassHierarchy(classInfo) //
                 .stream() //
+                .map(ClassInfo::loadClass) //
                 .map(Class::getDeclaredMethods) //
                 .flatMap(Arrays::stream) //
                 .filter(not(Method::isBridge)) //

@@ -8,10 +8,12 @@ import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -36,6 +38,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InnerClassCallSetterForCodeGeneratorTest {
+
+    @RegisterExtension
+    static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     @InjectMocks
     private InnerClassCallSetterForCodeGenerator generator;
@@ -76,7 +81,7 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("ignored") //
@@ -119,7 +124,7 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                 .packageName("ignored") //
                                 .name("Ignored") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
-                                        .type(SimpleClass.class) //
+                                        .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(CollectionSetter.builder() //
                                                 .methodName("ignored") //
