@@ -1,12 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 
-import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.InnerPrivateClass;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivateConstructor;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.Public;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.SettersWithDifferentVisibility;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.*;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;

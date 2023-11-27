@@ -34,7 +34,7 @@ public class ClassGraphExtension implements BeforeAllCallback {
     private ClassInfoList loadAllClasses() {
         try (final ScanResult scanResult = new ClassGraph()
                 .enableAllInfo()
-                .acceptPackages(Marker.class.getPackageName())
+                .acceptPackages(Marker.class.getPackage().getName())
                 .scan()) {
             //
             final ClassInfoList classInfos = scanResult.getAllClasses();

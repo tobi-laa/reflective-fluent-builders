@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.MethodSpec;
+import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.CallSetterFor;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodCodeGenerator;
@@ -29,7 +30,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
     @Override
     public MethodSpec generateBuildMethod(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final Class<?> clazz = builderMetadata.getBuiltType().getType();
+        final ClassInfo clazz = builderMetadata.getBuiltType().getType();
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("build")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(clazz.loadClass());

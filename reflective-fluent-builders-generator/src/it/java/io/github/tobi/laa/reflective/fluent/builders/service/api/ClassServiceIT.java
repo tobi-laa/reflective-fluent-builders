@@ -1,5 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassGraphException;
 import io.github.classgraph.ClassInfo;
@@ -25,10 +27,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedConstruction;
 import org.mockito.invocation.InvocationOnMock;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.*;
@@ -36,7 +40,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.function.Predicate.not;
+import static com.google.common.base.Predicates.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,7 +71,7 @@ class ClassServiceIT {
     @MethodSource
     void testCollectFullClassHierarchy(final ClassInfo clazz, final Set<Predicate<Class<?>>> excludes, final List<ClassInfo> expected) {
         // Arrange
-        final var hierarchyCollection = new StandardBuildersProperties.StandardHierarchyCollection();
+        final StandardBuildersProperties.StandardHierarchyCollection hierarchyCollection = new StandardBuildersProperties.StandardHierarchyCollection();
         hierarchyCollection.setExcludes(excludes);
         doReturn(hierarchyCollection).when(properties).getHierarchyCollection();
         // Act
@@ -81,7 +85,7 @@ class ClassServiceIT {
                 Arguments.of( //
                         classInfo.get(ClassWithHierarchy.class.getName()), //
                         Collections.emptySet(), //
-                        List.of( //
+                        ImmutableList.of( //
                                 classInfo.get(ClassWithHierarchy.class.getName()), //
                                 classInfo.get(AnInterface.class.getName()), //
                                 classInfo.get(FirstSuperClass.class.getName()), //
@@ -90,8 +94,8 @@ class ClassServiceIT {
                                 classInfo.get(AnotherInterface.class.getName()))), //
                 Arguments.of( //
                         classInfo.get(ClassWithHierarchy.class.getName()), //
-                        Set.<Predicate<Class<?>>>of(Object.class::equals), //
-                        List.of( //
+                        ImmutableSet.<Predicate<Class<?>>>of(Object.class::equals), //
+                        ImmutableList.of( //
                                 classInfo.get(ClassWithHierarchy.class.getName()), //
                                 classInfo.get(AnInterface.class.getName()), //
                                 classInfo.get(FirstSuperClass.class.getName()), //
@@ -100,8 +104,8 @@ class ClassServiceIT {
                                 classInfo.get(AnotherInterface.class.getName()))), //
                 Arguments.of( //
                         classInfo.get(ClassWithHierarchy.class.getName()), //
-                        Set.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
-                        List.of( //
+                        ImmutableSet.<Predicate<Class<?>>>of(Object.class::equals, AnInterface.class::equals), //
+                        ImmutableList.of( //
                                 classInfo.get(ClassWithHierarchy.class.getName()), //
                                 classInfo.get(FirstSuperClass.class.getName()), //
                                 classInfo.get(SecondSuperClassInDifferentPackage.class.getName()), //
@@ -109,8 +113,8 @@ class ClassServiceIT {
                                 classInfo.get(AnotherInterface.class.getName()))), //
                 Arguments.of( //
                         classInfo.get(ClassWithHierarchy.class.getName()), //
-                        Set.<Predicate<Class<?>>>of(FirstSuperClass.class::equals), //
-                        List.of( //
+                        ImmutableSet.<Predicate<Class<?>>>of(FirstSuperClass.class::equals), //
+                        ImmutableList.of( //
                                 classInfo.get(ClassWithHierarchy.class.getName()), //
                                 classInfo.get(AnInterface.class.getName()))));
     }
@@ -129,8 +133,8 @@ class ClassServiceIT {
     @Test
     void testCollectClassesRecursivelyReflectionException() {
         // Arrange
-        final var cause = classGraphException("Thrown in unit test");
-        try (final var classGraph = mockConstruction(
+        final ClassGraphException cause = classGraphException("Thrown in unit test");
+        try (final MockedConstruction<ClassGraph> classGraph = mockConstruction(
                 ClassGraph.class,
                 withSettings().defaultAnswer(InvocationOnMock::getMock),
                 (mock, ctx) -> doThrow(cause).when(mock).scan())) {
@@ -146,7 +150,7 @@ class ClassServiceIT {
 
     @SneakyThrows
     private ClassGraphException classGraphException(final String message) {
-        final var constructor = ClassGraphException.class.getDeclaredConstructor(String.class);
+        final Constructor<ClassGraphException> constructor = ClassGraphException.class.getDeclaredConstructor(String.class);
         constructor.setAccessible(true);
         return constructor.newInstance(message);
     }
@@ -168,7 +172,7 @@ class ClassServiceIT {
                 .map(Method::getDeclaredAnnotations)
                 .flatMap(Arrays::stream)
                 .map(Annotation::annotationType)
-                .anyMatch(Set.of(Test.class, ParameterizedTest.class)::contains);
+                .anyMatch(ImmutableSet.of(Test.class, ParameterizedTest.class)::contains);
     }
 
     @SneakyThrows
@@ -178,8 +182,8 @@ class ClassServiceIT {
         final Class<?> clazz2 = Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne");
         return Stream.of( //
                 Arguments.of(
-                        Simple.class.getPackageName(), //
-                        Set.of( //
+                        Simple.class.getPackage().getName(), //
+                        ImmutableSet.of( //
                                 classInfo.get(Child.class.getName()), //
                                 classInfo.get(Parent.class.getName()), //
                                 classInfo.get(Simple.class.getName()), //
@@ -188,8 +192,8 @@ class ClassServiceIT {
                                 classInfo.get(SimpleClassNoDefaultConstructor.class.getName()), //
                                 classInfo.get(SimpleClassNoSetPrefix.class.getName()))),
                 Arguments.of(
-                        NestedMarker.class.getPackageName(), //
-                        Set.of( //
+                        NestedMarker.class.getPackage().getName(), //
+                        ImmutableSet.of( //
                                 classInfo.get(NestedMarker.class.getName()), //
                                 classInfo.get(TopLevelClass.class.getName()), //
                                 classInfo.get(TopLevelClass.NestedPublicLevelOne.class.getName()), //
@@ -214,7 +218,7 @@ class ClassServiceIT {
     @Test
     void testDetermineClassLocationCodeSourceNull() {
         // Arrange
-        final var clazz = String.class;
+        final Class<?> clazz = String.class;
         // Act
         final Optional<Path> actual = service.determineClassLocation(clazz);
         // Assert
@@ -224,7 +228,7 @@ class ClassServiceIT {
     @Test
     void testDetermineClassLocationFromJar() {
         // Arrange
-        final var clazz = Test.class;
+        final Class<?> clazz = Test.class;
         // Act
         final Optional<Path> actual = service.determineClassLocation(clazz);
         // Assert
@@ -235,7 +239,7 @@ class ClassServiceIT {
     @Test
     void testDetermineClassLocationFromClassFile() {
         // Arrange
-        final var clazz = getClass();
+        final Class<?> clazz = getClass();
         // Act
         final Optional<Path> actual = service.determineClassLocation(clazz);
         // Assert
@@ -258,9 +262,9 @@ class ClassServiceIT {
     @SuppressWarnings({"unused", "resource"})
     void testLoadClassException() {
         // Arrange
-        final var className = "does.not.matter";
-        final var cause = classGraphException("Thrown in unit test.");
-        try (final var classGraph = mockConstruction(
+        final String className = "does.not.matter";
+        final ClassGraphException cause = classGraphException("Thrown in unit test.");
+        try (final MockedConstruction<ClassGraph> classGraph = mockConstruction(
                 ClassGraph.class,
                 withSettings().defaultAnswer(InvocationOnMock::getMock),
                 (mock, ctx) -> doThrow(cause).when(mock).scan())) {
