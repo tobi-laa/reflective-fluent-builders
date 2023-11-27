@@ -20,12 +20,17 @@ import org.junit.jupiter.api.Nested;
 import java.nio.file.Paths;
 
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
+import static io.github.tobi.laa.reflective.fluent.builders.mojo.ContainsBuildersCondition.expectedBuilder;
+import static io.github.tobi.laa.reflective.fluent.builders.mojo.ContainsBuildersCondition.expectedBuilders;
+import static io.github.tobi.laa.reflective.fluent.builders.mojo.HasDirCondition.emptyDirInTarget;
 import static io.github.tobi.laa.reflective.fluent.builders.mojo.IntegrationTestConstants.MAVEN_SHARED_LOCAL_CACHE;
 
 @MavenJupiterExtension
 class GenerateBuildersMojoIT {
 
     private final ProjectResultHelper projectResultHelper = new ProjectResultHelper();
+
+    private final FileHelper fileHelper = new FileHelper();
 
     @Nested
     @MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
@@ -37,7 +42,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Complex.class.getPackage(), false));
+                    .has(expectedBuilders(Complex.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
 
@@ -47,7 +52,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Full.class.getPackage(), false));
+                    .has(expectedBuilders(Full.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
 
@@ -57,7 +62,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+                    .has(expectedBuilders(Simple.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
 
@@ -67,7 +72,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(HasDirCondition.emptyDirInTarget(Paths.get("generated-sources", "builders")));
+                    .has(emptyDirInTarget(Paths.get("generated-sources", "builders")));
             assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
         }
 
@@ -77,7 +82,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Visibility.class.getPackage(), false));
+                    .has(expectedBuilders(Visibility.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
 
@@ -87,7 +92,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(NestedMarker.class.getPackage(), false));
+                    .has(expectedBuilders(NestedMarker.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
 
@@ -97,7 +102,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Jaxb.class.getPackage(), false));
+                    .has(expectedBuilders(Jaxb.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
     }
@@ -112,7 +117,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+                    .has(expectedBuilders(Simple.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
     }
@@ -190,7 +195,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(HasDirCondition.emptyDirInTarget(Paths.get("classes")));
+                    .has(emptyDirInTarget(Paths.get("classes")));
             assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
         }
 
@@ -201,9 +206,9 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(HasDirCondition.emptyDirInTarget(Paths.get("classes"))) //
+                    .has(emptyDirInTarget(Paths.get("classes"))) //
                     .has(HasDirCondition.nonEmptyDirInTarget(Paths.get("test-classes"))) //
-                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), true));
+                    .has(expectedBuilders(Simple.class.getPackage(), true));
             assertThat(result).out().warn().containsExactly("JAR will be empty - no content was marked for inclusion!");
         }
 
@@ -214,7 +219,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilder(SimpleClass.class.getName() + "Builder", false));
+                    .has(expectedBuilder(SimpleClass.class.getName() + "Builder", false));
             assertThat(result) //
                     .out() //
                     .info() //
@@ -228,7 +233,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilder(SimpleClass.class.getName() + "Builder", false)) //
+                    .has(expectedBuilder(SimpleClass.class.getName() + "Builder", false)) //
                     .has(HasNoBuilderCondition.noBuilder(SimpleClassNoDefaultConstructor.class.getName() + "Builder")) //
                     .has(HasNoBuilderCondition.noBuilder(SimpleClassNoSetPrefix.class.getName() + "Builder")) //
                     .has(HasNoBuilderCondition.noBuilder(Child.class.getName() + "Builder")) //
@@ -244,7 +249,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilder(builderClass, false, expectedBuildersRootDir));
+                    .has(expectedBuilder(builderClass, false, expectedBuildersRootDir));
             assertThat(result).out().warn().isEmpty();
         }
     }
@@ -414,7 +419,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+                    .has(expectedBuilders(Simple.class.getPackage(), false));
             final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
@@ -440,7 +445,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+                    .has(expectedBuilders(Simple.class.getPackage(), false));
             final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
@@ -467,7 +472,7 @@ class GenerateBuildersMojoIT {
                     .isSuccessful() //
                     .project() //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilders(Simple.class.getPackage(), false));
+                    .has(expectedBuilders(Simple.class.getPackage(), false));
             final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
             assertThat(result) //
                     .out() //
@@ -499,7 +504,7 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .withModule("module1") //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilder( //
+                    .has(expectedBuilder( //
                             "io.github.tobi.laa.reflective.fluent.builders.test.models.DogBuilder", //
                             true, //
                             expectedBuildersRootDir.resolve("module1")));
@@ -507,10 +512,38 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .withModule("module2") //
                     .hasTarget() //
-                    .has(ContainsBuildersCondition.expectedBuilder( //
+                    .has(expectedBuilder( //
                             "io.github.tobi.laa.reflective.fluent.builders.test.models.CatBuilder", //
                             true, //
                             expectedBuildersRootDir.resolve("module2")));
+            assertThat(result).out().warn().isEmpty();
+        }
+    }
+
+    @Nested
+    @MavenRepository(MAVEN_SHARED_LOCAL_CACHE)
+    class OrphanRemoval {
+
+        @MavenTest
+        void orphanedBuildersRemoved(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(expectedBuilders(Simple.class.getPackage(), false))
+                    .doesNotHave(expectedBuilders(Complex.class.getPackage(), false));
+            final var targetDirectory = projectResultHelper
+                    .getGeneratedSourcesDir(result.getMavenProjectResult())
+                    .resolve("builders");
+            final var orphanedFile = fileHelper
+                    .resolveJavaFile(targetDirectory, Complex.class.getName())
+                    .resolveSibling("ClassWithCollectionsBuilder.java");
+            assertThat(result) //
+                    .out() //
+                    .info() //
+                    .contains( //
+                            "Deleting orphaned builder file " + orphanedFile, //
+                            "Deleting orphaned builder directory " + orphanedFile.getParent());
             assertThat(result).out().warn().isEmpty();
         }
     }
