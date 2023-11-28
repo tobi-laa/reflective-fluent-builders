@@ -2,6 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -18,12 +19,14 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.Boolean.parseBoolean;
+import static java.nio.file.Files.getLastModifiedTime;
 
 /**
  * <p>
@@ -49,14 +52,43 @@ class MavenBuild extends AbstractLogEnabled {
         return buildContext.isIncremental() || parseBoolean(System.getProperty("incrementalBuildForIntegrationTests"));
     }
 
+    @SneakyThrows
     boolean hasDelta(final File file) {
         Objects.requireNonNull(file);
-        return buildContext.hasDelta(file) && !parseBoolean(System.getProperty("fixedNoDeltaForIntegrationTests"));
+        if (parseBoolean(System.getProperty("fixedNoDeltaForIntegrationTests"))) {
+            return false;
+        } else if (isProjectFile(file)) {
+            return buildContext.hasDelta(file);
+        } else if (file.exists()) {
+            final String key = lastModifiedKey(file);
+            final Instant lastModifiedFromFile = getLastModifiedTime(file.toPath()).toInstant();
+            final Instant lastModifiedFromBuildContext = Optional.ofNullable(buildContext.getValue(key))
+                    .map(Instant.class::cast)
+                    .orElse(Instant.MIN);
+            return lastModifiedFromFile.isAfter(lastModifiedFromBuildContext);
+        } else {
+            return false;
+        }
     }
 
+    @SneakyThrows
     void refresh(final File file) {
         Objects.requireNonNull(file);
-        buildContext.refresh(file);
+        if (isProjectFile(file)) {
+            buildContext.refresh(file);
+        } else if (file.exists()) {
+            final String key = lastModifiedKey(file);
+            final Instant lastModified = getLastModifiedTime(file.toPath()).toInstant();
+            buildContext.setValue(key, lastModified);
+        }
+    }
+
+    private String lastModifiedKey(final File file) {
+        return getClass().getName() + ":::timestamp:::" + file.getPath();
+    }
+
+    private boolean isProjectFile(final File file) {
+        return file.toPath().startsWith(mavenProject.getBasedir().toPath());
     }
 
     boolean isTestPhase() {
@@ -110,10 +142,5 @@ class MavenBuild extends AbstractLogEnabled {
 
     private String javaNameToPath(final String name) {
         return name.replace(".", FileSystems.getDefault().getSeparator());
-    }
-
-    boolean containsClassFile(final Path classLocation) {
-        final Path target = Paths.get(mavenProject.getBuild().getOutputDirectory());
-        return classLocation.startsWith(target);
     }
 }

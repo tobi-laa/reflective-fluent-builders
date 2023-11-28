@@ -13,6 +13,7 @@ import org.codehaus.plexus.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,6 +24,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -50,6 +55,9 @@ class MavenBuildTest {
     @Mock
     private Logger logger;
 
+    @TempDir
+    private Path tempDir;
+
     @BeforeEach
     void injectLogger() {
         mavenBuild.enableLogging(logger);
@@ -76,13 +84,71 @@ class MavenBuildTest {
     }
 
     @Test
-    void testHasDelta() {
+    void testHasDeltaProjectFile() {
         // Arrange
-        final File file = new File("");
+        final Path basedir = Paths.get("base");
+        final Path file = basedir.resolve("sth");
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
         // Act
-        mavenBuild.hasDelta(file);
+        mavenBuild.hasDelta(file.toFile());
         // Assert
-        verify(buildContext).hasDelta(file);
+        verify(buildContext).hasDelta(file.toFile());
+    }
+
+    @Test
+    void testHasDeltaExternalFileNotExists() {
+        // Arrange
+        final Path basedir = Paths.get("base");
+        final Path file = Paths.get("somewhere", "over", "the", "rainbow");
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
+        // Act
+        final boolean hasDelta = mavenBuild.hasDelta(file.toFile());
+        // Assert
+        assertThat(hasDelta).isFalse();
+    }
+
+    @Test
+    @SneakyThrows
+    void testHasDeltaExternalFileUnknown() {
+        // Arrange
+        final Path basedir = Paths.get("base");
+        final Path file = tempDir.resolve("dummy");
+        Files.createFile(file);
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
+        // Act
+        final boolean hasDelta = mavenBuild.hasDelta(file.toFile());
+        // Assert
+        assertThat(hasDelta).isTrue();
+    }
+
+    @Test
+    @SneakyThrows
+    void testHasDeltaExternalFileNewer() {
+        // Arrange
+        final Path basedir = Paths.get("base");
+        final Path file = tempDir.resolve("dummy");
+        Files.createFile(file);
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
+        doReturn(Instant.MIN).when(buildContext).getValue(anyString());
+        // Act
+        final boolean hasDelta = mavenBuild.hasDelta(file.toFile());
+        // Assert
+        assertThat(hasDelta).isTrue();
+    }
+
+    @Test
+    @SneakyThrows
+    void testHasDeltaExternalFileNotNewer() {
+        // Arrange
+        final Path basedir = Paths.get("base");
+        final Path file = tempDir.resolve("dummy");
+        Files.createFile(file);
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
+        doReturn(Instant.MAX).when(buildContext).getValue(anyString());
+        // Act
+        final boolean hasDelta = mavenBuild.hasDelta(file.toFile());
+        // Assert
+        assertThat(hasDelta).isFalse();
     }
 
     @Test
@@ -95,13 +161,41 @@ class MavenBuildTest {
     }
 
     @Test
-    void testRefresh() {
+    void testRefreshProjectFile() {
         // Arrange
-        final File file = new File("");
+        final Path basedir = Paths.get("base");
+        final Path file = basedir.resolve("sth");
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
         // Act
-        mavenBuild.refresh(file);
+        mavenBuild.refresh(file.toFile());
         // Assert
-        verify(buildContext).refresh(file);
+        verify(buildContext).refresh(file.toFile());
+    }
+
+    @Test
+    void testRefreshExternalFileNotExists() {
+        // Arrange
+        final Path basedir = Paths.get("base");
+        final Path file = Paths.get("somewhere", "over", "the", "rainbow");
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
+        // Act
+        mavenBuild.refresh(file.toFile());
+        // Assert
+        verifyNoInteractions(buildContext);
+    }
+
+    @Test
+    @SneakyThrows
+    void testRefreshExternalFileExists() {
+        // Arrange
+        final Path basedir = Paths.get("base");
+        final Path file = tempDir.resolve("dummy");
+        Files.createFile(file);
+        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
+        // Act
+        mavenBuild.refresh(file.toFile());
+        // Assert
+        verify(buildContext).setValue(contains(file.toString()), any(Instant.class));
     }
 
     @ParameterizedTest
