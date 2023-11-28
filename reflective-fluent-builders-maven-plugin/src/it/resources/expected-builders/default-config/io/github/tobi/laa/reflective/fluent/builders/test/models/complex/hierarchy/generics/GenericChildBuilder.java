@@ -22,7 +22,7 @@ public class GenericChildBuilder<S extends Number, T> {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<GenericChild> objectSupplier;
+  private final Supplier<GenericChild> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -73,7 +73,7 @@ public class GenericChildBuilder<S extends Number, T> {
   }
 
   public GenericChild build() {
-    final GenericChild objectToBuild = objectSupplier.get();
+    final GenericChild objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.generic) {
       objectToBuild.setGeneric(this.fieldValue.generic);
     }

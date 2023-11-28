@@ -16,7 +16,7 @@ public class TopLevelClassBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<TopLevelClass> objectSupplier;
+  private final Supplier<TopLevelClass> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -61,7 +61,7 @@ public class TopLevelClassBuilder {
   }
 
   public TopLevelClass build() {
-    final TopLevelClass objectToBuild = objectSupplier.get();
+    final TopLevelClass objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.nestedNonStatic) {
       objectToBuild.setNestedNonStatic(this.fieldValue.nestedNonStatic);
     }

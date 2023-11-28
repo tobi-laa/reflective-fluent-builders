@@ -16,7 +16,7 @@ public class SettersWithDifferentVisibilityBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<SettersWithDifferentVisibility> objectSupplier;
+  private final Supplier<SettersWithDifferentVisibility> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -56,7 +56,7 @@ public class SettersWithDifferentVisibilityBuilder {
   }
 
   public SettersWithDifferentVisibility build() {
-    final SettersWithDifferentVisibility objectToBuild = objectSupplier.get();
+    final SettersWithDifferentVisibility objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.packagePrivateSetter) {
       objectToBuild.setPackagePrivateSetter(this.fieldValue.packagePrivateSetter);
     }

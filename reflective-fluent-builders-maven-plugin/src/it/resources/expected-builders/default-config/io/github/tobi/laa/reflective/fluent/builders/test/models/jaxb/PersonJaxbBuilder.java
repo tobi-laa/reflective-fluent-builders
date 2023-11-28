@@ -20,7 +20,7 @@ public class PersonJaxbBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<PersonJaxb> objectSupplier;
+  private final Supplier<PersonJaxb> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -87,7 +87,7 @@ public class PersonJaxbBuilder {
   }
 
   public PersonJaxb build() {
-    final PersonJaxb objectToBuild = objectSupplier.get();
+    final PersonJaxb objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.age) {
       objectToBuild.setAge(this.fieldValue.age);
     }

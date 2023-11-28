@@ -19,7 +19,7 @@ public class GetAndAddBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<GetAndAdd> objectSupplier;
+  private final Supplier<GetAndAdd> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -88,7 +88,7 @@ public class GetAndAddBuilder {
   }
 
   public GetAndAdd build() {
-    final GetAndAdd objectToBuild = objectSupplier.get();
+    final GetAndAdd objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.listGetterAndSetter) {
       objectToBuild.setListGetterAndSetter(this.fieldValue.listGetterAndSetter);
     }

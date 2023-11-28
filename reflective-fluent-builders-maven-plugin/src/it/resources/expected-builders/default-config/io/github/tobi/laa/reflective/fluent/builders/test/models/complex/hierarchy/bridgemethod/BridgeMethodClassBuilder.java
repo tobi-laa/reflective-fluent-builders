@@ -17,7 +17,7 @@ public class BridgeMethodClassBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<BridgeMethodClass> objectSupplier;
+  private final Supplier<BridgeMethodClass> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -42,7 +42,7 @@ public class BridgeMethodClassBuilder {
   }
 
   public BridgeMethodClass build() {
-    final BridgeMethodClass objectToBuild = objectSupplier.get();
+    final BridgeMethodClass objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.something) {
       objectToBuild.setSomething(this.fieldValue.something);
     }

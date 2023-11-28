@@ -16,7 +16,7 @@ public class SecondSuperClassInDifferentPackageBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<SecondSuperClassInDifferentPackage> objectSupplier;
+  private final Supplier<SecondSuperClassInDifferentPackage> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -55,7 +55,7 @@ public class SecondSuperClassInDifferentPackageBuilder {
   }
 
   public SecondSuperClassInDifferentPackage build() {
-    final SecondSuperClassInDifferentPackage objectToBuild = objectSupplier.get();
+    final SecondSuperClassInDifferentPackage objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.eight) {
       objectToBuild.setEight(this.fieldValue.eight);
     }

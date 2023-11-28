@@ -19,7 +19,7 @@ public class PetJaxbBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<PetJaxb> objectSupplier;
+  private final Supplier<PetJaxb> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -66,7 +66,7 @@ public class PetJaxbBuilder {
   }
 
   public PetJaxb build() {
-    final PetJaxb objectToBuild = objectSupplier.get();
+    final PetJaxb objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.fullName) {
       objectToBuild.setFullName(this.fieldValue.fullName);
     }

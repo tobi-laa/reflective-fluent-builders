@@ -16,7 +16,7 @@ public class PackagePrivateConstructorBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<PackagePrivateConstructor> objectSupplier;
+  private final Supplier<PackagePrivateConstructor> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -49,7 +49,7 @@ public class PackagePrivateConstructorBuilder {
   }
 
   public PackagePrivateConstructor build() {
-    final PackagePrivateConstructor objectToBuild = objectSupplier.get();
+    final PackagePrivateConstructor objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.intField) {
       objectToBuild.setIntField(this.fieldValue.intField);
     }

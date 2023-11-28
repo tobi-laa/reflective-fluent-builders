@@ -74,7 +74,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .build(), //
                         String.format(
                                 "public %1$s build() {\n" +
-                                        "  final %1$s objectToBuild = objectSupplier.get();\n" +
+                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.anInt) {\n" +
                                         "    objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
                                         "  }\n" +
@@ -112,7 +112,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .build(), //
                         String.format("public %1$s build(\n" +
                                         "    ) {\n" +
-                                        "  final %1$s objectToBuild = objectSupplier.get();\n" +
+                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.list) {\n" +
                                         "    objectToBuild.setList(this.fieldValue.list);\n" +
                                         "  }\n" +
@@ -140,7 +140,7 @@ class BuildMethodCodeGeneratorImplTest {
                                         .build()) //
                                 .build(), //
                         String.format("public %1$s build() {\n" +
-                                        "  final %1$s objectToBuild = objectSupplier.get();\n" +
+                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.siblings && this.fieldValue.siblings != null) {\n" +
                                         "    this.fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);\n" +
                                         "  }\n" +

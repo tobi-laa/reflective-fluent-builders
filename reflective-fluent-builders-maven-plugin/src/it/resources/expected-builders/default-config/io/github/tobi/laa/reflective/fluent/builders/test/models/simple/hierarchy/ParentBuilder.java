@@ -16,7 +16,7 @@ public class ParentBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<Parent> objectSupplier;
+  private final Supplier<Parent> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -41,7 +41,7 @@ public class ParentBuilder {
   }
 
   public Parent build() {
-    final Parent objectToBuild = objectSupplier.get();
+    final Parent objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.parentField) {
       objectToBuild.setParentField(this.fieldValue.parentField);
     }

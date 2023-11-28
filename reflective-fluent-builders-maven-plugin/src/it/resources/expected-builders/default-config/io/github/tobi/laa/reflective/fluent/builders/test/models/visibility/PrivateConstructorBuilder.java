@@ -16,7 +16,7 @@ public class PrivateConstructorBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<PrivateConstructor> objectSupplier;
+  private final Supplier<PrivateConstructor> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -38,7 +38,7 @@ public class PrivateConstructorBuilder {
   }
 
   public PrivateConstructor build() {
-    final PrivateConstructor objectToBuild = objectSupplier.get();
+    final PrivateConstructor objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.intField) {
       objectToBuild.setIntField(this.fieldValue.intField);
     }

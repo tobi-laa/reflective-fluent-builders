@@ -17,7 +17,7 @@ public class CatBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<Cat> objectSupplier;
+  private final Supplier<Cat> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -42,7 +42,7 @@ public class CatBuilder {
   }
 
   public Cat build() {
-    final Cat objectToBuild = objectSupplier.get();
+    final Cat objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.fur) {
       objectToBuild.setFur(this.fieldValue.fur);
     }

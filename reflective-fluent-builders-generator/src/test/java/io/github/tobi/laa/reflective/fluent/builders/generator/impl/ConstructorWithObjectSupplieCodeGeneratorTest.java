@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ConstructorWithObjectToBuildCodeGeneratorTest {
+class ConstructorWithObjectSupplieCodeGeneratorTest {
 
     @RegisterExtension
     static ClassGraphExtension classInfo = new ClassGraphExtension();
 
-    private final ConstructorWithObjectToBuildCodeGenerator generator = new ConstructorWithObjectToBuildCodeGenerator();
+    private final ConstructorWithObjectSupplieCodeGenerator generator = new ConstructorWithObjectSupplieCodeGenerator();
 
     @Test
     void testGenerateNull() {

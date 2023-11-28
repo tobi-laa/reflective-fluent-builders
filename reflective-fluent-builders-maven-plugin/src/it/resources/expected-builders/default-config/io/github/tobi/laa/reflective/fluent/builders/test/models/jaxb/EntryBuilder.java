@@ -17,7 +17,7 @@ public class EntryBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<PersonJaxb.Relations.Entry> objectSupplier;
+  private final Supplier<PersonJaxb.Relations.Entry> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -48,7 +48,7 @@ public class EntryBuilder {
   }
 
   public PersonJaxb.Relations.Entry build() {
-    final PersonJaxb.Relations.Entry objectToBuild = objectSupplier.get();
+    final PersonJaxb.Relations.Entry objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.key) {
       objectToBuild.setKey(this.fieldValue.key);
     }

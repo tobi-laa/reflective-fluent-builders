@@ -16,7 +16,7 @@ public class NestedProtectedLevelOneBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<TopLevelClass.NestedProtectedLevelOne> objectSupplier;
+  private final Supplier<TopLevelClass.NestedProtectedLevelOne> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -43,7 +43,7 @@ public class NestedProtectedLevelOneBuilder {
   }
 
   public TopLevelClass.NestedProtectedLevelOne build() {
-    final TopLevelClass.NestedProtectedLevelOne objectToBuild = objectSupplier.get();
+    final TopLevelClass.NestedProtectedLevelOne objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.field) {
       objectToBuild.setField(this.fieldValue.field);
     }

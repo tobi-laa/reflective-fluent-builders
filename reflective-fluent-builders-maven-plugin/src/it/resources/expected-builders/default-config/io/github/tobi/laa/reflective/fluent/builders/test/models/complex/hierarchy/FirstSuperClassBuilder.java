@@ -16,7 +16,7 @@ public class FirstSuperClassBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<FirstSuperClass> objectSupplier;
+  private final Supplier<FirstSuperClass> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -59,7 +59,7 @@ public class FirstSuperClassBuilder {
   }
 
   public FirstSuperClass build() {
-    final FirstSuperClass objectToBuild = objectSupplier.get();
+    final FirstSuperClass objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.eight) {
       objectToBuild.setEight(this.fieldValue.eight);
     }

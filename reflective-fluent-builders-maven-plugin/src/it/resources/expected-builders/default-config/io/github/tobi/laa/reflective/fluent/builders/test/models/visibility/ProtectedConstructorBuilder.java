@@ -16,7 +16,7 @@ public class ProtectedConstructorBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<ProtectedConstructor> objectSupplier;
+  private final Supplier<ProtectedConstructor> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -42,7 +42,7 @@ public class ProtectedConstructorBuilder {
   }
 
   public ProtectedConstructor build() {
-    final ProtectedConstructor objectToBuild = objectSupplier.get();
+    final ProtectedConstructor objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.intField) {
       objectToBuild.setIntField(this.fieldValue.intField);
     }
