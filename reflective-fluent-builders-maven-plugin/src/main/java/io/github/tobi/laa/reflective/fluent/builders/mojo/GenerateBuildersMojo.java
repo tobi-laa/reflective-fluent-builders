@@ -34,8 +34,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.function.Predicate.not;
-
 /**
  * <p>
  * A maven plugin for generating fluent builders for existing classes with the help of reflection. This can be useful in
@@ -183,7 +181,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private boolean buildContextHasDelta(final BuilderMetadata builderMetadata) {
-        return determineSourceOrClassLocation(builderMetadata).map(mavenBuild::hasDelta).orElse(true);
+        return determineSourceOrClassLocation(builderMetadata).map(mavenBuild::hasDelta).orElse(false);
     }
 
     private Optional<File> determineSourceOrClassLocation(final BuilderMetadata builderMetadata) {
@@ -191,7 +189,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private Optional<Path> determineSourceOrClassLocation(final BuiltType type) {
-        return determineSourceLocation(type).or(type::getLocation).filter(not(mavenBuild::containsClassFile));
+        return determineSourceLocation(type).or(type::getLocation);
     }
 
     private Optional<Path> determineSourceLocation(final BuiltType type) {

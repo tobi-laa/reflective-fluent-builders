@@ -251,8 +251,56 @@ class BuilderMetadataServiceIT {
                                         .location(classLocation(SimpleClassNoDefaultConstructor.class)) //
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
-                                .build()) //
-        );
+                                .build()), //
+                Arguments.of( //
+                        BuilderConstants.PACKAGE_PLACEHOLDER, //
+                        "Builder", //
+                        "set", //
+                        classInfo.get(NameCollisions.class), //
+                        BuilderMetadata.builder() //
+                                .packageName(NameCollisions.class.getPackageName()) //
+                                .name("NameCollisionsBuilder") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(classInfo.get(NameCollisions.class.getName())) //
+                                        .location(classLocation(NameCollisions.class)) //
+                                        .accessibleNonArgsConstructor(true) //
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("setField") //
+                                                .paramName("field") //
+                                                .paramType(int.class) //
+                                                .visibility(PUBLIC) //
+                                                .declaringClass(NameCollisions.class) //
+                                                .build()) //
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("setField") //
+                                                .paramName("field0") //
+                                                .paramType(String.class) //
+                                                .visibility(PUBLIC) //
+                                                .declaringClass(NameCollisions.class) //
+                                                .build()) //
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("setAnotherField") //
+                                                .paramName("anotherField") //
+                                                .paramType(boolean.class) //
+                                                .visibility(PUBLIC) //
+                                                .declaringClass(NameCollisions.class) //
+                                                .build()) //
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("setAnotherField") //
+                                                .paramName("anotherField0") //
+                                                .paramType(int.class) //
+                                                .visibility(PUBLIC) //
+                                                .declaringClass(NameCollisions.class) //
+                                                .build()) //
+                                        .setter(SimpleSetter.builder() //
+                                                .methodName("setAnotherField") //
+                                                .paramName("anotherField1") //
+                                                .paramType(String.class) //
+                                                .visibility(PUBLIC) //
+                                                .declaringClass(NameCollisions.class) //
+                                                .build()) //
+                                        .build()) //
+                                .build()));
     }
 
     private static Path classLocation(final Class<?> clazz) {
