@@ -79,11 +79,11 @@ class OrphanDeleter extends AbstractLogEnabled {
             }
             return super.postVisitDirectory(dir, exc);
         }
-    }
 
-    private boolean isEmptyDir(final Path dir) throws IOException {
-        try (final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir)) {
-            return !directoryStream.iterator().hasNext();
+        private boolean isEmptyDir(final Path dir) throws IOException {
+            try (final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir)) {
+                return !directoryStream.iterator().hasNext();
+            }
         }
     }
 }
