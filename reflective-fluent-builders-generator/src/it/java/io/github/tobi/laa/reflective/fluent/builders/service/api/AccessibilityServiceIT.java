@@ -206,6 +206,10 @@ class AccessibilityServiceIT {
     }
 
     private static Stream<Arguments> testIsConstructorAccessibleFrom() {
-        return testIsClassAccessibleFrom();
+        return Stream.concat(
+                testIsClassAccessibleFrom(),
+                Stream.of( //
+                        Arguments.of(ProtectedConstructor.class, "a.weird.package", false), //
+                        Arguments.of(ProtectedConstructor.class, ProtectedConstructor.class.getPackageName(), true)));
     }
 }
