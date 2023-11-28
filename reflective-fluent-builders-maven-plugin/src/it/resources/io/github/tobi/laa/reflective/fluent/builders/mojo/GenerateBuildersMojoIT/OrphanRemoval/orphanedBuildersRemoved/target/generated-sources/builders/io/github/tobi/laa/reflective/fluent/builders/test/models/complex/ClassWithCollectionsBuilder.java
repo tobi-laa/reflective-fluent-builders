@@ -32,7 +32,7 @@ public class ClassWithCollectionsBuilder<T, U> {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<ClassWithCollections> objectSupplier;
+  private final Supplier<ClassWithCollections> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -166,7 +166,7 @@ public class ClassWithCollectionsBuilder<T, U> {
   }
 
   public ClassWithCollections build() {
-    final ClassWithCollections objectToBuild = objectSupplier.get();
+    final ClassWithCollections objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.deque) {
       objectToBuild.setDeque(this.fieldValue.deque);
     }
