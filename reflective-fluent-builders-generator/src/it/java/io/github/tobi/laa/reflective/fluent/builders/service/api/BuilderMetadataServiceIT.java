@@ -260,7 +260,7 @@ class BuilderMetadataServiceIT {
                         "set", //
                         classInfo.get(NameCollisions.class), //
                         BuilderMetadata.builder() //
-                                .packageName(NameCollisions.class.getPackageName()) //
+                                .packageName(NameCollisions.class.getPackage().getName()) //
                                 .name("NameCollisionsBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(NameCollisions.class.getName())) //

@@ -34,8 +34,8 @@ class ClassServiceImplTest {
     @SneakyThrows
     void testGetLocationAsPathURISyntaxException() {
         // Arrange
-        final var codeSource = Mockito.mock(CodeSource.class);
-        final var url = Mockito.mock(URL.class);
+        final CodeSource codeSource = Mockito.mock(CodeSource.class);
+        final URL url = Mockito.mock(URL.class);
         when(codeSource.getLocation()).thenReturn(url);
         when(url.toURI()).thenThrow(new URISyntaxException("mock", "Thrown in unit test."));
         // Act
