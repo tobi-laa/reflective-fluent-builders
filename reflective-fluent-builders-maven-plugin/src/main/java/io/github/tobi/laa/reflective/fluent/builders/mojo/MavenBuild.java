@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.nio.file.Files.getLastModifiedTime;
@@ -131,8 +132,15 @@ class MavenBuild extends AbstractLogEnabled {
     }
 
     Optional<Path> resolveSourceFile(final String packageName, final Path sourceFile) {
-        return mavenProject.getCompileSourceRoots()
-                .stream()
+        final Stream<String> sourceRoots;
+        if (isTestPhase()) {
+            sourceRoots = Stream.concat(
+                    mavenProject.getCompileSourceRoots().stream(),
+                    mavenProject.getTestCompileSourceRoots().stream());
+        } else {
+            sourceRoots = mavenProject.getCompileSourceRoots().stream();
+        }
+        return sourceRoots
                 .map(Paths::get)
                 .map(path -> path.resolve(javaNameToPath(packageName)))
                 .map(path -> path.resolve(sourceFile))
