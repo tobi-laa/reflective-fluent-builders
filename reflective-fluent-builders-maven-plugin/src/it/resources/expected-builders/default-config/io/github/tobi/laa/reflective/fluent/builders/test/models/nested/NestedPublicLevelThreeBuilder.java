@@ -16,7 +16,7 @@ public class NestedPublicLevelThreeBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree> objectSupplier;
+  private final Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -43,7 +43,7 @@ public class NestedPublicLevelThreeBuilder {
   }
 
   public TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree build() {
-    final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree objectToBuild = objectSupplier.get();
+    final TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.field) {
       objectToBuild.setField(this.fieldValue.field);
     }

@@ -16,7 +16,7 @@ public class ClassWithBuilderExistingBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<ClassWithBuilderExisting> objectSupplier;
+  private final Supplier<ClassWithBuilderExisting> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -39,7 +39,7 @@ public class ClassWithBuilderExistingBuilder {
   }
 
   public ClassWithBuilderExisting build() {
-    final ClassWithBuilderExisting objectToBuild = objectSupplier.get();
+    final ClassWithBuilderExisting objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.aField) {
       objectToBuild.setAField(this.fieldValue.aField);
     }

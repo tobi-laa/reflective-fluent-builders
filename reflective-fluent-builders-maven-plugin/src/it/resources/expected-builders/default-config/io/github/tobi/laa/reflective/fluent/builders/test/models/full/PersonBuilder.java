@@ -24,7 +24,7 @@ public class PersonBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<Person> objectSupplier;
+  private final Supplier<Person> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -101,7 +101,7 @@ public class PersonBuilder {
   }
 
   public Person build() {
-    final Person objectToBuild = objectSupplier.get();
+    final Person objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.age) {
       objectToBuild.setAge(this.fieldValue.age);
     }

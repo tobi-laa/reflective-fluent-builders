@@ -19,7 +19,7 @@ public class ClassWithGenericsBuilder<T> {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<ClassWithGenerics> objectSupplier;
+  private final Supplier<ClassWithGenerics> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -76,7 +76,7 @@ public class ClassWithGenericsBuilder<T> {
   }
 
   public ClassWithGenerics build() {
-    final ClassWithGenerics objectToBuild = objectSupplier.get();
+    final ClassWithGenerics objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.anInt) {
       objectToBuild.setAnInt(this.fieldValue.anInt);
     }

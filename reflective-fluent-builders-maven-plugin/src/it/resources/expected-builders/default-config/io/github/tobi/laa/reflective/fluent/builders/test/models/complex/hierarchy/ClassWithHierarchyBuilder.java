@@ -16,7 +16,7 @@ public class ClassWithHierarchyBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<ClassWithHierarchy> objectSupplier;
+  private final Supplier<ClassWithHierarchy> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -72,7 +72,7 @@ public class ClassWithHierarchyBuilder {
   }
 
   public ClassWithHierarchy build() {
-    final ClassWithHierarchy objectToBuild = objectSupplier.get();
+    final ClassWithHierarchy objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.eight) {
       objectToBuild.setEight(this.fieldValue.eight);
     }

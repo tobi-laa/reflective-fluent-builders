@@ -23,7 +23,7 @@ import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderCon
  */
 @Named
 @Singleton
-class ConstructorWithObjectToBuildCodeGenerator implements MethodCodeGenerator {
+class ConstructorWithObjectSupplieCodeGenerator implements MethodCodeGenerator {
 
     @Override
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {

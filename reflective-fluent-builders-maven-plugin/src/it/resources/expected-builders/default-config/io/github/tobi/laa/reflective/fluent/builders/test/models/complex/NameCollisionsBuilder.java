@@ -17,7 +17,7 @@ public class NameCollisionsBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<NameCollisions> objectSupplier;
+  private final Supplier<NameCollisions> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -66,7 +66,7 @@ public class NameCollisionsBuilder {
   }
 
   public NameCollisions build() {
-    final NameCollisions objectToBuild = objectSupplier.get();
+    final NameCollisions objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.anotherField) {
       objectToBuild.setAnotherField(this.fieldValue.anotherField);
     }

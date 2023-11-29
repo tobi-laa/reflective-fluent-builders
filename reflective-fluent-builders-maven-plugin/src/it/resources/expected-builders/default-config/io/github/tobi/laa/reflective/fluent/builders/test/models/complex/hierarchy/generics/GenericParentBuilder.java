@@ -20,7 +20,7 @@ public class GenericParentBuilder<R, S, T> {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<GenericParent> objectSupplier;
+  private final Supplier<GenericParent> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -71,7 +71,7 @@ public class GenericParentBuilder<R, S, T> {
   }
 
   public GenericParent build() {
-    final GenericParent objectToBuild = objectSupplier.get();
+    final GenericParent objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.generic) {
       objectToBuild.setGeneric(this.fieldValue.generic);
     }

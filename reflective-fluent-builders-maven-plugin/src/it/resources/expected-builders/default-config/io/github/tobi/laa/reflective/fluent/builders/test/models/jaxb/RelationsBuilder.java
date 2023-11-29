@@ -18,7 +18,7 @@ public class RelationsBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<PersonJaxb.Relations> objectSupplier;
+  private final Supplier<PersonJaxb.Relations> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -47,7 +47,7 @@ public class RelationsBuilder {
   }
 
   public PersonJaxb.Relations build() {
-    final PersonJaxb.Relations objectToBuild = objectSupplier.get();
+    final PersonJaxb.Relations objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.entry && this.fieldValue.entry != null) {
       this.fieldValue.entry.forEach(objectToBuild.getEntry()::add);
     }

@@ -16,7 +16,7 @@ public class BuiltClassAsMemberBuilder0 {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<BuiltClassAsMemberBuilder.BuiltClassAsMember> objectSupplier;
+  private final Supplier<BuiltClassAsMemberBuilder.BuiltClassAsMember> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -43,7 +43,7 @@ public class BuiltClassAsMemberBuilder0 {
   }
 
   public BuiltClassAsMemberBuilder.BuiltClassAsMember build() {
-    final BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild = objectSupplier.get();
+    final BuiltClassAsMemberBuilder.BuiltClassAsMember objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.aField) {
       objectToBuild.setAField(this.fieldValue.aField);
     }

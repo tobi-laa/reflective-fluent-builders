@@ -17,7 +17,7 @@ public class DogBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<Dog> objectSupplier;
+  private final Supplier<Dog> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -42,7 +42,7 @@ public class DogBuilder {
   }
 
   public Dog build() {
-    final Dog objectToBuild = objectSupplier.get();
+    final Dog objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.name) {
       objectToBuild.setName(this.fieldValue.name);
     }

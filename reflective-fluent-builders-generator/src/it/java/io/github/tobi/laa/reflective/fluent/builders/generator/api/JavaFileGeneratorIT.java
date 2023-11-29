@@ -85,7 +85,7 @@ class JavaFileGeneratorIT {
                         "  @SuppressWarnings(\"unused\")\n" +
                         "  private boolean ______generatedByReflectiveFluentBuildersGenerator;\n" +
                         "\n" +
-                        "  private Supplier<ClassWithGenerics> objectSupplier;\n" +
+                        "  private final Supplier<ClassWithGenerics> objectSupplier;\n" +
                         "\n" +
                         "  private final CallSetterFor callSetterFor = new CallSetterFor();\n" +
                         "\n" +
@@ -126,7 +126,7 @@ class JavaFileGeneratorIT {
                         "  }\n" +
                         "\n" +
                         "  public ClassWithGenerics build() {\n" +
-                        "    final ClassWithGenerics objectToBuild = objectSupplier.get();\n" +
+                        "    final ClassWithGenerics objectToBuild = this.objectSupplier.get();\n" +
                         "    if (this.callSetterFor.anInt) {\n" +
                         "      objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
                         "    }\n" +

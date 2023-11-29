@@ -19,7 +19,7 @@ public class SimpleClassBuilder {
   @SuppressWarnings("unused")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
-  private Supplier<SimpleClass> objectSupplier;
+  private final Supplier<SimpleClass> objectSupplier;
 
   private final CallSetterFor callSetterFor = new CallSetterFor();
 
@@ -62,7 +62,7 @@ public class SimpleClassBuilder {
   }
 
   public SimpleClass build() {
-    final SimpleClass objectToBuild = objectSupplier.get();
+    final SimpleClass objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.aString) {
       objectToBuild.setAString(this.fieldValue.aString);
     }
