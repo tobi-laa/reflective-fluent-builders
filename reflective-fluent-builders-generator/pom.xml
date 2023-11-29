@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.github.tobi-laa</groupId>
         <artifactId>reflective-fluent-builders</artifactId>
-        <version>1.8.0-java8-SNAPSHOT</version>
+        <version>1.7.2-java8</version>
     </parent>
     <artifactId>reflective-fluent-builders-generator</artifactId>
     <packaging>jar</packaging>
