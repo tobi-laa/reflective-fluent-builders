@@ -127,7 +127,7 @@ class GenerateBuildersMojoIT {
     class WithDebugLogging {
 
         @MavenTest
-        @MavenDebug
+        @MavenVerbose
         void packageSimpleWithDebugLogging(final MavenExecutionResult result) {
             assertThat(result).isSuccessful();
             final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
@@ -200,7 +200,7 @@ class GenerateBuildersMojoIT {
         }
 
         @MavenTest
-        @MavenDebug
+        @MavenVerbose
         void packageSimplePhaseGenerateTestSources(final MavenExecutionResult result) {
             assertThat(result) //
                     .isSuccessful() //
@@ -213,7 +213,7 @@ class GenerateBuildersMojoIT {
         }
 
         @MavenTest
-        @MavenDebug
+        @MavenVerbose
         void simpleClassOnly(final MavenExecutionResult result) {
             assertThat(result) //
                     .isSuccessful() //
