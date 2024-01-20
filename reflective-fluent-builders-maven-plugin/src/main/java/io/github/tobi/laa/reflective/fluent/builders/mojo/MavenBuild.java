@@ -19,6 +19,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +42,9 @@ import static java.nio.file.Files.getLastModifiedTime;
 class MavenBuild extends AbstractLogEnabled {
 
     @lombok.NonNull
+    private final Clock clock;
+
+    @lombok.NonNull
     private BuildContext buildContext;
 
     @lombok.NonNull
@@ -61,12 +65,11 @@ class MavenBuild extends AbstractLogEnabled {
         } else if (isProjectFile(file)) {
             return buildContext.hasDelta(file);
         } else if (file.exists()) {
-            final String key = lastModifiedKey(file);
             final Instant lastModifiedFromFile = getLastModifiedTime(file.toPath()).toInstant();
-            final Instant lastModifiedFromBuildContext = Optional.ofNullable(buildContext.getValue(key))
+            final Instant lastModuleBuildTime = Optional.ofNullable(buildContext.getValue(lastModuleBuildTimeKey()))
                     .map(Instant.class::cast)
                     .orElse(Instant.MIN);
-            return lastModifiedFromFile.isAfter(lastModifiedFromBuildContext);
+            return lastModifiedFromFile.isAfter(lastModuleBuildTime);
         } else {
             return false;
         }
@@ -75,17 +78,15 @@ class MavenBuild extends AbstractLogEnabled {
     @SneakyThrows
     void refresh(final File file) {
         Objects.requireNonNull(file);
-        if (isProjectFile(file)) {
-            buildContext.refresh(file);
-        } else if (file.exists()) {
-            final String key = lastModifiedKey(file);
-            final Instant lastModified = getLastModifiedTime(file.toPath()).toInstant();
-            buildContext.setValue(key, lastModified);
-        }
+        buildContext.refresh(file);
     }
 
-    private String lastModifiedKey(final File file) {
-        return getClass().getName() + ":::timestamp:::" + file.getPath();
+    void updateModuleBuildTime() {
+        buildContext.setValue(lastModuleBuildTimeKey(), Instant.now(clock));
+    }
+
+    private String lastModuleBuildTimeKey() {
+        return mavenProject.getGroupId() + ':' + mavenProject.getArtifactId() + ':' + mavenProject.getVersion() + ":::buildTime";
     }
 
     private boolean isProjectFile(final File file) {

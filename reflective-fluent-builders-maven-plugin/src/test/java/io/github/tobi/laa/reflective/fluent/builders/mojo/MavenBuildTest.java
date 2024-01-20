@@ -17,7 +17,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,7 +25,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -38,8 +39,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MavenBuildTest {
 
-    @InjectMocks
     private MavenBuild mavenBuild;
+
+    private final Clock clock = Clock.fixed(Instant.parse("3333-03-13T00:00:00.00Z"), ZoneId.of("UTC"));
 
     @Mock
     private BuildContext buildContext;
@@ -57,7 +59,8 @@ class MavenBuildTest {
     private Path tempDir;
 
     @BeforeEach
-    void injectLogger() {
+    void initMavenBuild() {
+        mavenBuild = new MavenBuild(clock, buildContext, mavenProject, mojoExecution);
         mavenBuild.enableLogging(logger);
     }
 
@@ -150,6 +153,18 @@ class MavenBuildTest {
     }
 
     @Test
+    void testUpdateModuleBuildTime() {
+        // Arrange
+        doReturn("com.dummy.group").when(mavenProject).getGroupId();
+        doReturn("dummy-artifact").when(mavenProject).getArtifactId();
+        doReturn("1.0.0").when(mavenProject).getVersion();
+        // Act
+        mavenBuild.updateModuleBuildTime();
+        // Assert
+        verify(buildContext).setValue("com.dummy.group:dummy-artifact:1.0.0:::buildTime", Instant.parse("3333-03-13T00:00:00.00Z"));
+    }
+
+    @Test
     void testRefreshNull() {
         // Act
         final ThrowingCallable refresh = () -> mavenBuild.refresh(null);
@@ -159,41 +174,14 @@ class MavenBuildTest {
     }
 
     @Test
-    void testRefreshProjectFile() {
+    void testRefresh() {
         // Arrange
         final Path basedir = Paths.get("base");
         final Path file = basedir.resolve("sth");
-        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
         // Act
         mavenBuild.refresh(file.toFile());
         // Assert
         verify(buildContext).refresh(file.toFile());
-    }
-
-    @Test
-    void testRefreshExternalFileNotExists() {
-        // Arrange
-        final Path basedir = Paths.get("base");
-        final Path file = Paths.get("somewhere", "over", "the", "rainbow");
-        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
-        // Act
-        mavenBuild.refresh(file.toFile());
-        // Assert
-        verifyNoInteractions(buildContext);
-    }
-
-    @Test
-    @SneakyThrows
-    void testRefreshExternalFileExists() {
-        // Arrange
-        final Path basedir = Paths.get("base");
-        final Path file = tempDir.resolve("dummy");
-        Files.createFile(file);
-        doReturn(basedir.toFile()).when(mavenProject).getBasedir();
-        // Act
-        mavenBuild.refresh(file.toFile());
-        // Assert
-        verify(buildContext).setValue(contains(file.toString()), any(Instant.class));
     }
 
     @ParameterizedTest
