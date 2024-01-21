@@ -35,23 +35,23 @@ class JavaFileGeneratorIT {
                         .accessibleNonArgsConstructor(true) //
                         .setter(SimpleSetter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
                         .setter(ArraySetter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
+                                .propertyName("floats") //
+                                .propertyType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
                         .setter(SimpleSetter.builder() //
                                 .methodName("setT") //
-                                .paramName("t") //
-                                .paramType(typeVariableT()) //
+                                .propertyName("t") //
+                                .propertyType(typeVariableT()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //

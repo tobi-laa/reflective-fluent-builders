@@ -41,22 +41,22 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                                 "if (this.$1L.$3L && this.$2L.$3L != null)",
                                 CallSetterFor.FIELD_NAME,
                                 FieldValue.FIELD_NAME,
-                                setter.getParamName())
+                                setter.getPropertyName())
                         .addStatement(
                                 "this.$L.$L.forEach($L.$L()::add)",
                                 FieldValue.FIELD_NAME,
-                                setter.getParamName(),
+                                setter.getPropertyName(),
                                 OBJECT_TO_BUILD_FIELD_NAME,
                                 setter.getMethodName());
             } else {
                 methodBuilder
-                        .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
+                        .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getPropertyName())
                         .addStatement(
                                 "$L.$L(this.$L.$L)",
                                 OBJECT_TO_BUILD_FIELD_NAME,
                                 setter.getMethodName(),
                                 FieldValue.FIELD_NAME,
-                                setter.getParamName());
+                                setter.getPropertyName());
             }
             methodBuilder.endControlFlow();
         }

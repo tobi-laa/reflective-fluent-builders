@@ -77,8 +77,8 @@ class SetterCodeGeneratorImplTest {
                         null, //
                         CollectionSetter.builder() //
                                 .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
+                                .propertyName("deque") //
+                                .propertyType(Deque.class) //
                                 .paramTypeArg(TypeUtils.wildcardType().build()) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -92,9 +92,9 @@ class SetterCodeGeneratorImplTest {
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeNameForParam(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
         if (setter instanceof CollectionGetAndAdder) {
-            when(setterService.dropGetterPrefix(any())).thenReturn(setter.getParamName());
+            when(setterService.dropGetterPrefix(any())).thenReturn(setter.getPropertyName());
         } else {
-            when(setterService.dropSetterPrefix(any())).thenReturn(setter.getParamName());
+            when(setterService.dropSetterPrefix(any())).thenReturn(setter.getPropertyName());
         }
         // Act
         final MethodSpec actual = generator.generate(builderMetadata, setter);
@@ -124,8 +124,8 @@ class SetterCodeGeneratorImplTest {
                         builderMetadata, //
                         SimpleSetter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build(), //
@@ -141,8 +141,8 @@ class SetterCodeGeneratorImplTest {
                         builderMetadata, //
                         ArraySetter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
+                                .propertyName("floats") //
+                                .propertyType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -159,8 +159,8 @@ class SetterCodeGeneratorImplTest {
                         builderMetadata, //
                         MapSetter.builder() //
                                 .methodName("setSortedMap") //
-                                .paramName("sortedMap") //
-                                .paramType(SortedMap.class) //
+                                .propertyName("sortedMap") //
+                                .propertyType(SortedMap.class) //
                                 .keyType(Integer.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
@@ -178,8 +178,8 @@ class SetterCodeGeneratorImplTest {
                         builderMetadata, //
                         CollectionSetter.builder() //
                                 .methodName("setList") //
-                                .paramName("list") //
-                                .paramType(List.class) //
+                                .propertyName("list") //
+                                .propertyType(List.class) //
                                 .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -196,8 +196,8 @@ class SetterCodeGeneratorImplTest {
                         builderMetadata, //
                         CollectionGetAndAdder.builder() //
                                 .methodName("getList") //
-                                .paramName("list") //
-                                .paramType(List.class) //
+                                .propertyName("list") //
+                                .propertyType(List.class) //
                                 .paramTypeArg(String.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(GetAndAdd.class) //

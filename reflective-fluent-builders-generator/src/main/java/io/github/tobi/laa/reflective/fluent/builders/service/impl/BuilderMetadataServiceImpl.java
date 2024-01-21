@@ -103,13 +103,13 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private SortedSet<Setter> avoidNameCollisions(final Set<Setter> setters) {
         final SortedSet<Setter> noNameCollisions = new TreeSet<>();
         for (final var setter : setters) {
-            if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(setter.getParamName()::equals)) {
+            if (noNameCollisions.stream().map(Setter::getPropertyName).noneMatch(setter.getPropertyName()::equals)) {
                 noNameCollisions.add(setter);
             } else {
                 for (int i = 0; true; i++) {
-                    final var paramName = setter.getParamName() + i;
-                    if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(paramName::equals)) {
-                        noNameCollisions.add(setter.withParamName(paramName));
+                    final var propertyName = setter.getPropertyName() + i;
+                    if (noNameCollisions.stream().map(Setter::getPropertyName).noneMatch(propertyName::equals)) {
+                        noNameCollisions.add(setter.withPropertyName(propertyName));
                         break;
                     }
                 }

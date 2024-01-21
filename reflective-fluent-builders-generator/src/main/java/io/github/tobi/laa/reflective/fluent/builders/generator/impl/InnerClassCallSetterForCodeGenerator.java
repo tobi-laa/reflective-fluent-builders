@@ -51,7 +51,7 @@ class InnerClassCallSetterForCodeGenerator implements EncapsulatingClassCodeGene
         final var callSetterFor = builderClassName.nestedClass(CallSetterFor.CLASS_NAME);
         final var fields = builderMetadata.getBuiltType().getSetters() //
                 .stream() //
-                .map(Setter::getParamName) //
+                .map(Setter::getPropertyName) //
                 .map(paramName -> FieldSpec //
                         .builder(boolean.class, paramName) //
                         .build()) //

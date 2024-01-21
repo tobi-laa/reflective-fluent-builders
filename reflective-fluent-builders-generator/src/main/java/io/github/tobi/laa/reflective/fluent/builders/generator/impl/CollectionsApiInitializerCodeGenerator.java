@@ -78,14 +78,14 @@ class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCod
     public boolean isApplicable(final CollectionSetter collectionSetter) {
         Objects.requireNonNull(collectionSetter);
         return SUPPORTED_COLLECTIONS.stream() //
-                .anyMatch(type -> getRawType(collectionSetter.getParamType()).isAssignableFrom(type));
+                .anyMatch(type -> getRawType(collectionSetter.getPropertyType()).isAssignableFrom(type));
     }
 
     @Override
     public CodeBlock generateCollectionInitializer(final CollectionSetter collectionSetter) {
         Objects.requireNonNull(collectionSetter);
         return SUPPORTED_COLLECTIONS.stream() //
-                .filter(type -> getRawType(collectionSetter.getParamType()).isAssignableFrom(type)) //
+                .filter(type -> getRawType(collectionSetter.getPropertyType()).isAssignableFrom(type)) //
                 .map(type -> CodeBlock.builder().add("new $T<>()", type).build()) //
                 .findFirst() //
                 .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + collectionSetter + " is not supported."));
@@ -95,14 +95,14 @@ class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCod
     public boolean isApplicable(final MapSetter mapSetter) {
         Objects.requireNonNull(mapSetter);
         return SUPPORTED_MAPS.stream() //
-                .anyMatch(type -> getRawType(mapSetter.getParamType()).isAssignableFrom(type));
+                .anyMatch(type -> getRawType(mapSetter.getPropertyType()).isAssignableFrom(type));
     }
 
     @Override
     public CodeBlock generateMapInitializer(final MapSetter mapSetter) {
         Objects.requireNonNull(mapSetter);
         return SUPPORTED_MAPS.stream() //
-                .filter(type -> getRawType(mapSetter.getParamType()).isAssignableFrom(type)) //
+                .filter(type -> getRawType(mapSetter.getPropertyType()).isAssignableFrom(type)) //
                 .map(type -> CodeBlock.builder().add("new $T<>()", type).build()) //
                 .findFirst() //
                 .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + mapSetter + " is not supported."));

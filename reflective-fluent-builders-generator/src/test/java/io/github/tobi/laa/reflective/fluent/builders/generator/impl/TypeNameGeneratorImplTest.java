@@ -50,8 +50,8 @@ class TypeNameGeneratorImplTest {
                 Arguments.of(
                         SimpleSetter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build(), //
@@ -60,8 +60,8 @@ class TypeNameGeneratorImplTest {
                 Arguments.of(
                         CollectionSetter.builder() //
                                 .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(TypeUtils.parameterize(Deque.class, Object.class)) //
+                                .propertyName("deque") //
+                                .propertyType(TypeUtils.parameterize(Deque.class, Object.class)) //
                                 .paramTypeArg(wildcardType() //
                                         .withUpperBounds(Object.class) //
                                         .build()) //
@@ -73,8 +73,8 @@ class TypeNameGeneratorImplTest {
                 Arguments.of(
                         CollectionSetter.builder() //
                                 .methodName("setList") //
-                                .paramName("list") //
-                                .paramType(TypeUtils.parameterize(List.class, Character.class)) //
+                                .propertyName("list") //
+                                .propertyType(TypeUtils.parameterize(List.class, Character.class)) //
                                 .paramTypeArg(Character.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -84,9 +84,9 @@ class TypeNameGeneratorImplTest {
                 Arguments.of(
                         CollectionSetter.builder() //
                                 .methodName("setList") //
-                                .paramName("list") //
-                                .paramType(List.class) //
-                                .paramType(TypeUtils.parameterize(List.class, TypeUtils.parameterize(Map.class, String.class, Object.class))) //
+                                .propertyName("list") //
+                                .propertyType(List.class) //
+                                .propertyType(TypeUtils.parameterize(List.class, TypeUtils.parameterize(Map.class, String.class, Object.class))) //
                                 .paramTypeArg(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -96,8 +96,8 @@ class TypeNameGeneratorImplTest {
                 Arguments.of(
                         ArraySetter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
+                                .propertyName("floats") //
+                                .propertyType(float[].class) //
                                 .paramComponentType(float.class) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
@@ -107,8 +107,8 @@ class TypeNameGeneratorImplTest {
                 Arguments.of(
                         MapSetter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
+                                .propertyName("map") //
+                                .propertyType(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
                                 .keyType(String.class) //
                                 .valueType(Object.class) //
                                 .visibility(Visibility.PRIVATE) //
@@ -119,8 +119,8 @@ class TypeNameGeneratorImplTest {
                 Arguments.of(
                         MapSetter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(TypeUtils.parameterize(SortedMap.class, String.class, Object.class)) //
+                                .propertyName("map") //
+                                .propertyType(TypeUtils.parameterize(SortedMap.class, String.class, Object.class)) //
                                 .keyType(String.class) //
                                 .valueType(wildcardType() //
                                         .withUpperBounds(Object.class) //

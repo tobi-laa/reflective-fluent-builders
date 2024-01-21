@@ -27,7 +27,7 @@ class AbstractSetterTest {
     private static Stream<Arguments> testEquals() {
         final var abstractSetter = TestSetter.builder() //
                 .methodName("getSth") //
-                .paramName("aName") //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(SimpleClass.class) //
                 .build();
@@ -39,8 +39,8 @@ class AbstractSetterTest {
                         abstractSetter, //
                         ArraySetter.builder() //
                                 .methodName("getSth") //
-                                .paramType(Object[].class) //
-                                .paramName("aName") //
+                                .propertyType(Object[].class) //
+                                .propertyName("aName") //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .paramComponentType(Object.class) //
@@ -52,12 +52,12 @@ class AbstractSetterTest {
     private static class TestSetter extends AbstractSetter {
 
         @Override
-        public Type getParamType() {
+        public Type getPropertyType() {
             return Map.class;
         }
 
         @Override
-        public TestSetter withParamName(final String paramName) {
+        public TestSetter withPropertyName(final String paramName) {
             return this;
         }
     }

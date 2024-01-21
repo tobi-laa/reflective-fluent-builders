@@ -14,19 +14,19 @@ class ArraySetterTest {
         // Arrange
         final var arraySetter = ArraySetter.builder() //
                 .methodName("getSth") //
-                .paramType(Object[].class) //
-                .paramName("aName") //
+                .propertyType(Object[].class) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .paramComponentType(Object.class) //
                 .build();
         // Act
-        final var withParamName = arraySetter.withParamName(paramName);
+        final var withPropertyName = arraySetter.withPropertyName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(ArraySetter.builder() //
+        assertThat(withPropertyName).usingRecursiveComparison().isEqualTo(ArraySetter.builder() //
                 .methodName("getSth") //
-                .paramType(Object[].class) //
-                .paramName(paramName) //
+                .propertyType(Object[].class) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .paramComponentType(Object.class) //

@@ -82,7 +82,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(collectionSetter.getParamType().getTypeName());
+                .contains(collectionSetter.getPropertyType().getTypeName());
     }
 
     private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {
@@ -195,7 +195,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(mapSetter.getParamType().getTypeName());
+                .contains(mapSetter.getPropertyType().getTypeName());
     }
 
     private static Stream<MapSetter> testGenerateMapInitializerCodeGenerationException() {
@@ -242,8 +242,8 @@ class CollectionsApiInitializerCodeGeneratorTest {
 
     private static MapSetter mapSetter(final Class<?> type) {
         return MapSetter.builder() //
-                .paramName("") //
-                .paramType(type) //
+                .propertyName("") //
+                .propertyType(type) //
                 .keyType(Object.class) //
                 .valueType(Object.class) //
                 .methodName("") //
@@ -258,8 +258,8 @@ class CollectionsApiInitializerCodeGeneratorTest {
 
     private static CollectionSetter collectionSetter(final Class<?> type) {
         return CollectionSetter.builder() //
-                .paramName("") //
-                .paramType(type) //
+                .propertyName("") //
+                .propertyType(type) //
                 .paramTypeArg(Object.class) //
                 .methodName("") //
                 .visibility(Visibility.PRIVATE) //
@@ -269,8 +269,8 @@ class CollectionsApiInitializerCodeGeneratorTest {
 
     private static CollectionGetAndAdder collectionGetAndAdder(final Class<?> type) {
         return CollectionGetAndAdder.builder() //
-                .paramName("") //
-                .paramType(type) //
+                .propertyName("") //
+                .propertyType(type) //
                 .paramTypeArg(Object.class) //
                 .methodName("") //
                 .visibility(Visibility.PRIVATE) //

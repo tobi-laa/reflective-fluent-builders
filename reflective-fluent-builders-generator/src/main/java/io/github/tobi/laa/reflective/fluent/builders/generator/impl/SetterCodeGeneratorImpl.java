@@ -50,9 +50,9 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
         return MethodSpec.methodBuilder(name)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(builderClassName)
-                .addParameter(typeNameGenerator.generateTypeNameForParam(setter), setter.getParamName(), Modifier.FINAL)
-                .addStatement("this.$1L.$2L = $2L", BuilderConstants.FieldValue.FIELD_NAME, setter.getParamName())
-                .addStatement("this.$L.$L = $L", BuilderConstants.CallSetterFor.FIELD_NAME, setter.getParamName(), true)
+                .addParameter(typeNameGenerator.generateTypeNameForParam(setter), setter.getPropertyName(), Modifier.FINAL)
+                .addStatement("this.$1L.$2L = $2L", BuilderConstants.FieldValue.FIELD_NAME, setter.getPropertyName())
+                .addStatement("this.$L.$L = $L", BuilderConstants.CallSetterFor.FIELD_NAME, setter.getPropertyName(), true)
                 .addStatement("return this")
                 .build();
     }

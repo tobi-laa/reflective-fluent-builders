@@ -16,19 +16,19 @@ class CollectionSetterTest {
         // Arrange
         final var collectionSetter = CollectionSetter.builder() //
                 .methodName("getSth") //
-                .paramType(List.class) //
-                .paramName("aName") //
+                .propertyType(List.class) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .paramTypeArg(Object.class) //
                 .build();
         // Act
-        final var withParamName = collectionSetter.withParamName(paramName);
+        final var withPropertyName = collectionSetter.withPropertyName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(CollectionSetter.builder() //
+        assertThat(withPropertyName).usingRecursiveComparison().isEqualTo(CollectionSetter.builder() //
                 .methodName("getSth") //
-                .paramType(List.class) //
-                .paramName(paramName) //
+                .propertyType(List.class) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .paramTypeArg(Object.class) //

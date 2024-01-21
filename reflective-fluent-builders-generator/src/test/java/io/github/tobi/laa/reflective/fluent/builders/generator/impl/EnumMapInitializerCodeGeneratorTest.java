@@ -60,8 +60,8 @@ class EnumMapInitializerCodeGeneratorTest {
                         CollectionsApiInitializerCodeGenerator.SUPPORTED_MAPS.stream(),
                         Stream.of(Set.class, List.class, CollectionsApiInitializerCodeGeneratorTest.MyList.class))
                 .map(type -> MapSetter.builder() //
-                        .paramName("") //
-                        .paramType(type) //
+                        .propertyName("") //
+                        .propertyType(type) //
                         .keyType(Object.class) //
                         .valueType(Object.class)
                         .methodName("") //
@@ -88,7 +88,7 @@ class EnumMapInitializerCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(mapSetter.getParamType().getTypeName());
+                .contains(mapSetter.getPropertyType().getTypeName());
     }
 
     private static Stream<MapSetter> testGenerateMapInitializerCodeGenerationException() {
@@ -108,8 +108,8 @@ class EnumMapInitializerCodeGeneratorTest {
         return Stream.of(
                 Arguments.of(
                         MapSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumMap.class) //
+                                .propertyName("") //
+                                .propertyType(EnumMap.class) //
                                 .keyType(EnumA.class) //
                                 .valueType(Object.class) //
                                 .methodName("") //
@@ -119,8 +119,8 @@ class EnumMapInitializerCodeGeneratorTest {
                         CodeBlock.builder().add("new java.util.EnumMap<>(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumMapInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
                         MapSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumMap.class) //
+                                .propertyName("") //
+                                .propertyType(EnumMap.class) //
                                 .keyType(EnumB.class) //
                                 .valueType(Object.class) //
                                 .methodName("") //

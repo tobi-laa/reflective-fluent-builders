@@ -60,8 +60,8 @@ class EnumSetInitializerCodeGeneratorTest {
                         CollectionsApiInitializerCodeGenerator.SUPPORTED_COLLECTIONS.stream(),
                         Stream.of(Set.class, List.class, CollectionsApiInitializerCodeGeneratorTest.MyList.class))
                 .map(type -> CollectionSetter.builder() //
-                        .paramName("") //
-                        .paramType(type) //
+                        .propertyName("") //
+                        .propertyType(type) //
                         .paramTypeArg(Object.class) //
                         .methodName("") //
                         .visibility(Visibility.PRIVATE) //
@@ -87,7 +87,7 @@ class EnumSetInitializerCodeGeneratorTest {
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(collectionSetter.getParamType().getTypeName());
+                .contains(collectionSetter.getPropertyType().getTypeName());
     }
 
     private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {
@@ -107,8 +107,8 @@ class EnumSetInitializerCodeGeneratorTest {
         return Stream.of(
                 Arguments.of(
                         CollectionSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumSet.class) //
+                                .propertyName("") //
+                                .propertyType(EnumSet.class) //
                                 .paramTypeArg(EnumA.class) //
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //
@@ -117,8 +117,8 @@ class EnumSetInitializerCodeGeneratorTest {
                         CodeBlock.builder().add("java.util.EnumSet.noneOf(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumSetInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
                         CollectionSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumSet.class) //
+                                .propertyName("") //
+                                .propertyType(EnumSet.class) //
                                 .paramTypeArg(EnumB.class) //
                                 .methodName("") //
                                 .visibility(Visibility.PRIVATE) //

@@ -23,7 +23,7 @@ public abstract class AbstractSetter implements Setter {
     private final String methodName;
 
     @lombok.NonNull
-    private final String paramName;
+    private final String propertyName;
 
     @lombok.NonNull
     private final Visibility visibility;
@@ -32,14 +32,14 @@ public abstract class AbstractSetter implements Setter {
     private final Class<?> declaringClass;
 
     @Override
-    public int compareTo(final Setter other) {
+    public int compareTo(final WriteAccessor other) {
         Objects.requireNonNull(other);
         if (equals(other)) {
             return 0;
         } else {
             return Stream.<IntSupplier>of( //
-                            () -> compare(paramName, other.getParamName(), naturalOrder()), //
-                            () -> compare(getParamType(), other.getParamType(), new SetterTypeComparator()), //
+                            () -> compare(propertyName, other.getPropertyName(), naturalOrder()), //
+                            () -> compare(getPropertyType(), other.getPropertyType(), new SetterTypeComparator()), //
                             () -> compare(getClass().getName(), other.getClass().getName(), naturalOrder()))
                     .map(IntSupplier::getAsInt) //
                     .filter(i -> i != 0) //
@@ -57,11 +57,11 @@ public abstract class AbstractSetter implements Setter {
         }
         final var aSetter = (Setter) anObject;
         return Objects.equals(getMethodName(), aSetter.getMethodName()) && //
-                compare(getParamType(), aSetter.getParamType(), new SetterTypeComparator()) == 0;
+                compare(getPropertyType(), aSetter.getPropertyType(), new SetterTypeComparator()) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getMethodName(), getParamType());
+        return Objects.hash(getMethodName(), getPropertyType());
     }
 }

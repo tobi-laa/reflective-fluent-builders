@@ -22,14 +22,14 @@ class EnumMapInitializerCodeGenerator implements MapInitializerCodeGenerator {
     @Override
     public boolean isApplicable(final MapSetter mapSetter) {
         Objects.requireNonNull(mapSetter);
-        return mapSetter.getParamType() == EnumMap.class;
+        return mapSetter.getPropertyType() == EnumMap.class;
     }
 
     @Override
     public CodeBlock generateMapInitializer(final MapSetter mapSetter) {
         if (isApplicable(mapSetter)) {
             return CodeBlock.builder()
-                    .add("new $T<>($T.class)", mapSetter.getParamType(), mapSetter.getKeyType())
+                    .add("new $T<>($T.class)", mapSetter.getPropertyType(), mapSetter.getKeyType())
                     .build();
         } else {
             throw new CodeGenerationException("Generation of initializing code blocks for " + mapSetter + " is not supported.");

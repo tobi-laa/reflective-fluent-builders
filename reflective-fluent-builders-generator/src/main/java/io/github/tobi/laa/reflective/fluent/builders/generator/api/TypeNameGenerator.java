@@ -8,19 +8,19 @@ import java.lang.reflect.Type;
 /**
  * <p>
  * Generates the full {@link TypeName} (including generics) for a given {@link Setter setter's}
- * {@link Setter#getParamType() param} or a given {@link Type}.
+ * {@link Setter#getPropertyType() param} or a given {@link Type}.
  * </p>
  */
 public interface TypeNameGenerator {
 
     /**
      * <p>
-     * Generates the full {@link TypeName} (including generics) for the {@link Setter#getParamType() param} of
+     * Generates the full {@link TypeName} (including generics) for the {@link Setter#getPropertyType() param} of
      * {@code setter}.
      * </p>
      *
      * @param setter The setter for whose param to generate the full type name. Must not be {@code null}.
-     * @return The full {@link TypeName} (including generics) for the {@link Setter#getParamType() param} of
+     * @return The full {@link TypeName} (including generics) for the {@link Setter#getPropertyType() param} of
      * {@code setter}.
      */
     TypeName generateTypeNameForParam(final Setter setter);

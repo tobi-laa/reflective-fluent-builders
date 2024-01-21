@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 public class CollectionSetter extends AbstractSetter {
 
     @lombok.NonNull
-    private final Type paramType;
+    private final Type propertyType;
 
     /**
      * <p>
@@ -31,7 +31,7 @@ public class CollectionSetter extends AbstractSetter {
     private final Type paramTypeArg;
 
     @Override
-    public CollectionSetter withParamName(final String paramName) {
-        return toBuilder().paramName(paramName).build();
+    public CollectionSetter withPropertyName(final String propertyName) {
+        return toBuilder().propertyName(propertyName).build();
     }
 }

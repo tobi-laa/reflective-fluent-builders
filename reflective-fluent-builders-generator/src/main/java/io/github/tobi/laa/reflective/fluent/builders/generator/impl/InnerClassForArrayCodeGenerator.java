@@ -60,10 +60,10 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
 
     private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final ArraySetter setter) {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Array" + capitalize(setter.getParamName()));
+        final var className = builderClassName.nestedClass("Array" + capitalize(setter.getPropertyName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setter.getParamName()) //
+                        .methodBuilder(setter.getPropertyName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
@@ -86,16 +86,16 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
                                 .addStatement("this.list = new $T<>()", ArrayList.class) //
                                 .endControlFlow() //
                                 .addStatement("this.list.add($L)", "item") //
-                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getParamName(), true) //
+                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getPropertyName(), true) //
                                 .addStatement("return this") //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("and") //
                                 .addModifiers(Modifier.PUBLIC) //
                                 .returns(builderClassName) //
                                 .beginControlFlow("if (this.list != null)") //
-                                .addStatement("$T.this.$L.$L = new $T[this.list.size()]", builderClassName, FieldValue.FIELD_NAME, setter.getParamName(), setter.getParamComponentType()) //
+                                .addStatement("$T.this.$L.$L = new $T[this.list.size()]", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName(), setter.getParamComponentType()) //
                                 .beginControlFlow("for (int i = 0; i < this.list.size(); i++)")
-                                .addStatement("$T.this.$L.$L[i] = this.list.get(i)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName()) //
+                                .addStatement("$T.this.$L.$L[i] = this.list.get(i)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName()) //
                                 .endControlFlow()
                                 .endControlFlow()
                                 .addStatement("return $T.this", builderClassName) //

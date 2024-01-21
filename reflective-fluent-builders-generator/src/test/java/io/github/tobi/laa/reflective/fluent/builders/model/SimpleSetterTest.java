@@ -16,18 +16,18 @@ class SimpleSetterTest {
         // Arrange
         final var simpleSetter = SimpleSetter.builder() //
                 .methodName("getSth") //
-                .paramType(Map.class) //
-                .paramName("aName") //
+                .propertyType(Map.class) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(SimpleClass.class) //
                 .build();
         // Act
-        final var withParamName = simpleSetter.withParamName(paramName);
+        final var withPropertyName = simpleSetter.withPropertyName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(SimpleSetter.builder() //
+        assertThat(withPropertyName).usingRecursiveComparison().isEqualTo(SimpleSetter.builder() //
                 .methodName("getSth") //
-                .paramType(Map.class) //
-                .paramName(paramName) //
+                .propertyType(Map.class) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(SimpleClass.class) //
                 .build());

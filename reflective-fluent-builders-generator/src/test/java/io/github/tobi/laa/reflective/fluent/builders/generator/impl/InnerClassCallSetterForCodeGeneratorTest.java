@@ -85,22 +85,22 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("anInt") //
-                                                .paramType(int.class) //
+                                                .propertyName("anInt") //
+                                                .propertyType(int.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("string") //
-                                                .paramType(String.class) //
+                                                .propertyName("string") //
+                                                .propertyType(String.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("object") //
-                                                .paramType(Object.class) //
+                                                .propertyName("object") //
+                                                .propertyType(Object.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
@@ -128,32 +128,32 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(CollectionSetter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("set") //
-                                                .paramType(Set.class) //
+                                                .propertyName("set") //
+                                                .propertyType(Set.class) //
                                                 .paramTypeArg(List.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(CollectionSetter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("deque") //
-                                                .paramType(Deque.class) //
+                                                .propertyName("deque") //
+                                                .propertyType(Deque.class) //
                                                 .paramTypeArg(TypeUtils.wildcardType().build()) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(ArraySetter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("floats") //
-                                                .paramType(float[].class) //
+                                                .propertyName("floats") //
+                                                .propertyType(float[].class) //
                                                 .paramComponentType(float.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(MapSetter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("map") //
-                                                .paramType(Map.class) //
+                                                .propertyName("map") //
+                                                .propertyType(Map.class) //
                                                 .keyType(String.class) //
                                                 .valueType(Object.class) //
                                                 .visibility(Visibility.PUBLIC) //
@@ -170,8 +170,8 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                         .classBuilder(fieldValue) //
                                         .addModifiers(Modifier.PRIVATE) //
                                         .addField(FieldSpec.builder(TypeName.get(boolean.class), "deque").build()) //
-                                        .addField(FieldSpec.builder(TypeName.get(boolean.class), "floats").build()) //                                        .addField(FieldSpec.builder(TypeName.get(MockType.class), "string").build()) //
-                                        .addField(FieldSpec.builder(TypeName.get(boolean.class), "map").build()) //                                     .addField(FieldSpec.builder(TypeName.get(MockType.class), "string").build()) //
+                                        .addField(FieldSpec.builder(TypeName.get(boolean.class), "floats").build()) //
+                                        .addField(FieldSpec.builder(TypeName.get(boolean.class), "map").build()) //
                                         .addField(FieldSpec.builder(TypeName.get(boolean.class), "set").build()) //
                                         .build()) //
                                 .build()));

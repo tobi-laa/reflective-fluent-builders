@@ -66,10 +66,10 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
 
     private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final MapSetter setter) {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Map" + capitalize(setter.getParamName()));
+        final var className = builderClassName.nestedClass("Map" + capitalize(setter.getPropertyName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setter.getParamName()) //
+                        .methodBuilder(setter.getPropertyName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
@@ -82,9 +82,9 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
                                 .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getKeyType()), "key", FINAL) //
                                 .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getValueType()), "value", FINAL) //
                                 .returns(className) //
-                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName()) //
+                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName()) //
                                 .addStatement(CodeBlock.builder()
-                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, setter.getParamName())
+                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName())
                                         .add(initializerGenerators //
                                                 .stream() //
                                                 .filter(gen -> gen.isApplicable(setter)) //
@@ -93,8 +93,8 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
                                                 .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + setter + '.'))) //
                                         .build()) //
                                 .endControlFlow() //
-                                .addStatement("$T.this.$L.$L.put($L, $L)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName(), "key", "value") //
-                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getParamName(), true) //
+                                .addStatement("$T.this.$L.$L.put($L, $L)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName(), "key", "value") //
+                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getPropertyName(), true) //
                                 .addStatement("return this") //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("and") //

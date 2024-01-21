@@ -18,19 +18,19 @@ class CollectionGetAndAdderTest {
         // Arrange
         final var collectionGetAndAdder = CollectionGetAndAdder.builder() //
                 .methodName("getSth") //
-                .paramType(List.class) //
-                .paramName("aName") //
+                .propertyType(List.class) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(GetAndAdd.class) //
                 .paramTypeArg(Object.class) //
                 .build();
         // Act
-        final var withParamName = collectionGetAndAdder.withParamName(paramName);
+        final var withParamName = collectionGetAndAdder.withPropertyName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(CollectionGetAndAdder.builder() //
                 .methodName("getSth") //
-                .paramType(List.class) //
-                .paramName(paramName) //
+                .propertyType(List.class) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(GetAndAdd.class) //
                 .paramTypeArg(Object.class) //
@@ -42,16 +42,16 @@ class CollectionGetAndAdderTest {
         // Arrange
         final var collectionGetAndAdder = CollectionGetAndAdder.builder() //
                 .methodName("getSth") //
-                .paramType(List.class) //
-                .paramName("aName") //
+                .propertyType(List.class) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(GetAndAdd.class) //
                 .paramTypeArg(Object.class) //
                 .build();
         final var collectionSetter = CollectionSetter.builder() //
                 .methodName("setSth") //
-                .paramType(List.class) //
-                .paramName("aName") //
+                .propertyType(List.class) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .paramTypeArg(Object.class) //

@@ -57,15 +57,15 @@ class BuildMethodCodeGeneratorImplTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .setter(SimpleSetter.builder() //
                                                 .methodName("setAnInt") //
-                                                .paramName("anInt") //
-                                                .paramType(int.class) //
+                                                .propertyName("anInt") //
+                                                .propertyType(int.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
                                         .setter(ArraySetter.builder() //
                                                 .methodName("setFloats") //
-                                                .paramName("floats") //
-                                                .paramType(float[].class) //
+                                                .propertyName("floats") //
+                                                .propertyType(float[].class) //
                                                 .paramComponentType(float.class) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(SimpleClass.class) //
@@ -93,8 +93,8 @@ class BuildMethodCodeGeneratorImplTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(MapSetter.builder() //
                                                 .methodName("setSortedMap") //
-                                                .paramName("sortedMap") //
-                                                .paramType(SortedMap.class) //
+                                                .propertyName("sortedMap") //
+                                                .propertyType(SortedMap.class) //
                                                 .keyType(Integer.class) //
                                                 .valueType(Object.class) //
                                                 .visibility(Visibility.PRIVATE) //
@@ -102,8 +102,8 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .build()) //
                                         .setter(CollectionSetter.builder() //
                                                 .methodName("setList") //
-                                                .paramName("list") //
-                                                .paramType(List.class) //
+                                                .propertyName("list") //
+                                                .propertyType(List.class) //
                                                 .paramTypeArg(String.class) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(ClassWithHierarchy.class) //
@@ -131,8 +131,8 @@ class BuildMethodCodeGeneratorImplTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .setter(CollectionGetAndAdder.builder() //
                                                 .methodName("getSiblings") //
-                                                .paramName("siblings") //
-                                                .paramType(List.class) //
+                                                .propertyName("siblings") //
+                                                .propertyType(List.class) //
                                                 .paramTypeArg(PetJaxb.class) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(PetJaxb.class) //

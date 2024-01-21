@@ -20,10 +20,10 @@ import java.lang.reflect.Type;
 public class SimpleSetter extends AbstractSetter {
 
     @lombok.NonNull
-    private final Type paramType;
+    private final Type propertyType;
 
     @Override
-    public SimpleSetter withParamName(final String paramName) {
-        return toBuilder().paramName(paramName).build();
+    public SimpleSetter withPropertyName(final String propertyName) {
+        return toBuilder().propertyName(propertyName).build();
     }
 }

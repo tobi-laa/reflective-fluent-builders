@@ -67,10 +67,10 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
 
     private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final CollectionSetter setter) {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Collection" + capitalize(setter.getParamName()));
+        final var className = builderClassName.nestedClass("Collection" + capitalize(setter.getPropertyName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setter.getParamName()) //
+                        .methodBuilder(setter.getPropertyName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
@@ -82,9 +82,9 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
                                 .addModifiers(Modifier.PUBLIC) //
                                 .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getParamTypeArg()), "item", FINAL) //
                                 .returns(className) //
-                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName()) //
+                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName()) //
                                 .addStatement(CodeBlock.builder()
-                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, setter.getParamName())
+                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName())
                                         .add(initializerGenerators //
                                                 .stream() //
                                                 .filter(gen -> gen.isApplicable(setter)) //
@@ -93,8 +93,8 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
                                                 .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + setter + '.'))) //
                                         .build()) //
                                 .endControlFlow() //
-                                .addStatement("$T.this.$L.$L.add($L)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName(), "item") //
-                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getParamName(), true) //
+                                .addStatement("$T.this.$L.$L.add($L)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName(), "item") //
+                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getPropertyName(), true) //
                                 .addStatement("return this") //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("and") //

@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 public class MapSetter extends AbstractSetter {
 
     @lombok.NonNull
-    private final Type paramType;
+    private final Type propertyType;
 
     /**
      * <p>
@@ -41,7 +41,7 @@ public class MapSetter extends AbstractSetter {
     private final Type valueType;
 
     @Override
-    public MapSetter withParamName(final String paramName) {
-        return toBuilder().paramName(paramName).build();
+    public MapSetter withPropertyName(final String propertyName) {
+        return toBuilder().propertyName(propertyName).build();
     }
 }

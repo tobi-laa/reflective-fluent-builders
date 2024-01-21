@@ -16,20 +16,20 @@ class MapSetterTest {
         // Arrange
         final var mapSetter = MapSetter.builder() //
                 .methodName("getSth") //
-                .paramType(Map.class) //
-                .paramName("aName") //
+                .propertyType(Map.class) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .keyType(Object.class) //
                 .valueType(Object.class) //
                 .build();
         // Act
-        final var withParamName = mapSetter.withParamName(paramName);
+        final var withParamName = mapSetter.withPropertyName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(MapSetter.builder() //
                 .methodName("getSth") //
-                .paramType(Map.class) //
-                .paramName(paramName) //
+                .propertyType(Map.class) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .keyType(Object.class) //

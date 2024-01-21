@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 public class CollectionGetAndAdder extends CollectionSetter {
 
     @Override
-    public CollectionGetAndAdder withParamName(final String paramName) {
-        return toBuilder().paramName(paramName).build();
+    public CollectionGetAndAdder withPropertyName(final String propertyName) {
+        return toBuilder().propertyName(propertyName).build();
     }
 }

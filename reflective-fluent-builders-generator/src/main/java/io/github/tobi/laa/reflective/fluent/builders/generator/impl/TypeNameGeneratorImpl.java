@@ -29,13 +29,13 @@ class TypeNameGeneratorImpl implements TypeNameGenerator {
     @Override
     public TypeName generateTypeNameForParam(final Setter setter) {
         Objects.requireNonNull(setter);
-        if (setter.getParamType() instanceof ParameterizedType) {
-            final var parameterizedType = (ParameterizedType) setter.getParamType();
+        if (setter.getPropertyType() instanceof ParameterizedType) {
+            final var parameterizedType = (ParameterizedType) setter.getPropertyType();
             final var rawType = (Class<?>) parameterizedType.getRawType();
             final Type[] typeArgs = Arrays.stream(parameterizedType.getActualTypeArguments()).map(this::wildcardToUpperBound).toArray(Type[]::new);
             return ParameterizedTypeName.get(rawType, typeArgs);
         } else {
-            return TypeName.get(setter.getParamType());
+            return TypeName.get(setter.getPropertyType());
         }
     }
 

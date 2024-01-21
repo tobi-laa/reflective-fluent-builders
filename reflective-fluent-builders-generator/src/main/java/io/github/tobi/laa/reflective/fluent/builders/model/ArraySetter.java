@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 public class ArraySetter extends AbstractSetter {
 
     @lombok.NonNull
-    private final Type paramType;
+    private final Type propertyType;
 
     /**
      * <p>
@@ -31,7 +31,7 @@ public class ArraySetter extends AbstractSetter {
     private final Type paramComponentType;
 
     @Override
-    public ArraySetter withParamName(final String paramName) {
-        return toBuilder().paramName(paramName).build();
+    public ArraySetter withPropertyName(final String propertyName) {
+        return toBuilder().propertyName(propertyName).build();
     }
 }

@@ -87,8 +87,8 @@ class SetterServiceImpl implements SetterService {
 
     private boolean noCorrespondingSetter(final Method method, final Set<Setter> setters) {
         return setters.stream()
-                .noneMatch(setter -> getRawType(setter.getParamType()) == method.getReturnType() &&
-                        setter.getParamName().equals(dropGetterPrefix(method.getName())));
+                .noneMatch(setter -> getRawType(setter.getPropertyType()) == method.getReturnType() &&
+                        setter.getPropertyName().equals(dropGetterPrefix(method.getName())));
     }
 
     private Class<?> getRawType(final Type type) {
@@ -97,42 +97,42 @@ class SetterServiceImpl implements SetterService {
 
     private Setter toSetter(final Class<?> clazz, final Method method) {
         final var param = method.getParameters()[0];
-        final var paramType = resolveType(clazz, method.getGenericParameterTypes()[0]);
+        final var propertyType = resolveType(clazz, method.getGenericParameterTypes()[0]);
         if (param.getType().isArray()) {
             return ArraySetter.builder() //
                     .paramComponentType(param.getType().getComponentType()) //
                     .methodName(method.getName()) //
-                    .paramType(paramType) //
-                    .paramName(dropSetterPrefix(method.getName())) //
+                    .propertyType(propertyType) //
+                    .propertyName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else if (Collection.class.isAssignableFrom(param.getType())) {
-            final var collectionType = resolveCollectionType(clazz, paramType);
+            final var collectionType = resolveCollectionType(clazz, propertyType);
             return CollectionSetter.builder() //
                     .paramTypeArg(typeArg(collectionType, 0)) //
                     .methodName(method.getName()) //
-                    .paramType(paramType) //
-                    .paramName(dropSetterPrefix(method.getName())) //
+                    .propertyType(propertyType) //
+                    .propertyName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else if (Map.class.isAssignableFrom(param.getType())) {
-            final var mapType = resolveMapType(clazz, paramType);
+            final var mapType = resolveMapType(clazz, propertyType);
             return MapSetter.builder() //
                     .keyType(typeArg(mapType, 0)) //
                     .valueType(typeArg(mapType, 1)) //
                     .methodName(method.getName()) //
-                    .paramType(paramType) //
-                    .paramName(dropSetterPrefix(method.getName())) //
+                    .propertyType(propertyType) //
+                    .propertyName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .declaringClass(method.getDeclaringClass()) //
                     .build();
         } else {
             return SimpleSetter.builder() //
                     .methodName(method.getName()) //
-                    .paramType(paramType) //
-                    .paramName(dropSetterPrefix(method.getName())) //
+                    .propertyType(propertyType) //
+                    .propertyName(dropSetterPrefix(method.getName())) //
                     .visibility(visibilityService.toVisibility(method.getModifiers())) //
                     .declaringClass(method.getDeclaringClass()) //
                     .build();
@@ -141,13 +141,13 @@ class SetterServiceImpl implements SetterService {
 
     @SuppressWarnings("java:S3252")
     private CollectionGetAndAdder toGetAndAdder(final Class<?> clazz, final Method method) {
-        final var paramType = resolveType(clazz, method.getGenericReturnType());
-        final var collectionType = resolveCollectionType(clazz, paramType);
+        final var propertyType = resolveType(clazz, method.getGenericReturnType());
+        final var collectionType = resolveCollectionType(clazz, propertyType);
         return CollectionGetAndAdder.builder() //
                 .paramTypeArg(typeArg(collectionType, 0)) //
                 .methodName(method.getName()) //
-                .paramType(paramType) //
-                .paramName(dropGetterPrefix(method.getName())) //
+                .propertyType(propertyType) //
+                .propertyName(dropGetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
                 .build();

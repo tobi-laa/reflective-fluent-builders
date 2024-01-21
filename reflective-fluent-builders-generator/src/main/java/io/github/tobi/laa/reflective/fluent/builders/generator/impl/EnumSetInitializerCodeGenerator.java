@@ -22,14 +22,14 @@ class EnumSetInitializerCodeGenerator implements CollectionInitializerCodeGenera
     @Override
     public boolean isApplicable(final CollectionSetter collectionSetter) {
         Objects.requireNonNull(collectionSetter);
-        return collectionSetter.getParamType() == EnumSet.class;
+        return collectionSetter.getPropertyType() == EnumSet.class;
     }
 
     @Override
     public CodeBlock generateCollectionInitializer(final CollectionSetter collectionSetter) {
         if (isApplicable(collectionSetter)) {
             return CodeBlock.builder()
-                    .add("$T.noneOf($T.class)", collectionSetter.getParamType(), collectionSetter.getParamTypeArg())
+                    .add("$T.noneOf($T.class)", collectionSetter.getPropertyType(), collectionSetter.getParamTypeArg())
                     .build();
         } else {
             throw new CodeGenerationException("Generation of initializing code blocks for " + collectionSetter + " is not supported.");
