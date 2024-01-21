@@ -62,9 +62,9 @@ class FinalCollectionFieldAccessorBuildMethodStepCodeGeneratorTest {
                 Arguments.of(
                         FieldAccessor.builder() //
                                 .propertyName("publicFinalFieldNoSetter") //
-                                .propertyType(new CollectionType(parameterize(List.class, String.class), String.class)) //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
-                                .isFinal(false) //
+                                .isFinal(true) //
                                 .declaringClass(DirectFieldAccess.class) //
                                 .build(),
                         false),
