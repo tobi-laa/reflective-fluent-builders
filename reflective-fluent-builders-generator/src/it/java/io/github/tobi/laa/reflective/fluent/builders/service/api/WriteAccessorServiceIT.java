@@ -18,6 +18,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
 import lombok.SneakyThrows;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -36,6 +37,7 @@ import static io.github.tobi.laa.reflective.fluent.builders.model.Visibility.*;
 import static org.apache.commons.lang3.reflect.TypeUtils.parameterize;
 import static org.apache.commons.lang3.reflect.TypeUtils.wildcardType;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -263,5 +265,69 @@ class WriteAccessorServiceIT {
 
     private static TypeVariable<?> typeVariableU() {
         return ClassWithCollections.class.getTypeParameters()[1];
+    }
+
+    @Test
+    void testIsSetterNull() {
+        // Arrange
+        final WriteAccessor writeAccessor = null;
+        // Act
+        final ThrowingCallable isSetter = () -> writeAccessorService.isSetter(writeAccessor);
+        // Assert
+        assertThatThrownBy(isSetter).isInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testIsSetter(final WriteAccessor writeAccessor, final boolean expected) {
+        // Act
+        final boolean actual = writeAccessorService.isSetter(writeAccessor);
+        // Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> testIsSetter() {
+        return Stream.of(
+                Arguments.of(
+                        Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
+                        true),
+                Arguments.of(
+                        Getter.builder().methodName("getWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
+                        false),
+                Arguments.of(
+                        Getter.builder().methodName("getSiblings").propertyName("siblings").propertyType(new CollectionType(parameterize(List.class, PetJaxb.class), PetJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
+                        false));
+    }
+
+    @Test
+    void testIsCollectionGetterNull() {
+        // Arrange
+        final WriteAccessor writeAccessor = null;
+        // Act
+        final ThrowingCallable isSetter = () -> writeAccessorService.isCollectionGetter(writeAccessor);
+        // Assert
+        assertThatThrownBy(isSetter).isInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testIsCollectionGetter(final WriteAccessor writeAccessor, final boolean expected) {
+        // Act
+        final boolean actual = writeAccessorService.isCollectionGetter(writeAccessor);
+        // Assert
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> testIsCollectionGetter() {
+        return Stream.of(
+                Arguments.of(
+                        Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
+                        false),
+                Arguments.of(
+                        Getter.builder().methodName("getWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
+                        false),
+                Arguments.of(
+                        Getter.builder().methodName("getSiblings").propertyName("siblings").propertyType(new CollectionType(parameterize(List.class, PetJaxb.class), PetJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
+                        true));
     }
 }

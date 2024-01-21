@@ -5,7 +5,10 @@ import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
+import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import lombok.RequiredArgsConstructor;
 
@@ -40,10 +43,10 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
         Objects.requireNonNull(writeAccessor);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         final String name;
-        if (writeAccessor instanceof Getter && writeAccessor.getPropertyType() instanceof CollectionType) {
+        if (writeAccessorService.isCollectionGetter(writeAccessor)) {
             final var getter = (Getter) writeAccessor;
             name = writeAccessorService.dropGetterPrefix(getter.getMethodName());
-        } else if (writeAccessor instanceof Setter) {
+        } else if (writeAccessorService.isSetter(writeAccessor)) {
             final var setter = (Setter) writeAccessor;
             name = writeAccessorService.dropSetterPrefix(setter.getMethodName());
         } else {
