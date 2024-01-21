@@ -12,11 +12,11 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AbstractMethodAccessorTest {
+class AbstractWriteAccessorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testEquals(final AbstractMethodAccessor a, final Object b, final boolean expected) {
+    void testEquals(final AbstractWriteAccessor a, final Object b, final boolean expected) {
         // Act
         final boolean actual = a.equals(b);
         // Assert
@@ -24,8 +24,7 @@ class AbstractMethodAccessorTest {
     }
 
     private static Stream<Arguments> testEquals() {
-        final var abstractSetter = TestMethodAccessor.builder() //
-                .methodName("getSth") //
+        final var abstractSetter = TestAccessor.builder() //
                 .propertyType(new MapType(Map.class, Object.class, Object.class)) //
                 .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
@@ -48,10 +47,10 @@ class AbstractMethodAccessorTest {
     }
 
     @SuperBuilder
-    private static class TestMethodAccessor extends AbstractMethodAccessor {
+    private static class TestAccessor extends AbstractWriteAccessor {
 
         @Override
-        public TestMethodAccessor withPropertyName(final String paramName) {
+        public TestAccessor withPropertyName(final String paramName) {
             return this;
         }
     }

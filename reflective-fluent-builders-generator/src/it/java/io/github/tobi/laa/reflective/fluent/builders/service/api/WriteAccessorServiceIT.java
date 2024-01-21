@@ -191,7 +191,7 @@ class WriteAccessorServiceIT {
                                 Getter.builder().methodName("getListSetterWrongType").propertyName("listSetterWrongType").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Setter.builder().methodName("setListSetterWrongType").propertyName("listSetterWrongType").propertyType(new ArrayType(String[].class, String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build())),
                 Arguments.of("set", "get", true, true, classInfo.get(DirectFieldAccess.class), //
-                        Set.of( //
+                        Set.<WriteAccessor>of( //
                                 FieldAccessor.builder().propertyName("packagePrivateFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PACKAGE_PRIVATE).declaringClass(DirectFieldAccess.class).build(), //
                                 FieldAccessor.builder().propertyName("protectedFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PROTECTED).declaringClass(DirectFieldAccess.class).build(), //
                                 FieldAccessor.builder().propertyName("publicFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(DirectFieldAccess.class).build(), //
