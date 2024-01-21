@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.function.Predicate.not;
 
 /**
@@ -50,7 +51,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         final var clazz = classInfo.loadClass();
         final var builderPackage = builderPackageService.resolveBuilderPackage(clazz);
         final var classHierarchy = classService.collectFullClassHierarchy(classInfo);
-        final var methods = gatherAllNonBridgeAccessibleMethods(classHierarchy, builderPackage);
+        final var methods = gatherAllNonStaticNonBridgeAccessibleMethods(classHierarchy, builderPackage);
         final SortedSet<WriteAccessor> writeAccessors = new TreeSet<>();
         writeAccessors.addAll(gatherAllSetters(methods, classInfo));
         if (properties.isGetAndAddEnabled()) {
@@ -72,13 +73,14 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .forEach(target::add);
     }
 
-    private List<Method> gatherAllNonBridgeAccessibleMethods(final List<ClassInfo> classHierarchy, final String builderPackage) {
+    private List<Method> gatherAllNonStaticNonBridgeAccessibleMethods(final List<ClassInfo> classHierarchy, final String builderPackage) {
         return classHierarchy //
                 .stream() //
                 .map(ClassInfo::loadClass) //
                 .map(Class::getDeclaredMethods) //
                 .flatMap(Arrays::stream) //
                 .filter(not(Method::isBridge)) //
+                .filter(not(method -> isStatic(method.getModifiers()))) //
                 .filter(method -> accessibilityService.isAccessibleFrom(method, builderPackage)) //
                 .collect(Collectors.toList());
     }
@@ -113,7 +115,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .map(ClassInfo::loadClass) //
                 .map(Class::getDeclaredFields) //
                 .flatMap(Arrays::stream) //
-                .filter(not(field -> Modifier.isStatic(field.getModifiers()))) //
+                .filter(not(field -> isStatic(field.getModifiers()))) //
                 .filter(field -> accessibilityService.isAccessibleFrom(field, builderPackage)) //
                 .collect(Collectors.toList());
     }
