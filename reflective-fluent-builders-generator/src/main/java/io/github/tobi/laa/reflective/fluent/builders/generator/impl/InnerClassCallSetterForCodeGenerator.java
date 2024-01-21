@@ -7,7 +7,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassN
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.EncapsulatingClassCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -49,9 +49,9 @@ class InnerClassCallSetterForCodeGenerator implements EncapsulatingClassCodeGene
         Objects.requireNonNull(builderMetadata);
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         final var callSetterFor = builderClassName.nestedClass(CallSetterFor.CLASS_NAME);
-        final var fields = builderMetadata.getBuiltType().getSetters() //
+        final var fields = builderMetadata.getBuiltType().getWriteAccessors() //
                 .stream() //
-                .map(Setter::getParamName) //
+                .map(WriteAccessor::getPropertyName) //
                 .map(paramName -> FieldSpec //
                         .builder(boolean.class, paramName) //
                         .build()) //

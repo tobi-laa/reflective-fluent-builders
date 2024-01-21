@@ -122,19 +122,17 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     private static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
         return Stream.of( //
-                CollectionSetter.builder() //
+                Setter.builder() //
                         .methodName("setDeque") //
-                        .paramName("deque") //
-                        .paramType(Deque.class) //
-                        .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                        .propertyName("deque") //
+                        .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build(), //
-                CollectionSetter.builder() //
+                Setter.builder() //
                         .methodName("setList") //
-                        .paramName("list") //
-                        .paramType(List.class) //
-                        .paramTypeArg(String.class) //
+                        .propertyName("list") //
+                        .propertyType(new CollectionType(List.class, String.class)) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build());
@@ -165,11 +163,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                                .propertyName("deque") //
+                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -184,7 +181,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Generation of inner collection class for .+ is not supported.") //
-                .hasMessageContaining(setter.getParamType().toString());
+                .hasMessageContaining(setter.getPropertyType().toString());
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorB, initializerGeneratorB);
     }
 
@@ -199,10 +196,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        SimpleSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build()), //
@@ -215,11 +212,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyName("floats") //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()), //
@@ -232,12 +228,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(Map.class) //
-                                .keyType(String.class) //
-                                .valueType(Object.class) //
+                                .propertyName("map") //
+                                .propertyType(new MapType(Map.class, String.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -248,14 +242,14 @@ class InnerClassForCollectionCodeGeneratorTest {
     void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final Setter setter) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Could not generate initializer for .+") //
-                .hasMessageContaining(setter.getParamType().toString());
+                .hasMessageContaining(setter.getPropertyType().toString());
     }
 
     private static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
@@ -274,21 +268,22 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerate(final BuilderMetadata builderMetadata, final CollectionSetter setter, final String expectedGetter, final String expectedInnerClass) {
+    void testGenerate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateCollectionInitializer(any())).thenReturn(CodeBlock.of("new MockList<>()"));
         // Act
-        final CollectionClassSpec actual = generator.generate(builderMetadata, setter);
+        final CollectionClassSpec actual = generator.generate(builderMetadata, writeAccessor);
         // Assert
         assertThat(actual).isNotNull();
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(typeNameGenerator).generateTypeNameForParam(setter.getParamTypeArg());
-        verify(initializerGeneratorA).generateCollectionInitializer(setter);
+        final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+        verify(typeNameGenerator).generateTypeName(collectionType.getTypeArg());
+        verify(initializerGeneratorA).generateCollectionInitializer(collectionType);
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -303,11 +298,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                                .propertyName("deque") //
+                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
@@ -344,11 +338,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionGetAndAdder.builder() //
+                        Getter.builder() //
                                 .methodName("getList") //
-                                .paramName("list") //
-                                .paramType(List.class) //
-                                .paramTypeArg(String.class) //
+                                .propertyName("list") //
+                                .propertyType(new CollectionType(List.class, String.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //

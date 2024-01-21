@@ -2,9 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -35,38 +33,31 @@ class EnumSetInitializerCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableTrue(final CollectionSetter collectionSetter) {
+    void testIsApplicableTrue(final CollectionType collectionType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(collectionSetter);
+        final boolean isApplicable = generator.isApplicable(collectionType);
         // Assert
         assertTrue(isApplicable);
     }
 
-    private static Stream<CollectionSetter> testIsApplicableTrue() {
-        return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionSetter.class::cast);
+    private static Stream<CollectionType> testIsApplicableTrue() {
+        return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionType.class::cast);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableFalse(final CollectionSetter collectionSetter) {
+    void testIsApplicableFalse(final CollectionType collectionType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(collectionSetter);
+        final boolean isApplicable = generator.isApplicable(collectionType);
         // Assert
         assertFalse(isApplicable);
     }
 
-    private static Stream<CollectionSetter> testIsApplicableFalse() {
+    private static Stream<CollectionType> testIsApplicableFalse() {
         return Stream.concat(
                         CollectionsApiInitializerCodeGenerator.SUPPORTED_COLLECTIONS.stream(),
                         Stream.of(Set.class, List.class, CollectionsApiInitializerCodeGeneratorTest.MyList.class))
-                .map(type -> CollectionSetter.builder() //
-                        .paramName("") //
-                        .paramType(type) //
-                        .paramTypeArg(Object.class) //
-                        .methodName("") //
-                        .visibility(Visibility.PRIVATE) //
-                        .declaringClass(ClassWithCollections.class) //
-                        .build());
+                .map(type -> new CollectionType(type, Object.class));
     }
 
     @Test
@@ -79,26 +70,26 @@ class EnumSetInitializerCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateCollectionInitializerCodeGenerationException(final CollectionSetter collectionSetter) {
+    void testGenerateCollectionInitializerCodeGenerationException(final CollectionType collectionType) {
         // Act
-        final ThrowableAssert.ThrowingCallable generateCollectionInitializer = () -> generator.generateCollectionInitializer(collectionSetter);
+        final ThrowableAssert.ThrowingCallable generateCollectionInitializer = () -> generator.generateCollectionInitializer(collectionType);
         // Assert
         assertThatThrownBy(generateCollectionInitializer)
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(collectionSetter.getParamType().getTypeName());
+                .contains(collectionType.getType().getTypeName());
     }
 
-    private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {
+    private static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
         return testIsApplicableFalse();
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateCollectionInitializer(final CollectionSetter collectionSetter, final CodeBlock expected) {
+    void testGenerateCollectionInitializer(final CollectionType collectionType, final CodeBlock expected) {
         // Act
-        final CodeBlock actual = generator.generateCollectionInitializer(collectionSetter);
+        final CodeBlock actual = generator.generateCollectionInitializer(collectionType);
         // Assert
         assertThat(actual).hasToString(expected.toString());
     }
@@ -106,24 +97,10 @@ class EnumSetInitializerCodeGeneratorTest {
     private static Stream<Arguments> testGenerateCollectionInitializer() {
         return Stream.of(
                 Arguments.of(
-                        CollectionSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumSet.class) //
-                                .paramTypeArg(EnumA.class) //
-                                .methodName("") //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(),
+                        new CollectionType(EnumSet.class, EnumA.class),
                         CodeBlock.builder().add("java.util.EnumSet.noneOf(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumSetInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
-                        CollectionSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumSet.class) //
-                                .paramTypeArg(EnumB.class) //
-                                .methodName("") //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(),
+                        new CollectionType(EnumSet.class, EnumB.class),
                         CodeBlock.builder().add("java.util.EnumSet.noneOf(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumSetInitializerCodeGeneratorTest.EnumB.class)").build()));
     }
 

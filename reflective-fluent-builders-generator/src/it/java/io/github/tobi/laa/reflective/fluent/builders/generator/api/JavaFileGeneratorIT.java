@@ -1,9 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
-import io.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.SimpleSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithGenerics;
@@ -33,25 +30,24 @@ class JavaFileGeneratorIT {
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(classInfo.get(ClassWithGenerics.class)) //
                         .accessibleNonArgsConstructor(true) //
-                        .setter(SimpleSetter.builder() //
+                        .writeAccessor(Setter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
-                        .setter(ArraySetter.builder() //
+                        .writeAccessor(Setter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyName("floats") //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
-                        .setter(SimpleSetter.builder() //
+                        .writeAccessor(Setter.builder() //
                                 .methodName("setT") //
-                                .paramName("t") //
-                                .paramType(typeVariableT()) //
+                                .propertyName("t") //
+                                .propertyType(new SimpleType(typeVariableT())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //

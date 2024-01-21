@@ -1,18 +1,21 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.MethodSpec;
-import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.CallSetterFor;
-import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodCodeGenerator;
+import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodStepCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
 
+import static com.google.common.collect.ImmutableSortedSet.copyOf;
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.OBJECT_SUPPLIER_FIELD_NAME;
 
 /**
@@ -26,6 +29,17 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
 
     private static final String OBJECT_TO_BUILD_FIELD_NAME = "objectToBuild";
 
+    @lombok.NonNull
+    private final SortedSet<BuildMethodStepCodeGenerator> stepCodeGenerators;
+
+    @Inject
+    @SuppressWarnings("unused")
+    BuildMethodCodeGeneratorImpl(final Set<BuildMethodStepCodeGenerator> stepCodeGenerators) {
+        // to ensure deterministic outputs, sets are sorted on construction
+        final var compareByClassName = Comparator.comparing(o -> o.getClass().getName());
+        this.stepCodeGenerators = copyOf(compareByClassName, stepCodeGenerators);
+    }
+
     @Override
     public MethodSpec generateBuildMethod(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
@@ -34,31 +48,10 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .returns(clazz.loadClass());
         methodBuilder.addStatement("final $T $L = this.$L.get()", clazz.loadClass(), OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
-        for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
-            if (setter instanceof CollectionGetAndAdder) {
-                methodBuilder
-                        .beginControlFlow(
-                                "if (this.$1L.$3L && this.$2L.$3L != null)",
-                                CallSetterFor.FIELD_NAME,
-                                FieldValue.FIELD_NAME,
-                                setter.getParamName())
-                        .addStatement(
-                                "this.$L.$L.forEach($L.$L()::add)",
-                                FieldValue.FIELD_NAME,
-                                setter.getParamName(),
-                                OBJECT_TO_BUILD_FIELD_NAME,
-                                setter.getMethodName());
-            } else {
-                methodBuilder
-                        .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getParamName())
-                        .addStatement(
-                                "$L.$L(this.$L.$L)",
-                                OBJECT_TO_BUILD_FIELD_NAME,
-                                setter.getMethodName(),
-                                FieldValue.FIELD_NAME,
-                                setter.getParamName());
-            }
-            methodBuilder.endControlFlow();
+        for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
+            stepCodeGenerators.stream()
+                    .filter(gen -> gen.isApplicable(writeAccessor))
+                    .forEach(gen -> methodBuilder.addCode(gen.generate(writeAccessor)));
         }
         methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);
         return methodBuilder.build();

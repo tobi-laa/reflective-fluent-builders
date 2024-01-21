@@ -2,44 +2,45 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
 import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
 
 /**
  * <p>
- * Generates a {@link CodeBlock} for initializing the collection being set by a given {@link CollectionSetter}.
+ * Generates a {@link CodeBlock} for initializing the collection represented by a given {@link CollectionType}.
  * </p>
  * <p>
- * Calling {@link #generateCollectionInitializer(CollectionSetter)} for the setter of a {@link java.util.List List}
- * should for instance produce a CodeBlock holding the statement {@code "new ArrayList<>()"}.
+ * Calling {@link #generateCollectionInitializer(CollectionType)} for a {@link java.util.List List} should for instance
+ * produce a CodeBlock holding the statement {@code "new ArrayList<>()"}.
  * </p>
  */
 public interface CollectionInitializerCodeGenerator {
 
     /**
      * <p>
-     * Returns {@code true} if this generator is applicable for {@code collectionSetter} (meaning it can be used for
+     * Returns {@code true} if this generator is applicable for {@code collectionType} (meaning it can be used for
      * generating an initializer) and {@code false} otherwise.
      * </p>
      *
-     * @param collectionSetter The setter for which to check whether this generator is applicable. Must not be
-     *                         {@code null}.
-     * @return {@code true} if this generator is applicable for {@code collectionSetter} (meaning it can be used for
+     * @param collectionType The type for which to check whether this generator is applicable. Must not be {@code null}.
+     * @return {@code true} if this generator is applicable for {@code collectionType} (meaning it can be used for
      * generating an initializer) and {@code false} otherwise.
      */
-    boolean isApplicable(final CollectionSetter collectionSetter);
+    boolean isApplicable(final CollectionType collectionType);
 
     /**
      * <p>
-     * Generates a {@link CodeBlock} for initializing the collection being set by a given {@link CollectionSetter}.
+     * Generates a {@link CodeBlock} for initializing the collection represented by a given {@link CollectionType}.
      * </p>
      * <p>
-     * Calling this method for the setter of a {@link java.util.List List} should for instance produce a CodeBlock
-     * holding the statement {@code "new ArrayList<>()"}.
+     * Calling this method for a {@link java.util.List List} should for instance produce a CodeBlock holding the
+     * statement {@code "new ArrayList<>()"}.
      * </p>
      *
-     * @param collectionSetter The setter for which to generate the code block for initializing the collection being set by it. Must not be {@code null}.
-     * @return A code block for initializing the collection being set {@code collectionSetter}.
-     * @throws CodeGenerationException If called for a setter for which this generator is not {@link #isApplicable(CollectionSetter)}.
+     * @param collectionType The type for which to generate the code block for initializing the collection represented
+     *                       by it. Must not be {@code null}.
+     * @return A code block for initializing the collection represented by {@code collectionType}.
+     * @throws CodeGenerationException If called for a type for which this generator is not
+     *                                 {@link #isApplicable(CollectionType) applicable}.
      */
-    CodeBlock generateCollectionInitializer(final CollectionSetter collectionSetter);
+    CodeBlock generateCollectionInitializer(final CollectionType collectionType);
 }

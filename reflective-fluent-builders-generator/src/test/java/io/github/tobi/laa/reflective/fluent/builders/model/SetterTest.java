@@ -6,30 +6,28 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ArraySetterTest {
+class SetterTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var arraySetter = ArraySetter.builder() //
+        final var getter = Setter.builder() //
                 .methodName("getSth") //
-                .paramType(Object[].class) //
-                .paramName("aName") //
+                .propertyType(new SimpleType(String.class)) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
-                .paramComponentType(Object.class) //
                 .build();
         // Act
-        final var withParamName = arraySetter.withParamName(paramName);
+        final var withParamName = getter.withPropertyName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(ArraySetter.builder() //
+        assertThat(withParamName).usingRecursiveComparison().isEqualTo(Setter.builder() //
                 .methodName("getSth") //
-                .paramType(Object[].class) //
-                .paramName(paramName) //
+                .propertyType(new SimpleType(String.class)) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
-                .paramComponentType(Object.class) //
                 .build());
     }
 }

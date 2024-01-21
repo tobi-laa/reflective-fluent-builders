@@ -4,36 +4,30 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWi
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MapSetterTest {
+class AdderTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var mapSetter = MapSetter.builder() //
+        final var adder = Adder.builder() //
                 .methodName("getSth") //
-                .paramType(Map.class) //
-                .paramName("aName") //
+                .propertyType(new SimpleType(String.class)) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
-                .keyType(Object.class) //
-                .valueType(Object.class) //
                 .build();
         // Act
-        final var withParamName = mapSetter.withParamName(paramName);
+        final var withParamName = adder.withPropertyName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(MapSetter.builder() //
+        assertThat(withParamName).usingRecursiveComparison().isEqualTo(Adder.builder() //
                 .methodName("getSth") //
-                .paramType(Map.class) //
-                .paramName(paramName) //
+                .propertyType(new SimpleType(String.class)) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
-                .keyType(Object.class) //
-                .valueType(Object.class) //
                 .build());
     }
 }

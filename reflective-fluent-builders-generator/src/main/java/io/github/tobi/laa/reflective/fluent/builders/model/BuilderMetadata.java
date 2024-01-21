@@ -66,6 +66,6 @@ public class BuilderMetadata {
 
         @lombok.NonNull
         @Singular
-        private final SortedSet<Setter> setters;
+        private final SortedSet<WriteAccessor> writeAccessors;
     }
 }

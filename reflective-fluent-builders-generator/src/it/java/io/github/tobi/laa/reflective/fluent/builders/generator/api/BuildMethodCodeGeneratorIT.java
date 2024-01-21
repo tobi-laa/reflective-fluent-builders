@@ -1,8 +1,10 @@
-package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
+package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
 import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.DirectFieldAccess;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -13,19 +15,23 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.reflect.TypeUtils.parameterize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class BuildMethodCodeGeneratorImplTest {
+@IntegrationTest
+class BuildMethodCodeGeneratorIT {
 
     @RegisterExtension
     static ClassGraphExtension classInfo = new ClassGraphExtension();
 
-    private final BuildMethodCodeGeneratorImpl generator = new BuildMethodCodeGeneratorImpl();
+    @Inject
+    private BuildMethodCodeGenerator generator;
 
     @Test
     void testGenerateNull() {
@@ -55,18 +61,17 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setAnInt") //
-                                                .paramName("anInt") //
-                                                .paramType(int.class) //
+                                                .propertyName("anInt") //
+                                                .propertyType(new SimpleType(int.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(ArraySetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setFloats") //
-                                                .paramName("floats") //
-                                                .paramType(float[].class) //
-                                                .paramComponentType(float.class) //
+                                                .propertyName("floats") //
+                                                .propertyType(new ArrayType(float[].class, float.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
@@ -91,20 +96,17 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(ClassWithHierarchy.class)) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .setter(MapSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setSortedMap") //
-                                                .paramName("sortedMap") //
-                                                .paramType(SortedMap.class) //
-                                                .keyType(Integer.class) //
-                                                .valueType(Object.class) //
+                                                .propertyName("sortedMap") //
+                                                .propertyType(new MapType(SortedMap.class, Integer.class, Object.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(ClassWithHierarchy.class) //
                                                 .build()) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setList") //
-                                                .paramName("list") //
-                                                .paramType(List.class) //
-                                                .paramTypeArg(String.class) //
+                                                .propertyName("list") //
+                                                .propertyType(new CollectionType(List.class, String.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(ClassWithHierarchy.class) //
                                                 .build()) //
@@ -129,11 +131,10 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(PetJaxb.class)) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .setter(CollectionGetAndAdder.builder() //
+                                        .writeAccessor(Getter.builder() //
                                                 .methodName("getSiblings") //
-                                                .paramName("siblings") //
-                                                .paramType(List.class) //
-                                                .paramTypeArg(PetJaxb.class) //
+                                                .propertyName("siblings") //
+                                                .propertyType(new CollectionType(List.class, PetJaxb.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(PetJaxb.class) //
                                                 .build()) //
@@ -146,6 +147,39 @@ class BuildMethodCodeGeneratorImplTest {
                                         "  }\n" +
                                         "  return objectToBuild;\n" +
                                         "}\n",
-                                PetJaxb.class.getName())));
+                                PetJaxb.class.getName())),
+                Arguments.of(
+                        BuilderMetadata.builder() //
+                                .packageName(DirectFieldAccess.class.getPackageName()) //
+                                .name("DirectFieldAccessBuilder") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(classInfo.get(DirectFieldAccess.class)) //
+                                        .accessibleNonArgsConstructor(true) //
+                                        .writeAccessor(FieldAccessor.builder() //
+                                                .propertyName("publicFieldNoSetter") //
+                                                .propertyType(new SimpleType(int.class)) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(DirectFieldAccess.class) //
+                                                .build()) //
+                                        .writeAccessor(FieldAccessor.builder() //
+                                                .propertyName("publicFinalFieldNoSetter") //
+                                                .propertyType(new CollectionType(parameterize(List.class, String.class), String.class)) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .isFinal(true) //
+                                                .declaringClass(DirectFieldAccess.class) //
+                                                .build()) //
+                                        .build()) //
+                                .build(), //
+                        String.format("public %1$s build() {\n" +
+                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
+                                        "  if (this.callSetterFor.publicFieldNoSetter) {\n" +
+                                        "    objectToBuild.publicFieldNoSetter = this.fieldValue.publicFieldNoSetter;\n" +
+                                        "  }\n" +
+                                        "  if (this.callSetterFor.publicFinalFieldNoSetter && this.fieldValue.publicFinalFieldNoSetter != null) {\n" +
+                                        "    this.fieldValue.publicFinalFieldNoSetter.forEach(objectToBuild.publicFinalFieldNoSetter::add);\n" +
+                                        "  }\n" +
+                                        "  return objectToBuild;\n" +
+                                        "}\n",
+                                DirectFieldAccess.class.getName())));
     }
 }

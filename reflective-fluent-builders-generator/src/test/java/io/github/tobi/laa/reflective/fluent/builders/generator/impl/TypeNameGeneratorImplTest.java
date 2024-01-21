@@ -29,18 +29,18 @@ class TypeNameGeneratorImplTest {
     @Test
     void testGenerateTypeNameForParamSetterNull() {
         // Arrange
-        final Setter setter = null;
+        final WriteAccessor writeAccessor = null;
         // Act
-        final Executable generateTypeNameForParam = () -> generator.generateTypeNameForParam(setter);
+        final Executable generateTypeNameForParam = () -> generator.generateTypeName(writeAccessor);
         // Assert
         assertThrows(NullPointerException.class, generateTypeNameForParam);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateTypeNameForParamSetter(final Setter setter, final String expected) {
+    void testGenerateTypeNameForParamSetter(final WriteAccessor writeAccessor, final String expected) {
         // Act
-        final TypeName actual = generator.generateTypeNameForParam(setter);
+        final TypeName actual = generator.generateTypeName(writeAccessor);
         // Assert
         assertThat(actual).hasToString(expected);
     }
@@ -48,83 +48,86 @@ class TypeNameGeneratorImplTest {
     private static Stream<Arguments> testGenerateTypeNameForParamSetter() {
         return Stream.of(
                 Arguments.of(
-                        SimpleSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build(), //
                         "int"
                 ),
                 Arguments.of(
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(TypeUtils.parameterize(Deque.class, Object.class)) //
-                                .paramTypeArg(wildcardType() //
-                                        .withUpperBounds(Object.class) //
-                                        .build()) //
+                                .propertyName("deque") //
+                                .propertyType(new CollectionType(
+                                        TypeUtils.parameterize(Deque.class, Object.class),
+                                        wildcardType() //
+                                                .withUpperBounds(Object.class) //
+                                                .build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.Deque<java.lang.Object>"
                 ),
                 Arguments.of(
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setList") //
-                                .paramName("list") //
-                                .paramType(TypeUtils.parameterize(List.class, Character.class)) //
-                                .paramTypeArg(Character.class) //
+                                .propertyName("list") //
+                                .propertyType(new CollectionType(
+                                        TypeUtils.parameterize(List.class, Character.class),
+                                        Character.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.List<java.lang.Character>"
                 ),
                 Arguments.of(
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setList") //
-                                .paramName("list") //
-                                .paramType(List.class) //
-                                .paramType(TypeUtils.parameterize(List.class, TypeUtils.parameterize(Map.class, String.class, Object.class))) //
-                                .paramTypeArg(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
+                                .propertyName("list") //
+                                .propertyType(new CollectionType(
+                                        TypeUtils.parameterize(List.class, TypeUtils.parameterize(Map.class, String.class, Object.class)),
+                                        TypeUtils.parameterize(Map.class, String.class, Object.class))) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"
                 ),
                 Arguments.of(
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyName("floats") //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "float[]"
                 ),
                 Arguments.of(
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(TypeUtils.parameterize(Map.class, String.class, Object.class)) //
-                                .keyType(String.class) //
-                                .valueType(Object.class) //
+                                .propertyName("map") //
+                                .propertyType(new MapType( //
+                                        TypeUtils.parameterize(Map.class, String.class, Object.class), //
+                                        String.class, //
+                                        Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         "java.util.Map<java.lang.String, java.lang.Object>"
                 ),
                 Arguments.of(
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(TypeUtils.parameterize(SortedMap.class, String.class, Object.class)) //
-                                .keyType(String.class) //
-                                .valueType(wildcardType() //
-                                        .withUpperBounds(Object.class) //
-                                        .build()) //
+                                .propertyName("map") //
+                                .propertyType(new MapType( //
+                                        TypeUtils.parameterize(SortedMap.class, String.class, Object.class), //
+                                        String.class, //
+                                        wildcardType() //
+                                                .withUpperBounds(Object.class) //
+                                                .build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
@@ -137,7 +140,7 @@ class TypeNameGeneratorImplTest {
         // Arrange
         final Type type = null;
         // Act
-        final Executable generateTypeNameForParam = () -> generator.generateTypeNameForParam(type);
+        final Executable generateTypeNameForParam = () -> generator.generateTypeName(type);
         // Assert
         assertThrows(NullPointerException.class, generateTypeNameForParam);
     }
@@ -146,7 +149,7 @@ class TypeNameGeneratorImplTest {
     @MethodSource
     void testGenerateTypeNameForParamType(final Type type, final String expected) {
         // Act
-        final TypeName actual = generator.generateTypeNameForParam(type);
+        final TypeName actual = generator.generateTypeName(type);
         // Assert
         assertThat(actual).hasToString(expected);
     }

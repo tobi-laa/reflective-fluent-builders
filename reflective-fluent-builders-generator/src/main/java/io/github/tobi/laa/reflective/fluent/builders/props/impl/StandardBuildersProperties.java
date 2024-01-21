@@ -35,6 +35,8 @@ public class StandardBuildersProperties implements BuildersProperties {
 
     private boolean getAndAddEnabled = true;
 
+    private boolean directFieldAccessEnabled = true;
+
     @lombok.NonNull
     @ToString.Exclude
     private Set<Predicate<Class<?>>> excludes = Set.of( //

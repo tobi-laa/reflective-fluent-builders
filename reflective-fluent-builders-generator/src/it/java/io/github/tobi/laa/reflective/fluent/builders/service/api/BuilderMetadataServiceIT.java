@@ -112,31 +112,31 @@ class BuilderMetadataServiceIT {
                                         .type(classInfo.get(SimpleClass.class.getName())) //
                                         .location(classLocation(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder()
+                                        .writeAccessor(Setter.builder()
                                                 .methodName("setAnInt")
-                                                .paramName("anInt")
-                                                .paramType(int.class)
+                                                .propertyName("anInt")
+                                                .propertyType(new SimpleType(int.class))
                                                 .visibility(PUBLIC)
                                                 .declaringClass(SimpleClass.class)
                                                 .build())
-                                        .setter(SimpleSetter.builder()
+                                        .writeAccessor(Setter.builder()
                                                 .methodName("setAString")
-                                                .paramName("aString")
-                                                .paramType(String.class)
+                                                .propertyName("aString")
+                                                .propertyType(new SimpleType(String.class))
                                                 .visibility(PUBLIC)
                                                 .declaringClass(SimpleClass.class)
                                                 .build())
-                                        .setter(SimpleSetter.builder()
+                                        .writeAccessor(Setter.builder()
                                                 .methodName("setBooleanField")
-                                                .paramName("booleanField")
-                                                .paramType(boolean.class)
+                                                .propertyName("booleanField")
+                                                .propertyType(new SimpleType(boolean.class))
                                                 .visibility(PUBLIC)
                                                 .declaringClass(SimpleClass.class)
                                                 .build())
-                                        .setter(SimpleSetter.builder()
+                                        .writeAccessor(Setter.builder()
                                                 .methodName("setSetClass")
-                                                .paramName("setClass")
-                                                .paramType(parameterize(Class.class, wildcardType().build()))
+                                                .propertyName("setClass")
+                                                .propertyType(new SimpleType(parameterize(Class.class, wildcardType().build())))
                                                 .visibility(PUBLIC)
                                                 .declaringClass(SimpleClass.class)
                                                 .build())
@@ -154,18 +154,18 @@ class BuilderMetadataServiceIT {
                                         .type(classInfo.get(ClassWithCollections.class.getName())) //
                                         .location(classLocation(ClassWithCollections.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(CollectionSetter.builder().methodName("setInts").paramName("ints").paramType(parameterize(Collection.class, Integer.class)).paramTypeArg(Integer.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(CollectionSetter.builder().methodName("setList").paramName("list").paramType(List.class).paramTypeArg(Object.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(CollectionSetter.builder().methodName("setSet").paramName("set").paramType(setOfList).paramTypeArg(List.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(CollectionSetter.builder().methodName("setDeque").paramName("deque").paramType(parameterize(Deque.class, wildcardType().withUpperBounds(Object.class).build())).paramTypeArg(wildcardType().withUpperBounds(Object.class).build()).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(CollectionSetter.builder().methodName("setSortedSetWild").paramName("sortedSetWild").paramType(parameterize(SortedSet.class, wildcardType().build())).paramTypeArg(wildcardType().build()).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(ArraySetter.builder().methodName("setFloats").paramName("floats").paramType(float[].class).paramComponentType(float.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(MapSetter.builder().methodName("setMap").paramName("map").paramType(parameterize(Map.class, String.class, Object.class)).keyType(String.class).valueType(Object.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(MapSetter.builder().methodName("setMapTU").paramName("mapTU").paramType(parameterize(Map.class, typeVariableT(), typeVariableU())).keyType(typeVariableT()).valueType(typeVariableU()).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(MapSetter.builder().methodName("setMapWildObj").paramName("mapWildObj").paramType(parameterize(Map.class, wildcardType().build(), Object.class)).keyType(wildcardType().build()).valueType(Object.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(MapSetter.builder().methodName("setMapNoTypeArgs").paramName("mapNoTypeArgs").paramType(Map.class).keyType(Object.class).valueType(Object.class).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(CollectionSetter.builder().methodName("setListWithTwoParams").paramName("listWithTwoParams").paramType(parameterize(ListWithTwoParams.class, String.class, Integer.class)).paramTypeArg(parameterize(Map.class, String.class, Integer.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
-                                        .setter(MapSetter.builder().methodName("setMapWithThreeParams").paramName("mapWithThreeParams").paramType(parameterize(MapWithThreeParams.class, String.class, Integer.class, Boolean.class)).keyType(String.class).valueType(parameterize(Map.class, Integer.class, Boolean.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setInts").propertyName("ints").propertyType(new CollectionType(parameterize(Collection.class, Integer.class), Integer.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setList").propertyName("list").propertyType(new CollectionType(List.class, Object.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setSet").propertyName("set").propertyType(new CollectionType(setOfList, List.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setDeque").propertyName("deque").propertyType(new CollectionType(parameterize(Deque.class, wildcardType().withUpperBounds(Object.class).build()), wildcardType().withUpperBounds(Object.class).build())).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setSortedSetWild").propertyName("sortedSetWild").propertyType(new CollectionType(parameterize(SortedSet.class, wildcardType().build()), wildcardType().build())).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setFloats").propertyName("floats").propertyType(new ArrayType(float[].class, float.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setMap").propertyName("map").propertyType(new MapType(parameterize(Map.class, String.class, Object.class), String.class, Object.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setMapTU").propertyName("mapTU").propertyType(new MapType(parameterize(Map.class, typeVariableT(), typeVariableU()), typeVariableT(), typeVariableU())).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setMapWildObj").propertyName("mapWildObj").propertyType(new MapType(parameterize(Map.class, wildcardType().build(), Object.class), wildcardType().build(), Object.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setMapNoTypeArgs").propertyName("mapNoTypeArgs").propertyType(new MapType(Map.class, Object.class, Object.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setListWithTwoParams").propertyName("listWithTwoParams").propertyType(new CollectionType(parameterize(ListWithTwoParams.class, String.class, Integer.class), parameterize(Map.class, String.class, Integer.class))).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
+                                        .writeAccessor(Setter.builder().methodName("setMapWithThreeParams").propertyName("mapWithThreeParams").propertyType(new MapType(parameterize(MapWithThreeParams.class, String.class, Integer.class, Boolean.class), String.class, parameterize(Map.class, Integer.class, Boolean.class))).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())
                                         .build()) //
                                 .build()), //
                 Arguments.of( //
@@ -180,17 +180,17 @@ class BuilderMetadataServiceIT {
                                         .type(classInfo.get(PackagePrivateConstructor.class.getName())) //
                                         .location(classLocation(PackagePrivateConstructor.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setIntField") //
-                                                .paramName("intField") //
-                                                .paramType(int.class) //
+                                                .propertyName("intField") //                                                
+                                                .propertyType(new SimpleType(int.class))
                                                 .visibility(PUBLIC) //
                                                 .declaringClass(PackagePrivateConstructor.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setPackagePrivate") //
-                                                .paramName("packagePrivate") //
-                                                .paramType(packagePrivate) //
+                                                .propertyName("packagePrivate") //
+                                                .propertyType(new SimpleType(packagePrivate))
                                                 .visibility(PUBLIC) //
                                                 .declaringClass(PackagePrivateConstructor.class) //
                                                 .build()) //
@@ -222,17 +222,17 @@ class BuilderMetadataServiceIT {
                                         .type(classInfo.get(SimpleClassNoSetPrefix.class.getName())) //
                                         .location(classLocation(SimpleClassNoSetPrefix.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("anInt") //
-                                                .paramName("anInt") //
-                                                .paramType(int.class) //
+                                                .propertyName("anInt") //
+                                                .propertyType(new SimpleType(int.class))
                                                 .visibility(PACKAGE_PRIVATE) //
                                                 .declaringClass(SimpleClassNoSetPrefix.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("aString") //
-                                                .paramName("aString") //
-                                                .paramType(String.class) //
+                                                .propertyName("aString") //
+                                                .propertyType(new SimpleType(String.class))
                                                 .visibility(PACKAGE_PRIVATE) //
                                                 .declaringClass(SimpleClassNoSetPrefix.class) //
                                                 .build()) //
@@ -264,38 +264,38 @@ class BuilderMetadataServiceIT {
                                         .type(classInfo.get(NameCollisions.class.getName())) //
                                         .location(classLocation(NameCollisions.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setField") //
-                                                .paramName("field") //
-                                                .paramType(int.class) //
+                                                .propertyName("field") //
+                                                .propertyType(new SimpleType(int.class))
                                                 .visibility(PUBLIC) //
                                                 .declaringClass(NameCollisions.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setField") //
-                                                .paramName("field0") //
-                                                .paramType(String.class) //
+                                                .propertyName("field0") //
+                                                .propertyType(new SimpleType(String.class))
                                                 .visibility(PUBLIC) //
                                                 .declaringClass(NameCollisions.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setAnotherField") //
-                                                .paramName("anotherField") //
-                                                .paramType(boolean.class) //
+                                                .propertyName("anotherField") //
+                                                .propertyType(new SimpleType(boolean.class))
                                                 .visibility(PUBLIC) //
                                                 .declaringClass(NameCollisions.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setAnotherField") //
-                                                .paramName("anotherField0") //
-                                                .paramType(int.class) //
+                                                .propertyName("anotherField0") //
+                                                .propertyType(new SimpleType(int.class))
                                                 .visibility(PUBLIC) //
                                                 .declaringClass(NameCollisions.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setAnotherField") //
-                                                .paramName("anotherField1") //
-                                                .paramType(String.class) //
+                                                .propertyName("anotherField1") //
+                                                .propertyType(new SimpleType(String.class))
                                                 .visibility(PUBLIC) //
                                                 .declaringClass(NameCollisions.class) //
                                                 .build()) //
@@ -465,10 +465,10 @@ class BuilderMetadataServiceIT {
                                         .builtType(BuilderMetadata.BuiltType.builder() //
                                                 .type(classInfo.get(SimpleClass.class.getName())) //
                                                 .accessibleNonArgsConstructor(true) //
-                                                .setter(SimpleSetter.builder() //
+                                                .writeAccessor(Setter.builder() //
                                                         .methodName("setPub") //
-                                                        .paramName("pub") //
-                                                        .paramType(int.class) //
+                                                        .propertyName("pub") //
+                                                        .propertyType(new SimpleType(int.class)) //
                                                         .visibility(PUBLIC) //
                                                         .declaringClass(SimpleClass.class) //
                                                         .build())
@@ -481,10 +481,10 @@ class BuilderMetadataServiceIT {
                                         .builtType(BuilderMetadata.BuiltType.builder() //
                                                 .type(classInfo.get(SimpleClass.class.getName())) //
                                                 .accessibleNonArgsConstructor(true) //
-                                                .setter(SimpleSetter.builder() //
+                                                .writeAccessor(Setter.builder() //
                                                         .methodName("setPub") //
-                                                        .paramName("pub") //
-                                                        .paramType(int.class) //
+                                                        .propertyName("pub") //
+                                                        .propertyType(new SimpleType(int.class)) //
                                                         .visibility(PUBLIC) //
                                                         .declaringClass(SimpleClass.class) //
                                                         .build())

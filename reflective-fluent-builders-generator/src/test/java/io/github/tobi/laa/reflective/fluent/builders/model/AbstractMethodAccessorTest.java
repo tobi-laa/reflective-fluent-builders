@@ -7,17 +7,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AbstractSetterTest {
+class AbstractMethodAccessorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testEquals(final AbstractSetter a, final Object b, final boolean expected) {
+    void testEquals(final AbstractMethodAccessor a, final Object b, final boolean expected) {
         // Act
         final boolean actual = a.equals(b);
         // Assert
@@ -25,11 +24,12 @@ class AbstractSetterTest {
     }
 
     private static Stream<Arguments> testEquals() {
-        final var abstractSetter = TestSetter.builder() //
-                .methodName("getSth") //
-                .paramName("aName") //
+        final var abstractSetter = TestAccessor.builder() //
+                .propertyType(new MapType(Map.class, Object.class, Object.class)) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(SimpleClass.class) //
+                .methodName("foobar") //
                 .build();
         return Stream.of( //
                 Arguments.of(abstractSetter, abstractSetter, true), //
@@ -37,27 +37,21 @@ class AbstractSetterTest {
                 Arguments.of(abstractSetter, "foobar", false), //
                 Arguments.of( //
                         abstractSetter, //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("getSth") //
-                                .paramType(Object[].class) //
-                                .paramName("aName") //
+                                .propertyType(new ArrayType(Object[].class, Object.class)) //
+                                .propertyName("aName") //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
-                                .paramComponentType(Object.class) //
                                 .build(), //
                         false));
     }
 
     @SuperBuilder
-    private static class TestSetter extends AbstractSetter {
+    private static class TestAccessor extends AbstractMethodAccessor {
 
         @Override
-        public Type getParamType() {
-            return Map.class;
-        }
-
-        @Override
-        public TestSetter withParamName(final String paramName) {
+        public TestAccessor withPropertyName(final String paramName) {
             return this;
         }
     }

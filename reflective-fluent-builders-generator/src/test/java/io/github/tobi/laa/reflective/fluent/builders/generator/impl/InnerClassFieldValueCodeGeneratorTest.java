@@ -68,7 +68,7 @@ class InnerClassFieldValueCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final EncapsulatingClassSpec expected) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
+        when(typeNameGenerator.generateTypeName(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
         // Act
         final EncapsulatingClassSpec actual = generator.generate(builderMetadata);
         // Assert
@@ -76,7 +76,7 @@ class InnerClassFieldValueCodeGeneratorTest {
         assertThat(actual.getField()).hasToString(expected.getField().toString());
         assertThat(actual.getInnerClass()).hasToString(expected.getInnerClass().toString());
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        builderMetadata.getBuiltType().getSetters().forEach(verify(typeNameGenerator)::generateTypeNameForParam);
+        builderMetadata.getBuiltType().getWriteAccessors().forEach(verify(typeNameGenerator)::generateTypeName);
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -89,24 +89,24 @@ class InnerClassFieldValueCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("anInt") //
-                                                .paramType(int.class) //
+                                                .propertyName("anInt") //
+                                                .propertyType(new SimpleType(int.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("string") //
-                                                .paramType(String.class) //
+                                                .propertyName("string") //
+                                                .propertyType(new SimpleType(String.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("object") //
-                                                .paramType(Object.class) //
+                                                .propertyName("object") //
+                                                .propertyType(new SimpleType(Object.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
@@ -132,36 +132,31 @@ class InnerClassFieldValueCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("set") //
-                                                .paramType(Set.class) //
-                                                .paramTypeArg(List.class) //
+                                                .propertyName("set") //
+                                                .propertyType(new CollectionType(Set.class, List.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("deque") //
-                                                .paramType(Deque.class) //
-                                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                                                .propertyName("deque") //
+                                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().build())) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(ArraySetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("floats") //
-                                                .paramType(float[].class) //
-                                                .paramComponentType(float.class) //
+                                                .propertyName("floats") //
+                                                .propertyType(new ArrayType(float[].class, float.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(MapSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
-                                                .paramName("map") //
-                                                .paramType(Map.class) //
-                                                .keyType(String.class) //
-                                                .valueType(Object.class) //
+                                                .propertyName("map") //
+                                                .propertyType(new MapType(Map.class, String.class, Object.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
@@ -176,8 +171,8 @@ class InnerClassFieldValueCodeGeneratorTest {
                                         .classBuilder(fieldValue) //
                                         .addModifiers(Modifier.PRIVATE) //
                                         .addField(FieldSpec.builder(TypeName.get(MockType.class), "deque").build()) //
-                                        .addField(FieldSpec.builder(TypeName.get(MockType.class), "floats").build()) //                                        .addField(FieldSpec.builder(TypeName.get(MockType.class), "string").build()) //
-                                        .addField(FieldSpec.builder(TypeName.get(MockType.class), "map").build()) //                                     .addField(FieldSpec.builder(TypeName.get(MockType.class), "string").build()) //
+                                        .addField(FieldSpec.builder(TypeName.get(MockType.class), "floats").build()) //
+                                        .addField(FieldSpec.builder(TypeName.get(MockType.class), "map").build()) //
                                         .addField(FieldSpec.builder(TypeName.get(MockType.class), "set").build()) //
                                         .build()) //
                                 .build()));

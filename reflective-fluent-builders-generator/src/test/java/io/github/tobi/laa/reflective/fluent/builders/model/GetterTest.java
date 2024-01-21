@@ -4,34 +4,30 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWi
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CollectionSetterTest {
+class GetterTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var collectionSetter = CollectionSetter.builder() //
+        final var getter = Getter.builder() //
                 .methodName("getSth") //
-                .paramType(List.class) //
-                .paramName("aName") //
+                .propertyType(new SimpleType(String.class)) //
+                .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
-                .paramTypeArg(Object.class) //
                 .build();
         // Act
-        final var withParamName = collectionSetter.withParamName(paramName);
+        final var withParamName = getter.withPropertyName(paramName);
         // Assert
-        assertThat(withParamName).usingRecursiveComparison().isEqualTo(CollectionSetter.builder() //
+        assertThat(withParamName).usingRecursiveComparison().isEqualTo(Getter.builder() //
                 .methodName("getSth") //
-                .paramType(List.class) //
-                .paramName(paramName) //
+                .propertyType(new SimpleType(String.class)) //
+                .propertyName(paramName) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
-                .paramTypeArg(Object.class) //
                 .build());
     }
 }
