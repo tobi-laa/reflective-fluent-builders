@@ -4,10 +4,7 @@ import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.CallSetterFor;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodCodeGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import lombok.RequiredArgsConstructor;
 
@@ -67,6 +64,30 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                                 setter.getMethodName(),
                                 FieldValue.FIELD_NAME,
                                 setter.getPropertyName());
+            } else if (writeAccessor instanceof FieldAccessor) {
+                final var fieldAccessor = (FieldAccessor) writeAccessor;
+                if (fieldAccessor.isFinal()) {
+                    methodBuilder
+                            .beginControlFlow(
+                                    "if (this.$1L.$3L && this.$2L.$3L != null)",
+                                    CallSetterFor.FIELD_NAME,
+                                    FieldValue.FIELD_NAME,
+                                    writeAccessor.getPropertyName())
+                            .addStatement(
+                                    "this.$1L.$2L.forEach($3L.$2L::add)",
+                                    FieldValue.FIELD_NAME,
+                                    writeAccessor.getPropertyName(),
+                                    OBJECT_TO_BUILD_FIELD_NAME);
+                } else {
+                    methodBuilder
+                            .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, writeAccessor.getPropertyName())
+                            .addStatement(
+                                    "$L.$L = this.$L.$L",
+                                    OBJECT_TO_BUILD_FIELD_NAME,
+                                    writeAccessor.getPropertyName(),
+                                    FieldValue.FIELD_NAME,
+                                    writeAccessor.getPropertyName());
+                }
             }
             methodBuilder.endControlFlow();
         }

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -62,6 +63,15 @@ class AccessibilityServiceImpl implements AccessibilityService {
         Objects.requireNonNull(constructor);
         Objects.requireNonNull(packageName);
         return isAccessible(constructor.getDeclaringClass(), constructor.getModifiers(), packageName);
+    }
+
+    @Override
+    public boolean isAccessibleFrom(final Field field, final String packageName) {
+        Objects.requireNonNull(field);
+        Objects.requireNonNull(packageName);
+        final var visibility = visibilityService.toVisibility(field.getModifiers());
+        return isAccessible(field.getDeclaringClass(), visibility, packageName) && //
+                isAccessibleFrom(field.getGenericType(), packageName);
     }
 
     private boolean isAccessible(final Class<?> clazz, final int modifiers, final String builderPackage) {

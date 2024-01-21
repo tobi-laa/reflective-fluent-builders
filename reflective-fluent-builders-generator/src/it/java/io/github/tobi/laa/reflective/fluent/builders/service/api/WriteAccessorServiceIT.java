@@ -6,10 +6,7 @@ import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersPropertie
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.InjectSpy;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ListWithTwoParams;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.MapWithThreeParams;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.Generic;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.GenericChild;
@@ -119,10 +116,11 @@ class WriteAccessorServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testGatherAllSetters(final String setterPrefix, final String getterPrefix, final boolean getAndAddEnabled, final ClassInfo clazz, final Set<WriteAccessor> expected) {
+    void testGatherAllSetters(final String setterPrefix, final String getterPrefix, final boolean getAndAddEnabled, final boolean directFieldAccessEnabled, final ClassInfo clazz, final Set<WriteAccessor> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         when(properties.isGetAndAddEnabled()).thenReturn(getAndAddEnabled);
+        when(properties.isDirectFieldAccessEnabled()).thenReturn(directFieldAccessEnabled);
         if (getAndAddEnabled) {
             when(properties.getGetterPrefix()).thenReturn(getterPrefix);
         }
@@ -145,17 +143,17 @@ class WriteAccessorServiceIT {
     private static Stream<Arguments> testGatherAllSetters() {
         final var setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
         return Stream.of( //
-                Arguments.of("set", null, false, classInfo.get(SimpleClass.class), //
+                Arguments.of("set", null, false, false, classInfo.get(SimpleClass.class), //
                         Set.of( //
                                 Setter.builder().methodName("setAnInt").propertyName("anInt").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 Setter.builder().methodName("setAString").propertyName("aString").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 Setter.builder().methodName("setBooleanField").propertyName("booleanField").propertyType(new SimpleType(boolean.class)).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 Setter.builder().methodName("setSetClass").propertyName("setClass").propertyType(new SimpleType(parameterize(Class.class, wildcardType().withUpperBounds(Object.class).build()))).visibility(PUBLIC).declaringClass(SimpleClass.class).build())), //
-                Arguments.of("", null, false, classInfo.get(SimpleClassNoSetPrefix.class), //
+                Arguments.of("", null, false, false, classInfo.get(SimpleClassNoSetPrefix.class), //
                         Set.of( //
                                 Setter.builder().methodName("anInt").propertyName("anInt").propertyType(new SimpleType(int.class)).visibility(PACKAGE_PRIVATE).declaringClass(SimpleClassNoSetPrefix.class).build(), //
                                 Setter.builder().methodName("aString").propertyName("aString").propertyType(new SimpleType(String.class)).visibility(PACKAGE_PRIVATE).declaringClass(SimpleClassNoSetPrefix.class).build())), //
-                Arguments.of("set", "get", false, classInfo.get(ClassWithCollections.class), //
+                Arguments.of("set", "get", false, false, classInfo.get(ClassWithCollections.class), //
                         Set.of( //
                                 Setter.builder().methodName("setInts").propertyName("ints").propertyType(new CollectionType(parameterize(Collection.class, Integer.class), Integer.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 Setter.builder().methodName("setList").propertyName("list").propertyType(new CollectionType(List.class, Object.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
@@ -169,29 +167,43 @@ class WriteAccessorServiceIT {
                                 Setter.builder().methodName("setMapNoTypeArgs").propertyName("mapNoTypeArgs").propertyType(new MapType(Map.class, Object.class, Object.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 Setter.builder().methodName("setListWithTwoParams").propertyName("listWithTwoParams").propertyType(new CollectionType(parameterize(ListWithTwoParams.class, String.class, Integer.class), parameterize(Map.class, String.class, Integer.class))).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 Setter.builder().methodName("setMapWithThreeParams").propertyName("mapWithThreeParams").propertyType(new MapType(parameterize(MapWithThreeParams.class, String.class, Integer.class, Boolean.class), String.class, parameterize(Map.class, Integer.class, Boolean.class))).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())), //
-                Arguments.of("set", "get", false, classInfo.get(PetJaxb.class), //
+                Arguments.of("set", "get", false, false, classInfo.get(PetJaxb.class), //
                         Set.of( //
                                 Setter.builder().methodName("setFullName").propertyName("fullName").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setOwner").propertyName("owner").propertyType(new SimpleType(PersonJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build())),
-                Arguments.of("set", "get", true, classInfo.get(PetJaxb.class), //
+                Arguments.of("set", "get", true, false, classInfo.get(PetJaxb.class), //
                         Set.of( //
                                 Setter.builder().methodName("setFullName").propertyName("fullName").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Getter.builder().methodName("getSiblings").propertyName("siblings").propertyType(new CollectionType(parameterize(List.class, PetJaxb.class), PetJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setOwner").propertyName("owner").propertyType(new SimpleType(PersonJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build())),
-                Arguments.of("set", "myPrefix", true, classInfo.get(PetJaxb.class), //
+                Arguments.of("set", "myPrefix", true, false, classInfo.get(PetJaxb.class), //
                         Set.of( //
                                 Setter.builder().methodName("setFullName").propertyName("fullName").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setOwner").propertyName("owner").propertyType(new SimpleType(PersonJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build())), //
-                Arguments.of("set", "get", true, classInfo.get(GetAndAdd.class), //
+                Arguments.of("set", "get", true, false, classInfo.get(GetAndAdd.class), //
                         Set.of( //
                                 Setter.builder().methodName("setListGetterAndSetter").propertyName("listGetterAndSetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Getter.builder().methodName("getListNoSetter").propertyName("listNoSetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Setter.builder().methodName("setListNoGetter").propertyName("listNoGetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Getter.builder().methodName("getListSetterWrongType").propertyName("listSetterWrongType").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
-                                Setter.builder().methodName("setListSetterWrongType").propertyName("listSetterWrongType").propertyType(new ArrayType(String[].class, String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build())));
+                                Setter.builder().methodName("setListSetterWrongType").propertyName("listSetterWrongType").propertyType(new ArrayType(String[].class, String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build())),
+                Arguments.of("set", "get", true, true, classInfo.get(DirectFieldAccess.class), //
+                        Set.of( //
+                                FieldAccessor.builder().propertyName("packagePrivateFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PACKAGE_PRIVATE).declaringClass(DirectFieldAccess.class).build(), //
+                                FieldAccessor.builder().propertyName("protectedFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PROTECTED).declaringClass(DirectFieldAccess.class).build(), //
+                                FieldAccessor.builder().propertyName("publicFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(DirectFieldAccess.class).build(), //
+                                Setter.builder().methodName("setPackagePrivateFieldWithSetter").propertyName("packagePrivateFieldWithSetter").propertyType(new SimpleType(int.class)).visibility(PACKAGE_PRIVATE).declaringClass(DirectFieldAccess.class).build(), //
+                                Setter.builder().methodName("setProtectedFieldWithSetter").propertyName("protectedFieldWithSetter").propertyType(new SimpleType(int.class)).visibility(PROTECTED).declaringClass(DirectFieldAccess.class).build(), //
+                                Setter.builder().methodName("setPublicFieldWithSetter").propertyName("publicFieldWithSetter").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(DirectFieldAccess.class).build(), //
+                                Getter.builder().methodName("getPackagePrivateFieldWithGetAndAdd").propertyName("packagePrivateFieldWithGetAndAdd").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PACKAGE_PRIVATE).declaringClass(DirectFieldAccess.class).build(), //
+                                Getter.builder().methodName("getProtectedFieldWithGetAndAdd").propertyName("protectedFieldWithGetAndAdd").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PROTECTED).declaringClass(DirectFieldAccess.class).build(), //
+                                Getter.builder().methodName("getPublicFieldWithGetAndAdd").propertyName("publicFieldWithGetAndAdd").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(DirectFieldAccess.class).build(),
+                                FieldAccessor.builder().propertyName("publicFieldWithPrivateSetter").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(DirectFieldAccess.class).build(),
+                                FieldAccessor.builder().propertyName("publicFinalFieldNoSetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).isFinal(true).declaringClass(DirectFieldAccess.class).build())));
+
     }
 
     @ParameterizedTest

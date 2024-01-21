@@ -322,6 +322,21 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     /**
      * <p>
+     * If this is set to {@code true}, the generated builders will use direct field access if possible and if no setter
+     * is available.
+     * </p>
+     *
+     * @param directFieldAccessEnabled Whether to support direct field access in generated builders.
+     * @since 2.0.0
+     */
+    @Parameter(name = "directFieldAccessEnabled", defaultValue = "true")
+    @SuppressWarnings("unused")
+    public void setDirectFieldAccessEnabled(final boolean directFieldAccessEnabled) {
+        params.setDirectFieldAccessEnabled(directFieldAccessEnabled);
+    }
+
+    /**
+     * <p>
      * Properties relating to hierarchy collection of classes.
      * </p>
      * <ul>

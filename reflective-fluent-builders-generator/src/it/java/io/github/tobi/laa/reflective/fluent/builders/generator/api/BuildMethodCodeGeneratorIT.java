@@ -4,6 +4,7 @@ import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.DirectFieldAccess;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @IntegrationTest
-class BuildMethodCodeGeneratorImplTest {
+class BuildMethodCodeGeneratorIT {
 
     @RegisterExtension
     static ClassGraphExtension classInfo = new ClassGraphExtension();
@@ -145,6 +146,29 @@ class BuildMethodCodeGeneratorImplTest {
                                         "  }\n" +
                                         "  return objectToBuild;\n" +
                                         "}\n",
-                                PetJaxb.class.getName())));
+                                PetJaxb.class.getName())),
+                Arguments.of(
+                        BuilderMetadata.builder() //
+                                .packageName(DirectFieldAccess.class.getPackageName()) //
+                                .name("DirectFieldAccessBuilder") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(classInfo.get(DirectFieldAccess.class)) //
+                                        .accessibleNonArgsConstructor(true) //
+                                        .writeAccessor(FieldAccessor.builder() //
+                                                .propertyName("publicFieldNoSetter") //
+                                                .propertyType(new SimpleType(int.class)) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .declaringClass(DirectFieldAccess.class) //
+                                                .build()) //
+                                        .build()) //
+                                .build(), //
+                        String.format("public %1$s build() {\n" +
+                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
+                                        "  if (this.callSetterFor.publicFieldNoSetter) {\n" +
+                                        "    objectToBuild.publicFieldNoSetter = this.fieldValue.publicFieldNoSetter;\n" +
+                                        "  }\n" +
+                                        "  return objectToBuild;\n" +
+                                        "}\n",
+                                DirectFieldAccess.class.getName())));
     }
 }

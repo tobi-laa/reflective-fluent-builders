@@ -77,6 +77,17 @@ public interface BuildersProperties {
 
     /**
      * <p>
+     * If this is set to {@code true}, the generated builders will use direct field access if possible and if no setter
+     * is available.
+     * </p>
+     *
+     * @return Whether to support direct field access in generated builders.
+     * @see WriteAccessorService
+     */
+    boolean isDirectFieldAccessEnabled();
+
+    /**
+     * <p>
      * Specifies classes to be excluded when generating builders.
      * </p>
      *

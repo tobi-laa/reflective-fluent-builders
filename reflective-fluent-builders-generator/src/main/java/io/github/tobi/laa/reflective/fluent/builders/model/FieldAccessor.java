@@ -12,7 +12,7 @@ import static java.util.Objects.compare;
 
 /**
  * <p>
- * A {@link WriteAccessor} that represents a field or the directing writing access to it.
+ * A {@link WriteAccessor} that represents a field or the direct writing access to it.
  * </p>
  */
 @Builder(toBuilder = true)
@@ -27,6 +27,9 @@ public class FieldAccessor implements WriteAccessor {
 
     @lombok.NonNull
     private final Visibility visibility;
+
+    @lombok.NonNull
+    private final boolean isFinal;
 
     @lombok.NonNull
     private final Class<?> declaringClass;

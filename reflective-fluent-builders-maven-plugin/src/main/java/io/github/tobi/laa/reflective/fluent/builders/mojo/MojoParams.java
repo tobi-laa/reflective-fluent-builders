@@ -41,6 +41,8 @@ public class MojoParams implements BuildersProperties {
 
     private boolean getAndAddEnabled;
 
+    private boolean directFieldAccessEnabled;
+
     @Valid
     private MojoParams.HierarchyCollection hierarchyCollection = new HierarchyCollection();
 

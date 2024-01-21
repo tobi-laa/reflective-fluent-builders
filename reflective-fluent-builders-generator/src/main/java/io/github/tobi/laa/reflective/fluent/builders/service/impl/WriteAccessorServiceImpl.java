@@ -12,9 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,7 +49,31 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         Objects.requireNonNull(classInfo);
         final var clazz = classInfo.loadClass();
         final var builderPackage = builderPackageService.resolveBuilderPackage(clazz);
-        final var methods = classService.collectFullClassHierarchy(classInfo) //
+        final var classHierarchy = classService.collectFullClassHierarchy(classInfo);
+        final var methods = gatherAllNonBridgeAccessibleMethods(classHierarchy, builderPackage);
+        final SortedSet<WriteAccessor> writeAccessors = new TreeSet<>();
+        writeAccessors.addAll(gatherAllSetters(methods, classInfo));
+        if (properties.isGetAndAddEnabled()) {
+            final var collectionGetters = gatherAllCollectionGetters(methods, classInfo);
+            addAllThatAreNotYetCovered(writeAccessors, collectionGetters);
+        }
+        if (properties.isDirectFieldAccessEnabled()) {
+            final var fields = gatherAllNonStaticAccessibleFields(classHierarchy, builderPackage);
+            final var fieldAccessors = gatherAllFieldAccessors(fields, classInfo);
+            addAllThatAreNotYetCovered(writeAccessors, fieldAccessors);
+        }
+        return ImmutableSortedSet.copyOf(writeAccessors);
+    }
+
+    private void addAllThatAreNotYetCovered(final SortedSet<WriteAccessor> target, final SortedSet<? extends WriteAccessor> candidates) {
+        candidates
+                .stream()
+                .filter(candidate -> notYetCoveredByAnotherWriteAccessor(candidate, target))
+                .forEach(target::add);
+    }
+
+    private List<Method> gatherAllNonBridgeAccessibleMethods(final List<ClassInfo> classHierarchy, final String builderPackage) {
+        return classHierarchy //
                 .stream() //
                 .map(ClassInfo::loadClass) //
                 .map(Class::getDeclaredMethods) //
@@ -59,24 +81,24 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .filter(not(Method::isBridge)) //
                 .filter(method -> accessibilityService.isAccessibleFrom(method, builderPackage)) //
                 .collect(Collectors.toList());
-        final var setters = methods.stream() //
+    }
+
+    private SortedSet<Setter> gatherAllSetters(final List<Method> methods, final ClassInfo classInfo) {
+        return methods.stream() //
                 .filter(this::isSetter) //
-                .map(method -> toSetter(clazz, method)) //
+                .map(method -> toSetter(classInfo.loadClass(), method)) //
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
-        if (properties.isGetAndAddEnabled()) {
-            final var collectionGetters = methods.stream() //
-                    .filter(this::isCollectionGetter) //
-                    .filter(method -> noCorrespondingSetter(method, setters)) //
-                    .map(method -> toCollectionGetter(clazz, method)) //
-                    .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
-            return ImmutableSortedSet.<WriteAccessor>naturalOrder().addAll(setters).addAll(collectionGetters).build();
-        } else {
-            return setters.stream().collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
-        }
     }
 
     private boolean isSetter(final Method method) {
         return method.getParameterCount() == 1 && method.getName().startsWith(properties.getSetterPrefix());
+    }
+
+    private SortedSet<Getter> gatherAllCollectionGetters(final List<Method> methods, final ClassInfo classInfo) {
+        return methods.stream() //
+                .filter(this::isCollectionGetter) //
+                .map(method -> toGetter(classInfo.loadClass(), method)) //
+                .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
     }
 
     private boolean isCollectionGetter(final Method method) {
@@ -85,10 +107,35 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 Collection.class.isAssignableFrom(method.getReturnType());
     }
 
-    private boolean noCorrespondingSetter(final Method method, final Set<Setter> setters) {
-        return setters.stream()
-                .noneMatch(setter -> getRawType(setter.getPropertyType().getType()) == method.getReturnType() &&
-                        setter.getPropertyName().equals(dropGetterPrefix(method.getName())));
+    private List<Field> gatherAllNonStaticAccessibleFields(final List<ClassInfo> classHierarchy, final String builderPackage) {
+        return classHierarchy //
+                .stream() //
+                .map(ClassInfo::loadClass) //
+                .map(Class::getDeclaredFields) //
+                .flatMap(Arrays::stream) //
+                .filter(not(field -> Modifier.isStatic(field.getModifiers()))) //
+                .filter(field -> accessibilityService.isAccessibleFrom(field, builderPackage)) //
+                .collect(Collectors.toList());
+    }
+
+    private SortedSet<FieldAccessor> gatherAllFieldAccessors(final List<Field> fields, final ClassInfo classInfo) {
+        return fields.stream() //
+                .filter(this::isFieldAccessor) //
+                .map(field -> toFieldAccessor(classInfo.loadClass(), field)) //
+                .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
+    }
+
+    private boolean isFieldAccessor(final Field field) {
+        return !Modifier.isFinal(field.getModifiers()) ||
+                // for final collections, it is assumed they are non-null so adding to them is possible
+                Collection.class.isAssignableFrom(field.getType());
+    }
+
+    private boolean notYetCoveredByAnotherWriteAccessor(final WriteAccessor candidate, final Set<WriteAccessor> writeAccessors) {
+        return writeAccessors
+                .stream()
+                .noneMatch(accessor -> getRawType(candidate.getPropertyType().getType()) == getRawType(accessor.getPropertyType().getType())
+                        && candidate.getPropertyName().equals(accessor.getPropertyName()));
     }
 
     private Class<?> getRawType(final Type type) {
@@ -97,38 +144,48 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
 
     private Setter toSetter(final Class<?> clazz, final Method method) {
         final var param = method.getParameters()[0];
-        final var type = resolveType(clazz, method.getGenericParameterTypes()[0]);
-        final PropertyType propertyType;
-        if (param.getType().isArray()) {
-            propertyType = new ArrayType(type, param.getType().getComponentType());
-        } else if (Collection.class.isAssignableFrom(param.getType())) {
-            final var collectionType = resolveCollectionType(clazz, type);
-            propertyType = new CollectionType(type, typeArg(collectionType, 0));
-        } else if (Map.class.isAssignableFrom(param.getType())) {
-            final var mapType = resolveMapType(clazz, type);
-            propertyType = new MapType(type, typeArg(mapType, 0), typeArg(mapType, 1));
-        } else {
-            propertyType = new SimpleType(type);
-        }
         return Setter.builder() //
                 .methodName(method.getName()) //
-                .propertyType(propertyType) //
+                .propertyType(toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0])) //
                 .propertyName(dropSetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
                 .build();
     }
 
+    private PropertyType toPropertyType(final Class<?> declaringClass, final Class<?> rawType, final Type genericType) {
+        final var type = resolveType(declaringClass, genericType);
+        if (rawType.isArray()) {
+            return new ArrayType(type, rawType.getComponentType());
+        } else if (Collection.class.isAssignableFrom(rawType)) {
+            final var collectionType = resolveCollectionType(declaringClass, type);
+            return new CollectionType(type, typeArg(collectionType, 0));
+        } else if (Map.class.isAssignableFrom(rawType)) {
+            final var mapType = resolveMapType(declaringClass, type);
+            return new MapType(type, typeArg(mapType, 0), typeArg(mapType, 1));
+        } else {
+            return new SimpleType(type);
+        }
+    }
+
     @SuppressWarnings("java:S3252")
-    private Getter toCollectionGetter(final Class<?> clazz, final Method method) {
-        final var propertyType = resolveType(clazz, method.getGenericReturnType());
-        final var collectionType = resolveCollectionType(clazz, propertyType);
+    private Getter toGetter(final Class<?> clazz, final Method method) {
         return Getter.builder() //
-                .propertyType(new CollectionType(propertyType, typeArg(collectionType, 0)))
+                .propertyType(toPropertyType(clazz, method.getReturnType(), method.getGenericReturnType())) //
                 .methodName(method.getName()) //
                 .propertyName(dropGetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
+                .build();
+    }
+
+    private FieldAccessor toFieldAccessor(final Class<?> clazz, final Field field) {
+        return FieldAccessor.builder() //
+                .propertyType(toPropertyType(clazz, field.getType(), field.getGenericType())) //
+                .propertyName(field.getName())
+                .visibility(visibilityService.toVisibility(field.getModifiers())) //
+                .isFinal(Modifier.isFinal(field.getModifiers())) //
+                .declaringClass(field.getDeclaringClass()) //
                 .build();
     }
 
