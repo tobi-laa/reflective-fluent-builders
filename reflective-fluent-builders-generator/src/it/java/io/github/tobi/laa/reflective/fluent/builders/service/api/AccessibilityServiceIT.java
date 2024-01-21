@@ -249,8 +249,8 @@ class AccessibilityServiceIT {
     @SneakyThrows
     void testIsFieldAccessiblePublicFieldButInaccessibleType() {
         // Arrange
-        final Field field = PackagePrivateConstructor.class.getDeclaredField("privateClass");
-        final String packageName = PackagePrivateConstructor.class.getPackageName();
+        final Field field = DirectFieldAccess.class.getDeclaredField("privateInnerClass");
+        final String packageName = "does.not.matter";
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(field, packageName);
         // Assert

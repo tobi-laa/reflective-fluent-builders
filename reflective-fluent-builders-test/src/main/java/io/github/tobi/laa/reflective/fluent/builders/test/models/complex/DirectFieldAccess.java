@@ -41,4 +41,10 @@ public class DirectFieldAccess {
     public final List<String> publicFinalFieldNoSetter = new ArrayList<>();
 
     public final int publicFinalFieldNoCollection = 0;
+
+    public PrivateInnerClass privateInnerClass;
+
+    private static class PrivateInnerClass {
+        // no content
+    }
 }
