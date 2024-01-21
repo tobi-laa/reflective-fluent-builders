@@ -123,21 +123,17 @@ class InnerClassForMapCodeGeneratorTest {
 
     private static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
         return Stream.of( //
-                MapSetter.builder() //
+                Setter.builder() //
                         .methodName("setMap") //
                         .propertyName("map") //
-                        .propertyType(Map.class) //
-                        .keyType(String.class)
-                        .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                        .propertyType(new MapType(Map.class, String.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build(), //
-                MapSetter.builder() //
+                Setter.builder() //
                         .methodName("setSortedMap") //
                         .propertyName("sortedMap") //
-                        .propertyType(SortedMap.class) //
-                        .keyType(Integer.class) //
-                        .valueType(Object.class) //
+                        .propertyType(new MapType(SortedMap.class, Integer.class, Object.class)) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build());
@@ -168,12 +164,10 @@ class InnerClassForMapCodeGeneratorTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
                                 .propertyName("map") //
-                                .propertyType(Map.class) //
-                                .keyType(String.class)
-                                .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                                .propertyType(new MapType(Map.class, String.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -203,10 +197,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        SimpleSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setAnInt") //
                                 .propertyName("anInt") //
-                                .propertyType(int.class) //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build()), //
@@ -219,11 +213,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
                                 .propertyName("floats") //
-                                .propertyType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()), //
@@ -236,11 +229,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
                                 .propertyName("deque") //
-                                .propertyType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -277,7 +269,7 @@ class InnerClassForMapCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerate(final BuilderMetadata builderMetadata, final MapSetter setter, final String expectedGetter, final String expectedInnerClass) {
+    void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
         when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
@@ -290,9 +282,10 @@ class InnerClassForMapCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(typeNameGenerator).generateTypeName(setter.getKeyType());
-        verify(typeNameGenerator).generateTypeName(setter.getValueType());
-        verify(initializerGeneratorA).generateMapInitializer(setter);
+        final var mapType = (MapType) setter.getPropertyType();
+        verify(typeNameGenerator).generateTypeName(mapType.getKeyType());
+        verify(typeNameGenerator).generateTypeName(mapType.getValueType());
+        verify(initializerGeneratorA).generateMapInitializer(mapType);
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -307,12 +300,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
                                 .propertyName("map") //
-                                .propertyType(Map.class) //
-                                .keyType(String.class)
-                                .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                                .propertyType(new MapType(Map.class, String.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
@@ -349,12 +340,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setSortedMap") //
                                 .propertyName("sortedMap") //
-                                .propertyType(SortedMap.class) //
-                                .keyType(Integer.class) //
-                                .valueType(Object.class) //
+                                .propertyType(new MapType(SortedMap.class, Integer.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //

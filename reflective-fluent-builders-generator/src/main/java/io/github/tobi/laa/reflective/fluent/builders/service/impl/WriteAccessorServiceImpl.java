@@ -64,12 +64,12 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .map(method -> toSetter(clazz, method)) //
                 .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         if (properties.isGetAndAddEnabled()) {
-            final var getAndAdders = methods.stream() //
+            final var collectionGetters = methods.stream() //
                     .filter(this::isCollectionGetter) //
                     .filter(method -> noCorrespondingSetter(method, setters)) //
-                    .map(method -> toGetAndAdder(clazz, method)) //
+                    .map(method -> toCollectionGetter(clazz, method)) //
                     .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
-            return ImmutableSortedSet.<WriteAccessor>naturalOrder().addAll(setters).addAll(getAndAdders).build();
+            return ImmutableSortedSet.<WriteAccessor>naturalOrder().addAll(setters).addAll(collectionGetters).build();
         } else {
             return setters.stream().collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         }
@@ -87,7 +87,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
 
     private boolean noCorrespondingSetter(final Method method, final Set<Setter> setters) {
         return setters.stream()
-                .noneMatch(setter -> getRawType(setter.getPropertyType()) == method.getReturnType() &&
+                .noneMatch(setter -> getRawType(setter.getPropertyType().getType()) == method.getReturnType() &&
                         setter.getPropertyName().equals(dropGetterPrefix(method.getName())));
     }
 
@@ -97,56 +97,35 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
 
     private Setter toSetter(final Class<?> clazz, final Method method) {
         final var param = method.getParameters()[0];
-        final var propertyType = resolveType(clazz, method.getGenericParameterTypes()[0]);
+        final var type = resolveType(clazz, method.getGenericParameterTypes()[0]);
+        final PropertyType propertyType;
         if (param.getType().isArray()) {
-            return ArraySetter.builder() //
-                    .paramComponentType(param.getType().getComponentType()) //
-                    .methodName(method.getName()) //
-                    .propertyType(propertyType) //
-                    .propertyName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
-                    .build();
+            propertyType = new ArrayType(type, param.getType().getComponentType());
         } else if (Collection.class.isAssignableFrom(param.getType())) {
-            final var collectionType = resolveCollectionType(clazz, propertyType);
-            return CollectionSetter.builder() //
-                    .paramTypeArg(typeArg(collectionType, 0)) //
-                    .methodName(method.getName()) //
-                    .propertyType(propertyType) //
-                    .propertyName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
-                    .build();
+            final var collectionType = resolveCollectionType(clazz, type);
+            propertyType = new CollectionType(type, typeArg(collectionType, 0));
         } else if (Map.class.isAssignableFrom(param.getType())) {
-            final var mapType = resolveMapType(clazz, propertyType);
-            return MapSetter.builder() //
-                    .keyType(typeArg(mapType, 0)) //
-                    .valueType(typeArg(mapType, 1)) //
-                    .methodName(method.getName()) //
-                    .propertyType(propertyType) //
-                    .propertyName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
-                    .build();
+            final var mapType = resolveMapType(clazz, type);
+            propertyType = new MapType(type, typeArg(mapType, 0), typeArg(mapType, 1));
         } else {
-            return SimpleSetter.builder() //
-                    .methodName(method.getName()) //
-                    .propertyType(propertyType) //
-                    .propertyName(dropSetterPrefix(method.getName())) //
-                    .visibility(visibilityService.toVisibility(method.getModifiers())) //
-                    .declaringClass(method.getDeclaringClass()) //
-                    .build();
+            propertyType = new SimpleType(type);
         }
+        return Setter.builder() //
+                .methodName(method.getName()) //
+                .propertyType(propertyType) //
+                .propertyName(dropSetterPrefix(method.getName())) //
+                .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                .declaringClass(method.getDeclaringClass()) //
+                .build();
     }
 
     @SuppressWarnings("java:S3252")
-    private CollectionGetAndAdder toGetAndAdder(final Class<?> clazz, final Method method) {
+    private Getter toCollectionGetter(final Class<?> clazz, final Method method) {
         final var propertyType = resolveType(clazz, method.getGenericReturnType());
         final var collectionType = resolveCollectionType(clazz, propertyType);
-        return CollectionGetAndAdder.builder() //
-                .paramTypeArg(typeArg(collectionType, 0)) //
+        return Getter.builder() //
+                .propertyType(new CollectionType(propertyType, typeArg(collectionType, 0)))
                 .methodName(method.getName()) //
-                .propertyType(propertyType) //
                 .propertyName(dropGetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
@@ -204,5 +183,17 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         }
         final var paramName = name.replaceFirst('^' + Pattern.quote(prefix), "");
         return StringUtils.uncapitalize(paramName);
+    }
+
+    @Override
+    public boolean isSetter(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        return writeAccessor instanceof Setter;
+    }
+
+    @Override
+    public boolean isCollectionGetter(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        return writeAccessor instanceof Getter && writeAccessor.getPropertyType() instanceof CollectionType;
     }
 }

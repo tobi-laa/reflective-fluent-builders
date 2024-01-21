@@ -12,7 +12,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitialize
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.MapType;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 
@@ -48,28 +48,32 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
     @Override
     public boolean isApplicable(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
-        return writeAccessor instanceof MapSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) writeAccessor));
+        if (!(writeAccessor.getPropertyType() instanceof MapType)) {
+            return false;
+        } else {
+            final var mapType = (MapType) writeAccessor.getPropertyType();
+            return initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(mapType));
+        }
     }
 
     @Override
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor instanceof MapSetter) {
-            final MapSetter mapSetter = (MapSetter) writeAccessor;
-            return generate(builderMetadata, mapSetter);
+        if (writeAccessor.getPropertyType() instanceof MapType) {
+            final var mapType = (MapType) writeAccessor.getPropertyType();
+            return generate(builderMetadata, writeAccessor, mapType);
         } else {
             throw new CodeGenerationException("Generation of inner map class for " + writeAccessor + " is not supported.");
         }
     }
 
-    private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final MapSetter setter) {
+    private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor, final MapType mapType) {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Map" + capitalize(setter.getPropertyName()));
+        final var className = builderClassName.nestedClass("Map" + capitalize(writeAccessor.getPropertyName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setter.getPropertyName()) //
+                        .methodBuilder(writeAccessor.getPropertyName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
@@ -79,22 +83,22 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
                         .addModifiers(Modifier.PUBLIC) //
                         .addMethod(MethodSpec.methodBuilder("put") //
                                 .addModifiers(Modifier.PUBLIC) //
-                                .addParameter(typeNameGenerator.generateTypeName(setter.getKeyType()), "key", FINAL) //
-                                .addParameter(typeNameGenerator.generateTypeName(setter.getValueType()), "value", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeName(mapType.getKeyType()), "key", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeName(mapType.getValueType()), "value", FINAL) //
                                 .returns(className) //
-                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName()) //
+                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName()) //
                                 .addStatement(CodeBlock.builder()
-                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName())
+                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName())
                                         .add(initializerGenerators //
                                                 .stream() //
-                                                .filter(gen -> gen.isApplicable(setter)) //
-                                                .map(gen -> gen.generateMapInitializer(setter)) //
+                                                .filter(gen -> gen.isApplicable(mapType)) //
+                                                .map(gen -> gen.generateMapInitializer(mapType)) //
                                                 .findFirst() //
-                                                .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + setter + '.'))) //
+                                                .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + mapType + '.'))) //
                                         .build()) //
                                 .endControlFlow() //
-                                .addStatement("$T.this.$L.$L.put($L, $L)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName(), "key", "value") //
-                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getPropertyName(), true) //
+                                .addStatement("$T.this.$L.$L.put($L, $L)", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName(), "key", "value") //
+                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, writeAccessor.getPropertyName(), true) //
                                 .addStatement("return this") //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("and") //

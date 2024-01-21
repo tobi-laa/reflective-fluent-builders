@@ -1,7 +1,5 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
-import java.lang.reflect.Type;
-
 /**
  * <p>
  * Represents a way of accessing the property of a class for which a builder is going to be generated. This can be
@@ -46,7 +44,7 @@ public interface WriteAccessor extends Comparable<WriteAccessor> {
      *
      * @return The type of this {@link WriteAccessor}.
      */
-    Type getPropertyType();
+    PropertyType getPropertyType();
 
     /**
      * <p>

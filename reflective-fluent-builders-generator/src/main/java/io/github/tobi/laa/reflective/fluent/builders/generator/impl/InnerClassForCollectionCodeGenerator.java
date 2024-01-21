@@ -12,7 +12,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIni
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 
@@ -49,28 +49,32 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     @Override
     public boolean isApplicable(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
-        return writeAccessor instanceof CollectionSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) writeAccessor));
+        if (!(writeAccessor.getPropertyType() instanceof CollectionType)) {
+            return false;
+        } else {
+            final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+            return initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(collectionType));
+        }
     }
 
     @Override
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor instanceof CollectionSetter) {
-            final CollectionSetter collectionSetter = (CollectionSetter) writeAccessor;
-            return generate(builderMetadata, collectionSetter);
+        if (writeAccessor.getPropertyType() instanceof CollectionType) {
+            final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+            return generate(builderMetadata, writeAccessor, collectionType);
         } else {
             throw new CodeGenerationException("Generation of inner collection class for " + writeAccessor + " is not supported.");
         }
     }
 
-    private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final CollectionSetter setter) {
+    private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor, final CollectionType type) {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var className = builderClassName.nestedClass("Collection" + capitalize(setter.getPropertyName()));
+        final var className = builderClassName.nestedClass("Collection" + capitalize(writeAccessor.getPropertyName()));
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
-                        .methodBuilder(setter.getPropertyName()) //
+                        .methodBuilder(writeAccessor.getPropertyName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
@@ -80,21 +84,21 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
                         .addModifiers(Modifier.PUBLIC) //
                         .addMethod(MethodSpec.methodBuilder("add") //
                                 .addModifiers(Modifier.PUBLIC) //
-                                .addParameter(typeNameGenerator.generateTypeName(setter.getParamTypeArg()), "item", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeName(type.getTypeArg()), "item", FINAL) //
                                 .returns(className) //
-                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName()) //
+                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName()) //
                                 .addStatement(CodeBlock.builder()
-                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName())
+                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName())
                                         .add(initializerGenerators //
                                                 .stream() //
-                                                .filter(gen -> gen.isApplicable(setter)) //
-                                                .map(gen -> gen.generateCollectionInitializer(setter)) //
+                                                .filter(gen -> gen.isApplicable(type)) //
+                                                .map(gen -> gen.generateCollectionInitializer(type)) //
                                                 .findFirst() //
-                                                .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + setter + '.'))) //
+                                                .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + type + '.'))) //
                                         .build()) //
                                 .endControlFlow() //
-                                .addStatement("$T.this.$L.$L.add($L)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName(), "item") //
-                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getPropertyName(), true) //
+                                .addStatement("$T.this.$L.$L.add($L)", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName(), "item") //
+                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, writeAccessor.getPropertyName(), true) //
                                 .addStatement("return this") //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("and") //

@@ -1,8 +1,9 @@
-package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
+package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
 import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.stream.Stream;
@@ -20,12 +22,14 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@IntegrationTest
 class BuildMethodCodeGeneratorImplTest {
 
     @RegisterExtension
     static ClassGraphExtension classInfo = new ClassGraphExtension();
 
-    private final BuildMethodCodeGeneratorImpl generator = new BuildMethodCodeGeneratorImpl();
+    @Inject
+    private BuildMethodCodeGenerator generator;
 
     @Test
     void testGenerateNull() {
@@ -55,18 +59,17 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .writeAccessor(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setAnInt") //
                                                 .propertyName("anInt") //
-                                                .propertyType(int.class) //
+                                                .propertyType(new SimpleType(int.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .writeAccessor(ArraySetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setFloats") //
                                                 .propertyName("floats") //
-                                                .propertyType(float[].class) //
-                                                .paramComponentType(float.class) //
+                                                .propertyType(new ArrayType(float[].class, float.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
@@ -91,20 +94,17 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(ClassWithHierarchy.class)) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .writeAccessor(MapSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setSortedMap") //
                                                 .propertyName("sortedMap") //
-                                                .propertyType(SortedMap.class) //
-                                                .keyType(Integer.class) //
-                                                .valueType(Object.class) //
+                                                .propertyType(new MapType(SortedMap.class, Integer.class, Object.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(ClassWithHierarchy.class) //
                                                 .build()) //
-                                        .writeAccessor(CollectionSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("setList") //
                                                 .propertyName("list") //
-                                                .propertyType(List.class) //
-                                                .paramTypeArg(String.class) //
+                                                .propertyType(new CollectionType(List.class, String.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(ClassWithHierarchy.class) //
                                                 .build()) //
@@ -129,11 +129,10 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(PetJaxb.class)) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .writeAccessor(CollectionGetAndAdder.builder() //
+                                        .writeAccessor(Getter.builder() //
                                                 .methodName("getSiblings") //
                                                 .propertyName("siblings") //
-                                                .propertyType(List.class) //
-                                                .paramTypeArg(PetJaxb.class) //
+                                                .propertyType(new CollectionType(List.class, PetJaxb.class)) //
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(PetJaxb.class) //
                                                 .build()) //

@@ -12,15 +12,16 @@ import static java.util.Objects.compare;
 
 /**
  * <p>
- * Basic implementation of {@link Setter}.
+ * Common logic shared by {@link WriteAccessor} implementations that represent a method, i.e. setters, adders and
+ * getters of collections and maps.
  * </p>
  */
 @SuperBuilder(toBuilder = true)
 @Data
-public abstract class AbstractSetter implements Setter {
+abstract class AbstractMethodAccessor implements WriteAccessor {
 
     @lombok.NonNull
-    private final String methodName;
+    private final PropertyType propertyType;
 
     @lombok.NonNull
     private final String propertyName;
@@ -31,6 +32,14 @@ public abstract class AbstractSetter implements Setter {
     @lombok.NonNull
     private final Class<?> declaringClass;
 
+    /**
+     * <p>
+     * The name of the method, for instance {@code setAge}.
+     * </p>
+     */
+    @lombok.NonNull
+    private final String methodName;
+
     @Override
     public int compareTo(final WriteAccessor other) {
         Objects.requireNonNull(other);
@@ -39,7 +48,7 @@ public abstract class AbstractSetter implements Setter {
         } else {
             return Stream.<IntSupplier>of( //
                             () -> compare(propertyName, other.getPropertyName(), naturalOrder()), //
-                            () -> compare(getPropertyType(), other.getPropertyType(), new SetterTypeComparator()), //
+                            () -> compare(getPropertyType(), other.getPropertyType(), new ParamTypeComparator()), //
                             () -> compare(getClass().getName(), other.getClass().getName(), naturalOrder()))
                     .map(IntSupplier::getAsInt) //
                     .filter(i -> i != 0) //
@@ -55,9 +64,9 @@ public abstract class AbstractSetter implements Setter {
         } else if (anObject == null || anObject.getClass() != this.getClass()) {
             return false;
         }
-        final var aSetter = (Setter) anObject;
+        final var aSetter = (AbstractMethodAccessor) anObject;
         return Objects.equals(getMethodName(), aSetter.getMethodName()) && //
-                compare(getPropertyType(), aSetter.getPropertyType(), new SetterTypeComparator()) == 0;
+                compare(getPropertyType(), aSetter.getPropertyType(), new ParamTypeComparator()) == 0;
     }
 
     @Override

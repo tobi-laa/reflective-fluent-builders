@@ -28,13 +28,13 @@ class TypeNameGeneratorImpl implements TypeNameGenerator {
     @SuppressWarnings("java:S3252") // false positive for static method call
     public TypeName generateTypeName(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor.getPropertyType() instanceof ParameterizedType) {
-            final var parameterizedType = (ParameterizedType) writeAccessor.getPropertyType();
+        if (writeAccessor.getPropertyType().getType() instanceof ParameterizedType) {
+            final var parameterizedType = (ParameterizedType) writeAccessor.getPropertyType().getType();
             final var rawType = (Class<?>) parameterizedType.getRawType();
             final Type[] typeArgs = Arrays.stream(parameterizedType.getActualTypeArguments()).map(this::wildcardToUpperBound).toArray(Type[]::new);
             return ParameterizedTypeName.get(rawType, typeArgs);
         } else {
-            return TypeName.get(writeAccessor.getPropertyType());
+            return TypeName.get(writeAccessor.getPropertyType().getType());
         }
     }
 

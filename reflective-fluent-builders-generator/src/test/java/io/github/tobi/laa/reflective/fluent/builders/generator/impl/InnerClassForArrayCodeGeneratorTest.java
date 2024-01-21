@@ -65,19 +65,17 @@ class InnerClassForArrayCodeGeneratorTest {
 
     private static Stream<Setter> testIsApplicableTrue() {
         return Stream.of( //
-                ArraySetter.builder() //
+                Setter.builder() //
                         .methodName("setFloats") //
                         .propertyName("floats") //
-                        .propertyType(float[].class) //
-                        .paramComponentType(float.class) //
+                        .propertyType(new ArrayType(float[].class, float.class)) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build(), //
-                ArraySetter.builder() //
+                Setter.builder() //
                         .methodName("setStrings") //
                         .propertyName("strings") //
-                        .propertyType(String[].class) //
-                        .paramComponentType(String.class) //
+                        .propertyType(new ArrayType(String[].class, String.class)) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build());
@@ -121,11 +119,10 @@ class InnerClassForArrayCodeGeneratorTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
                                 .propertyName("floats") //
-                                .propertyType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -155,10 +152,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        SimpleSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setAnInt") //
                                 .propertyName("anInt") //
-                                .propertyType(int.class) //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build()), //
@@ -171,11 +168,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
                                 .propertyName("deque") //
-                                .propertyType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()), //
@@ -188,12 +184,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
                                 .propertyName("map") //
-                                .propertyType(Map.class) //
-                                .keyType(String.class) //
-                                .valueType(Object.class) //
+                                .propertyType(new MapType(Map.class, String.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -225,11 +219,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
                                 .propertyName("floats") //
-                                .propertyType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
@@ -274,11 +267,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setStrings") //
                                 .propertyName("strings") //
-                                .propertyType(String[].class) //
-                                .paramComponentType(String.class) //
+                                .propertyType(new ArrayType(String[].class, String.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //

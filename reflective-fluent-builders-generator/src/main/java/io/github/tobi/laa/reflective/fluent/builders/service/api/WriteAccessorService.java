@@ -1,6 +1,9 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.classgraph.ClassInfo;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
+import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
+import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 import java.util.SortedSet;
@@ -21,6 +24,26 @@ public interface WriteAccessorService {
      * @return All write accessors of {@code clazz}.
      */
     SortedSet<WriteAccessor> gatherAllWriteAccessors(final ClassInfo clazz);
+
+    /**
+     * <p>
+     * Checks whether {@code writeAccessor} is a {@link Setter}.
+     * </p>
+     *
+     * @param writeAccessor The {@link WriteAccessor} to check. Must not be {@code null}.
+     * @return {@code true} if {@code writeAccessor} is a {@link Setter}, {@code false} otherwise.
+     */
+    boolean isSetter(final WriteAccessor writeAccessor);
+
+    /**
+     * <p>
+     * Checks whether {@code writeAccessor} is the {@link Getter} of a {@link CollectionType collection}.
+     * </p>
+     *
+     * @param writeAccessor The {@link WriteAccessor} to check. Must not be {@code null}.
+     * @return {@code true} if {@code writeAccessor} is a collection getter, {@code false} otherwise.
+     */
+    boolean isCollectionGetter(final WriteAccessor writeAccessor);
 
     /**
      * <p>

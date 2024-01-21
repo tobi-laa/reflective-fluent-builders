@@ -6,8 +6,8 @@ import com.sun.net.httpserver.Headers;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializerCodeGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
+import io.github.tobi.laa.reflective.fluent.builders.model.MapType;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -75,37 +75,37 @@ class CollectionsApiInitializerCodeGenerator implements CollectionInitializerCod
             WeakHashMap.class);
 
     @Override
-    public boolean isApplicable(final CollectionSetter collectionSetter) {
-        Objects.requireNonNull(collectionSetter);
+    public boolean isApplicable(final CollectionType collectionType) {
+        Objects.requireNonNull(collectionType);
         return SUPPORTED_COLLECTIONS.stream() //
-                .anyMatch(type -> getRawType(collectionSetter.getPropertyType()).isAssignableFrom(type));
+                .anyMatch(type -> getRawType(collectionType.getType()).isAssignableFrom(type));
     }
 
     @Override
-    public CodeBlock generateCollectionInitializer(final CollectionSetter collectionSetter) {
-        Objects.requireNonNull(collectionSetter);
+    public CodeBlock generateCollectionInitializer(final CollectionType collectionType) {
+        Objects.requireNonNull(collectionType);
         return SUPPORTED_COLLECTIONS.stream() //
-                .filter(type -> getRawType(collectionSetter.getPropertyType()).isAssignableFrom(type)) //
+                .filter(type -> getRawType(collectionType.getType()).isAssignableFrom(type)) //
                 .map(type -> CodeBlock.builder().add("new $T<>()", type).build()) //
                 .findFirst() //
-                .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + collectionSetter + " is not supported."));
+                .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + collectionType + " is not supported."));
     }
 
     @Override
-    public boolean isApplicable(final MapSetter mapSetter) {
-        Objects.requireNonNull(mapSetter);
+    public boolean isApplicable(final MapType mapType) {
+        Objects.requireNonNull(mapType);
         return SUPPORTED_MAPS.stream() //
-                .anyMatch(type -> getRawType(mapSetter.getPropertyType()).isAssignableFrom(type));
+                .anyMatch(type -> getRawType(mapType.getType()).isAssignableFrom(type));
     }
 
     @Override
-    public CodeBlock generateMapInitializer(final MapSetter mapSetter) {
-        Objects.requireNonNull(mapSetter);
+    public CodeBlock generateMapInitializer(final MapType mapType) {
+        Objects.requireNonNull(mapType);
         return SUPPORTED_MAPS.stream() //
-                .filter(type -> getRawType(mapSetter.getPropertyType()).isAssignableFrom(type)) //
+                .filter(type -> getRawType(mapType.getType()).isAssignableFrom(type)) //
                 .map(type -> CodeBlock.builder().add("new $T<>()", type).build()) //
                 .findFirst() //
-                .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + mapSetter + " is not supported."));
+                .orElseThrow(() -> new CodeGenerationException("Generation of initializing code blocks for " + mapType + " is not supported."));
     }
 
     private Class<?> getRawType(final Type type) {

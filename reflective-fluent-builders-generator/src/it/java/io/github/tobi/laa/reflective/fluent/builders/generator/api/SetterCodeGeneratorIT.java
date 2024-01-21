@@ -1,27 +1,20 @@
-package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
+package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
-import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.inject.Inject;
 import java.util.Deque;
 import java.util.List;
 import java.util.SortedMap;
@@ -29,35 +22,23 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class SetterCodeGeneratorImplTest {
+@IntegrationTest
+class SetterCodeGeneratorIT {
 
     @RegisterExtension
     static ClassGraphExtension classInfo = new ClassGraphExtension();
 
-    @InjectMocks
-    private SetterCodeGeneratorImpl generator;
-
-    @Mock
-    private BuilderClassNameGenerator builderClassNameGenerator;
-
-    @Mock
-    private TypeNameGenerator typeNameGenerator;
-
-    @Mock
-    private WriteAccessorService writeAccessorService;
+    @Inject
+    private SetterCodeGenerator generator;
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateNull(final BuilderMetadata builderMetadata, final Setter setter) {
+    void testGenerateNull(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         // Act
-        final Executable generate = () -> generator.generate(builderMetadata, setter);
+        final Executable generate = () -> generator.generate(builderMetadata, writeAccessor);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, typeNameGenerator, writeAccessorService);
     }
 
     private static Stream<Arguments> testGenerateNull() {
@@ -75,11 +56,10 @@ class SetterCodeGeneratorImplTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
                                 .propertyName("deque") //
-                                .propertyType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -87,33 +67,18 @@ class SetterCodeGeneratorImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expected) {
-        // Arrange
-        when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeName(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
-        if (setter instanceof CollectionGetAndAdder) {
-            when(writeAccessorService.dropGetterPrefix(any())).thenReturn(setter.getPropertyName());
-        } else {
-            when(writeAccessorService.dropSetterPrefix(any())).thenReturn(setter.getPropertyName());
-        }
+    void testGenerate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor, final String expected) {
         // Act
-        final MethodSpec actual = generator.generate(builderMetadata, setter);
+        final MethodSpec actual = generator.generate(builderMetadata, writeAccessor);
         // Assert
         assertThat(actual).hasToString(expected);
-        verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(typeNameGenerator).generateTypeName(setter);
-        if (setter instanceof CollectionGetAndAdder) {
-            verify(writeAccessorService).dropGetterPrefix(setter.getMethodName());
-        } else {
-            verify(writeAccessorService).dropSetterPrefix(setter.getMethodName());
-        }
     }
 
     private static Stream<Arguments> testGenerate() {
         final var mockTypeName = MockType.class.getName().replace('$', '.');
         final var builderMetadata = BuilderMetadata.builder() //
-                .packageName("ignored") //
-                .name("Ignored") //
+                .packageName(MockType.class.getPackageName()) //
+                .name("SetterCodeGeneratorIT.MockType") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(classInfo.get(SimpleClass.class)) //
                         .accessibleNonArgsConstructor(true) //
@@ -122,16 +87,16 @@ class SetterCodeGeneratorImplTest {
         return Stream.of( //
                 Arguments.of( //
                         builderMetadata, //
-                        SimpleSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setAnInt") //
                                 .propertyName("anInt") //
-                                .propertyType(int.class) //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s anInt(\n" +
-                                        "    final %1$s anInt) {\n" +
+                                        "    final int anInt) {\n" +
                                         "  this.fieldValue.anInt = anInt;\n" +
                                         "  this.callSetterFor.anInt = true;\n" +
                                         "  return this;\n" +
@@ -139,17 +104,16 @@ class SetterCodeGeneratorImplTest {
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
                                 .propertyName("floats") //
-                                .propertyType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s floats(\n" +
-                                        "    final %1$s floats) {\n" +
+                                        "    final float[] floats) {\n" +
                                         "  this.fieldValue.floats = floats;\n" +
                                         "  this.callSetterFor.floats = true;\n" +
                                         "  return this;\n" +
@@ -157,18 +121,16 @@ class SetterCodeGeneratorImplTest {
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setSortedMap") //
                                 .propertyName("sortedMap") //
-                                .propertyType(SortedMap.class) //
-                                .keyType(Integer.class) //
-                                .valueType(Object.class) //
+                                .propertyType(new MapType(SortedMap.class, Integer.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s sortedMap(\n" +
-                                        "    final %1$s sortedMap) {\n" +
+                                        "    final java.util.SortedMap sortedMap) {\n" +
                                         "  this.fieldValue.sortedMap = sortedMap;\n" +
                                         "  this.callSetterFor.sortedMap = true;\n" +
                                         "  return this;\n" +
@@ -176,17 +138,16 @@ class SetterCodeGeneratorImplTest {
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setList") //
                                 .propertyName("list") //
-                                .propertyType(List.class) //
-                                .paramTypeArg(String.class) //
+                                .propertyType(new CollectionType(List.class, String.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s list(\n" +
-                                        "    final %1$s list) {\n" +
+                                        "    final java.util.List list) {\n" +
                                         "  this.fieldValue.list = list;\n" +
                                         "  this.callSetterFor.list = true;\n" +
                                         "  return this;\n" +
@@ -194,17 +155,16 @@ class SetterCodeGeneratorImplTest {
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
-                        CollectionGetAndAdder.builder() //
+                        Getter.builder() //
                                 .methodName("getList") //
                                 .propertyName("list") //
-                                .propertyType(List.class) //
-                                .paramTypeArg(String.class) //
+                                .propertyType(new CollectionType(List.class, String.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(GetAndAdd.class) //
                                 .build(), //
                         String.format(
                                 "public %1$s list(\n" +
-                                        "    final %1$s list) {\n" +
+                                        "    final java.util.List list) {\n" +
                                         "  this.fieldValue.list = list;\n" +
                                         "  this.callSetterFor.list = true;\n" +
                                         "  return this;\n" +

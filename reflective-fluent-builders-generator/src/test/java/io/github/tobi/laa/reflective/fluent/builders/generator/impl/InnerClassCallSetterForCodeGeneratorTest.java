@@ -83,24 +83,24 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .writeAccessor(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("anInt") //
-                                                .propertyType(int.class) //
+                                                .propertyType(new SimpleType(int.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .writeAccessor(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("string") //
-                                                .propertyType(String.class) //
+                                                .propertyType(new SimpleType(String.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .writeAccessor(SimpleSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("object") //
-                                                .propertyType(Object.class) //
+                                                .propertyType(new SimpleType(Object.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
@@ -126,36 +126,31 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .writeAccessor(CollectionSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("set") //
-                                                .propertyType(Set.class) //
-                                                .paramTypeArg(List.class) //
+                                                .propertyType(new CollectionType(Set.class, List.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .writeAccessor(CollectionSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("deque") //
-                                                .propertyType(Deque.class) //
-                                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().build())) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .writeAccessor(ArraySetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("floats") //
-                                                .propertyType(float[].class) //
-                                                .paramComponentType(float.class) //
+                                                .propertyType(new ArrayType(float[].class, float.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .writeAccessor(MapSetter.builder() //
+                                        .writeAccessor(Setter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("map") //
-                                                .propertyType(Map.class) //
-                                                .keyType(String.class) //
-                                                .valueType(Object.class) //
+                                                .propertyType(new MapType(Map.class, String.class, Object.class)) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //

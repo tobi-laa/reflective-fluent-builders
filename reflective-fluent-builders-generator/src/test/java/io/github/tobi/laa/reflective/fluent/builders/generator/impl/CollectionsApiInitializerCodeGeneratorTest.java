@@ -2,12 +2,8 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
+import io.github.tobi.laa.reflective.fluent.builders.model.MapType;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -29,39 +25,39 @@ class CollectionsApiInitializerCodeGeneratorTest {
     private final CollectionsApiInitializerCodeGenerator generator = new CollectionsApiInitializerCodeGenerator();
 
     @Test
-    void testIsApplicableForNullCollectionSetter() {
+    void testIsApplicableForNullCollectionType() {
         // Act
-        final Executable isApplicable = () -> generator.isApplicable((CollectionSetter) null);
+        final Executable isApplicable = () -> generator.isApplicable((CollectionType) null);
         // Assert
         assertThrows(NullPointerException.class, isApplicable);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableTrueForCollectionSetter(final CollectionSetter collectionSetter) {
+    void testIsApplicableTrueForCollectionType(final CollectionType collectionType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(collectionSetter);
+        final boolean isApplicable = generator.isApplicable(collectionType);
         // Assert
         assertTrue(isApplicable);
     }
 
-    private static Stream<CollectionSetter> testIsApplicableTrueForCollectionSetter() {
-        return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionSetter.class::cast);
+    private static Stream<CollectionType> testIsApplicableTrueForCollectionType() {
+        return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionType.class::cast);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableFalseForCollectionSetter(final CollectionSetter collectionSetter) {
+    void testIsApplicableFalseForCollectionType(final CollectionType collectionType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(collectionSetter);
+        final boolean isApplicable = generator.isApplicable(collectionType);
         // Assert
         assertFalse(isApplicable);
     }
 
-    private static Stream<CollectionSetter> testIsApplicableFalseForCollectionSetter() {
+    private static Stream<CollectionType> testIsApplicableFalseForCollectionType() {
         return Stream.of(
-                collectionSetter(EnumSet.class),
-                collectionGetAndAdder(MyList.class));
+                collectionType(EnumSet.class),
+                collectionType(MyList.class));
     }
 
     @Test
@@ -74,26 +70,26 @@ class CollectionsApiInitializerCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateCollectionInitializerCodeGenerationException(final CollectionSetter collectionSetter) {
+    void testGenerateCollectionInitializerCodeGenerationException(final CollectionType collectionType) {
         // Act
-        final ThrowableAssert.ThrowingCallable generateCollectionInitializer = () -> generator.generateCollectionInitializer(collectionSetter);
+        final ThrowableAssert.ThrowingCallable generateCollectionInitializer = () -> generator.generateCollectionInitializer(collectionType);
         // Assert
         assertThatThrownBy(generateCollectionInitializer)
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(collectionSetter.getPropertyType().getTypeName());
+                .contains(collectionType.getType().getTypeName());
     }
 
-    private static Stream<CollectionSetter> testGenerateCollectionInitializerCodeGenerationException() {
-        return testIsApplicableFalseForCollectionSetter();
+    private static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
+        return testIsApplicableFalseForCollectionType();
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateCollectionInitializer(final CollectionSetter collectionSetter, final CodeBlock expected) {
+    void testGenerateCollectionInitializer(final CollectionType collectionType, final CodeBlock expected) {
         // Act
-        final CodeBlock actual = generator.generateCollectionInitializer(collectionSetter);
+        final CodeBlock actual = generator.generateCollectionInitializer(collectionType);
         // Assert
         assertThat(actual).hasToString(expected.toString());
     }
@@ -103,78 +99,78 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 CollectionsApiInitializerCodeGenerator.SUPPORTED_COLLECTIONS //
                         .stream() //
                         .map(type -> Arguments.of( //
-                                collectionSetter(type), //
+                                collectionType(type), //
                                 CodeBlock.builder().add("new " + type.getName() + "<>()").build())), //
                 Stream.of(
                         Arguments.of(
-                                collectionSetter(Vector.class),
+                                collectionType(Vector.class),
                                 CodeBlock.builder().add("new java.util.Stack<>()").build()),
                         Arguments.of(
-                                collectionSetter(BlockingDeque.class),
+                                collectionType(BlockingDeque.class),
                                 CodeBlock.builder().add("new java.util.concurrent.LinkedBlockingDeque<>()").build()),
                         Arguments.of(
-                                collectionSetter(BlockingQueue.class),
+                                collectionType(BlockingQueue.class),
                                 CodeBlock.builder().add("new java.util.concurrent.DelayQueue<>()").build()),
                         Arguments.of(
-                                collectionSetter(Deque.class),
+                                collectionType(Deque.class),
                                 CodeBlock.builder().add("new java.util.ArrayDeque<>()").build()),
                         Arguments.of(
-                                collectionSetter(List.class),
+                                collectionType(List.class),
                                 CodeBlock.builder().add("new java.util.ArrayList<>()").build()),
                         Arguments.of(
-                                collectionSetter(NavigableSet.class),
+                                collectionType(NavigableSet.class),
                                 CodeBlock.builder().add("new java.util.TreeSet<>()").build()),
                         Arguments.of(
-                                collectionSetter(Queue.class),
+                                collectionType(Queue.class),
                                 CodeBlock.builder().add("new java.util.ArrayDeque<>()").build()),
                         Arguments.of(
-                                collectionSetter(Set.class),
+                                collectionType(Set.class),
                                 CodeBlock.builder().add("new java.util.HashSet<>()").build()),
                         Arguments.of(
-                                collectionGetAndAdder(SortedSet.class),
+                                collectionType(SortedSet.class),
                                 CodeBlock.builder().add("new java.util.TreeSet<>()").build()),
                         Arguments.of(
-                                collectionGetAndAdder(TransferQueue.class),
+                                collectionType(TransferQueue.class),
                                 CodeBlock.builder().add("new java.util.concurrent.LinkedTransferQueue<>()").build()),
                         Arguments.of(
-                                collectionGetAndAdder(Collection.class),
+                                collectionType(Collection.class),
                                 CodeBlock.builder().add("new java.util.ArrayList<>()").build())));
     }
 
     @Test
-    void testIsApplicableNullForMapSetter() {
+    void testIsApplicableNullForMapType() {
         // Act
-        final Executable isApplicable = () -> generator.isApplicable((MapSetter) null);
+        final Executable isApplicable = () -> generator.isApplicable((MapType) null);
         // Assert
         assertThrows(NullPointerException.class, isApplicable);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableTrueForMapSetter(final MapSetter mapSetter) {
+    void testIsApplicableTrueForMapType(final MapType mapType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(mapSetter);
+        final boolean isApplicable = generator.isApplicable(mapType);
         // Assert
         assertTrue(isApplicable);
     }
 
-    private static Stream<MapSetter> testIsApplicableTrueForMapSetter() {
-        return testGenerateMapInitializer().map(args -> args.get()[0]).map(MapSetter.class::cast);
+    private static Stream<MapType> testIsApplicableTrueForMapType() {
+        return testGenerateMapInitializer().map(args -> args.get()[0]).map(MapType.class::cast);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableFalseForMapSetter(final MapSetter mapSetter) {
+    void testIsApplicableFalseForMapType(final MapType mapType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(mapSetter);
+        final boolean isApplicable = generator.isApplicable(mapType);
         // Assert
         assertFalse(isApplicable);
     }
 
-    private static Stream<MapSetter> testIsApplicableFalseForMapSetter() {
+    private static Stream<MapType> testIsApplicableFalseForMapType() {
         return Stream.of(
-                mapSetter(EnumMap.class),
-                mapSetter(MyMap.class));
+                mapType(EnumMap.class),
+                mapType(MyMap.class));
     }
 
     @Test
@@ -187,26 +183,26 @@ class CollectionsApiInitializerCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateMapInitializerCodeGenerationException(final MapSetter mapSetter) {
+    void testGenerateMapInitializerCodeGenerationException(final MapType mapType) {
         // Act
-        final ThrowableAssert.ThrowingCallable generateMapInitializer = () -> generator.generateMapInitializer(mapSetter);
+        final ThrowableAssert.ThrowingCallable generateMapInitializer = () -> generator.generateMapInitializer(mapType);
         // Assert
         assertThatThrownBy(generateMapInitializer)
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(mapSetter.getPropertyType().getTypeName());
+                .contains(mapType.getType().getTypeName());
     }
 
-    private static Stream<MapSetter> testGenerateMapInitializerCodeGenerationException() {
-        return testIsApplicableFalseForMapSetter();
+    private static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
+        return testIsApplicableFalseForMapType();
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateMapInitializer(final MapSetter mapSetter, final CodeBlock expected) {
+    void testGenerateMapInitializer(final MapType mapType, final CodeBlock expected) {
         // Act
-        final CodeBlock actual = generator.generateMapInitializer(mapSetter);
+        final CodeBlock actual = generator.generateMapInitializer(mapType);
         // Assert
         assertThat(actual).hasToString(expected.toString());
     }
@@ -216,66 +212,40 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 CollectionsApiInitializerCodeGenerator.SUPPORTED_MAPS //
                         .stream() //
                         .map(type -> Arguments.of( //
-                                mapSetter(type), //
+                                mapType(type), //
                                 CodeBlock.builder().add("new " + type.getName() + "<>()").build())), //
                 Stream.of(
                         Arguments.of(
-                                mapSetter(Bindings.class),
+                                mapType(Bindings.class),
                                 CodeBlock.builder().add("new javax.script.SimpleBindings<>()").build()),
                         Arguments.of(
-                                mapSetter(ConcurrentMap.class),
+                                mapType(ConcurrentMap.class),
                                 CodeBlock.builder().add("new java.util.concurrent.ConcurrentHashMap<>()").build()),
                         Arguments.of(
-                                mapSetter(ConcurrentNavigableMap.class),
+                                mapType(ConcurrentNavigableMap.class),
                                 CodeBlock.builder().add("new java.util.concurrent.ConcurrentSkipListMap<>()").build()),
                         Arguments.of(
-                                mapSetter(NavigableMap.class),
+                                mapType(NavigableMap.class),
                                 CodeBlock.builder().add("new java.util.TreeMap<>()").build()),
                         Arguments.of(
-                                mapSetter(SortedMap.class),
+                                mapType(SortedMap.class),
                                 CodeBlock.builder().add("new java.util.TreeMap<>()").build()),
                         Arguments.of(
-                                mapSetter(AbstractMap.class),
+                                mapType(AbstractMap.class),
                                 CodeBlock.builder().add("new java.util.HashMap<>()").build())));
     }
 
 
-    private static MapSetter mapSetter(final Class<?> type) {
-        return MapSetter.builder() //
-                .propertyName("") //
-                .propertyType(type) //
-                .keyType(Object.class) //
-                .valueType(Object.class) //
-                .methodName("") //
-                .visibility(Visibility.PRIVATE) //
-                .declaringClass(ClassWithCollections.class) //
-                .build();
+    private static MapType mapType(final Class<?> type) {
+        return new MapType(type, Object.class, Object.class);
     }
 
     static class MyMap<K, V> extends HashMap<K, V> {
         private static final long serialVersionUID = 3204706075779867698L;
     }
 
-    private static CollectionSetter collectionSetter(final Class<?> type) {
-        return CollectionSetter.builder() //
-                .propertyName("") //
-                .propertyType(type) //
-                .paramTypeArg(Object.class) //
-                .methodName("") //
-                .visibility(Visibility.PRIVATE) //
-                .declaringClass(ClassWithCollections.class) //
-                .build();
-    }
-
-    private static CollectionGetAndAdder collectionGetAndAdder(final Class<?> type) {
-        return CollectionGetAndAdder.builder() //
-                .propertyName("") //
-                .propertyType(type) //
-                .paramTypeArg(Object.class) //
-                .methodName("") //
-                .visibility(Visibility.PRIVATE) //
-                .declaringClass(GetAndAdd.class) //
-                .build();
+    private static CollectionType collectionType(final Class<?> type) {
+        return new CollectionType(type, Object.class);
     }
 
     static class MyList<T> extends ArrayList<T> {

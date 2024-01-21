@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.MapInitializerCodeGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
+import io.github.tobi.laa.reflective.fluent.builders.model.MapType;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -20,19 +20,19 @@ import java.util.Objects;
 class EnumMapInitializerCodeGenerator implements MapInitializerCodeGenerator {
 
     @Override
-    public boolean isApplicable(final MapSetter mapSetter) {
-        Objects.requireNonNull(mapSetter);
-        return mapSetter.getPropertyType() == EnumMap.class;
+    public boolean isApplicable(final MapType mapType) {
+        Objects.requireNonNull(mapType);
+        return mapType.getType() == EnumMap.class;
     }
 
     @Override
-    public CodeBlock generateMapInitializer(final MapSetter mapSetter) {
-        if (isApplicable(mapSetter)) {
+    public CodeBlock generateMapInitializer(final MapType mapType) {
+        if (isApplicable(mapType)) {
             return CodeBlock.builder()
-                    .add("new $T<>($T.class)", mapSetter.getPropertyType(), mapSetter.getKeyType())
+                    .add("new $T<>($T.class)", mapType.getType(), mapType.getKeyType())
                     .build();
         } else {
-            throw new CodeGenerationException("Generation of initializing code blocks for " + mapSetter + " is not supported.");
+            throw new CodeGenerationException("Generation of initializing code blocks for " + mapType + " is not supported.");
         }
     }
 }

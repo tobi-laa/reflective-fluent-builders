@@ -5,10 +5,13 @@ import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
+import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
+import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
@@ -23,9 +26,13 @@ import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderCon
  */
 @Named
 @Singleton
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
 
     private static final String OBJECT_TO_BUILD_FIELD_NAME = "objectToBuild";
+
+    @lombok.NonNull
+    private final WriteAccessorService writeAccessorService;
 
     @Override
     public MethodSpec generateBuildMethod(final BuilderMetadata builderMetadata) {
@@ -36,21 +43,21 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                 .returns(clazz.loadClass());
         methodBuilder.addStatement("final $T $L = this.$L.get()", clazz.loadClass(), OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
         for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
-            if (writeAccessor instanceof CollectionGetAndAdder) {
-                final var collectionGetAndAdder = (CollectionGetAndAdder) writeAccessor;
+            if (writeAccessorService.isCollectionGetter(writeAccessor)) {
+                final var getter = (Getter) writeAccessor;
                 methodBuilder
                         .beginControlFlow(
                                 "if (this.$1L.$3L && this.$2L.$3L != null)",
                                 CallSetterFor.FIELD_NAME,
                                 FieldValue.FIELD_NAME,
-                                collectionGetAndAdder.getPropertyName())
+                                getter.getPropertyName())
                         .addStatement(
                                 "this.$L.$L.forEach($L.$L()::add)",
                                 FieldValue.FIELD_NAME,
-                                collectionGetAndAdder.getPropertyName(),
+                                getter.getPropertyName(),
                                 OBJECT_TO_BUILD_FIELD_NAME,
-                                collectionGetAndAdder.getMethodName());
-            } else if (writeAccessor instanceof Setter) {
+                                getter.getMethodName());
+            } else if (writeAccessorService.isSetter(writeAccessor)) {
                 final var setter = (Setter) writeAccessor;
                 methodBuilder
                         .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getPropertyName())
