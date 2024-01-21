@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -26,5 +27,9 @@ public class GetAndAdd {
 
     public void setListSetterWrongType(final String... listSetterWrongType) {
         this.listSetterWrongType = List.of(listSetterWrongType);
+    }
+
+    public static List<String> getAStaticField() {
+        return Collections.emptyList();
     }
 }

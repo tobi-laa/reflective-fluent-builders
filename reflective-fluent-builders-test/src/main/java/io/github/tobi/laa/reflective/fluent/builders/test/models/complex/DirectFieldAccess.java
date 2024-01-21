@@ -9,6 +9,8 @@ import java.util.List;
 
 public class DirectFieldAccess {
 
+    public static int publicStaticFieldNoSetter;
+
     private int privateFieldNoSetter;
 
     int packagePrivateFieldNoSetter;

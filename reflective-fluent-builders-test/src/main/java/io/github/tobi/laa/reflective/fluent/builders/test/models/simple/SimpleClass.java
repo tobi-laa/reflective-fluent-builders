@@ -18,4 +18,8 @@ public class SimpleClass {
     void aString(final String aString) {
         this.aString = aString;
     }
+
+    public static void setAStaticField(final String aStaticField) {
+        // do nothing
+    }
 }
