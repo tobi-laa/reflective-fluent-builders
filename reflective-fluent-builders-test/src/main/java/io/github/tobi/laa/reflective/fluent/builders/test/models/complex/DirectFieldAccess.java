@@ -39,4 +39,6 @@ public class DirectFieldAccess {
     public int publicFieldWithPrivateSetter;
 
     public final List<String> publicFinalFieldNoSetter = new ArrayList<>();
+
+    public final int publicFinalFieldNoCollection = 0;
 }

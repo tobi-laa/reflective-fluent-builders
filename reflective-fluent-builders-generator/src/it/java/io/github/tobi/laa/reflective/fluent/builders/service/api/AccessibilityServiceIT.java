@@ -1,6 +1,8 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.DirectFieldAccess;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.*;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -12,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -211,5 +214,58 @@ class AccessibilityServiceIT {
                 Stream.of( //
                         Arguments.of(ProtectedConstructor.class, "a.weird.package", false), //
                         Arguments.of(ProtectedConstructor.class, ProtectedConstructor.class.getPackageName(), true)));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testIsFieldAccessibleFromNull(final Field field, final String packageName) {
+        // Act
+        final ThrowingCallable isAccessibleFrom = () -> accessibilityService.isAccessibleFrom(field, packageName);
+        // Assert
+        assertThatThrownBy(isAccessibleFrom).isExactlyInstanceOf(NullPointerException.class);
+    }
+
+    @SneakyThrows
+    private static Stream<Arguments> testIsFieldAccessibleFromNull() {
+        return Stream.of( //
+                Arguments.of(null, null), //
+                Arguments.of(SimpleClass.class.getDeclaredField("anInt"), null), //
+                Arguments.of(null, "a.package.name"));
+    }
+
+    @Test
+    @SneakyThrows
+    void testIsFieldAccessiblePrivateField() {
+        // Arrange
+        final Field field = DirectFieldAccess.class.getDeclaredField("privateFieldNoSetter");
+        final String packageName = "does.not.matter";
+        // Act
+        final boolean actual = accessibilityService.isAccessibleFrom(field, packageName);
+        // Assert
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    @SneakyThrows
+    void testIsFieldAccessiblePublicFieldButInaccessibleType() {
+        // Arrange
+        final Field field = PackagePrivateConstructor.class.getDeclaredField("privateClass");
+        final String packageName = "does.not.matter";
+        // Act
+        final boolean actual = accessibilityService.isAccessibleFrom(field, packageName);
+        // Assert
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    @SneakyThrows
+    void testIsFieldAccessible() {
+        // Arrange
+        final Field field = DirectFieldAccess.class.getDeclaredField("publicFieldNoSetter");
+        final String packageName = "does.not.matter";
+        // Act
+        final boolean actual = accessibilityService.isAccessibleFrom(field, packageName);
+        // Assert
+        assertThat(actual).isTrue();
     }
 }
