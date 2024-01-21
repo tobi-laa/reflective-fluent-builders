@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -8,6 +9,7 @@ import lombok.experimental.SuperBuilder;
  * </p>
  */
 @SuperBuilder(toBuilder = true)
+@ToString(callSuper = true)
 public class Setter extends AbstractMethodAccessor {
 
     /**

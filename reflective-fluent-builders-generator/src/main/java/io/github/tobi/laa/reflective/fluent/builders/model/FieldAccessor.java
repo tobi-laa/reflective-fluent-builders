@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
@@ -14,6 +15,7 @@ import static java.util.Objects.compare;
  */
 @SuperBuilder(toBuilder = true)
 @Data
+@ToString(callSuper = true)
 public class FieldAccessor extends AbstractWriteAccessor {
 
     @lombok.NonNull
