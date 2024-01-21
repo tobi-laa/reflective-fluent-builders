@@ -5,6 +5,7 @@ import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.DirectFieldAccess;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -167,6 +168,22 @@ class SetterCodeGeneratorIT {
                                         "    final java.util.List list) {\n" +
                                         "  this.fieldValue.list = list;\n" +
                                         "  this.callSetterFor.list = true;\n" +
+                                        "  return this;\n" +
+                                        "}\n",
+                                mockTypeName)),
+                Arguments.of( //
+                        builderMetadata, //
+                        FieldAccessor.builder() //
+                                .propertyName("publicFieldNoSetter") //
+                                .propertyType(new SimpleType(int.class)) //
+                                .visibility(Visibility.PUBLIC) //
+                                .declaringClass(DirectFieldAccess.class) //
+                                .build(), //
+                        String.format(
+                                "public %1$s publicFieldNoSetter(\n" +
+                                        "    final int publicFieldNoSetter) {\n" +
+                                        "  this.fieldValue.publicFieldNoSetter = publicFieldNoSetter;\n" +
+                                        "  this.callSetterFor.publicFieldNoSetter = true;\n" +
                                         "  return this;\n" +
                                         "}\n",
                                 mockTypeName)));
