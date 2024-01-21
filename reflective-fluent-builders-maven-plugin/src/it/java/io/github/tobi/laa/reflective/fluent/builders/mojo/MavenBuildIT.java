@@ -1,5 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
+import io.github.tobi.laa.reflective.fluent.builders.test.InjectMock;
+import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import lombok.SneakyThrows;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -11,23 +13,21 @@ import org.codehaus.plexus.build.BuildContext;
 import org.codehaus.plexus.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
+import org.junitpioneer.jupiter.cartesian.CartesianTest;
+import org.junitpioneer.jupiter.cartesian.CartesianTest.Values;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,31 +36,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class MavenBuildTest {
+@IntegrationTest
+class MavenBuildIT {
 
+    @Inject
     private MavenBuild mavenBuild;
 
-    private final Clock clock = Clock.fixed(Instant.parse("3333-03-13T00:00:00.00Z"), ZoneId.of("UTC"));
-
-    @Mock
+    @InjectMock
     private BuildContext buildContext;
 
-    @Mock
+    @InjectMock
     private MavenProject mavenProject;
 
-    @Mock
+    @InjectMock
     private MojoExecution mojoExecution;
 
-    @Mock
+    @InjectMock
     private Logger logger;
 
     @TempDir
     private Path tempDir;
 
     @BeforeEach
-    void initMavenBuild() {
-        mavenBuild = new MavenBuild(clock, buildContext, mavenProject, mojoExecution);
+    void injectLogger() {
         mavenBuild.enableLogging(logger);
     }
 
@@ -363,5 +361,40 @@ class MavenBuildTest {
     @SneakyThrows
     private void mockCompileClasspathElements(final String... elements) {
         doReturn(List.of(elements)).when(mavenProject).getCompileClasspathElements();
+    }
+
+    @CartesianTest
+    @SneakyThrows
+    void testResolveSourceFileUnderneathCompileSource(
+            @Values(booleans = {true, false}) final boolean testPhase,
+            @Values(strings = {"exists.for.test", "exists.for.compile", "does.not.exist"}) final String packageName,
+            @Values(strings = {"ExistsForTest.java", "ExistsForCompile.java", "DoesNotExist.java"}) final String sourceFile) {
+        // Arrange
+        final var testRoot = tempDir.resolve("testroot");
+        final var testSource = testRoot.resolve("exists").resolve("for").resolve("test").resolve("ExistsForTest.java");
+        Files.createDirectories(testSource.getParent());
+        Files.createFile(testSource);
+        final var compileRoot = tempDir.resolve("compileroot");
+        final var compileSource = compileRoot.resolve("exists").resolve("for").resolve("compile").resolve("ExistsForCompile.java");
+        Files.createDirectories(compileSource.getParent());
+        Files.createFile(compileSource);
+        mockTestPhase(testPhase);
+        doReturn(List.of(testRoot.toString())).when(mavenProject).getTestCompileSourceRoots();
+        doReturn(List.of(compileRoot.toString())).when(mavenProject).getCompileSourceRoots();
+        // Act
+        final var actual = mavenBuild.resolveSourceFile(packageName, Paths.get(sourceFile));
+        // Assert
+        if (packageName.contains("compile") && sourceFile.equals("ExistsForCompile.java")
+                || testPhase && packageName.contains("test") && sourceFile.equals("ExistsForTest.java")) {
+            assertThat(actual).isPresent();
+        } else {
+            assertThat(actual).isEmpty();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testResolveSourceFileUnderneathTestCompileSource(final boolean fileExists) {
+        mockTestPhase(true);
     }
 }
