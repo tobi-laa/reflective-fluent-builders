@@ -31,7 +31,7 @@ class TypeNameGeneratorImplTest {
         // Arrange
         final Setter setter = null;
         // Act
-        final Executable generateTypeNameForParam = () -> generator.generateTypeNameForParam(setter);
+        final Executable generateTypeNameForParam = () -> generator.generateTypeName(setter);
         // Assert
         assertThrows(NullPointerException.class, generateTypeNameForParam);
     }
@@ -40,7 +40,7 @@ class TypeNameGeneratorImplTest {
     @MethodSource
     void testGenerateTypeNameForParamSetter(final Setter setter, final String expected) {
         // Act
-        final TypeName actual = generator.generateTypeNameForParam(setter);
+        final TypeName actual = generator.generateTypeName(setter);
         // Assert
         assertThat(actual).hasToString(expected);
     }
@@ -137,7 +137,7 @@ class TypeNameGeneratorImplTest {
         // Arrange
         final Type type = null;
         // Act
-        final Executable generateTypeNameForParam = () -> generator.generateTypeNameForParam(type);
+        final Executable generateTypeNameForParam = () -> generator.generateTypeName(type);
         // Assert
         assertThrows(NullPointerException.class, generateTypeNameForParam);
     }
@@ -146,7 +146,7 @@ class TypeNameGeneratorImplTest {
     @MethodSource
     void testGenerateTypeNameForParamType(final Type type, final String expected) {
         // Act
-        final TypeName actual = generator.generateTypeNameForParam(type);
+        final TypeName actual = generator.generateTypeName(type);
         // Assert
         assertThat(actual).hasToString(expected);
     }

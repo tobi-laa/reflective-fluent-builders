@@ -1,26 +1,26 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.classgraph.ClassInfo;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 import java.util.SortedSet;
 
 /**
  * <p>
- * Gathers all setters found on a class.
+ * Gathers all write accessors found on a class.
  * </p>
  */
-public interface SetterService {
+public interface WriteAccessorService {
 
     /**
      * <p>
-     * Gathers all setters found on {@code clazz}.
+     * Gathers all write accessors found on {@code clazz}.
      * </p>
      *
-     * @param clazz The class for which to gather all setters. Must not be {@code null}.
-     * @return All setters of {@code clazz}.
+     * @param clazz The class for which to gather all write accessors. Must not be {@code null}.
+     * @return All write accessors of {@code clazz}.
      */
-    SortedSet<Setter> gatherAllSetters(final ClassInfo clazz);
+    SortedSet<WriteAccessor> gatherAllWriteAccessors(final ClassInfo clazz);
 
     /**
      * <p>

@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -26,21 +26,20 @@ import java.util.Objects;
 class TypeNameGeneratorImpl implements TypeNameGenerator {
 
     @SuppressWarnings("java:S3252") // false positive for static method call
-    @Override
-    public TypeName generateTypeNameForParam(final Setter setter) {
-        Objects.requireNonNull(setter);
-        if (setter.getPropertyType() instanceof ParameterizedType) {
-            final var parameterizedType = (ParameterizedType) setter.getPropertyType();
+    public TypeName generateTypeName(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        if (writeAccessor.getPropertyType() instanceof ParameterizedType) {
+            final var parameterizedType = (ParameterizedType) writeAccessor.getPropertyType();
             final var rawType = (Class<?>) parameterizedType.getRawType();
             final Type[] typeArgs = Arrays.stream(parameterizedType.getActualTypeArguments()).map(this::wildcardToUpperBound).toArray(Type[]::new);
             return ParameterizedTypeName.get(rawType, typeArgs);
         } else {
-            return TypeName.get(setter.getPropertyType());
+            return TypeName.get(writeAccessor.getPropertyType());
         }
     }
 
     @Override
-    public TypeName generateTypeNameForParam(final Type type) {
+    public TypeName generateTypeName(final Type type) {
         Objects.requireNonNull(type);
         return TypeName.get(wildcardToUpperBound(type));
 

@@ -6,7 +6,7 @@ import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd;
@@ -48,7 +48,7 @@ class SetterCodeGeneratorImplTest {
     private TypeNameGenerator typeNameGenerator;
 
     @Mock
-    private SetterService setterService;
+    private WriteAccessorService writeAccessorService;
 
     @ParameterizedTest
     @MethodSource
@@ -57,7 +57,7 @@ class SetterCodeGeneratorImplTest {
         final Executable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThrows(NullPointerException.class, generate);
-        verifyNoInteractions(builderClassNameGenerator, typeNameGenerator, setterService);
+        verifyNoInteractions(builderClassNameGenerator, typeNameGenerator, writeAccessorService);
     }
 
     private static Stream<Arguments> testGenerateNull() {
@@ -90,22 +90,22 @@ class SetterCodeGeneratorImplTest {
     void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expected) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
+        when(typeNameGenerator.generateTypeName(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
         if (setter instanceof CollectionGetAndAdder) {
-            when(setterService.dropGetterPrefix(any())).thenReturn(setter.getPropertyName());
+            when(writeAccessorService.dropGetterPrefix(any())).thenReturn(setter.getPropertyName());
         } else {
-            when(setterService.dropSetterPrefix(any())).thenReturn(setter.getPropertyName());
+            when(writeAccessorService.dropSetterPrefix(any())).thenReturn(setter.getPropertyName());
         }
         // Act
         final MethodSpec actual = generator.generate(builderMetadata, setter);
         // Assert
         assertThat(actual).hasToString(expected);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(typeNameGenerator).generateTypeNameForParam(setter);
+        verify(typeNameGenerator).generateTypeName(setter);
         if (setter instanceof CollectionGetAndAdder) {
-            verify(setterService).dropGetterPrefix(setter.getMethodName());
+            verify(writeAccessorService).dropGetterPrefix(setter.getMethodName());
         } else {
-            verify(setterService).dropSetterPrefix(setter.getMethodName());
+            verify(writeAccessorService).dropSetterPrefix(setter.getMethodName());
         }
     }
 

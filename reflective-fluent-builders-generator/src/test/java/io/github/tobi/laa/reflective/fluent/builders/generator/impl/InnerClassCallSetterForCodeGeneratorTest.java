@@ -83,21 +83,21 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(SimpleSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("anInt") //
                                                 .propertyType(int.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(SimpleSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("string") //
                                                 .propertyType(String.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(SimpleSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("object") //
                                                 .propertyType(Object.class) //
@@ -126,7 +126,7 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(CollectionSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("set") //
                                                 .propertyType(Set.class) //
@@ -134,7 +134,7 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(CollectionSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("deque") //
                                                 .propertyType(Deque.class) //
@@ -142,7 +142,7 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(ArraySetter.builder() //
+                                        .writeAccessor(ArraySetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("floats") //
                                                 .propertyType(float[].class) //
@@ -150,7 +150,7 @@ class InnerClassCallSetterForCodeGeneratorTest {
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(MapSetter.builder() //
+                                        .writeAccessor(MapSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("map") //
                                                 .propertyType(Map.class) //

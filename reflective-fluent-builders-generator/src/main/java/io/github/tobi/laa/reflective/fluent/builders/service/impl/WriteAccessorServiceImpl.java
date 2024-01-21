@@ -23,13 +23,13 @@ import static java.util.function.Predicate.not;
 
 /**
  * <p>
- * Standard implementation of {@link SetterService}.
+ * Standard implementation of {@link WriteAccessorService}.
  * </p>
  */
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-class SetterServiceImpl implements SetterService {
+class WriteAccessorServiceImpl implements WriteAccessorService {
 
     @lombok.NonNull
     private final VisibilityService visibilityService;
@@ -47,7 +47,7 @@ class SetterServiceImpl implements SetterService {
     private final BuildersProperties properties;
 
     @Override
-    public SortedSet<Setter> gatherAllSetters(final ClassInfo classInfo) {
+    public SortedSet<WriteAccessor> gatherAllWriteAccessors(final ClassInfo classInfo) {
         Objects.requireNonNull(classInfo);
         final var clazz = classInfo.loadClass();
         final var builderPackage = builderPackageService.resolveBuilderPackage(clazz);
@@ -69,9 +69,9 @@ class SetterServiceImpl implements SetterService {
                     .filter(method -> noCorrespondingSetter(method, setters)) //
                     .map(method -> toGetAndAdder(clazz, method)) //
                     .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
-            return ImmutableSortedSet.<Setter>naturalOrder().addAll(setters).addAll(getAndAdders).build();
+            return ImmutableSortedSet.<WriteAccessor>naturalOrder().addAll(setters).addAll(getAndAdders).build();
         } else {
-            return setters;
+            return setters.stream().collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
         }
     }
 

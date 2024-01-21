@@ -251,7 +251,7 @@ class InnerClassForMapCodeGeneratorTest {
     void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final Setter setter) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
@@ -280,7 +280,7 @@ class InnerClassForMapCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final MapSetter setter, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateMapInitializer(any())).thenReturn(CodeBlock.of("new MockMap<>()"));
         // Act
@@ -290,8 +290,8 @@ class InnerClassForMapCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(typeNameGenerator).generateTypeNameForParam(setter.getKeyType());
-        verify(typeNameGenerator).generateTypeNameForParam(setter.getValueType());
+        verify(typeNameGenerator).generateTypeName(setter.getKeyType());
+        verify(typeNameGenerator).generateTypeName(setter.getValueType());
         verify(initializerGeneratorA).generateMapInitializer(setter);
     }
 

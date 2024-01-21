@@ -33,14 +33,14 @@ class JavaFileGeneratorIT {
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(classInfo.get(ClassWithGenerics.class)) //
                         .accessibleNonArgsConstructor(true) //
-                        .setter(SimpleSetter.builder() //
+                        .writeAccessor(SimpleSetter.builder() //
                                 .methodName("setAnInt") //
                                 .propertyName("anInt") //
                                 .propertyType(int.class) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
-                        .setter(ArraySetter.builder() //
+                        .writeAccessor(ArraySetter.builder() //
                                 .methodName("setFloats") //
                                 .propertyName("floats") //
                                 .propertyType(float[].class) //
@@ -48,7 +48,7 @@ class JavaFileGeneratorIT {
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithGenerics.class) //
                                 .build()) //
-                        .setter(SimpleSetter.builder() //
+                        .writeAccessor(SimpleSetter.builder() //
                                 .methodName("setT") //
                                 .propertyName("t") //
                                 .propertyType(typeVariableT()) //

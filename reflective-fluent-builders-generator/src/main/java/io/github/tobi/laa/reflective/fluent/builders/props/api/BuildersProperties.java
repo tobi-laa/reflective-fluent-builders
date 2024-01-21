@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.props.api;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -48,7 +48,7 @@ public interface BuildersProperties {
      * </p>
      *
      * @return The prefix used for identifying setter methods via reflection when analyzing classes.
-     * @see SetterService
+     * @see WriteAccessorService
      */
     String getSetterPrefix();
 
@@ -59,7 +59,7 @@ public interface BuildersProperties {
      * </p>
      *
      * @return The prefix used for identifying getter methods via reflection when analyzing classes.
-     * @see SetterService
+     * @see WriteAccessorService
      */
     String getGetterPrefix();
 
@@ -71,7 +71,7 @@ public interface BuildersProperties {
      * </p>
      *
      * @return Whether to support using a get-and-add paradigm in generated builders.
-     * @see SetterService
+     * @see WriteAccessorService
      */
     boolean isGetAndAddEnabled();
 

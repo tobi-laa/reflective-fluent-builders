@@ -6,7 +6,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.*;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -132,9 +132,9 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
 
     private void generateCollectionClasses(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {
         for (final CollectionClassCodeGenerator generator : collectionClassCodeGenerators) {
-            for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
-                if (generator.isApplicable(setter)) {
-                    final var collectionClassSpec = generator.generate(builderMetadata, setter);
+            for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
+                if (generator.isApplicable(writeAccessor)) {
+                    final var collectionClassSpec = generator.generate(builderMetadata, writeAccessor);
                     builderTypeSpec.addMethod(collectionClassSpec.getGetter());
                     builderTypeSpec.addType(collectionClassSpec.getInnerClass());
                 }
@@ -143,8 +143,8 @@ class JavaFileGeneratorImpl implements JavaFileGenerator {
     }
 
     private void generateSetters(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {
-        for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
-            builderTypeSpec.addMethod(setterCodeGenerator.generate(builderMetadata, setter));
+        for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
+            builderTypeSpec.addMethod(setterCodeGenerator.generate(builderMetadata, writeAccessor));
         }
     }
 

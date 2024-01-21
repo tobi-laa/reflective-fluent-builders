@@ -248,7 +248,7 @@ class InnerClassForCollectionCodeGeneratorTest {
     void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final Setter setter) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
@@ -277,7 +277,7 @@ class InnerClassForCollectionCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final CollectionSetter setter, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateCollectionInitializer(any())).thenReturn(CodeBlock.of("new MockList<>()"));
         // Act
@@ -287,7 +287,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(typeNameGenerator).generateTypeNameForParam(setter.getParamTypeArg());
+        verify(typeNameGenerator).generateTypeName(setter.getParamTypeArg());
         verify(initializerGeneratorA).generateCollectionInitializer(setter);
     }
 

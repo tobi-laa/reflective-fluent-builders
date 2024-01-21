@@ -13,7 +13,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGener
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -47,21 +47,21 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     private final List<CollectionInitializerCodeGenerator> initializerGenerators;
 
     @Override
-    public boolean isApplicable(final Setter setter) {
-        Objects.requireNonNull(setter);
-        return setter instanceof CollectionSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) setter));
+    public boolean isApplicable(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        return writeAccessor instanceof CollectionSetter //
+                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) writeAccessor));
     }
 
     @Override
-    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
+    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
-        Objects.requireNonNull(setter);
-        if (setter instanceof CollectionSetter) {
-            final CollectionSetter collectionSetter = (CollectionSetter) setter;
+        Objects.requireNonNull(writeAccessor);
+        if (writeAccessor instanceof CollectionSetter) {
+            final CollectionSetter collectionSetter = (CollectionSetter) writeAccessor;
             return generate(builderMetadata, collectionSetter);
         } else {
-            throw new CodeGenerationException("Generation of inner collection class for " + setter + " is not supported.");
+            throw new CodeGenerationException("Generation of inner collection class for " + writeAccessor + " is not supported.");
         }
     }
 
@@ -80,7 +80,7 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
                         .addModifiers(Modifier.PUBLIC) //
                         .addMethod(MethodSpec.methodBuilder("add") //
                                 .addModifiers(Modifier.PUBLIC) //
-                                .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getParamTypeArg()), "item", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeName(setter.getParamTypeArg()), "item", FINAL) //
                                 .returns(className) //
                                 .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName()) //
                                 .addStatement(CodeBlock.builder()

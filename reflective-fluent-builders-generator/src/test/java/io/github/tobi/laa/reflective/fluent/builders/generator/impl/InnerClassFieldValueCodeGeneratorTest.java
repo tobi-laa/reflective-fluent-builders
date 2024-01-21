@@ -68,7 +68,7 @@ class InnerClassFieldValueCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final EncapsulatingClassSpec expected) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
+        when(typeNameGenerator.generateTypeName(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
         // Act
         final EncapsulatingClassSpec actual = generator.generate(builderMetadata);
         // Assert
@@ -76,7 +76,7 @@ class InnerClassFieldValueCodeGeneratorTest {
         assertThat(actual.getField()).hasToString(expected.getField().toString());
         assertThat(actual.getInnerClass()).hasToString(expected.getInnerClass().toString());
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        builderMetadata.getBuiltType().getSetters().forEach(verify(typeNameGenerator)::generateTypeNameForParam);
+        builderMetadata.getBuiltType().getWriteAccessors().forEach(verify(typeNameGenerator)::generateTypeName);
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -89,21 +89,21 @@ class InnerClassFieldValueCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(SimpleSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("anInt") //
                                                 .propertyType(int.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(SimpleSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("string") //
                                                 .propertyType(String.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(SimpleSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("object") //
                                                 .propertyType(Object.class) //
@@ -132,7 +132,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(CollectionSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("set") //
                                                 .propertyType(Set.class) //
@@ -140,7 +140,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(CollectionSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("deque") //
                                                 .propertyType(Deque.class) //
@@ -148,7 +148,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(ArraySetter.builder() //
+                                        .writeAccessor(ArraySetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("floats") //
                                                 .propertyType(float[].class) //
@@ -156,7 +156,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(MapSetter.builder() //
+                                        .writeAccessor(MapSetter.builder() //
                                                 .methodName("ignored") //
                                                 .propertyName("map") //
                                                 .propertyType(Map.class) //

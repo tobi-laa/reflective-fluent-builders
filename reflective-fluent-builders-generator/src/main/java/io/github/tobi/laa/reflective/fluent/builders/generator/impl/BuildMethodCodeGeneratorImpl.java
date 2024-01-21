@@ -7,6 +7,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodCo
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionGetAndAdder;
 import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -34,21 +35,23 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .returns(clazz.loadClass());
         methodBuilder.addStatement("final $T $L = this.$L.get()", clazz.loadClass(), OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
-        for (final Setter setter : builderMetadata.getBuiltType().getSetters()) {
-            if (setter instanceof CollectionGetAndAdder) {
+        for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
+            if (writeAccessor instanceof CollectionGetAndAdder) {
+                final var collectionGetAndAdder = (CollectionGetAndAdder) writeAccessor;
                 methodBuilder
                         .beginControlFlow(
                                 "if (this.$1L.$3L && this.$2L.$3L != null)",
                                 CallSetterFor.FIELD_NAME,
                                 FieldValue.FIELD_NAME,
-                                setter.getPropertyName())
+                                collectionGetAndAdder.getPropertyName())
                         .addStatement(
                                 "this.$L.$L.forEach($L.$L()::add)",
                                 FieldValue.FIELD_NAME,
-                                setter.getPropertyName(),
+                                collectionGetAndAdder.getPropertyName(),
                                 OBJECT_TO_BUILD_FIELD_NAME,
-                                setter.getMethodName());
-            } else {
+                                collectionGetAndAdder.getMethodName());
+            } else if (writeAccessor instanceof Setter) {
+                final var setter = (Setter) writeAccessor;
                 methodBuilder
                         .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getPropertyName())
                         .addStatement(

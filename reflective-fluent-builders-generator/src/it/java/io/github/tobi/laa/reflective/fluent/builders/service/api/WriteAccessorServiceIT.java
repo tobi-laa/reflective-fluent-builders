@@ -44,13 +44,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @IntegrationTest
-class SetterServiceIT {
+class WriteAccessorServiceIT {
 
     @RegisterExtension
     static ClassGraphExtension classInfo = new ClassGraphExtension();
 
     @Inject
-    private SetterService setterService;
+    private WriteAccessorService writeAccessorService;
 
     @InjectSpy
     private BuildersProperties properties;
@@ -58,7 +58,7 @@ class SetterServiceIT {
     @Test
     void testDropSetterPrefixNull() {
         // Act
-        final Executable dropSetterPrefix = () -> setterService.dropSetterPrefix(null);
+        final Executable dropSetterPrefix = () -> writeAccessorService.dropSetterPrefix(null);
         // Assert
         assertThrows(NullPointerException.class, dropSetterPrefix);
     }
@@ -69,7 +69,7 @@ class SetterServiceIT {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         // Act
-        final String actual = setterService.dropSetterPrefix(name);
+        final String actual = writeAccessorService.dropSetterPrefix(name);
         // Assert
         assertEquals(expected, actual);
     }
@@ -85,7 +85,7 @@ class SetterServiceIT {
     @Test
     void testDropGetterPrefixNull() {
         // Act
-        final Executable dropGetterPrefix = () -> setterService.dropGetterPrefix(null);
+        final Executable dropGetterPrefix = () -> writeAccessorService.dropGetterPrefix(null);
         // Assert
         assertThrows(NullPointerException.class, dropGetterPrefix);
     }
@@ -96,7 +96,7 @@ class SetterServiceIT {
         // Arrange
         when(properties.getGetterPrefix()).thenReturn(getterPrefix);
         // Act
-        final String actual = setterService.dropGetterPrefix(name);
+        final String actual = writeAccessorService.dropGetterPrefix(name);
         // Assert
         assertEquals(expected, actual);
     }
@@ -112,14 +112,14 @@ class SetterServiceIT {
     @Test
     void testGatherAllSettersNull() {
         // Act
-        final Executable gatherAllSetters = () -> setterService.gatherAllSetters(null);
+        final Executable gatherAllSetters = () -> writeAccessorService.gatherAllWriteAccessors(null);
         // Assert
         assertThrows(NullPointerException.class, gatherAllSetters);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGatherAllSetters(final String setterPrefix, final String getterPrefix, final boolean getAndAddEnabled, final ClassInfo clazz, final Set<Setter> expected) {
+    void testGatherAllSetters(final String setterPrefix, final String getterPrefix, final boolean getAndAddEnabled, final ClassInfo clazz, final Set<WriteAccessor> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn(setterPrefix);
         when(properties.isGetAndAddEnabled()).thenReturn(getAndAddEnabled);
@@ -127,7 +127,7 @@ class SetterServiceIT {
             when(properties.getGetterPrefix()).thenReturn(getterPrefix);
         }
         // Act
-        final Set<Setter> actual = setterService.gatherAllSetters(clazz);
+        final Set<WriteAccessor> actual = writeAccessorService.gatherAllWriteAccessors(clazz);
         // Assert
         assertThat(actual)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
@@ -193,11 +193,11 @@ class SetterServiceIT {
 
     @ParameterizedTest
     @MethodSource
-    void testGatherAllSettersForClassWithHierarchy(final ClassInfo clazz, final Set<Setter> expected) {
+    void testGatherAllSettersForClassWithHierarchy(final ClassInfo clazz, final Set<WriteAccessor> expected) {
         // Arrange
         when(properties.getSetterPrefix()).thenReturn("set");
         // Act
-        final Set<Setter> actual = setterService.gatherAllSetters(clazz);
+        final Set<WriteAccessor> actual = writeAccessorService.gatherAllWriteAccessors(clazz);
         // Assert
         assertThat(actual)
                 .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()

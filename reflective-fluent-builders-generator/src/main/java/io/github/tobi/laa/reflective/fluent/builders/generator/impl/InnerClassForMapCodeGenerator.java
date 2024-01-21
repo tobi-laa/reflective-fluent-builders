@@ -13,7 +13,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGener
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -46,21 +46,21 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
     private final List<MapInitializerCodeGenerator> initializerGenerators;
 
     @Override
-    public boolean isApplicable(final Setter setter) {
-        Objects.requireNonNull(setter);
-        return setter instanceof MapSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) setter));
+    public boolean isApplicable(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        return writeAccessor instanceof MapSetter //
+                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((MapSetter) writeAccessor));
     }
 
     @Override
-    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
+    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
-        Objects.requireNonNull(setter);
-        if (setter instanceof MapSetter) {
-            final MapSetter mapSetter = (MapSetter) setter;
+        Objects.requireNonNull(writeAccessor);
+        if (writeAccessor instanceof MapSetter) {
+            final MapSetter mapSetter = (MapSetter) writeAccessor;
             return generate(builderMetadata, mapSetter);
         } else {
-            throw new CodeGenerationException("Generation of inner map class for " + setter + " is not supported.");
+            throw new CodeGenerationException("Generation of inner map class for " + writeAccessor + " is not supported.");
         }
     }
 
@@ -79,8 +79,8 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
                         .addModifiers(Modifier.PUBLIC) //
                         .addMethod(MethodSpec.methodBuilder("put") //
                                 .addModifiers(Modifier.PUBLIC) //
-                                .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getKeyType()), "key", FINAL) //
-                                .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getValueType()), "value", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeName(setter.getKeyType()), "key", FINAL) //
+                                .addParameter(typeNameGenerator.generateTypeName(setter.getValueType()), "value", FINAL) //
                                 .returns(className) //
                                 .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getPropertyName()) //
                                 .addStatement(CodeBlock.builder()

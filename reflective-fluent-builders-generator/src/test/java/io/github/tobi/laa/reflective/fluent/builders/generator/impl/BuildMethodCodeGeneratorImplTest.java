@@ -55,14 +55,14 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(SimpleClass.class)) //
                                         .accessibleNonArgsConstructor(true) //
-                                        .setter(SimpleSetter.builder() //
+                                        .writeAccessor(SimpleSetter.builder() //
                                                 .methodName("setAnInt") //
                                                 .propertyName("anInt") //
                                                 .propertyType(int.class) //
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(SimpleClass.class) //
                                                 .build()) //
-                                        .setter(ArraySetter.builder() //
+                                        .writeAccessor(ArraySetter.builder() //
                                                 .methodName("setFloats") //
                                                 .propertyName("floats") //
                                                 .propertyType(float[].class) //
@@ -91,7 +91,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(ClassWithHierarchy.class)) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .setter(MapSetter.builder() //
+                                        .writeAccessor(MapSetter.builder() //
                                                 .methodName("setSortedMap") //
                                                 .propertyName("sortedMap") //
                                                 .propertyType(SortedMap.class) //
@@ -100,7 +100,7 @@ class BuildMethodCodeGeneratorImplTest {
                                                 .visibility(Visibility.PRIVATE) //
                                                 .declaringClass(ClassWithHierarchy.class) //
                                                 .build()) //
-                                        .setter(CollectionSetter.builder() //
+                                        .writeAccessor(CollectionSetter.builder() //
                                                 .methodName("setList") //
                                                 .propertyName("list") //
                                                 .propertyType(List.class) //
@@ -129,7 +129,7 @@ class BuildMethodCodeGeneratorImplTest {
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(PetJaxb.class)) //
                                         .accessibleNonArgsConstructor(false) //
-                                        .setter(CollectionGetAndAdder.builder() //
+                                        .writeAccessor(CollectionGetAndAdder.builder() //
                                                 .methodName("getSiblings") //
                                                 .propertyName("siblings") //
                                                 .propertyType(List.class) //

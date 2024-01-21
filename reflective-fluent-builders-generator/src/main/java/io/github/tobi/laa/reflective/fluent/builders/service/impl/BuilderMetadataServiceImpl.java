@@ -4,7 +4,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.FieldInfo;
 import io.github.classgraph.FieldInfoList;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private final AccessibilityService accessibilityService;
 
     @lombok.NonNull
-    private final SetterService setterService;
+    private final WriteAccessorService writeAccessorService;
 
     @lombok.NonNull
     private final ClassService classService;
@@ -58,7 +58,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                         .type(classInfo) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz, builderPackage)) //
-                        .setters(gatherSettersAndAvoidNameCollisions(classInfo))
+                        .writeAccessors(gatherWriteAccessorsAndAvoidNameCollisions(classInfo))
                         .build()) //
                 .build();
     }
@@ -95,21 +95,21 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .anyMatch(count -> count == 0);
     }
 
-    private SortedSet<Setter> gatherSettersAndAvoidNameCollisions(final ClassInfo clazz) {
-        final var setters = setterService.gatherAllSetters(clazz);
+    private SortedSet<WriteAccessor> gatherWriteAccessorsAndAvoidNameCollisions(final ClassInfo clazz) {
+        final var setters = writeAccessorService.gatherAllWriteAccessors(clazz);
         return avoidNameCollisions(setters);
     }
 
-    private SortedSet<Setter> avoidNameCollisions(final Set<Setter> setters) {
-        final SortedSet<Setter> noNameCollisions = new TreeSet<>();
-        for (final var setter : setters) {
-            if (noNameCollisions.stream().map(Setter::getPropertyName).noneMatch(setter.getPropertyName()::equals)) {
-                noNameCollisions.add(setter);
+    private SortedSet<WriteAccessor> avoidNameCollisions(final Set<WriteAccessor> writeAccessors) {
+        final SortedSet<WriteAccessor> noNameCollisions = new TreeSet<>();
+        for (final var writeAccessor : writeAccessors) {
+            if (noNameCollisions.stream().map(WriteAccessor::getPropertyName).noneMatch(writeAccessor.getPropertyName()::equals)) {
+                noNameCollisions.add(writeAccessor);
             } else {
                 for (int i = 0; true; i++) {
-                    final var propertyName = setter.getPropertyName() + i;
-                    if (noNameCollisions.stream().map(Setter::getPropertyName).noneMatch(propertyName::equals)) {
-                        noNameCollisions.add(setter.withPropertyName(propertyName));
+                    final var propertyName = writeAccessor.getPropertyName() + i;
+                    if (noNameCollisions.stream().map(WriteAccessor::getPropertyName).noneMatch(propertyName::equals)) {
+                        noNameCollisions.add(writeAccessor.withPropertyName(propertyName));
                         break;
                     }
                 }
@@ -151,7 +151,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     public Set<BuilderMetadata> filterOutEmptyBuilders(final Collection<BuilderMetadata> builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         return builderMetadata.stream() //
-                .filter(metadata -> !metadata.getBuiltType().getSetters().isEmpty()) //
+                .filter(metadata -> !metadata.getBuiltType().getWriteAccessors().isEmpty()) //
                 .collect(Collectors.toSet());
     }
 }

@@ -12,7 +12,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionCla
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.ArraySetter;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ClassUtils;
 
@@ -41,20 +41,20 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
     private final BuilderClassNameGenerator builderClassNameGenerator;
 
     @Override
-    public boolean isApplicable(final Setter setter) {
-        Objects.requireNonNull(setter);
-        return setter instanceof ArraySetter;
+    public boolean isApplicable(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        return writeAccessor instanceof ArraySetter;
     }
 
     @Override
-    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
+    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
-        Objects.requireNonNull(setter);
-        if (setter instanceof ArraySetter) {
-            final ArraySetter arraySetter = (ArraySetter) setter;
+        Objects.requireNonNull(writeAccessor);
+        if (writeAccessor instanceof ArraySetter) {
+            final ArraySetter arraySetter = (ArraySetter) writeAccessor;
             return generate(builderMetadata, arraySetter);
         } else {
-            throw new CodeGenerationException("Generation of inner array class for " + setter + " is not supported.");
+            throw new CodeGenerationException("Generation of inner array class for " + writeAccessor + " is not supported.");
         }
     }
 
