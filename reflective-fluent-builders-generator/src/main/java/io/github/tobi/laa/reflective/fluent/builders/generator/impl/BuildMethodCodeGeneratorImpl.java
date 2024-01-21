@@ -1,19 +1,21 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.MethodSpec;
-import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.CallSetterFor;
-import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.FieldValue;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodCodeGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.*;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
-import lombok.RequiredArgsConstructor;
+import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuildMethodStepCodeGenerator;
+import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
 
+import static com.google.common.collect.ImmutableSortedSet.copyOf;
 import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants.OBJECT_SUPPLIER_FIELD_NAME;
 
 /**
@@ -23,13 +25,20 @@ import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderCon
  */
 @Named
 @Singleton
-@RequiredArgsConstructor(onConstructor_ = @Inject)
 class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
 
     private static final String OBJECT_TO_BUILD_FIELD_NAME = "objectToBuild";
 
     @lombok.NonNull
-    private final WriteAccessorService writeAccessorService;
+    private final SortedSet<BuildMethodStepCodeGenerator> stepCodeGenerators;
+
+    @Inject
+    @SuppressWarnings("unused")
+    BuildMethodCodeGeneratorImpl(final Set<BuildMethodStepCodeGenerator> stepCodeGenerators) {
+        // to ensure deterministic outputs, sets are sorted on construction
+        final var compareByClassName = Comparator.comparing(o -> o.getClass().getName());
+        this.stepCodeGenerators = copyOf(compareByClassName, stepCodeGenerators);
+    }
 
     @Override
     public MethodSpec generateBuildMethod(final BuilderMetadata builderMetadata) {
@@ -40,56 +49,9 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
                 .returns(clazz.loadClass());
         methodBuilder.addStatement("final $T $L = this.$L.get()", clazz.loadClass(), OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
         for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
-            if (writeAccessorService.isCollectionGetter(writeAccessor)) {
-                final var getter = (Getter) writeAccessor;
-                methodBuilder
-                        .beginControlFlow(
-                                "if (this.$1L.$3L && this.$2L.$3L != null)",
-                                CallSetterFor.FIELD_NAME,
-                                FieldValue.FIELD_NAME,
-                                getter.getPropertyName())
-                        .addStatement(
-                                "this.$L.$L.forEach($L.$L()::add)",
-                                FieldValue.FIELD_NAME,
-                                getter.getPropertyName(),
-                                OBJECT_TO_BUILD_FIELD_NAME,
-                                getter.getMethodName());
-            } else if (writeAccessorService.isSetter(writeAccessor)) {
-                final var setter = (Setter) writeAccessor;
-                methodBuilder
-                        .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, setter.getPropertyName())
-                        .addStatement(
-                                "$L.$L(this.$L.$L)",
-                                OBJECT_TO_BUILD_FIELD_NAME,
-                                setter.getMethodName(),
-                                FieldValue.FIELD_NAME,
-                                setter.getPropertyName());
-            } else if (writeAccessor instanceof FieldAccessor) {
-                final var fieldAccessor = (FieldAccessor) writeAccessor;
-                if (fieldAccessor.isFinal()) {
-                    methodBuilder
-                            .beginControlFlow(
-                                    "if (this.$1L.$3L && this.$2L.$3L != null)",
-                                    CallSetterFor.FIELD_NAME,
-                                    FieldValue.FIELD_NAME,
-                                    writeAccessor.getPropertyName())
-                            .addStatement(
-                                    "this.$1L.$2L.forEach($3L.$2L::add)",
-                                    FieldValue.FIELD_NAME,
-                                    writeAccessor.getPropertyName(),
-                                    OBJECT_TO_BUILD_FIELD_NAME);
-                } else {
-                    methodBuilder
-                            .beginControlFlow("if (this.$L.$L)", CallSetterFor.FIELD_NAME, writeAccessor.getPropertyName())
-                            .addStatement(
-                                    "$L.$L = this.$L.$L",
-                                    OBJECT_TO_BUILD_FIELD_NAME,
-                                    writeAccessor.getPropertyName(),
-                                    FieldValue.FIELD_NAME,
-                                    writeAccessor.getPropertyName());
-                }
-            }
-            methodBuilder.endControlFlow();
+            stepCodeGenerators.stream()
+                    .filter(gen -> gen.isApplicable(writeAccessor))
+                    .forEach(gen -> methodBuilder.addCode(gen.generate(writeAccessor)));
         }
         methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);
         return methodBuilder.build();

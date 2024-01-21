@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.reflect.TypeUtils.parameterize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -160,12 +161,22 @@ class BuildMethodCodeGeneratorIT {
                                                 .visibility(Visibility.PUBLIC) //
                                                 .declaringClass(DirectFieldAccess.class) //
                                                 .build()) //
+                                        .writeAccessor(FieldAccessor.builder() //
+                                                .propertyName("publicFinalFieldNoSetter") //
+                                                .propertyType(new CollectionType(parameterize(List.class, String.class), String.class)) //
+                                                .visibility(Visibility.PUBLIC) //
+                                                .isFinal(true) //
+                                                .declaringClass(DirectFieldAccess.class) //
+                                                .build()) //
                                         .build()) //
                                 .build(), //
                         String.format("public %1$s build() {\n" +
                                         "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.publicFieldNoSetter) {\n" +
                                         "    objectToBuild.publicFieldNoSetter = this.fieldValue.publicFieldNoSetter;\n" +
+                                        "  }\n" +
+                                        "  if (this.callSetterFor.publicFinalFieldNoSetter && this.fieldValue.publicFinalFieldNoSetter != null) {\n" +
+                                        "    this.fieldValue.publicFinalFieldNoSetter.forEach(objectToBuild.publicFinalFieldNoSetter::add);\n" +
                                         "  }\n" +
                                         "  return objectToBuild;\n" +
                                         "}\n",
