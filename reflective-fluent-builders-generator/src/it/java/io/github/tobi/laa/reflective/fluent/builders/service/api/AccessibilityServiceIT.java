@@ -250,7 +250,7 @@ class AccessibilityServiceIT {
     void testIsFieldAccessiblePublicFieldButInaccessibleType() {
         // Arrange
         final Field field = PackagePrivateConstructor.class.getDeclaredField("privateClass");
-        final String packageName = "does.not.matter";
+        final String packageName = PackagePrivateConstructor.class.getPackageName();
         // Act
         final boolean actual = accessibilityService.isAccessibleFrom(field, packageName);
         // Assert
