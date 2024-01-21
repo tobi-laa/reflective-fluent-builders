@@ -41,6 +41,14 @@ class FieldAccessorTest {
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
+                        false),
+                Arguments.of( //
+                        fieldAccessor, //
+                        fieldAccessor.toBuilder().propertyName("anotherName").build(), //
+                        false),
+                Arguments.of( //
+                        fieldAccessor, //
+                        fieldAccessor.toBuilder().propertyType(new SimpleType(int.class)).build(), //
                         false));
     }
 

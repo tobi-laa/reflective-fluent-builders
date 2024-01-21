@@ -28,9 +28,9 @@ public class FieldAccessor extends AbstractWriteAccessor {
         } else if (anObject == null || anObject.getClass() != this.getClass()) {
             return false;
         }
-        final var aSetter = (FieldAccessor) anObject;
-        return Objects.equals(getPropertyName(), aSetter.getPropertyName()) && //
-                compare(getPropertyType(), aSetter.getPropertyType(), new ParamTypeComparator()) == 0;
+        final var anAccessor = (FieldAccessor) anObject;
+        return Objects.equals(getPropertyName(), anAccessor.getPropertyName()) && //
+                compare(getPropertyType(), anAccessor.getPropertyType(), new ParamTypeComparator()) == 0;
     }
 
     @Override
