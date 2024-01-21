@@ -30,6 +30,7 @@ class FieldAccessorTest {
                 .build();
         return Stream.of( //
                 Arguments.of(fieldAccessor, fieldAccessor, true), //
+                Arguments.of(fieldAccessor, fieldAccessor.toBuilder().build(), true), //
                 Arguments.of(fieldAccessor, null, false), //
                 Arguments.of(fieldAccessor, "foobar", false), //
                 Arguments.of( //
