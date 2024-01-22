@@ -306,6 +306,25 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     /**
      * <p>
+     * The pattern used for identifying adder methods via reflection when analyzing classes.
+     * This needs to be a valid regular expression with the first group being the name of the property.
+     * The default value is:
+     * <pre>
+     * {@code add(.+)}
+     * </pre>
+     * </p>
+     *
+     * @param adderPattern The pattern used for identifying adder methods via reflection when analyzing classes.
+     * @since 2.0.0
+     */
+    @Parameter(name = "adderPattern", defaultValue = "add(.+)")
+    @SuppressWarnings("unused")
+    public void setAdderPattern(final String adderPattern) {
+        params.setAdderPattern(adderPattern);
+    }
+
+    /**
+     * <p>
      * If this is set to {@code true}, it is assumed that getters of collections without a corresponding setter will
      * lazily initialize the underlying collection. The generated builders will use a get-and-add paradigm where
      * necessary to construct a collection.
@@ -333,6 +352,21 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @SuppressWarnings("unused")
     public void setDirectFieldAccessEnabled(final boolean directFieldAccessEnabled) {
         params.setDirectFieldAccessEnabled(directFieldAccessEnabled);
+    }
+
+    /**
+     * <p>
+     * If this is set to {@code true}, the generated builders will use adder methods. Adder methods will take precedence
+     * over setters if both are available.
+     * </p>
+     *
+     * @param addersEnabled Whether to support adder methods in generated builders.
+     * @since 2.0.0
+     */
+    @Parameter(name = "addersEnabled", defaultValue = "true")
+    @SuppressWarnings("unused")
+    public void setAddersEnabled(final boolean addersEnabled) {
+        params.setAddersEnabled(addersEnabled);
     }
 
     /**

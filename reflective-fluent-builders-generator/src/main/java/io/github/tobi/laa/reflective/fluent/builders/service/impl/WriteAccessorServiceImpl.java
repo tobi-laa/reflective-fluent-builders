@@ -8,6 +8,7 @@ import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersPropertie
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.atteo.evo.inflector.English;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,11 +54,19 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         final var classHierarchy = classService.collectFullClassHierarchy(classInfo);
         final var methods = gatherAllNonStaticNonBridgeAccessibleMethods(classHierarchy, builderPackage);
         final SortedSet<WriteAccessor> writeAccessors = new TreeSet<>();
-        writeAccessors.addAll(gatherAllSetters(methods, classInfo));
+        // adders take precedence over setters
+        if (properties.isAddersEnabled()) {
+            writeAccessors.addAll(gatherAllAdders(methods, classInfo));
+        }
+        // setters take precedence over collection getters
+        final var setters = gatherAllSetters(methods, classInfo);
+        addAllThatAreNotYetCovered(writeAccessors, setters);
+        // collection getters take precedence over field accessors
         if (properties.isGetAndAddEnabled()) {
             final var collectionGetters = gatherAllCollectionGetters(methods, classInfo);
             addAllThatAreNotYetCovered(writeAccessors, collectionGetters);
         }
+        // field accessors are the last resort if nothing else is available
         if (properties.isDirectFieldAccessEnabled()) {
             final var fields = gatherAllNonStaticAccessibleFields(classHierarchy, builderPackage);
             final var fieldAccessors = gatherAllFieldAccessors(fields, classInfo);
@@ -83,6 +92,17 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .filter(not(method -> isStatic(method.getModifiers()))) //
                 .filter(method -> accessibilityService.isAccessibleFrom(method, builderPackage)) //
                 .collect(Collectors.toList());
+    }
+
+    private SortedSet<Adder> gatherAllAdders(final List<Method> methods, final ClassInfo classInfo) {
+        return methods.stream() //
+                .filter(this::isAdder) //
+                .map(method -> toAdder(classInfo.loadClass(), method)) //
+                .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
+    }
+
+    private boolean isAdder(final Method method) {
+        return method.getParameterCount() == 1 && method.getName().matches(properties.getAdderPattern());
     }
 
     private SortedSet<Setter> gatherAllSetters(final List<Method> methods, final ClassInfo classInfo) {
@@ -136,12 +156,34 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     private boolean notYetCoveredByAnotherWriteAccessor(final WriteAccessor candidate, final Set<WriteAccessor> writeAccessors) {
         return writeAccessors
                 .stream()
-                .noneMatch(accessor -> getRawType(candidate.getPropertyType().getType()) == getRawType(accessor.getPropertyType().getType())
-                        && candidate.getPropertyName().equals(accessor.getPropertyName()));
+                .noneMatch(accessor -> equivalentAccessors(accessor, candidate));
+    }
+
+    private boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second) {
+        final var firstType = getRawType(first.getPropertyType().getType());
+        final var secondType = getRawType(second.getPropertyType().getType());
+        final var firstName = first instanceof Adder ? pluralize(first.getPropertyName()) : first.getPropertyName();
+        final var secondName = second instanceof Adder ? pluralize(second.getPropertyName()) : second.getPropertyName();
+        return firstType == secondType && firstName.equals(secondName);
+    }
+
+    private String pluralize(final String name) {
+        return English.plural(name);
     }
 
     private Class<?> getRawType(final Type type) {
         return TypeToken.of(type).getRawType();
+    }
+
+    private Adder toAdder(final Class<?> clazz, final Method method) {
+        final var param = method.getParameters()[0];
+        return Adder.builder() //
+                .methodName(method.getName()) //
+                .propertyType(toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0])) //
+                .propertyName(method.getName().replaceFirst(properties.getAdderPattern(), "$1")) //
+                .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                .declaringClass(method.getDeclaringClass()) //
+                .build();
     }
 
     private Setter toSetter(final Class<?> clazz, final Method method) {

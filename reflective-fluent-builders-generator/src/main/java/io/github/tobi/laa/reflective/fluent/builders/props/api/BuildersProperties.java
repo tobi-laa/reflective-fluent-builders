@@ -65,6 +65,21 @@ public interface BuildersProperties {
 
     /**
      * <p>
+     * The pattern used for identifying adder methods via reflection when analyzing classes.
+     * This needs to be a valid regular expression with the first group being the name of the property.
+     * The default value is:
+     * <pre>
+     * {@code add(.+)}
+     * </pre>
+     * </p>
+     *
+     * @return The pattern used for identifying adder methods via reflection when analyzing classes.
+     * @see WriteAccessorService
+     */
+    String getAdderPattern();
+
+    /**
+     * <p>
      * If this is set to {@code true}, it is assumed that getters of collections without a corresponding setter will
      * lazily initialize the underlying collection. The generated builders will use a get-and-add paradigm where
      * necessary to construct a collection.
@@ -85,6 +100,17 @@ public interface BuildersProperties {
      * @see WriteAccessorService
      */
     boolean isDirectFieldAccessEnabled();
+
+    /**
+     * <p>
+     * If this is set to {@code true}, the generated builders will use adder methods. Adder methods will take precedence
+     * over setters if both are available.
+     * </p>
+     *
+     * @return Whether to support adder methods in generated builders.
+     * @see WriteAccessorService
+     */
+    boolean isAddersEnabled();
 
     /**
      * <p>

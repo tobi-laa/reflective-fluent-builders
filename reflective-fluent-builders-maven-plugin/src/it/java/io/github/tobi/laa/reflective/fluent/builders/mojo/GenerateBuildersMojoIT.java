@@ -158,8 +158,10 @@ class GenerateBuildersMojoIT {
                                     "builderSuffix=Builder, " +
                                     "setterPrefix=set, " +
                                     "getterPrefix=get, " +
+                                    "adderPattern=add(.+), " +
                                     "getAndAddEnabled=true, " +
                                     "directFieldAccessEnabled=true, " +
+                                    "addersEnabled=true, " +
                                     "hierarchyCollection=MojoParams.HierarchyCollection(excludes=null), " +
                                     "includes=[Include(super=AbstractIncludeExclude(packageName=io.github.tobi.laa.reflective.fluent.builders.test.models.simple, className=null))], " +
                                     "excludes=null, " +
