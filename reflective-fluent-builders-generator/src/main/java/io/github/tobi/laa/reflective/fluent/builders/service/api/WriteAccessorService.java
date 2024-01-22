@@ -1,10 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.classgraph.ClassInfo;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
-import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.model.*;
 
 import java.util.SortedSet;
 
@@ -47,6 +44,16 @@ public interface WriteAccessorService {
 
     /**
      * <p>
+     * Checks whether {@code writeAccessor} is an {@link Adder}.
+     * </p>
+     *
+     * @param writeAccessor The {@link WriteAccessor} to check. Must not be {@code null}.
+     * @return {@code true} if {@code writeAccessor} is an adder, {@code false} otherwise.
+     */
+    boolean isAdder(final WriteAccessor writeAccessor);
+
+    /**
+     * <p>
      * Drop the configured setter prefix (for instance {@code set}) from {@code name}.
      * </p>
      *
@@ -56,6 +63,17 @@ public interface WriteAccessorService {
      * unchanged.
      */
     String dropSetterPrefix(final String name);
+
+    /**
+     * <p>
+     * Drop the configured adder pattern (for instance {@code add(.+)}) surrounding {@code name}.
+     * </p>
+     *
+     * @param name The (method) name from which to drop the configured adder pattern. Must not be {@code null}.
+     * @return {@code name} with the configured setter prefix stripped from it. If {@code name} does not match the said
+     * pattern, {@code name} will be returned unchanged.
+     */
+    String dropAdderPattern(final String name);
 
     /**
      * <p>

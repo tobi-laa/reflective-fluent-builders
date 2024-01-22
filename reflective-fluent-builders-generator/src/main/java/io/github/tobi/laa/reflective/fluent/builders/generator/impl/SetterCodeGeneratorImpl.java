@@ -5,10 +5,7 @@ import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import lombok.RequiredArgsConstructor;
 
@@ -49,6 +46,9 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
         } else if (writeAccessorService.isSetter(writeAccessor)) {
             final var setter = (Setter) writeAccessor;
             name = writeAccessorService.dropSetterPrefix(setter.getMethodName());
+        } else if (writeAccessorService.isAdder(writeAccessor)) {
+            final var adder = (Adder) writeAccessor;
+            name = writeAccessorService.dropAdderPattern(adder.getMethodName());
         } else {
             name = writeAccessor.getPropertyName();
         }

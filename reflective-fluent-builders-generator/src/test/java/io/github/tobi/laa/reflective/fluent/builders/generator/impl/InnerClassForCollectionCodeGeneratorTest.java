@@ -9,6 +9,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionIni
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import io.github.tobi.laa.reflective.fluent.builders.test.ClassGraphExtension;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -48,6 +49,9 @@ class InnerClassForCollectionCodeGeneratorTest {
     private InnerClassForCollectionCodeGenerator generator;
 
     @Mock
+    private WriteAccessorService writeAccessorService;
+
+    @Mock
     private BuilderClassNameGenerator builderClassNameGenerator;
 
     @Mock
@@ -61,7 +65,7 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @BeforeEach
     void init() {
-        generator = new InnerClassForCollectionCodeGenerator(builderClassNameGenerator, typeNameGenerator, List.of(initializerGeneratorA, initializerGeneratorB));
+        generator = new InnerClassForCollectionCodeGenerator(writeAccessorService, builderClassNameGenerator, typeNameGenerator, List.of(initializerGeneratorA, initializerGeneratorB));
     }
 
     @Test

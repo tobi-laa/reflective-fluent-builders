@@ -14,6 +14,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionC
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ import java.util.Objects;
 
 import static javax.lang.model.element.Modifier.FINAL;
 import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.reflect.TypeUtils.parameterize;
 
 /**
  * <p>
@@ -38,6 +40,9 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerator {
 
     @lombok.NonNull
+    private final WriteAccessorService writeAccessorService;
+
+    @lombok.NonNull
     private final BuilderClassNameGenerator builderClassNameGenerator;
 
     @lombok.NonNull
@@ -49,11 +54,13 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     @Override
     public boolean isApplicable(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
-        if (!(writeAccessor.getPropertyType() instanceof CollectionType)) {
-            return false;
-        } else {
+        if (writeAccessorService.isAdder(writeAccessor)) {
+            return true;
+        } else if (writeAccessor.getPropertyType() instanceof CollectionType) {
             final var collectionType = (CollectionType) writeAccessor.getPropertyType();
             return initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(collectionType));
+        } else {
+            return false;
         }
     }
 
@@ -61,7 +68,12 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor.getPropertyType() instanceof CollectionType) {
+        if (writeAccessorService.isAdder(writeAccessor)) {
+            final var collectionType = new CollectionType(
+                    parameterize(List.class, writeAccessor.getPropertyType().getType()),
+                    writeAccessor.getPropertyType().getType());
+            return generate(builderMetadata, writeAccessor, collectionType);
+        } else if (writeAccessor.getPropertyType() instanceof CollectionType) {
             final var collectionType = (CollectionType) writeAccessor.getPropertyType();
             return generate(builderMetadata, writeAccessor, collectionType);
         } else {

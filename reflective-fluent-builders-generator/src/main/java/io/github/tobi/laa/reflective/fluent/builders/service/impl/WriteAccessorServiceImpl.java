@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.function.Predicate.not;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 /**
  * <p>
@@ -159,11 +160,79 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .noneMatch(accessor -> equivalentAccessors(accessor, candidate));
     }
 
+    /**
+     * <p>
+     * Checks whether this {@link WriteAccessor} is equivalent to {@code other}. Two {@link WriteAccessor} are
+     * considered equivalent if they modify the same property of the same class.
+     * </p>
+     * <p>
+     * Consider the following example:
+     * </p>
+     * <pre>
+     * public class Person {
+     *
+     *     public List<String> items;
+     *
+     *     public List<String> getItems() {
+     *         return this.items;
+     *     }
+     *
+     *     public void setItems(final List<String> items) {
+     *         this.items = items;
+     *     }
+     *
+     *     public void addItem(final String item) {
+     *         this.items.add(item);
+     *     }
+     * }
+     * </pre>
+     * <p>
+     * In this case, when scanning the class {@code Person}, four {@link WriteAccessor WriteAccessors} would be found:
+     * </p>
+     * <ul>
+     *     <li>A {@link WriteAccessor} for directly accessing the field {@code items}.</li>
+     *     <li>A {@link WriteAccessor} for the setter {@code setItems}.</li>
+     *     <li>A {@link WriteAccessor} for the getter {@code getItems}.</li>
+     *     <li>A {@link WriteAccessor} for the adder {@code addItem}.</li>
+     * </ul>
+     * <p>
+     * As all of those {@link WriteAccessor WriteAccessors} modify the same property of the same class, they are all
+     * considered to be equivalent.
+     * </p>
+     *
+     * @param first  The first {@link WriteAccessor}.
+     * @param second The second {@link WriteAccessor}.
+     * @return {@code true} if this {@code first} is equivalent to {@code second}, {@code false} otherwise.
+     */
     private boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second) {
-        final var firstType = getRawType(first.getPropertyType().getType());
-        final var secondType = getRawType(second.getPropertyType().getType());
-        final var firstName = first instanceof Adder ? pluralize(first.getPropertyName()) : first.getPropertyName();
-        final var secondName = second instanceof Adder ? pluralize(second.getPropertyName()) : second.getPropertyName();
+        final Class<?> firstType;
+        final Class<?> secondType;
+        final String firstName;
+        final String secondName;
+        if (first instanceof Adder) {
+            firstName = pluralize(first.getPropertyName());
+            if (second.getPropertyType() instanceof CollectionType) {
+                final var collectionType = (CollectionType) second.getPropertyType();
+                secondType = getRawType(collectionType.getTypeArg());
+            } else {
+                secondType = getRawType(second.getPropertyType().getType());
+            }
+        } else {
+            firstName = first.getPropertyName();
+            secondType = getRawType(second.getPropertyType().getType());
+        }
+        if (second instanceof Adder) {
+            secondName = pluralize(second.getPropertyName());
+            if (first.getPropertyType() instanceof CollectionType) {
+                final var collectionType = (CollectionType) first.getPropertyType();
+                firstType = getRawType(collectionType.getTypeArg());
+            } else {
+                firstType = getRawType(first.getPropertyType().getType());
+            }
+        } else {
+            secondName = second.getPropertyName();
+            firstType = getRawType(first.getPropertyType().getType());
+        }
         return firstType == secondType && firstName.equals(secondName);
     }
 
@@ -180,7 +249,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         return Adder.builder() //
                 .methodName(method.getName()) //
                 .propertyType(toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0])) //
-                .propertyName(method.getName().replaceFirst(properties.getAdderPattern(), "$1")) //
+                .propertyName(dropAdderPattern(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
                 .build();
@@ -283,7 +352,13 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
             return name;
         }
         final var paramName = name.replaceFirst('^' + Pattern.quote(prefix), "");
-        return StringUtils.uncapitalize(paramName);
+        return uncapitalize(paramName);
+    }
+
+    @Override
+    public String dropAdderPattern(final String name) {
+        Objects.requireNonNull(name);
+        return uncapitalize(name.replaceFirst(properties.getAdderPattern(), "$1"));
     }
 
     @Override
@@ -296,5 +371,11 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     public boolean isCollectionGetter(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
         return writeAccessor instanceof Getter && writeAccessor.getPropertyType() instanceof CollectionType;
+    }
+
+    @Override
+    public boolean isAdder(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        return writeAccessor instanceof Adder;
     }
 }
