@@ -340,6 +340,17 @@ class GenerateBuildersMojoIT {
                             "Invalid <exclude> tag. Exactly one of the fields packageName, packageRegex, className or classRegex needs to be initialized.", //
                             "-> [Help 1]");
         }
+
+        @MavenTest
+        void invalidAdderPattern(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "The adder pattern must contain at least one group.", //
+                            "-> [Help 1]");
+        }
     }
 
     @Nested
