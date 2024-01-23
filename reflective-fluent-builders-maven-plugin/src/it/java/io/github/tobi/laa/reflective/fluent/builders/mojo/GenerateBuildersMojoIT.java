@@ -4,6 +4,7 @@ import com.soebes.itf.jupiter.extension.*;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.custom.naming.CustomNaming;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.full.Full;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.Jaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
@@ -253,6 +254,17 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(expectedBuilder(builderClass, false, expectedBuildersRootDir));
+            assertThat(result).out().warn().isEmpty();
+        }
+
+        @MavenTest
+        void packageCustomNamingWithCustomNamingConfig(final MavenExecutionResult result) {
+            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "custom-naming");
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(expectedBuilders(CustomNaming.class.getPackage(), false, expectedBuildersRootDir));
             assertThat(result).out().warn().isEmpty();
         }
     }
