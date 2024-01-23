@@ -44,7 +44,7 @@ public class FieldAccessor extends AbstractWriteAccessor {
      * </p>
      *
      * @param propertyName The new property name for the newly constructed {@link FieldAccessor}.
-     * @return A new {@link FieldAccessor} with all values kept the same except for {@code paramName}.
+     * @return A new {@link FieldAccessor} with all values kept the same except for {@code propertyName}.
      */
     @Override
     public FieldAccessor withPropertyName(String propertyName) {

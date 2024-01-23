@@ -39,12 +39,12 @@ public class WithAddersBuilder {
     return new WithAddersBuilder(supplier);
   }
 
-  public CollectionAlsoHasAdder alsoHasAdder() {
-    return new CollectionAlsoHasAdder();
+  public CollectionAlsoHasAdders alsoHasAdders() {
+    return new CollectionAlsoHasAdders();
   }
 
-  public CollectionHasAdder hasAdder() {
-    return new CollectionHasAdder();
+  public CollectionHasAdders hasAdders() {
+    return new CollectionHasAdders();
   }
 
   public CollectionHasInaccessibleAdders hasInaccessibleAdders() {
@@ -55,15 +55,15 @@ public class WithAddersBuilder {
     return new CollectionHasNoAdders();
   }
 
-  public WithAddersBuilder alsoHasAdder(final List<List<Object>> alsoHasAdder) {
-    this.fieldValue.alsoHasAdder = alsoHasAdder;
-    this.callSetterFor.alsoHasAdder = true;
+  public WithAddersBuilder alsoHasAdder(final List<List<Object>> alsoHasAdders) {
+    this.fieldValue.alsoHasAdders = alsoHasAdders;
+    this.callSetterFor.alsoHasAdders = true;
     return this;
   }
 
-  public WithAddersBuilder hasAdder(final List<String> hasAdder) {
-    this.fieldValue.hasAdder = hasAdder;
-    this.callSetterFor.hasAdder = true;
+  public WithAddersBuilder hasAdder(final List<String> hasAdders) {
+    this.fieldValue.hasAdders = hasAdders;
+    this.callSetterFor.hasAdders = true;
     return this;
   }
 
@@ -82,11 +82,11 @@ public class WithAddersBuilder {
 
   public WithAdders build() {
     final WithAdders objectToBuild = this.objectSupplier.get();
-    if (this.callSetterFor.alsoHasAdder && this.fieldValue.alsoHasAdder != null) {
-      this.fieldValue.alsoHasAdder.forEach(objectToBuild::addAlsoHasAdder);
+    if (this.callSetterFor.alsoHasAdders && this.fieldValue.alsoHasAdders != null) {
+      this.fieldValue.alsoHasAdders.forEach(objectToBuild::addAlsoHasAdder);
     }
-    if (this.callSetterFor.hasAdder && this.fieldValue.hasAdder != null) {
-      this.fieldValue.hasAdder.forEach(objectToBuild::addHasAdder);
+    if (this.callSetterFor.hasAdders && this.fieldValue.hasAdders != null) {
+      this.fieldValue.hasAdders.forEach(objectToBuild::addHasAdder);
     }
     if (this.callSetterFor.hasInaccessibleAdders) {
       objectToBuild.setHasInaccessibleAdders(this.fieldValue.hasInaccessibleAdders);
@@ -98,9 +98,9 @@ public class WithAddersBuilder {
   }
 
   private class CallSetterFor {
-    boolean alsoHasAdder;
+    boolean alsoHasAdders;
 
-    boolean hasAdder;
+    boolean hasAdders;
 
     boolean hasInaccessibleAdders;
 
@@ -108,22 +108,22 @@ public class WithAddersBuilder {
   }
 
   private class FieldValue {
-    List<List<Object>> alsoHasAdder;
+    List<List<Object>> alsoHasAdders;
 
-    List<String> hasAdder;
+    List<String> hasAdders;
 
     List<Map<String, String>> hasInaccessibleAdders;
 
     List<String> hasNoAdders;
   }
 
-  public class CollectionAlsoHasAdder {
-    public CollectionAlsoHasAdder add(final List<Object> item) {
-      if (WithAddersBuilder.this.fieldValue.alsoHasAdder == null) {
-        WithAddersBuilder.this.fieldValue.alsoHasAdder = new ArrayList<>();
+  public class CollectionAlsoHasAdders {
+    public CollectionAlsoHasAdders add(final List<Object> item) {
+      if (WithAddersBuilder.this.fieldValue.alsoHasAdders == null) {
+        WithAddersBuilder.this.fieldValue.alsoHasAdders = new ArrayList<>();
       }
-      WithAddersBuilder.this.fieldValue.alsoHasAdder.add(item);
-      WithAddersBuilder.this.callSetterFor.alsoHasAdder = true;
+      WithAddersBuilder.this.fieldValue.alsoHasAdders.add(item);
+      WithAddersBuilder.this.callSetterFor.alsoHasAdders = true;
       return this;
     }
 
@@ -132,13 +132,13 @@ public class WithAddersBuilder {
     }
   }
 
-  public class CollectionHasAdder {
-    public CollectionHasAdder add(final String item) {
-      if (WithAddersBuilder.this.fieldValue.hasAdder == null) {
-        WithAddersBuilder.this.fieldValue.hasAdder = new ArrayList<>();
+  public class CollectionHasAdders {
+    public CollectionHasAdders add(final String item) {
+      if (WithAddersBuilder.this.fieldValue.hasAdders == null) {
+        WithAddersBuilder.this.fieldValue.hasAdders = new ArrayList<>();
       }
-      WithAddersBuilder.this.fieldValue.hasAdder.add(item);
-      WithAddersBuilder.this.callSetterFor.hasAdder = true;
+      WithAddersBuilder.this.fieldValue.hasAdders.add(item);
+      WithAddersBuilder.this.callSetterFor.hasAdders = true;
       return this;
     }
 

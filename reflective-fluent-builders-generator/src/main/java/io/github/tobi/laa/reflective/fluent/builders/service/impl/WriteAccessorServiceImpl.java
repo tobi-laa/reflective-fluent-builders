@@ -205,39 +205,22 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
      * @return {@code true} if this {@code first} is equivalent to {@code second}, {@code false} otherwise.
      */
     private boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second) {
-        final Class<?> firstType;
-        final Class<?> secondType;
-        final String firstName;
-        final String secondName;
-        if (first instanceof Adder) {
-            firstName = pluralize(first.getPropertyName());
-            if (second.getPropertyType() instanceof CollectionType) {
-                final var collectionType = (CollectionType) second.getPropertyType();
-                secondType = getRawType(collectionType.getTypeArg());
-            } else {
-                secondType = getRawType(second.getPropertyType().getType());
-            }
-        } else {
-            firstName = first.getPropertyName();
-            secondType = getRawType(second.getPropertyType().getType());
-        }
-        if (second instanceof Adder) {
-            secondName = pluralize(second.getPropertyName());
-            if (first.getPropertyType() instanceof CollectionType) {
-                final var collectionType = (CollectionType) first.getPropertyType();
-                firstType = getRawType(collectionType.getTypeArg());
-            } else {
-                firstType = getRawType(first.getPropertyType().getType());
-            }
-        } else {
-            secondName = second.getPropertyName();
-            firstType = getRawType(first.getPropertyType().getType());
-        }
-        return firstType == secondType && firstName.equals(secondName);
+        final Class<?> firstType = second instanceof Adder ? getRawCollectionTypeArg(first) : getRawPropertyType(first);
+        final Class<?> secondType = first instanceof Adder ? getRawCollectionTypeArg(second) : getRawPropertyType(second);
+        return firstType == secondType && first.getPropertyName().equals(second.getPropertyName());
     }
 
-    private String pluralize(final String name) {
-        return English.plural(name);
+    private Class<?> getRawCollectionTypeArg(final WriteAccessor writeAccessor) {
+        if (writeAccessor.getPropertyType() instanceof CollectionType) {
+            final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+            return getRawType(collectionType.getTypeArg());
+        } else {
+            return getRawPropertyType(writeAccessor);
+        }
+    }
+
+    private Class<?> getRawPropertyType(final WriteAccessor writeAccessor) {
+        return TypeToken.of(writeAccessor.getPropertyType().getType()).getRawType();
     }
 
     private Class<?> getRawType(final Type type) {
@@ -246,13 +229,19 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
 
     private Adder toAdder(final Class<?> clazz, final Method method) {
         final var param = method.getParameters()[0];
+        final var paramName = dropAdderPattern(method.getName());
         return Adder.builder() //
                 .methodName(method.getName()) //
                 .propertyType(toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0])) //
-                .propertyName(dropAdderPattern(method.getName())) //
+                .propertyName(pluralize(paramName)) //
+                .paramName(paramName) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
                 .build();
+    }
+
+    private String pluralize(final String name) {
+        return English.plural(name);
     }
 
     private Setter toSetter(final Class<?> clazz, final Method method) {

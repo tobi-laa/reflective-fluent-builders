@@ -38,39 +38,39 @@ public class ListWithTwoParamsBuilder<A, B> {
     return new ListWithTwoParamsBuilder(supplier);
   }
 
-  public CollectionAll all() {
-    return new CollectionAll();
+  public CollectionAlls alls() {
+    return new CollectionAlls();
   }
 
-  public ListWithTwoParamsBuilder all(final List<Collection<? extends Map<A, B>>> all) {
-    this.fieldValue.all = all;
-    this.callSetterFor.all = true;
+  public ListWithTwoParamsBuilder all(final List<Collection<? extends Map<A, B>>> alls) {
+    this.fieldValue.alls = alls;
+    this.callSetterFor.alls = true;
     return this;
   }
 
   public ListWithTwoParams build() {
     final ListWithTwoParams objectToBuild = this.objectSupplier.get();
-    if (this.callSetterFor.all && this.fieldValue.all != null) {
-      this.fieldValue.all.forEach(objectToBuild::addAll);
+    if (this.callSetterFor.alls && this.fieldValue.alls != null) {
+      this.fieldValue.alls.forEach(objectToBuild::addAll);
     }
     return objectToBuild;
   }
 
   private class CallSetterFor {
-    boolean all;
+    boolean alls;
   }
 
   private class FieldValue {
-    List<Collection<? extends Map<A, B>>> all;
+    List<Collection<? extends Map<A, B>>> alls;
   }
 
-  public class CollectionAll {
-    public CollectionAll add(final Collection<? extends Map<A, B>> item) {
-      if (ListWithTwoParamsBuilder.this.fieldValue.all == null) {
-        ListWithTwoParamsBuilder.this.fieldValue.all = new ArrayList<>();
+  public class CollectionAlls {
+    public CollectionAlls add(final Collection<? extends Map<A, B>> item) {
+      if (ListWithTwoParamsBuilder.this.fieldValue.alls == null) {
+        ListWithTwoParamsBuilder.this.fieldValue.alls = new ArrayList<>();
       }
-      ListWithTwoParamsBuilder.this.fieldValue.all.add(item);
-      ListWithTwoParamsBuilder.this.callSetterFor.all = true;
+      ListWithTwoParamsBuilder.this.fieldValue.alls.add(item);
+      ListWithTwoParamsBuilder.this.callSetterFor.alls = true;
       return this;
     }
 

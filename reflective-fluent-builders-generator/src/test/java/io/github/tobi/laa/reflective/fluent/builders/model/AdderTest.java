@@ -13,9 +13,10 @@ class AdderTest {
     void testWithParamName(final String paramName) {
         // Arrange
         final var adder = Adder.builder() //
-                .methodName("getSth") //
+                .methodName("addName") //
                 .propertyType(new SimpleType(String.class)) //
-                .propertyName("aName") //
+                .propertyName("names") //
+                .paramName("name") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .build();
@@ -23,9 +24,10 @@ class AdderTest {
         final var withParamName = adder.withPropertyName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(Adder.builder() //
-                .methodName("getSth") //
+                .methodName("addName") //
                 .propertyType(new SimpleType(String.class)) //
                 .propertyName(paramName) //
+                .paramName("name") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .build());

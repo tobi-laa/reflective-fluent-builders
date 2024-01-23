@@ -18,7 +18,7 @@ public class Setter extends AbstractMethodAccessor {
      * </p>
      *
      * @param propertyName The new property name for the newly constructed {@link Setter}.
-     * @return A new {@link Setter} with all values kept the same except for {@code paramName}.
+     * @return A new {@link Setter} with all values kept the same except for {@code propertyName}.
      */
     @Override
     public Setter withPropertyName(final String propertyName) {

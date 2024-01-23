@@ -18,7 +18,7 @@ public class Getter extends AbstractMethodAccessor {
      * </p>
      *
      * @param propertyName The new property name for the newly constructed {@link Getter}.
-     * @return A new {@link Getter} with all values kept the same except for {@code paramName}.
+     * @return A new {@link Getter} with all values kept the same except for {@code propertyName}.
      */
     @Override
     public Getter withPropertyName(final String propertyName) {
