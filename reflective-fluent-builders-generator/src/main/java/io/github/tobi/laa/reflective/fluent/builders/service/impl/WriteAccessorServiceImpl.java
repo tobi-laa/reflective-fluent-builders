@@ -8,6 +8,7 @@ import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersPropertie
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.atteo.evo.inflector.English;
 
 import javax.inject.Inject;
@@ -205,8 +206,16 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
      * @return {@code true} if this {@code first} is equivalent to {@code second}, {@code false} otherwise.
      */
     private boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second) {
-        final Class<?> firstType = second instanceof Adder ? getRawCollectionTypeArg(first) : getRawPropertyType(first);
-        final Class<?> secondType = first instanceof Adder ? getRawCollectionTypeArg(second) : getRawPropertyType(second);
+        final Class<?> firstType;
+        final Class<?> secondType;
+        if (first instanceof Adder && second.getPropertyType() instanceof CollectionType ||
+                second instanceof Adder && first.getPropertyType() instanceof CollectionType) {
+            firstType = getRawCollectionTypeArg(first);
+            secondType = getRawCollectionTypeArg(second);
+        } else {
+            firstType = getRawPropertyType(first);
+            secondType = getRawPropertyType(second);
+        }
         return firstType == secondType && first.getPropertyName().equals(second.getPropertyName());
     }
 
@@ -230,11 +239,13 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     private Adder toAdder(final Class<?> clazz, final Method method) {
         final var param = method.getParameters()[0];
         final var paramName = dropAdderPattern(method.getName());
+        final var paramType = toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0]);
         return Adder.builder() //
                 .methodName(method.getName()) //
-                .propertyType(toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0])) //
+                .propertyType(new CollectionType(TypeUtils.parameterize(List.class, paramType.getType()), paramType.getType())) //
                 .propertyName(pluralize(paramName)) //
                 .paramName(paramName) //
+                .paramType(paramType) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
                 .build();

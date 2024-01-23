@@ -37,16 +37,15 @@ public class CustomNamingBuilder {
     return new CustomNamingBuilder(supplier);
   }
 
-  public CollectionAnotherFields anotherFields() {
-    return new CollectionAnotherFields();
-  }
-
   public CollectionCollectionField collectionField() {
     return new CollectionCollectionField();
   }
 
-  public CustomNamingBuilder anotherField(final List<String> anotherFields) {
-    this.fieldValue.anotherFields = anotherFields;
+  public CustomNamingBuilder anotherField(final String anotherField) {
+    if (this.fieldValue.anotherFields == null) {
+      this.fieldValue.anotherFields = new ArrayList<>();
+    }
+    this.fieldValue.anotherFields.add(anotherField);
     this.callSetterFor.anotherFields = true;
     return this;
   }
@@ -91,21 +90,6 @@ public class CustomNamingBuilder {
     List<String> collectionField;
 
     String field;
-  }
-
-  public class CollectionAnotherFields {
-    public CollectionAnotherFields add(final String item) {
-      if (CustomNamingBuilder.this.fieldValue.anotherFields == null) {
-        CustomNamingBuilder.this.fieldValue.anotherFields = new ArrayList<>();
-      }
-      CustomNamingBuilder.this.fieldValue.anotherFields.add(item);
-      CustomNamingBuilder.this.callSetterFor.anotherFields = true;
-      return this;
-    }
-
-    public CustomNamingBuilder and() {
-      return CustomNamingBuilder.this;
-    }
   }
 
   public class CollectionCollectionField {

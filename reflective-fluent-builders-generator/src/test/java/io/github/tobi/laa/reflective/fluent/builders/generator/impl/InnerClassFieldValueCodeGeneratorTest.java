@@ -68,7 +68,7 @@ class InnerClassFieldValueCodeGeneratorTest {
     void testGenerate(final BuilderMetadata builderMetadata, final EncapsulatingClassSpec expected) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeName(any(Setter.class))).thenReturn(TypeName.get(MockType.class));
+        when(typeNameGenerator.generateTypeName(any(PropertyType.class))).thenReturn(TypeName.get(MockType.class));
         // Act
         final EncapsulatingClassSpec actual = generator.generate(builderMetadata);
         // Assert
@@ -76,7 +76,10 @@ class InnerClassFieldValueCodeGeneratorTest {
         assertThat(actual.getField()).hasToString(expected.getField().toString());
         assertThat(actual.getInnerClass()).hasToString(expected.getInnerClass().toString());
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        builderMetadata.getBuiltType().getWriteAccessors().forEach(verify(typeNameGenerator)::generateTypeName);
+        builderMetadata.getBuiltType().getWriteAccessors()
+                .stream()
+                .map(WriteAccessor::getPropertyType)
+                .forEach(verify(typeNameGenerator)::generateTypeName);
     }
 
     private static Stream<Arguments> testGenerate() {

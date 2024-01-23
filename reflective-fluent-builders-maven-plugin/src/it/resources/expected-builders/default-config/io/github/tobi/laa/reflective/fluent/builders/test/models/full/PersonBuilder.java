@@ -76,8 +76,8 @@ public class PersonBuilder {
     return this;
   }
 
-  public PersonBuilder married(final String married0) {
-    this.fieldValue.married0 = married0;
+  public PersonBuilder married(final String married) {
+    this.fieldValue.married0 = married;
     this.callSetterFor.married0 = true;
     return this;
   }

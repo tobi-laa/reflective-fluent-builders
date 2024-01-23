@@ -55,7 +55,7 @@ class InnerClassFieldValueCodeGenerator implements EncapsulatingClassCodeGenerat
         final var fields = builderMetadata.getBuiltType().getWriteAccessors() //
                 .stream() //
                 .map(accessor -> FieldSpec //
-                        .builder(typeNameGenerator.generateTypeName(accessor), accessor.getPropertyName()) //
+                        .builder(typeNameGenerator.generateTypeName(accessor.getPropertyType()), accessor.getPropertyName()) //
                         .build()) //
                 .collect(Collectors.toList());
         return EncapsulatingClassSpec.builder() //

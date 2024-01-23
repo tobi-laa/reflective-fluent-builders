@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
 import com.squareup.javapoet.TypeName;
+import io.github.tobi.laa.reflective.fluent.builders.model.PropertyType;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 import java.lang.reflect.Type;
@@ -15,16 +16,13 @@ public interface TypeNameGenerator {
 
     /**
      * <p>
-     * Generates the full {@link TypeName} (including generics) for the {@link WriteAccessor#getPropertyType() type} of
-     * {@code writeAccessor}.
+     * Generates the full {@link TypeName} (including generics) for {@code propertyType}.
      * </p>
      *
-     * @param writeAccessor The write accessor for whose property to generate the full type name. Must not be
-     *                      {@code null}.
-     * @return The full {@link TypeName} (including generics) for the {@link WriteAccessor#getPropertyType() property}
-     * of {@code writeAccessor}.
+     * @param propertyType The property type for which to generate the full type name. Must not be {@code null}.
+     * @return The full {@link TypeName} (including generics) for {@code propertyType}.
      */
-    TypeName generateTypeName(final WriteAccessor writeAccessor);
+    TypeName generateTypeName(final PropertyType propertyType);
 
     /**
      * <p>

@@ -41,14 +41,14 @@ public class NameCollisionsBuilder {
     return this;
   }
 
-  public NameCollisionsBuilder anotherField(final int anotherField0) {
-    this.fieldValue.anotherField0 = anotherField0;
+  public NameCollisionsBuilder anotherField(final int anotherField) {
+    this.fieldValue.anotherField0 = anotherField;
     this.callSetterFor.anotherField0 = true;
     return this;
   }
 
-  public NameCollisionsBuilder anotherField(final String anotherField1) {
-    this.fieldValue.anotherField1 = anotherField1;
+  public NameCollisionsBuilder anotherField(final String anotherField) {
+    this.fieldValue.anotherField1 = anotherField;
     this.callSetterFor.anotherField1 = true;
     return this;
   }
@@ -59,8 +59,8 @@ public class NameCollisionsBuilder {
     return this;
   }
 
-  public NameCollisionsBuilder field(final String field0) {
-    this.fieldValue.field0 = field0;
+  public NameCollisionsBuilder field(final String field) {
+    this.fieldValue.field0 = field;
     this.callSetterFor.field0 = true;
     return this;
   }

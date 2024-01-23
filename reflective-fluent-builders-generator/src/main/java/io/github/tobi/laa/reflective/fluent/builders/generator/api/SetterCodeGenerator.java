@@ -2,12 +2,11 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 
 import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 /**
  * <p>
- * Generates the {@link MethodSpec} for a single fluent {@link Setter setter}.
+ * Generates the {@link MethodSpec} for a single fluent setter of a builder.
  * </p>
  */
 public interface SetterCodeGenerator {

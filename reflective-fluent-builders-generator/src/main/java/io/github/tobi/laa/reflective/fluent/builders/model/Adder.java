@@ -26,6 +26,16 @@ public class Adder extends AbstractMethodAccessor {
 
     /**
      * <p>
+     * The type of the parameter of the adder method, for instance {@code String}. This differs from
+     * {@link #getPropertyType() propertyType} in that the latter is the type of the property that is modified by the
+     * adder method, for instance {@code List<String>}, whereas this is the name of the parameter of the adder method.
+     * </p>
+     */
+    @lombok.NonNull
+    private final PropertyType paramType;
+
+    /**
+     * <p>
      * Creates a <em>new</em> {@link Adder} with all values kept the same except for {@code propertyName}.
      * </p>
      *

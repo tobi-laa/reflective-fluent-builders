@@ -38,12 +38,11 @@ public class ListWithTwoParamsBuilder<A, B> {
     return new ListWithTwoParamsBuilder(supplier);
   }
 
-  public CollectionAlls alls() {
-    return new CollectionAlls();
-  }
-
-  public ListWithTwoParamsBuilder all(final List<Collection<? extends Map<A, B>>> alls) {
-    this.fieldValue.alls = alls;
+  public ListWithTwoParamsBuilder all(final Collection<Map<A, B>> all) {
+    if (this.fieldValue.alls == null) {
+      this.fieldValue.alls = new ArrayList<>();
+    }
+    this.fieldValue.alls.add(all);
     this.callSetterFor.alls = true;
     return this;
   }
@@ -62,20 +61,5 @@ public class ListWithTwoParamsBuilder<A, B> {
 
   private class FieldValue {
     List<Collection<? extends Map<A, B>>> alls;
-  }
-
-  public class CollectionAlls {
-    public CollectionAlls add(final Collection<? extends Map<A, B>> item) {
-      if (ListWithTwoParamsBuilder.this.fieldValue.alls == null) {
-        ListWithTwoParamsBuilder.this.fieldValue.alls = new ArrayList<>();
-      }
-      ListWithTwoParamsBuilder.this.fieldValue.alls.add(item);
-      ListWithTwoParamsBuilder.this.callSetterFor.alls = true;
-      return this;
-    }
-
-    public ListWithTwoParamsBuilder and() {
-      return ListWithTwoParamsBuilder.this;
-    }
   }
 }

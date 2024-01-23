@@ -39,14 +39,6 @@ public class WithAddersBuilder {
     return new WithAddersBuilder(supplier);
   }
 
-  public CollectionAlsoHasAdders alsoHasAdders() {
-    return new CollectionAlsoHasAdders();
-  }
-
-  public CollectionHasAdders hasAdders() {
-    return new CollectionHasAdders();
-  }
-
   public CollectionHasInaccessibleAdders hasInaccessibleAdders() {
     return new CollectionHasInaccessibleAdders();
   }
@@ -55,14 +47,20 @@ public class WithAddersBuilder {
     return new CollectionHasNoAdders();
   }
 
-  public WithAddersBuilder alsoHasAdder(final List<List<Object>> alsoHasAdders) {
-    this.fieldValue.alsoHasAdders = alsoHasAdders;
+  public WithAddersBuilder alsoHasAdder(final List<Object> alsoHasAdder) {
+    if (this.fieldValue.alsoHasAdders == null) {
+      this.fieldValue.alsoHasAdders = new ArrayList<>();
+    }
+    this.fieldValue.alsoHasAdders.add(alsoHasAdder);
     this.callSetterFor.alsoHasAdders = true;
     return this;
   }
 
-  public WithAddersBuilder hasAdder(final List<String> hasAdders) {
-    this.fieldValue.hasAdders = hasAdders;
+  public WithAddersBuilder hasAdder(final String hasAdder) {
+    if (this.fieldValue.hasAdders == null) {
+      this.fieldValue.hasAdders = new ArrayList<>();
+    }
+    this.fieldValue.hasAdders.add(hasAdder);
     this.callSetterFor.hasAdders = true;
     return this;
   }
@@ -115,36 +113,6 @@ public class WithAddersBuilder {
     List<Map<String, String>> hasInaccessibleAdders;
 
     List<String> hasNoAdders;
-  }
-
-  public class CollectionAlsoHasAdders {
-    public CollectionAlsoHasAdders add(final List<Object> item) {
-      if (WithAddersBuilder.this.fieldValue.alsoHasAdders == null) {
-        WithAddersBuilder.this.fieldValue.alsoHasAdders = new ArrayList<>();
-      }
-      WithAddersBuilder.this.fieldValue.alsoHasAdders.add(item);
-      WithAddersBuilder.this.callSetterFor.alsoHasAdders = true;
-      return this;
-    }
-
-    public WithAddersBuilder and() {
-      return WithAddersBuilder.this;
-    }
-  }
-
-  public class CollectionHasAdders {
-    public CollectionHasAdders add(final String item) {
-      if (WithAddersBuilder.this.fieldValue.hasAdders == null) {
-        WithAddersBuilder.this.fieldValue.hasAdders = new ArrayList<>();
-      }
-      WithAddersBuilder.this.fieldValue.hasAdders.add(item);
-      WithAddersBuilder.this.callSetterFor.hasAdders = true;
-      return this;
-    }
-
-    public WithAddersBuilder and() {
-      return WithAddersBuilder.this;
-    }
   }
 
   public class CollectionHasInaccessibleAdders {
