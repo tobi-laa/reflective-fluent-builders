@@ -161,51 +161,10 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .noneMatch(accessor -> equivalentAccessors(accessor, candidate));
     }
 
-    /**
-     * <p>
-     * Checks whether this {@link WriteAccessor} is equivalent to {@code other}. Two {@link WriteAccessor} are
-     * considered equivalent if they modify the same property of the same class.
-     * </p>
-     * <p>
-     * Consider the following example:
-     * </p>
-     * <pre>
-     * public class Person {
-     *
-     *     public List<String> items;
-     *
-     *     public List<String> getItems() {
-     *         return this.items;
-     *     }
-     *
-     *     public void setItems(final List<String> items) {
-     *         this.items = items;
-     *     }
-     *
-     *     public void addItem(final String item) {
-     *         this.items.add(item);
-     *     }
-     * }
-     * </pre>
-     * <p>
-     * In this case, when scanning the class {@code Person}, four {@link WriteAccessor WriteAccessors} would be found:
-     * </p>
-     * <ul>
-     *     <li>A {@link WriteAccessor} for directly accessing the field {@code items}.</li>
-     *     <li>A {@link WriteAccessor} for the setter {@code setItems}.</li>
-     *     <li>A {@link WriteAccessor} for the getter {@code getItems}.</li>
-     *     <li>A {@link WriteAccessor} for the adder {@code addItem}.</li>
-     * </ul>
-     * <p>
-     * As all of those {@link WriteAccessor WriteAccessors} modify the same property of the same class, they are all
-     * considered to be equivalent.
-     * </p>
-     *
-     * @param first  The first {@link WriteAccessor}.
-     * @param second The second {@link WriteAccessor}.
-     * @return {@code true} if this {@code first} is equivalent to {@code second}, {@code false} otherwise.
-     */
-    private boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second) {
+    @Override
+    public boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second) {
+        Objects.requireNonNull(first);
+        Objects.requireNonNull(second);
         final Class<?> firstType;
         final Class<?> secondType;
         if (first instanceof Adder && second.getPropertyType() instanceof CollectionType ||

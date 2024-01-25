@@ -13,6 +13,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarc
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.GenericGrandChild;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics.GenericParent;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.second.SecondSuperClassInDifferentPackage;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.full.Person;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PersonJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.PetJaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junitpioneer.jupiter.cartesian.ArgumentSets;
+import org.junitpioneer.jupiter.cartesian.CartesianTest;
 
 import javax.inject.Inject;
 import java.lang.reflect.Type;
@@ -404,5 +407,122 @@ class WriteAccessorServiceIT {
                 Arguments.of(
                         Getter.builder().methodName("getSiblings").propertyName("siblings").propertyType(new CollectionType(parameterize(List.class, PetJaxb.class), PetJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
                         true));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testEquivalentAccessorsNull(final WriteAccessor first, final WriteAccessor second) {
+        // Act
+        final ThrowingCallable equivalentAccessors = () -> writeAccessorService.equivalentAccessors(first, second);
+        // Assert
+        assertThatThrownBy(equivalentAccessors).isInstanceOf(NullPointerException.class);
+    }
+
+    private static Stream<Arguments> testEquivalentAccessorsNull() {
+        final var writeAccessor = Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build();
+        return Stream.of(
+                Arguments.of(null, null),
+                Arguments.of(null, writeAccessor),
+                Arguments.of(writeAccessor, null));
+    }
+
+    @CartesianTest
+    @CartesianTest.MethodFactory("testEquivalentAccessorsTrue")
+    void testEquivalentAccessorsTrue(final WriteAccessor first,
+                                     final WriteAccessor second) {
+        // Act
+        final boolean actual = writeAccessorService.equivalentAccessors(first, second);
+        // Assert
+        assertThat(actual).isTrue();
+    }
+
+    @SuppressWarnings("unused")
+    static ArgumentSets testEquivalentAccessorsTrue() {
+        return ArgumentSets
+                .argumentsForFirstParameter(writeAccessorsThatAreAllEqualWithEachOther()) //
+                .argumentsForNextParameter(writeAccessorsThatAreAllEqualWithEachOther());
+    }
+
+    @CartesianTest
+    @CartesianTest.MethodFactory("testEquivalentAccessorsFalse")
+    void testEquivalentAccessorsFalse(final WriteAccessor first,
+                                      final WriteAccessor second) {
+        // Act
+        final boolean actual = writeAccessorService.equivalentAccessors(first, second);
+        // Assert
+        assertThat(actual).isFalse();
+    }
+
+    @SuppressWarnings("unused")
+    static ArgumentSets testEquivalentAccessorsFalse() {
+        return ArgumentSets
+                .argumentsForFirstParameter(writeAccessorsThatAreAllEqualWithEachOther()) //
+                .argumentsForNextParameter(writeAccessorsThatAreNotEqualWithAnyOfTherOthersAbove());
+    }
+
+    private static Stream<WriteAccessor> writeAccessorsThatAreAllEqualWithEachOther() {
+        return Stream.of(
+                FieldAccessor.builder()
+                        .propertyName("items")
+                        .propertyType(new CollectionType(parameterize(Set.class, String.class), String.class))
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build(),
+                Setter.builder()
+                        .methodName("setItems")
+                        .propertyName("items")
+                        .propertyType(new CollectionType(parameterize(Set.class, String.class), String.class))
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build(),
+                Getter.builder()
+                        .methodName("getItems")
+                        .propertyName("items")
+                        .propertyType(new CollectionType(parameterize(Set.class, String.class), String.class))
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build(),
+                Adder.builder()
+                        .methodName("addItem")
+                        .propertyName("items")
+                        .propertyType(new CollectionType(parameterize(List.class, String.class), String.class))
+                        .paramType(new SimpleType(String.class))
+                        .paramName("item")
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build());
+    }
+
+    private static Stream<WriteAccessor> writeAccessorsThatAreNotEqualWithAnyOfTherOthersAbove() {
+        return Stream.of(
+                FieldAccessor.builder()
+                        .propertyName("items")
+                        .propertyType(new CollectionType(parameterize(List.class, Object.class), Object.class))
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build(),
+                Setter.builder()
+                        .methodName("setOtherItems")
+                        .propertyName("otherItems")
+                        .propertyType(new CollectionType(parameterize(Set.class, String.class), String.class))
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build(),
+                Getter.builder()
+                        .methodName("getItems")
+                        .propertyName("items")
+                        .propertyType(new MapType(parameterize(Map.class, String.class, String.class), String.class, String.class))
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build(),
+                Adder.builder()
+                        .methodName("addItem")
+                        .propertyName("items")
+                        .propertyType(new CollectionType(parameterize(List.class, Number.class), Number.class))
+                        .paramType(new SimpleType(Number.class))
+                        .paramName("item")
+                        .visibility(PUBLIC)
+                        .declaringClass(Person.class)
+                        .build());
     }
 }
