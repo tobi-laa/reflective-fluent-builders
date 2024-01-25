@@ -27,6 +27,7 @@ import java.util.Objects;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
+@SuppressWarnings("java:S1192") // extracting the string literals would make the code less readable
 class SetterCodeGeneratorImpl implements SetterCodeGenerator {
 
     @lombok.NonNull

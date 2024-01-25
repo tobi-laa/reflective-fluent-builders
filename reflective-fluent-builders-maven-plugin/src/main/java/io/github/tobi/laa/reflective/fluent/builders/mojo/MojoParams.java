@@ -40,7 +40,7 @@ public class MojoParams implements BuildersProperties {
 
     private String getterPrefix;
 
-    @Pattern(regexp = ".*\\(.+\\).*", message = "The adder pattern must contain at least one group.")
+    @Pattern(regexp = "[^()]*\\(.+\\).*", message = "The adder pattern must contain at least one group.")
     private String adderPattern;
 
     private boolean getAndAddEnabled;
