@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Getter
 @ToString(callSuper = true)
+@SuppressWarnings("java:S2160") // AbstractMethodAccessor defines equals/hashCode
 public class Adder extends AbstractMethodAccessor {
 
     /**

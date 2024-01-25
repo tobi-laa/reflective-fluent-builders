@@ -62,7 +62,7 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor.getPropertyType() instanceof CollectionType) {
+        if (isApplicable(writeAccessor)) {
             final var type = (CollectionType) writeAccessor.getPropertyType();
             final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
             final var className = builderClassName.nestedClass("Collection" + capitalize(writeAccessor.getPropertyName()));
