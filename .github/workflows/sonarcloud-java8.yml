@@ -39,4 +39,3 @@ jobs:
         run: >
           mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           -Dsonar.projectKey=tobias-laa_reflective-fluent-builders
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco-aggregate/jacoco.xml
