@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import lombok.Data;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
@@ -32,7 +33,7 @@ abstract class AbstractWriteAccessor implements WriteAccessor {
     private final Class<?> declaringClass;
 
     @Override
-    public int compareTo(final WriteAccessor other) {
+    public int compareTo(@NonNull final WriteAccessor other) {
         Objects.requireNonNull(other);
         if (equals(other)) {
             return 0;

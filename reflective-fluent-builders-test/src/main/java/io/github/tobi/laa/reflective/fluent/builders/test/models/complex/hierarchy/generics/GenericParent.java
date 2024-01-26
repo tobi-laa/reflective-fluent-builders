@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @Setter
+@SuppressWarnings("unused")
 public class GenericParent<R, S, T> {
 
     private List<R> list;
@@ -18,6 +19,7 @@ public class GenericParent<R, S, T> {
 
     private Generic<R> otherGeneric;
 
+    @SuppressWarnings("java:S1452")
     public List<? extends Serializable> getGenericList() {
         return Collections.emptyList();
     }
