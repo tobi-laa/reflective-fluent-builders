@@ -63,7 +63,7 @@
         <sonar.organization>tobias-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.basedir}/reflective-fluent-builders-maven-plugin/target/site/jacoco-aggregate/jacoco.xml
+            ${project.basedir}/../reflective-fluent-builders-maven-plugin/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <!-- versions of external dependencies -->
         <lombok.version>1.18.30</lombok.version>
