@@ -448,9 +448,11 @@ class WriteAccessorServiceIT {
     void testEquivalentAccessorsFalse(final WriteAccessor first,
                                       final WriteAccessor second) {
         // Act
-        final boolean actual = writeAccessorService.equivalentAccessors(first, second);
+        final boolean actualFirstEquivSecond = writeAccessorService.equivalentAccessors(first, second);
+        final boolean actualSecondEquivFirs = writeAccessorService.equivalentAccessors(second, first);
         // Assert
-        assertThat(actual).isFalse();
+        assertThat(actualFirstEquivSecond).isFalse();
+        assertThat(actualSecondEquivFirs).isFalse();
     }
 
     @SuppressWarnings("unused")

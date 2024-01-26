@@ -179,12 +179,8 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private Class<?> getRawCollectionTypeArg(final WriteAccessor writeAccessor) {
-        if (writeAccessor.getPropertyType() instanceof CollectionType) {
-            final var collectionType = (CollectionType) writeAccessor.getPropertyType();
-            return getRawType(collectionType.getTypeArg());
-        } else {
-            return getRawPropertyType(writeAccessor);
-        }
+        final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+        return getRawType(collectionType.getTypeArg());
     }
 
     private Class<?> getRawPropertyType(final WriteAccessor writeAccessor) {
