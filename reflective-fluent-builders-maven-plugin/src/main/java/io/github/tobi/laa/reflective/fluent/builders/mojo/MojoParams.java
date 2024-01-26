@@ -3,6 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -39,9 +40,14 @@ public class MojoParams implements BuildersProperties {
 
     private String getterPrefix;
 
+    @Pattern(regexp = "[^()]*\\(.+\\)[^()]*", message = "The adder pattern must contain at least one group.")
+    private String adderPattern;
+
     private boolean getAndAddEnabled;
 
     private boolean directFieldAccessEnabled;
+
+    private boolean addersEnabled;
 
     @Valid
     private MojoParams.HierarchyCollection hierarchyCollection = new HierarchyCollection();

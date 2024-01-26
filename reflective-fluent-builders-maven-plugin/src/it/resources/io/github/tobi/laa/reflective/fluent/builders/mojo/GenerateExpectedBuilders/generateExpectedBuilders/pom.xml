@@ -68,6 +68,28 @@
                             <addCompileSourceRoot>false</addCompileSourceRoot>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>generate-builders-with-custom-getter-setter-adder-naming</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>generate-builders</goal>
+                        </goals>
+                        <configuration>
+                            <getterPrefix>retrieve</getterPrefix>
+                            <setterPrefix>modify</setterPrefix>
+                            <adderPattern>insert(.+)IntoCollection</adderPattern>
+                            <includes>
+                                <include>
+                                    <packageName>
+                                        io.github.tobi.laa.reflective.fluent.builders.test.models.custom.naming
+                                    </packageName>
+                                </include>
+                            </includes>
+                            <target>${project.basedir}/${it.resources.directory}/expected-builders/custom-naming
+                            </target>
+                            <addCompileSourceRoot>false</addCompileSourceRoot>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

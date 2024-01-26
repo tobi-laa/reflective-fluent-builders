@@ -1,10 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
 import io.github.classgraph.ClassInfo;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
-import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
-import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.model.*;
 
 import java.util.SortedSet;
 
@@ -47,6 +44,16 @@ public interface WriteAccessorService {
 
     /**
      * <p>
+     * Checks whether {@code writeAccessor} is an {@link Adder}.
+     * </p>
+     *
+     * @param writeAccessor The {@link WriteAccessor} to check. Must not be {@code null}.
+     * @return {@code true} if {@code writeAccessor} is an adder, {@code false} otherwise.
+     */
+    boolean isAdder(final WriteAccessor writeAccessor);
+
+    /**
+     * <p>
      * Drop the configured setter prefix (for instance {@code set}) from {@code name}.
      * </p>
      *
@@ -59,6 +66,17 @@ public interface WriteAccessorService {
 
     /**
      * <p>
+     * Drop the configured adder pattern (for instance {@code add(.+)}) surrounding {@code name}.
+     * </p>
+     *
+     * @param name The (method) name from which to drop the configured adder pattern. Must not be {@code null}.
+     * @return {@code name} with the configured setter prefix stripped from it. If {@code name} does not match the said
+     * pattern, {@code name} will be returned unchanged.
+     */
+    String dropAdderPattern(final String name);
+
+    /**
+     * <p>
      * Drop the configured getter prefix (for instance {@code get}) from {@code name}.
      * </p>
      *
@@ -68,4 +86,50 @@ public interface WriteAccessorService {
      * unchanged.
      */
     String dropGetterPrefix(final String name);
+
+    /**
+     * <p>
+     * Checks whether this {@link WriteAccessor} is equivalent to {@code other}. Two {@link WriteAccessor} are
+     * considered equivalent if they modify the same property of the same class.
+     * </p>
+     * <p>
+     * Consider the following example:
+     * </p>
+     * <pre>
+     * public class Person {
+     *
+     *     public List<String> items;
+     *
+     *     public List<String> getItems() {
+     *         return this.items;
+     *     }
+     *
+     *     public void setItems(final List<String> items) {
+     *         this.items = items;
+     *     }
+     *
+     *     public void addItem(final String item) {
+     *         this.items.add(item);
+     *     }
+     * }
+     * </pre>
+     * <p>
+     * In this case, when scanning the class {@code Person}, four {@link WriteAccessor WriteAccessors} would be found:
+     * </p>
+     * <ul>
+     *     <li>A {@link WriteAccessor} for directly accessing the field {@code items}.</li>
+     *     <li>A {@link WriteAccessor} for the setter {@code setItems}.</li>
+     *     <li>A {@link WriteAccessor} for the getter {@code getItems}.</li>
+     *     <li>A {@link WriteAccessor} for the adder {@code addItem}.</li>
+     * </ul>
+     * <p>
+     * As all of those {@link WriteAccessor WriteAccessors} modify the same property of the same class, they are all
+     * considered to be equivalent.
+     * </p>
+     *
+     * @param first  The first {@link WriteAccessor}.
+     * @param second The second {@link WriteAccessor}.
+     * @return {@code true} if this {@code first} is equivalent to {@code second}, {@code false} otherwise.
+     */
+    boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second);
 }

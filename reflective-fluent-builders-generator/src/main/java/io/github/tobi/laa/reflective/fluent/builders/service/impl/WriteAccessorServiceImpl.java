@@ -8,6 +8,8 @@ import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersPropertie
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
+import org.atteo.evo.inflector.English;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.function.Predicate.not;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 /**
  * <p>
@@ -53,11 +56,19 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         final var classHierarchy = classService.collectFullClassHierarchy(classInfo);
         final var methods = gatherAllNonStaticNonBridgeAccessibleMethods(classHierarchy, builderPackage);
         final SortedSet<WriteAccessor> writeAccessors = new TreeSet<>();
-        writeAccessors.addAll(gatherAllSetters(methods, classInfo));
+        // adders take precedence over setters
+        if (properties.isAddersEnabled()) {
+            writeAccessors.addAll(gatherAllAdders(methods, classInfo));
+        }
+        // setters take precedence over collection getters
+        final var setters = gatherAllSetters(methods, classInfo);
+        addAllThatAreNotYetCovered(writeAccessors, setters);
+        // collection getters take precedence over field accessors
         if (properties.isGetAndAddEnabled()) {
             final var collectionGetters = gatherAllCollectionGetters(methods, classInfo);
             addAllThatAreNotYetCovered(writeAccessors, collectionGetters);
         }
+        // field accessors are the last resort if nothing else is available
         if (properties.isDirectFieldAccessEnabled()) {
             final var fields = gatherAllNonStaticAccessibleFields(classHierarchy, builderPackage);
             final var fieldAccessors = gatherAllFieldAccessors(fields, classInfo);
@@ -83,6 +94,17 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .filter(not(method -> isStatic(method.getModifiers()))) //
                 .filter(method -> accessibilityService.isAccessibleFrom(method, builderPackage)) //
                 .collect(Collectors.toList());
+    }
+
+    private SortedSet<Adder> gatherAllAdders(final List<Method> methods, final ClassInfo classInfo) {
+        return methods.stream() //
+                .filter(this::isAdder) //
+                .map(method -> toAdder(classInfo.loadClass(), method)) //
+                .collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
+    }
+
+    private boolean isAdder(final Method method) {
+        return method.getParameterCount() == 1 && method.getName().matches(properties.getAdderPattern());
     }
 
     private SortedSet<Setter> gatherAllSetters(final List<Method> methods, final ClassInfo classInfo) {
@@ -136,12 +158,56 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     private boolean notYetCoveredByAnotherWriteAccessor(final WriteAccessor candidate, final Set<WriteAccessor> writeAccessors) {
         return writeAccessors
                 .stream()
-                .noneMatch(accessor -> getRawType(candidate.getPropertyType().getType()) == getRawType(accessor.getPropertyType().getType())
-                        && candidate.getPropertyName().equals(accessor.getPropertyName()));
+                .noneMatch(accessor -> equivalentAccessors(accessor, candidate));
+    }
+
+    @Override
+    public boolean equivalentAccessors(final WriteAccessor first, final WriteAccessor second) {
+        Objects.requireNonNull(first);
+        Objects.requireNonNull(second);
+        final Class<?> firstType;
+        final Class<?> secondType;
+        if (first instanceof Adder && second.getPropertyType() instanceof CollectionType ||
+                second instanceof Adder && first.getPropertyType() instanceof CollectionType) {
+            firstType = getRawCollectionTypeArg(first);
+            secondType = getRawCollectionTypeArg(second);
+        } else {
+            firstType = getRawPropertyType(first);
+            secondType = getRawPropertyType(second);
+        }
+        return firstType == secondType && first.getPropertyName().equals(second.getPropertyName());
+    }
+
+    private Class<?> getRawCollectionTypeArg(final WriteAccessor writeAccessor) {
+        final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+        return getRawType(collectionType.getTypeArg());
+    }
+
+    private Class<?> getRawPropertyType(final WriteAccessor writeAccessor) {
+        return TypeToken.of(writeAccessor.getPropertyType().getType()).getRawType();
     }
 
     private Class<?> getRawType(final Type type) {
         return TypeToken.of(type).getRawType();
+    }
+
+    private Adder toAdder(final Class<?> clazz, final Method method) {
+        final var param = method.getParameters()[0];
+        final var paramName = dropAdderPattern(method.getName());
+        final var paramType = toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0]);
+        return Adder.builder() //
+                .methodName(method.getName()) //
+                .propertyType(new CollectionType(TypeUtils.parameterize(List.class, paramType.getType()), paramType.getType())) //
+                .propertyName(pluralize(paramName)) //
+                .paramName(paramName) //
+                .paramType(paramType) //
+                .visibility(visibilityService.toVisibility(method.getModifiers())) //
+                .declaringClass(method.getDeclaringClass()) //
+                .build();
+    }
+
+    private String pluralize(final String name) {
+        return English.plural(name);
     }
 
     private Setter toSetter(final Class<?> clazz, final Method method) {
@@ -241,7 +307,13 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
             return name;
         }
         final var paramName = name.replaceFirst('^' + Pattern.quote(prefix), "");
-        return StringUtils.uncapitalize(paramName);
+        return uncapitalize(paramName);
+    }
+
+    @Override
+    public String dropAdderPattern(final String name) {
+        Objects.requireNonNull(name);
+        return uncapitalize(name.replaceFirst(properties.getAdderPattern(), "$1"));
     }
 
     @Override
@@ -254,5 +326,11 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     public boolean isCollectionGetter(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
         return writeAccessor instanceof Getter && writeAccessor.getPropertyType() instanceof CollectionType;
+    }
+
+    @Override
+    public boolean isAdder(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        return writeAccessor instanceof Adder;
     }
 }

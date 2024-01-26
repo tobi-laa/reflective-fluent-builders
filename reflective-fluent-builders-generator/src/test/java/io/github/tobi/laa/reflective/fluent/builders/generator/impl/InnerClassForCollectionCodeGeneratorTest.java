@@ -67,9 +67,9 @@ class InnerClassForCollectionCodeGeneratorTest {
     @Test
     void testIsApplicableNull() {
         // Arrange
-        final Setter setter = null;
+        final WriteAccessor writeAccessor = null;
         // Act
-        final Executable isApplicable = () -> generator.isApplicable(setter);
+        final Executable isApplicable = () -> generator.isApplicable(writeAccessor);
         // Assert
         assertThrows(NullPointerException.class, isApplicable);
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
@@ -77,7 +77,7 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @CartesianTest
     @CartesianTest.MethodFactory("testIsApplicableTrue")
-    void testIsApplicableTrue(final Setter setter, final boolean genAApplicable) {
+    void testIsApplicableTrue(final WriteAccessor writeAccessor, final boolean genAApplicable) {
         // Arrange
         if (genAApplicable) {
             when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
@@ -85,7 +85,7 @@ class InnerClassForCollectionCodeGeneratorTest {
             when(initializerGeneratorB.isApplicable(any())).thenReturn(true);
         }
         // Act
-        final boolean actual = generator.isApplicable(setter);
+        final boolean actual = generator.isApplicable(writeAccessor);
         // Assert
         assertTrue(actual);
     }
@@ -99,23 +99,23 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableFalseWrongType(final Setter setter) {
+    void testIsApplicableFalseWrongType(final WriteAccessor writeAccessor) {
         // Act
-        final boolean actual = generator.isApplicable(setter);
+        final boolean actual = generator.isApplicable(writeAccessor);
         // Assert
         assertFalse(actual);
         verifyNoInteractions(initializerGeneratorA, initializerGeneratorB);
     }
 
-    private static Stream<Setter> testIsApplicableFalseWrongType() {
-        return testGenerateCodeGenerationExceptionWrongType().map(args -> args.get()[1]).map(Setter.class::cast);
+    private static Stream<WriteAccessor> testIsApplicableFalseWrongType() {
+        return testGenerateCodeGenerationExceptionWrongType().map(args -> args.get()[1]).map(WriteAccessor.class::cast);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableFalseNoInitializerGeneratorApplicable(final Setter setter) {
+    void testIsApplicableFalseNoInitializerGeneratorApplicable(final WriteAccessor writeAccessor) {
         // Act
-        final boolean actual = generator.isApplicable(setter);
+        final boolean actual = generator.isApplicable(writeAccessor);
         // Assert
         assertFalse(actual);
     }
@@ -140,9 +140,9 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateCodeNull(final BuilderMetadata builderMetadata, final Setter setter) {
+    void testGenerateCodeNull(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         // Act
-        final Executable generate = () -> generator.generate(builderMetadata, setter);
+        final Executable generate = () -> generator.generate(builderMetadata, writeAccessor);
         // Assert
         assertThrows(NullPointerException.class, generate);
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
@@ -174,14 +174,14 @@ class InnerClassForCollectionCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateCodeGenerationExceptionWrongType(final BuilderMetadata builderMetadata, final Setter setter) {
+    void testGenerateCodeGenerationExceptionWrongType(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         // Act
-        final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
+        final ThrowingCallable generate = () -> generator.generate(builderMetadata, writeAccessor);
         // Assert
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Generation of inner collection class for .+ is not supported.") //
-                .hasMessageContaining(setter.getPropertyType().toString());
+                .hasMessageContaining(writeAccessor.getPropertyType().toString());
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorB, initializerGeneratorB);
     }
 
@@ -234,27 +234,8 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .propertyType(new MapType(Map.class, String.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
-                                .build()));
-    }
-
-    @ParameterizedTest
-    @MethodSource
-    void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final Setter setter) {
-        // Arrange
-        when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
-        // Act
-        final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
-        // Assert
-        assertThatThrownBy(generate) //
-                .isInstanceOf(CodeGenerationException.class) //
-                .hasMessageMatching("Could not generate initializer for .+") //
-                .hasMessageContaining(setter.getPropertyType().toString());
-    }
-
-    private static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
-        return testIsApplicableFalseNoInitializerGeneratorApplicable() //
-                .map(setter -> Arguments.of( //
+                                .build()),
+                Arguments.of( //
                         BuilderMetadata.builder() //
                                 .packageName("ignored") //
                                 .name("Ignored") //
@@ -263,7 +244,45 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        setter));
+                        Adder.builder() //
+                                .methodName("addItem") //
+                                .propertyName("items") //
+                                .propertyType(new CollectionType(List.class, String.class)) //
+                                .paramName("item") //
+                                .paramType(new SimpleType(String.class)) //
+                                .visibility(Visibility.PRIVATE) //
+                                .declaringClass(ClassWithCollections.class) //
+                                .build()));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
+        // Arrange
+        when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(initializerGeneratorA.isApplicable(any())).thenReturn(true, false);
+        // Act
+        final ThrowingCallable generate = () -> generator.generate(builderMetadata, writeAccessor);
+        // Assert
+        assertThatThrownBy(generate) //
+                .isInstanceOf(CodeGenerationException.class) //
+                .hasMessageMatching("Could not generate initializer for .+") //
+                .hasMessageContaining(writeAccessor.getPropertyType().toString());
+    }
+
+    private static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
+        return testIsApplicableFalseNoInitializerGeneratorApplicable() //
+                .map(writeAccessor -> Arguments.of( //
+                        BuilderMetadata.builder() //
+                                .packageName("ignored") //
+                                .name("Ignored") //
+                                .builtType(BuilderMetadata.BuiltType.builder() //
+                                        .type(classInfo.get(SimpleClass.class)) //
+                                        .accessibleNonArgsConstructor(true) //
+                                        .build()) //
+                                .build(), //
+                        writeAccessor));
     }
 
     @ParameterizedTest

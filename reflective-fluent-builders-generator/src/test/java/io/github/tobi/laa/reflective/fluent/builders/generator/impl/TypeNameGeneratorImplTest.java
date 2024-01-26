@@ -2,8 +2,6 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.TypeName;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -29,108 +27,61 @@ class TypeNameGeneratorImplTest {
     @Test
     void testGenerateTypeNameForParamSetterNull() {
         // Arrange
-        final WriteAccessor writeAccessor = null;
+        final PropertyType propertyType = null;
         // Act
-        final Executable generateTypeNameForParam = () -> generator.generateTypeName(writeAccessor);
+        final Executable generateTypeNameForParam = () -> generator.generateTypeName(propertyType);
         // Assert
         assertThrows(NullPointerException.class, generateTypeNameForParam);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateTypeNameForParamSetter(final WriteAccessor writeAccessor, final String expected) {
+    void testGenerateTypeNameForParamSetter(final PropertyType propertyType, final String expected) {
         // Act
-        final TypeName actual = generator.generateTypeName(writeAccessor);
+        final TypeName actual = generator.generateTypeName(propertyType);
         // Assert
         assertThat(actual).hasToString(expected);
     }
 
     private static Stream<Arguments> testGenerateTypeNameForParamSetter() {
-        return Stream.of(
-                Arguments.of(
-                        Setter.builder() //
-                                .methodName("setAnInt") //
-                                .propertyName("anInt") //
-                                .propertyType(new SimpleType(int.class)) //
-                                .visibility(Visibility.PUBLIC) //
-                                .declaringClass(SimpleClass.class) //
-                                .build(), //
-                        "int"
-                ),
-                Arguments.of(
-                        Setter.builder() //
-                                .methodName("setDeque") //
-                                .propertyName("deque") //
-                                .propertyType(new CollectionType(
-                                        TypeUtils.parameterize(Deque.class, Object.class),
-                                        wildcardType() //
-                                                .withUpperBounds(Object.class) //
-                                                .build())) //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(), //
+        return Stream.of(Arguments.of(new SimpleType(int.class), "int"),
+                Arguments.of(new CollectionType(
+                                TypeUtils.parameterize(Deque.class, Object.class),
+                                wildcardType() //
+                                        .withUpperBounds(Object.class) //
+                                        .build()), //
                         "java.util.Deque<java.lang.Object>"
                 ),
                 Arguments.of(
-                        Setter.builder() //
-                                .methodName("setList") //
-                                .propertyName("list") //
-                                .propertyType(new CollectionType(
-                                        TypeUtils.parameterize(List.class, Character.class),
-                                        Character.class)) //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(), //
+                        new CollectionType(
+                                TypeUtils.parameterize(List.class, Character.class),
+                                Character.class), //
                         "java.util.List<java.lang.Character>"
                 ),
                 Arguments.of(
-                        Setter.builder() //
-                                .methodName("setList") //
-                                .propertyName("list") //
-                                .propertyType(new CollectionType(
-                                        TypeUtils.parameterize(List.class, TypeUtils.parameterize(Map.class, String.class, Object.class)),
-                                        TypeUtils.parameterize(Map.class, String.class, Object.class))) //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(), //
+                        new CollectionType(
+                                TypeUtils.parameterize(List.class, TypeUtils.parameterize(Map.class, String.class, Object.class)),
+                                TypeUtils.parameterize(Map.class, String.class, Object.class)), //
                         "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>"
                 ),
                 Arguments.of(
-                        Setter.builder() //
-                                .methodName("setFloats") //
-                                .propertyName("floats") //
-                                .propertyType(new ArrayType(float[].class, float.class)) //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(), //
+                        new ArrayType(float[].class, float.class), //
                         "float[]"
                 ),
                 Arguments.of(
-                        Setter.builder() //
-                                .methodName("setMap") //
-                                .propertyName("map") //
-                                .propertyType(new MapType( //
-                                        TypeUtils.parameterize(Map.class, String.class, Object.class), //
-                                        String.class, //
-                                        Object.class)) //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(), //
+                        new MapType( //
+                                TypeUtils.parameterize(Map.class, String.class, Object.class), //
+                                String.class, //
+                                Object.class), //
                         "java.util.Map<java.lang.String, java.lang.Object>"
                 ),
                 Arguments.of(
-                        Setter.builder() //
-                                .methodName("setMap") //
-                                .propertyName("map") //
-                                .propertyType(new MapType( //
-                                        TypeUtils.parameterize(SortedMap.class, String.class, Object.class), //
-                                        String.class, //
-                                        wildcardType() //
-                                                .withUpperBounds(Object.class) //
-                                                .build())) //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(), //
+                        new MapType( //
+                                TypeUtils.parameterize(SortedMap.class, String.class, Object.class), //
+                                String.class, //
+                                wildcardType() //
+                                        .withUpperBounds(Object.class) //
+                                        .build()), //
                         "java.util.SortedMap<java.lang.String, java.lang.Object>"
                 ));
     }

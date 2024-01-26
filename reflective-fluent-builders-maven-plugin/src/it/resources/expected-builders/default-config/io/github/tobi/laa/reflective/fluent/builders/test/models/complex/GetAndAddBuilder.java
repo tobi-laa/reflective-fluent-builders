@@ -81,8 +81,8 @@ public class GetAndAddBuilder {
     return this;
   }
 
-  public GetAndAddBuilder listSetterWrongType(final List<String> listSetterWrongType0) {
-    this.fieldValue.listSetterWrongType0 = listSetterWrongType0;
+  public GetAndAddBuilder listSetterWrongType(final List<String> listSetterWrongType) {
+    this.fieldValue.listSetterWrongType0 = listSetterWrongType;
     this.callSetterFor.listSetterWrongType0 = true;
     return this;
   }

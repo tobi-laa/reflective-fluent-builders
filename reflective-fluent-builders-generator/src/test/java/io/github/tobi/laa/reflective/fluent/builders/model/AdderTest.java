@@ -4,6 +4,8 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWi
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AdderTest {
@@ -13,9 +15,11 @@ class AdderTest {
     void testWithParamName(final String paramName) {
         // Arrange
         final var adder = Adder.builder() //
-                .methodName("getSth") //
-                .propertyType(new SimpleType(String.class)) //
-                .propertyName("aName") //
+                .methodName("addName") //
+                .propertyType(new CollectionType(List.class, String.class)) //
+                .propertyName("names") //
+                .paramName("name") //
+                .paramType(new SimpleType(String.class)) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .build();
@@ -23,9 +27,11 @@ class AdderTest {
         final var withParamName = adder.withPropertyName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(Adder.builder() //
-                .methodName("getSth") //
-                .propertyType(new SimpleType(String.class)) //
+                .methodName("addName") //
+                .propertyType(new CollectionType(List.class, String.class)) //
                 .propertyName(paramName) //
+                .paramName("name") //
+                .paramType(new SimpleType(String.class)) //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .build());

@@ -1,21 +1,22 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
+import io.github.tobi.laa.reflective.fluent.builders.generator.api.SetterMethodNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
+import io.github.tobi.laa.reflective.fluent.builders.model.Adder;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -26,6 +27,7 @@ import java.util.Objects;
 @Named
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
+@SuppressWarnings("java:S1192") // extracting the string literals would make the code less readable
 class SetterCodeGeneratorImpl implements SetterCodeGenerator {
 
     @lombok.NonNull
@@ -35,29 +37,47 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
     private final TypeNameGenerator typeNameGenerator;
 
     @lombok.NonNull
-    private final WriteAccessorService writeAccessorService;
+    private final SetterMethodNameGenerator methodNameGenerator;
 
     @Override
     public MethodSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final String name;
-        if (writeAccessorService.isCollectionGetter(writeAccessor)) {
-            final var getter = (Getter) writeAccessor;
-            name = writeAccessorService.dropGetterPrefix(getter.getMethodName());
-        } else if (writeAccessorService.isSetter(writeAccessor)) {
-            final var setter = (Setter) writeAccessor;
-            name = writeAccessorService.dropSetterPrefix(setter.getMethodName());
+        if (writeAccessor instanceof Adder) {
+            return generateForAdder(builderMetadata, (Adder) writeAccessor);
         } else {
-            name = writeAccessor.getPropertyName();
+            return generateForNonAdder(builderMetadata, writeAccessor);
         }
+    }
+
+    private MethodSpec generateForNonAdder(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
+        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final String name = methodNameGenerator.generate(writeAccessor);
         return MethodSpec.methodBuilder(name)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(builderClassName)
-                .addParameter(typeNameGenerator.generateTypeName(writeAccessor), writeAccessor.getPropertyName(), Modifier.FINAL)
-                .addStatement("this.$1L.$2L = $2L", BuilderConstants.FieldValue.FIELD_NAME, writeAccessor.getPropertyName())
+                .addParameter(typeNameGenerator.generateTypeName(writeAccessor.getPropertyType()), name, Modifier.FINAL)
+                .addStatement("this.$L.$L = $L", BuilderConstants.FieldValue.FIELD_NAME, writeAccessor.getPropertyName(), name)
                 .addStatement("this.$L.$L = $L", BuilderConstants.CallSetterFor.FIELD_NAME, writeAccessor.getPropertyName(), true)
+                .addStatement("return this")
+                .build();
+    }
+
+    private MethodSpec generateForAdder(final BuilderMetadata builderMetadata, final Adder adder) {
+        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final String name = methodNameGenerator.generate(adder);
+        final var methodBuilder = MethodSpec.methodBuilder(name)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(builderClassName)
+                .addParameter(typeNameGenerator.generateTypeName(adder.getParamType()), name, Modifier.FINAL);
+        return methodBuilder
+                .beginControlFlow("if (this.$L.$L == null)", BuilderConstants.FieldValue.FIELD_NAME, adder.getPropertyName()) //
+                .addStatement(CodeBlock.builder()
+                        .add("this.$L.$L = new $T<>()", BuilderConstants.FieldValue.FIELD_NAME, adder.getPropertyName(), ArrayList.class)
+                        .build()) //
+                .endControlFlow()
+                .addStatement("this.$L.$L.add($L)", BuilderConstants.FieldValue.FIELD_NAME, adder.getPropertyName(), name)
+                .addStatement("this.$L.$L = $L", BuilderConstants.CallSetterFor.FIELD_NAME, adder.getPropertyName(), true)
                 .addStatement("return this")
                 .build();
     }
