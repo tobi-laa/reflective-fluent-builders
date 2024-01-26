@@ -6,8 +6,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
 
-import static java.util.Objects.compare;
-
 /**
  * <p>
  * Common logic shared by {@link WriteAccessor} implementations that represent a method, i.e. setters, adders and
@@ -36,7 +34,7 @@ abstract class AbstractMethodAccessor extends AbstractWriteAccessor {
         }
         final var aSetter = (AbstractMethodAccessor) anObject;
         return Objects.equals(getMethodName(), aSetter.getMethodName()) && //
-                compare(getPropertyType(), aSetter.getPropertyType(), new ParamTypeComparator()) == 0;
+                getPropertyType().equals(aSetter.getPropertyType());
     }
 
     @Override

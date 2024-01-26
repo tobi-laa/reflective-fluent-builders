@@ -40,11 +40,22 @@ abstract class AbstractWriteAccessor implements WriteAccessor {
             return Stream.<IntSupplier>of( //
                             () -> compare(propertyName, other.getPropertyName(), naturalOrder()), //
                             () -> compare(getPropertyType(), other.getPropertyType(), new ParamTypeComparator()), //
+                            () -> compareClasses(getDeclaringClass(), other.getDeclaringClass()), //
                             () -> compare(getClass().getName(), other.getClass().getName(), naturalOrder()))
                     .map(IntSupplier::getAsInt) //
                     .filter(i -> i != 0) //
                     .findFirst() //
                     .orElse(1);
+        }
+    }
+
+    private int compareClasses(final Class<?> clazz, final Class<?> anotherClazz) {
+        if (clazz == anotherClazz) {
+            return 0;
+        } else if (clazz.isAssignableFrom(anotherClazz)) {
+            return 1;
+        } else {
+            return -1;
         }
     }
 }

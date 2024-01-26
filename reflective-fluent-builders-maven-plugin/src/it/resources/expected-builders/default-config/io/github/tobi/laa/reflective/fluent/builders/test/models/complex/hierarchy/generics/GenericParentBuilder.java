@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.generics;
 
+import java.io.Serializable;
 import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,10 @@ public class GenericParentBuilder<R, S, T> {
     return new GenericParentBuilder(supplier);
   }
 
+  public CollectionGenericList genericList() {
+    return new CollectionGenericList();
+  }
+
   public CollectionList list() {
     return new CollectionList();
   }
@@ -49,6 +54,12 @@ public class GenericParentBuilder<R, S, T> {
   public GenericParentBuilder generic(final Generic<T> generic) {
     this.fieldValue.generic = generic;
     this.callSetterFor.generic = true;
+    return this;
+  }
+
+  public GenericParentBuilder genericList(final List<Serializable> genericList) {
+    this.fieldValue.genericList = genericList;
+    this.callSetterFor.genericList = true;
     return this;
   }
 
@@ -75,6 +86,9 @@ public class GenericParentBuilder<R, S, T> {
     if (this.callSetterFor.generic) {
       objectToBuild.setGeneric(this.fieldValue.generic);
     }
+    if (this.callSetterFor.genericList && this.fieldValue.genericList != null) {
+      this.fieldValue.genericList.forEach(objectToBuild.getGenericList()::add);
+    }
     if (this.callSetterFor.list) {
       objectToBuild.setList(this.fieldValue.list);
     }
@@ -90,6 +104,8 @@ public class GenericParentBuilder<R, S, T> {
   private class CallSetterFor {
     boolean generic;
 
+    boolean genericList;
+
     boolean list;
 
     boolean map;
@@ -100,11 +116,28 @@ public class GenericParentBuilder<R, S, T> {
   private class FieldValue {
     Generic<T> generic;
 
+    List<Serializable> genericList;
+
     List<R> list;
 
     Map<S, T> map;
 
     Generic<R> otherGeneric;
+  }
+
+  public class CollectionGenericList {
+    public CollectionGenericList add(final Serializable item) {
+      if (GenericParentBuilder.this.fieldValue.genericList == null) {
+        GenericParentBuilder.this.fieldValue.genericList = new ArrayList<>();
+      }
+      GenericParentBuilder.this.fieldValue.genericList.add(item);
+      GenericParentBuilder.this.callSetterFor.genericList = true;
+      return this;
+    }
+
+    public GenericParentBuilder and() {
+      return GenericParentBuilder.this;
+    }
   }
 
   public class CollectionList {

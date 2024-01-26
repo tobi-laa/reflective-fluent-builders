@@ -2,6 +2,8 @@ package io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierar
 
 import lombok.Setter;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -15,4 +17,8 @@ public class GenericParent<R, S, T> {
     private Generic<T> generic;
 
     private Generic<R> otherGeneric;
+
+    public List<? extends Serializable> getGenericList() {
+        return Collections.emptyList();
+    }
 }
