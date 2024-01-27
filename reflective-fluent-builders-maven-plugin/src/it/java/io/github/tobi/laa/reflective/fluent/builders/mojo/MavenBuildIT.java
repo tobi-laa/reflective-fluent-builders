@@ -391,10 +391,4 @@ class MavenBuildIT {
             assertThat(actual).isEmpty();
         }
     }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void testResolveSourceFileUnderneathTestCompileSource(final boolean fileExists) {
-        mockTestPhase(true);
-    }
 }
