@@ -35,7 +35,14 @@ public class StandardBuildersProperties implements BuildersProperties {
     @lombok.NonNull
     private String getterPrefix = "get";
 
+    @lombok.NonNull
+    private String adderPattern = "add(.+)";
+
     private boolean getAndAddEnabled = true;
+
+    private boolean directFieldAccessEnabled = true;
+
+    private boolean addersEnabled = true;
 
     @lombok.NonNull
     @ToString.Exclude

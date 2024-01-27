@@ -1,7 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.google.common.collect.Sets;
-import com.squareup.javapoet.JavaFile;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
@@ -76,11 +75,12 @@ public class GenerateBuildersMojo extends AbstractMojo {
         final Set<ClassInfo> classes = collectAndFilterClasses();
         final Set<BuilderMetadata> nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
         createTargetDirectory();
-        generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
+        final var generatedBuilderFiles = generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
         deleteOrphanedBuilders(nonEmptyBuilderMetadata);
-        refreshBuildContext(nonEmptyBuilderMetadata);
+        refreshBuildContext(generatedBuilderFiles);
         addCompileSourceRoot();
         closeClassLoader();
+        mavenBuild.updateModuleBuildTime();
     }
 
     private void closeClassLoader() {
@@ -182,7 +182,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private boolean buildContextHasDelta(final BuilderMetadata builderMetadata) {
-        return determineSourceOrClassLocation(builderMetadata).map(mavenBuild::hasDelta).orElse(false);
+        return determineSourceOrClassLocation(builderMetadata).map(mavenBuild::hasDelta).orElse(true);
     }
 
     private Optional<File> determineSourceOrClassLocation(final BuilderMetadata builderMetadata) {
@@ -202,24 +202,28 @@ public class GenerateBuildersMojo extends AbstractMojo {
         return type.getSourceFile().flatMap(source -> mavenBuild.resolveSourceFile(type.getType().getPackageName(), source));
     }
 
-    private void generateAndWriteBuildersToTarget(final Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
-        for (final BuilderMetadata metadata : nonEmptyBuilderMetadata) {
-            generateAndWriteBuilderToTarget(metadata);
+    private Set<Path> generateAndWriteBuildersToTarget(final Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
+        final Set<Path> generatedBuilderFiles = new HashSet<>();
+        for (final var metadata : nonEmptyBuilderMetadata) {
+            if (isGenerationNecessary(metadata)) {
+                generateAndWriteBuilderToTarget(metadata);
+                generatedBuilderFiles.add(resolveBuilderFile(metadata));
+            } else {
+                final var className = metadata.getBuiltType().getType().getName();
+                getLog().info("Builder for class " + className + " already exists and is up to date.");
+            }
         }
+        return generatedBuilderFiles;
     }
 
     private void generateAndWriteBuilderToTarget(final BuilderMetadata metadata) throws MojoFailureException {
-        final String className = metadata.getBuiltType().getType().getName();
-        if (isGenerationNecessary(metadata)) {
-            getLog().info("Generate builder for class " + className);
-            final JavaFile javaFile = javaFileGenerator.generateJavaFile(metadata);
-            try {
-                javaFile.writeTo(params.getTarget());
-            } catch (final IOException e) {
-                throw new MojoFailureException("Could not create file for builder for " + className + '.', e);
-            }
-        } else {
-            getLog().info("Builder for class " + className + " already exists and is up to date.");
+        final var className = metadata.getBuiltType().getType().getName();
+        getLog().info("Generate builder for class " + className);
+        final var javaFile = javaFileGenerator.generateJavaFile(metadata);
+        try {
+            javaFile.writeTo(params.getTarget());
+        } catch (final IOException e) {
+            throw new MojoFailureException("Could not create file for builder for " + className + '.', e);
         }
     }
 
@@ -235,12 +239,8 @@ public class GenerateBuildersMojo extends AbstractMojo {
         }
     }
 
-    private void refreshBuildContext(final Set<BuilderMetadata> builderMetadata) {
-        builderMetadata.stream()
-                .map(this::determineSourceOrClassLocation)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .forEach(mavenBuild::refresh);
+    private void refreshBuildContext(final Set<Path> generatedBuilderFiles) {
+        generatedBuilderFiles.stream().map(Path::toFile).forEach(mavenBuild::refresh);
     }
 
     /**
@@ -311,6 +311,25 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     /**
      * <p>
+     * The pattern used for identifying adder methods via reflection when analyzing classes.
+     * This needs to be a valid regular expression with the first group being the name of the property.
+     * The default value is:
+     * <pre>
+     * {@code add(.+)}
+     * </pre>
+     * </p>
+     *
+     * @param adderPattern The pattern used for identifying adder methods via reflection when analyzing classes.
+     * @since 2.0.0
+     */
+    @Parameter(name = "adderPattern", defaultValue = "add(.+)")
+    @SuppressWarnings("unused")
+    public void setAdderPattern(final String adderPattern) {
+        params.setAdderPattern(adderPattern);
+    }
+
+    /**
+     * <p>
      * If this is set to {@code true}, it is assumed that getters of collections without a corresponding setter will
      * lazily initialize the underlying collection. The generated builders will use a get-and-add paradigm where
      * necessary to construct a collection.
@@ -323,6 +342,36 @@ public class GenerateBuildersMojo extends AbstractMojo {
     @SuppressWarnings("unused")
     public void setGetAndAddEnabled(final boolean getAndAddEnabled) {
         params.setGetAndAddEnabled(getAndAddEnabled);
+    }
+
+    /**
+     * <p>
+     * If this is set to {@code true}, the generated builders will use direct field access if possible and if no setter
+     * is available.
+     * </p>
+     *
+     * @param directFieldAccessEnabled Whether to support direct field access in generated builders.
+     * @since 2.0.0
+     */
+    @Parameter(name = "directFieldAccessEnabled", defaultValue = "true")
+    @SuppressWarnings("unused")
+    public void setDirectFieldAccessEnabled(final boolean directFieldAccessEnabled) {
+        params.setDirectFieldAccessEnabled(directFieldAccessEnabled);
+    }
+
+    /**
+     * <p>
+     * If this is set to {@code true}, the generated builders will use adder methods. Adder methods will take precedence
+     * over setters if both are available.
+     * </p>
+     *
+     * @param addersEnabled Whether to support adder methods in generated builders.
+     * @since 2.0.0
+     */
+    @Parameter(name = "addersEnabled", defaultValue = "true")
+    @SuppressWarnings("unused")
+    public void setAddersEnabled(final boolean addersEnabled) {
+        params.setAddersEnabled(addersEnabled);
     }
 
     /**
@@ -460,10 +509,14 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * The target directory in which to place the generated builders.
      * </p>
      * <p>
-     * If not specified, the default value is dependent on the {@link LifecyclePhase}.For any test-related phase, the
-     * default target directory will be the following:<br>
+     * If not specified, the default value is dependent on the {@link LifecyclePhase}.
+     * </p>
+     * <p>
+     * For any test-related phase, the default target directory will be the following:
+     * <br>
      * <code>${project.build.directory}/generated-test-sources/builders</code><br>
-     * For any other phase, the default target directory will be:<br>
+     * For any other phase, the default target directory will be:
+     * <br>
      * <code>${project.build.directory}/generated-sources/builders</code>
      * </p>
      *
@@ -494,7 +547,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     /**
      * <p>
-     * Specifies whether to delete orphaned builders from the {@link #setTarget(File) target directory}.
+     * Specifies whether to delete orphaned builders from the {@link #setTarget(File) <target>} directory.
      * </p>
      * <p>
      * A builder is considered orphaned if it would no longer be generated during a clean build, be it due to a class

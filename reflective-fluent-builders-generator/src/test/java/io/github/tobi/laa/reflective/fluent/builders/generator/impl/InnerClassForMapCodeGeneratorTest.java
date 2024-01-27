@@ -123,21 +123,17 @@ class InnerClassForMapCodeGeneratorTest {
 
     private static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
         return Stream.of( //
-                MapSetter.builder() //
+                Setter.builder() //
                         .methodName("setMap") //
-                        .paramName("map") //
-                        .paramType(Map.class) //
-                        .keyType(String.class)
-                        .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                        .propertyName("map") //
+                        .propertyType(new MapType(Map.class, String.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build(), //
-                MapSetter.builder() //
+                Setter.builder() //
                         .methodName("setSortedMap") //
-                        .paramName("sortedMap") //
-                        .paramType(SortedMap.class) //
-                        .keyType(Integer.class) //
-                        .valueType(Object.class) //
+                        .propertyName("sortedMap") //
+                        .propertyType(new MapType(SortedMap.class, Integer.class, Object.class)) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build());
@@ -168,12 +164,10 @@ class InnerClassForMapCodeGeneratorTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(Map.class) //
-                                .keyType(String.class)
-                                .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                                .propertyName("map") //
+                                .propertyType(new MapType(Map.class, String.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -188,7 +182,7 @@ class InnerClassForMapCodeGeneratorTest {
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Generation of inner map class for .+ is not supported.") //
-                .hasMessageContaining(setter.getParamType().toString());
+                .hasMessageContaining(setter.getPropertyType().toString());
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorB, initializerGeneratorB);
     }
 
@@ -203,10 +197,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        SimpleSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build()), //
@@ -219,11 +213,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyName("floats") //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()), //
@@ -236,11 +229,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                                .propertyName("deque") //
+                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -251,14 +243,14 @@ class InnerClassForMapCodeGeneratorTest {
     void testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable(final BuilderMetadata builderMetadata, final Setter setter) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         // Act
         final ThrowingCallable generate = () -> generator.generate(builderMetadata, setter);
         // Assert
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Could not generate initializer for .+") //
-                .hasMessageContaining(setter.getParamType().toString());
+                .hasMessageContaining(setter.getPropertyType().toString());
     }
 
     private static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
@@ -277,10 +269,10 @@ class InnerClassForMapCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerate(final BuilderMetadata builderMetadata, final MapSetter setter, final String expectedGetter, final String expectedInnerClass) {
+    void testGenerate(final BuilderMetadata builderMetadata, final Setter setter, final String expectedGetter, final String expectedInnerClass) {
         // Arrange
         when(builderClassNameGenerator.generateClassName(any())).thenReturn(ClassName.get(MockType.class));
-        when(typeNameGenerator.generateTypeNameForParam(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
+        when(typeNameGenerator.generateTypeName(any(Type.class))).then(i -> TypeName.get((Type) i.getArgument(0)));
         when(initializerGeneratorA.isApplicable(any())).thenReturn(true);
         when(initializerGeneratorA.generateMapInitializer(any())).thenReturn(CodeBlock.of("new MockMap<>()"));
         // Act
@@ -290,9 +282,10 @@ class InnerClassForMapCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        verify(typeNameGenerator).generateTypeNameForParam(setter.getKeyType());
-        verify(typeNameGenerator).generateTypeNameForParam(setter.getValueType());
-        verify(initializerGeneratorA).generateMapInitializer(setter);
+        final var mapType = (MapType) setter.getPropertyType();
+        verify(typeNameGenerator).generateTypeName(mapType.getKeyType());
+        verify(typeNameGenerator).generateTypeName(mapType.getValueType());
+        verify(initializerGeneratorA).generateMapInitializer(mapType);
     }
 
     private static Stream<Arguments> testGenerate() {
@@ -307,23 +300,39 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(Map.class) //
-                                .keyType(String.class)
-                                .valueType(TypeUtils.wildcardType().withUpperBounds(Object.class).build()) //
+                                .propertyName("map") //
+                                .propertyType(new MapType(Map.class, String.class, TypeUtils.wildcardType().withUpperBounds(Object.class).build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.MapMap map(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the map property {@code map} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.map()\n" +
+                                        " *        .put(key1, value1)\n" +
+                                        " *        .put(key2, value2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the map property {@code map}.\n" +
+                                        " */\n" +
+                                        "public %1$s.MapMap map(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.MapMap();\n" +
                                         "}\n",
                                 mockTypeName), //
                         String.format(
                                 "public class MapMap {\n" +
+                                        "  /**\n" +
+                                        "   * Adds an entry to the map property {@code map}.\n" +
+                                        "   * @param key The key of the entry to add to the map {@code map}.\n" +
+                                        "   * @param value The value of the entry to add to the map {@code map}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.MapMap put(\n" +
                                         "      final java.lang.String key, final ? value) {\n" +
                                         "    if (%1$s.this.fieldValue.map == null) {\n" +
@@ -334,6 +343,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    return %1$s.this;\n" +
@@ -349,23 +362,39 @@ class InnerClassForMapCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setSortedMap") //
-                                .paramName("sortedMap") //
-                                .paramType(SortedMap.class) //
-                                .keyType(Integer.class) //
-                                .valueType(Object.class) //
+                                .propertyName("sortedMap") //
+                                .propertyType(new MapType(SortedMap.class, Integer.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.MapSortedMap sortedMap(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the map property {@code sortedMap} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.sortedMap()\n" +
+                                        " *        .put(key1, value1)\n" +
+                                        " *        .put(key2, value2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the map property {@code sortedMap}.\n" +
+                                        " */\n" +
+                                        "public %1$s.MapSortedMap sortedMap(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.MapSortedMap();\n" +
                                         "}\n",
                                 mockTypeName),
                         String.format(
                                 "public class MapSortedMap {\n" +
+                                        "  /**\n" +
+                                        "   * Adds an entry to the map property {@code sortedMap}.\n" +
+                                        "   * @param key The key of the entry to add to the map {@code sortedMap}.\n" +
+                                        "   * @param value The value of the entry to add to the map {@code sortedMap}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.MapSortedMap put(\n" +
                                         "      final java.lang.Integer key, final java.lang.Object value) {\n" +
                                         "    if (%1$s.this.fieldValue.sortedMap == null) {\n" +
@@ -376,6 +405,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    return %1$s.this;\n" +

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,5 +28,9 @@ public class GetAndAdd {
 
     public void setListSetterWrongType(final String... listSetterWrongType) {
         this.listSetterWrongType = Arrays.asList(listSetterWrongType);
+    }
+
+    public static List<String> getAStaticField() {
+        return Collections.emptyList();
     }
 }

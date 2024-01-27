@@ -5,7 +5,8 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.FieldInfo;
 import io.github.classgraph.FieldInfoList;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.MethodAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     private final AccessibilityService accessibilityService;
 
     @lombok.NonNull
-    private final SetterService setterService;
+    private final WriteAccessorService writeAccessorService;
 
     @lombok.NonNull
     private final ClassService classService;
@@ -52,16 +53,52 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
         Objects.requireNonNull(classInfo);
         final Class<?> clazz = classInfo.loadClass();
         final String builderPackage = builderPackageService.resolveBuilderPackage(clazz);
+        final SortedSet<WriteAccessor> writeAccessors = gatherWriteAccessorsAndAvoidNameCollisions(classInfo);
         return BuilderMetadata.builder() //
                 .packageName(builderPackage) //
                 .name(builderClassName(clazz, builderPackage)) //
+                .exceptionTypes(condenseExceptions(writeAccessors)) //
+                .nestedBuilders(nestedBuilders(classInfo)) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(classInfo) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz, builderPackage)) //
-                        .setters(gatherSettersAndAvoidNameCollisions(classInfo))
+                        .writeAccessors(writeAccessors)
                         .build()) //
                 .build();
+    }
+
+    private Set<Class<? extends Throwable>> condenseExceptions(final Set<WriteAccessor> writeAccessors) {
+        final Set<Class<? extends Throwable>> condensed = new HashSet<>();
+        writeAccessors //
+                .stream() //
+                .filter(MethodAccessor.class::isInstance) //
+                .map(MethodAccessor.class::cast) //
+                .map(MethodAccessor::getExceptionTypes) //
+                .flatMap(Set::stream)
+                .forEach(exception -> {
+                    removeExceptionsThatAreSubclasses(condensed, exception);
+                    addExceptionIfSuperclassIsNotPresent(condensed, exception);
+                });
+        return Collections.unmodifiableSet(condensed);
+    }
+
+    private Set<BuilderMetadata> nestedBuilders(final ClassInfo classInfo) {
+        return filterOutNonBuildableClasses(new HashSet<>(classInfo.getInnerClasses().getStandardClasses()))
+                .stream()
+                .filter(ci -> ci.loadClass().getEnclosingClass() == classInfo.loadClass())
+                .map(this::collectBuilderMetadata)
+                .collect(Collectors.toSet());
+    }
+
+    private void addExceptionIfSuperclassIsNotPresent(final Set<Class<? extends Throwable>> exceptions, final Class<? extends Throwable> exception) {
+        if (exceptions.stream().noneMatch(candidate -> candidate.isAssignableFrom(exception))) {
+            exceptions.add(exception);
+        }
+    }
+
+    private void removeExceptionsThatAreSubclasses(final Set<Class<? extends Throwable>> exceptions, final Class<? extends Throwable> exception) {
+        exceptions.removeIf(exception::isAssignableFrom);
     }
 
     private String builderClassName(final Class<?> clazz, final String builderPackage) {
@@ -96,21 +133,21 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .anyMatch(count -> count == 0);
     }
 
-    private SortedSet<Setter> gatherSettersAndAvoidNameCollisions(final ClassInfo clazz) {
-        final SortedSet<Setter> setters = setterService.gatherAllSetters(clazz);
+    private SortedSet<WriteAccessor> gatherWriteAccessorsAndAvoidNameCollisions(final ClassInfo clazz) {
+        final SortedSet<WriteAccessor> setters = writeAccessorService.gatherAllWriteAccessors(clazz);
         return avoidNameCollisions(setters);
     }
 
-    private SortedSet<Setter> avoidNameCollisions(final Set<Setter> setters) {
-        final SortedSet<Setter> noNameCollisions = new TreeSet<>();
-        for (final Setter setter : setters) {
-            if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(setter.getParamName()::equals)) {
-                noNameCollisions.add(setter);
+    private SortedSet<WriteAccessor> avoidNameCollisions(final Set<WriteAccessor> writeAccessors) {
+        final SortedSet<WriteAccessor> noNameCollisions = new TreeSet<>();
+        for (final WriteAccessor writeAccessor : writeAccessors) {
+            if (noNameCollisions.stream().map(WriteAccessor::getPropertyName).noneMatch(writeAccessor.getPropertyName()::equals)) {
+                noNameCollisions.add(writeAccessor);
             } else {
                 for (int i = 0; true; i++) {
-                    final String paramName = setter.getParamName() + i;
-                    if (noNameCollisions.stream().map(Setter::getParamName).noneMatch(paramName::equals)) {
-                        noNameCollisions.add(setter.withParamName(paramName));
+                    final String propertyName = writeAccessor.getPropertyName() + i;
+                    if (noNameCollisions.stream().map(WriteAccessor::getPropertyName).noneMatch(propertyName::equals)) {
+                        noNameCollisions.add(writeAccessor.withPropertyName(propertyName));
                         break;
                     }
                 }
@@ -152,7 +189,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
     public Set<BuilderMetadata> filterOutEmptyBuilders(final Collection<BuilderMetadata> builderMetadata) {
         Objects.requireNonNull(builderMetadata);
         return builderMetadata.stream() //
-                .filter(metadata -> !metadata.getBuiltType().getSetters().isEmpty()) //
+                .filter(metadata -> !metadata.getBuiltType().getWriteAccessors().isEmpty()) //
                 .collect(Collectors.toSet());
     }
 }

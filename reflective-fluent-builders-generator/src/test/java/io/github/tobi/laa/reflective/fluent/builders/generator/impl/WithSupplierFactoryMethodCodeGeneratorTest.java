@@ -74,7 +74,10 @@ class WithSupplierFactoryMethodCodeGeneratorTest {
                                         .build()) //
                                 .build(), //
                         String.format(
-                                "public static %1$s withSupplier(\n" +
+                                "/**\n" +
+                                        " * Creates an instance of {@link %1$s} that will work on an instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass} that is created initially by the given {@code supplier} once {@link #build()} is called.\n" +
+                                        " */\n" +
+                                        "public static %1$s withSupplier(\n" +
                                         "    final java.util.function.Supplier<%2$s> supplier) {\n" +
                                         "  return new %1$s(supplier);\n" +
                                         "}\n",
@@ -90,7 +93,10 @@ class WithSupplierFactoryMethodCodeGeneratorTest {
                                         .build()) //
                                 .build(), //
                         String.format(
-                                "public static %1$s withSupplier(\n" +
+                                "/**\n" +
+                                        " * Creates an instance of {@link %1$s} that will work on an instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy} that is created initially by the given {@code supplier} once {@link #build()} is called.\n" +
+                                        " */\n" +
+                                        "public static %1$s withSupplier(\n" +
                                         "    final java.util.function.Supplier<%2$s> supplier) {\n" +
                                         "  return new %1$s(supplier);\n" +
                                         "}\n",

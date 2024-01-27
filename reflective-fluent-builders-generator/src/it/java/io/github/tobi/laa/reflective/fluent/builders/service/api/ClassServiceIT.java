@@ -177,9 +177,6 @@ class ClassServiceIT {
 
     @SneakyThrows
     private static Stream<Arguments> testCollectClassesRecursively() {
-        final Class<?> clazz = Class.forName(TopLevelClass.class.getName() + "$NestedPrivateLevelOne");
-        final Class<?> clazz1 = Class.forName(TopLevelClass.class.getName() + "$NestedPackagePrivateLevelOne");
-        final Class<?> clazz2 = Class.forName(TopLevelClass.class.getName() + "$NestedProtectedLevelOne");
         return Stream.of( //
                 Arguments.of(
                         Simple.class.getPackage().getName(), //
@@ -195,14 +192,7 @@ class ClassServiceIT {
                         NestedMarker.class.getPackage().getName(), //
                         ImmutableSet.of( //
                                 classInfo.get(NestedMarker.class.getName()), //
-                                classInfo.get(TopLevelClass.class.getName()), //
-                                classInfo.get(TopLevelClass.NestedPublicLevelOne.class.getName()), //
-                                classInfo.get(clazz2.getName()), //
-                                classInfo.get(clazz1.getName()), //
-                                classInfo.get(clazz.getName()), //
-                                classInfo.get(TopLevelClass.NestedNonStatic.class.getName()), //
-                                classInfo.get(TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.class.getName()), //
-                                classInfo.get(TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree.class.getName()))));
+                                classInfo.get(TopLevelClass.class.getName()))));
     }
 
     @Test

@@ -54,10 +54,10 @@ class InnerClassFieldValueCodeGenerator implements EncapsulatingClassCodeGenerat
         Objects.requireNonNull(builderMetadata);
         final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         final ClassName fieldValue = builderClassName.nestedClass(FieldValue.CLASS_NAME);
-        final List<FieldSpec> fields = builderMetadata.getBuiltType().getSetters() //
+        final List<FieldSpec> fields = builderMetadata.getBuiltType().getWriteAccessors() //
                 .stream() //
-                .map(setter -> FieldSpec //
-                        .builder(typeNameGenerator.generateTypeNameForParam(setter), setter.getParamName()) //
+                .map(accessor -> FieldSpec //
+                        .builder(typeNameGenerator.generateTypeName(accessor.getPropertyType()), accessor.getPropertyName()) //
                         .build()) //
                 .collect(Collectors.toList());
         return EncapsulatingClassSpec.builder() //

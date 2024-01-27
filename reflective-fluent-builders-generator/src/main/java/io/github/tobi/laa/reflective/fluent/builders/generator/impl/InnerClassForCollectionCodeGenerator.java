@@ -12,9 +12,10 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionCla
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.CollectionInitializerCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
+import io.github.tobi.laa.reflective.fluent.builders.model.Adder;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.CollectionSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -48,62 +49,80 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     private final List<CollectionInitializerCodeGenerator> initializerGenerators;
 
     @Override
-    public boolean isApplicable(final Setter setter) {
-        Objects.requireNonNull(setter);
-        return setter instanceof CollectionSetter //
-                && initializerGenerators.stream().anyMatch(gen -> gen.isApplicable((CollectionSetter) setter));
-    }
-
-    @Override
-    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter) {
-        Objects.requireNonNull(builderMetadata);
-        Objects.requireNonNull(setter);
-        if (setter instanceof CollectionSetter) {
-            final CollectionSetter collectionSetter = (CollectionSetter) setter;
-            return generate(builderMetadata, collectionSetter);
+    public boolean isApplicable(final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(writeAccessor);
+        if (writeAccessor.getPropertyType() instanceof CollectionType && (!(writeAccessor instanceof Adder))) {
+            final CollectionType collectionType = (CollectionType) writeAccessor.getPropertyType();
+            return initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(collectionType));
         } else {
-            throw new CodeGenerationException("Generation of inner collection class for " + setter + " is not supported.");
+            return false;
         }
     }
 
-    private CollectionClassSpec generate(final BuilderMetadata builderMetadata, final CollectionSetter setter) {
-        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final ClassName className = builderClassName.nestedClass("Collection" + capitalize(setter.getParamName()));
-        return CollectionClassSpec.builder() //
-                .getter(MethodSpec //
-                        .methodBuilder(setter.getParamName()) //
-                        .addModifiers(Modifier.PUBLIC) //
-                        .returns(className) //
-                        .addStatement("return new $T()", className) //
-                        .build()) //
-                .innerClass(TypeSpec //
-                        .classBuilder(className) //
-                        .addModifiers(Modifier.PUBLIC) //
-                        .addMethod(MethodSpec.methodBuilder("add") //
-                                .addModifiers(Modifier.PUBLIC) //
-                                .addParameter(typeNameGenerator.generateTypeNameForParam(setter.getParamTypeArg()), "item", FINAL) //
-                                .returns(className) //
-                                .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName()) //
-                                .addStatement(CodeBlock.builder()
-                                        .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, setter.getParamName())
-                                        .add(initializerGenerators //
-                                                .stream() //
-                                                .filter(gen -> gen.isApplicable(setter)) //
-                                                .map(gen -> gen.generateCollectionInitializer(setter)) //
-                                                .findFirst() //
-                                                .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + setter + '.'))) //
-                                        .build()) //
-                                .endControlFlow() //
-                                .addStatement("$T.this.$L.$L.add($L)", builderClassName, FieldValue.FIELD_NAME, setter.getParamName(), "item") //
-                                .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, setter.getParamName(), true) //
-                                .addStatement("return this") //
-                                .build()) //
-                        .addMethod(MethodSpec.methodBuilder("and") //
-                                .addModifiers(Modifier.PUBLIC) //
-                                .returns(builderClassName) //
-                                .addStatement("return $T.this", builderClassName) //
-                                .build()) //
-                        .build()) //
-                .build();
+    @Override
+    public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
+        Objects.requireNonNull(builderMetadata);
+        Objects.requireNonNull(writeAccessor);
+        if (isApplicable(writeAccessor)) {
+            final CollectionType type = (CollectionType) writeAccessor.getPropertyType();
+            final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+            final ClassName className = builderClassName.nestedClass("Collection" + capitalize(writeAccessor.getPropertyName()));
+            return CollectionClassSpec.builder() //
+                    .getter(MethodSpec //
+                            .methodBuilder(writeAccessor.getPropertyName()) //
+                            .addJavadoc(
+                                    "Returns an inner builder for the collection property {@code $L} for chained calls of adding items to it.\n",
+                                    writeAccessor.getPropertyName()) //
+                            .addJavadoc("Can be used like follows:\n") //
+                            .addJavadoc("<pre>\n") //
+                            .addJavadoc("builder.$L()\n", writeAccessor.getPropertyName()) //
+                            .addJavadoc("       .add(item1)\n") //
+                            .addJavadoc("       .add(item2)\n") //
+                            .addJavadoc("       .and()\n") //
+                            .addJavadoc("       .build()\n") //
+                            .addJavadoc("</pre>\n") //
+                            .addJavadoc("@return The inner builder for the collection property {@code $L}.\n", writeAccessor.getPropertyName()) //
+                            .addModifiers(Modifier.PUBLIC) //
+                            .returns(className) //
+                            .addStatement("return new $T()", className) //
+                            .build()) //
+                    .innerClass(TypeSpec //
+                            .classBuilder(className) //
+                            .addModifiers(Modifier.PUBLIC) //
+                            .addMethod(MethodSpec.methodBuilder("add") //
+                                    .addJavadoc("Adds an item to the collection property {@code $L}.\n", writeAccessor.getPropertyName()) //
+                                    .addJavadoc("@param item The item to add to the collection {@code $L}.\n", writeAccessor.getPropertyName()) //
+                                    .addJavadoc("@return This builder for chained calls.\n") //
+                                    .addModifiers(Modifier.PUBLIC) //
+                                    .addParameter(typeNameGenerator.generateTypeName(type.getTypeArg()), "item", FINAL) //
+                                    .returns(className) //
+                                    .beginControlFlow("if ($T.this.$L.$L == null)", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName()) //
+                                    .addStatement(CodeBlock.builder()
+                                            .add("$T.this.$L.$L = ", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName())
+                                            .add(initializerGenerators //
+                                                    .stream() //
+                                                    .filter(gen -> gen.isApplicable(type)) //
+                                                    .map(gen -> gen.generateCollectionInitializer(type)) //
+                                                    .findFirst() //
+                                                    .orElseThrow(() -> new CodeGenerationException("Could not generate initializer for " + type + '.'))) //
+                                            .build()) //
+                                    .endControlFlow() //
+                                    .addStatement("$T.this.$L.$L.add($L)", builderClassName, FieldValue.FIELD_NAME, writeAccessor.getPropertyName(), "item") //
+                                    .addStatement("$T.this.$L.$L = $L", builderClassName, CallSetterFor.FIELD_NAME, writeAccessor.getPropertyName(), true) //
+                                    .addStatement("return this") //
+                                    .build()) //
+                            .addMethod(MethodSpec.methodBuilder("and") //
+                                    .addJavadoc("Returns the builder for the parent object.\n") //
+                                    .addJavadoc("@return The builder for the parent object.\n") //
+                                    .addModifiers(Modifier.PUBLIC) //
+                                    .returns(builderClassName) //
+                                    .addStatement("return $T.this", builderClassName) //
+                                    .build()) //
+                            .build()) //
+                    .build();
+        } else {
+            throw new CodeGenerationException("Generation of inner collection class for " + writeAccessor + " is not supported.");
+        }
     }
+
 }

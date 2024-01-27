@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.props.api;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.BuilderMetadataService;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService;
-import io.github.tobi.laa.reflective.fluent.builders.service.api.SetterService;
+import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -48,7 +48,7 @@ public interface BuildersProperties {
      * </p>
      *
      * @return The prefix used for identifying setter methods via reflection when analyzing classes.
-     * @see SetterService
+     * @see WriteAccessorService
      */
     String getSetterPrefix();
 
@@ -59,9 +59,24 @@ public interface BuildersProperties {
      * </p>
      *
      * @return The prefix used for identifying getter methods via reflection when analyzing classes.
-     * @see SetterService
+     * @see WriteAccessorService
      */
     String getGetterPrefix();
+
+    /**
+     * <p>
+     * The pattern used for identifying adder methods via reflection when analyzing classes.
+     * This needs to be a valid regular expression with the first group being the name of the property.
+     * The default value is:
+     * <pre>
+     * {@code add(.+)}
+     * </pre>
+     * </p>
+     *
+     * @return The pattern used for identifying adder methods via reflection when analyzing classes.
+     * @see WriteAccessorService
+     */
+    String getAdderPattern();
 
     /**
      * <p>
@@ -71,9 +86,31 @@ public interface BuildersProperties {
      * </p>
      *
      * @return Whether to support using a get-and-add paradigm in generated builders.
-     * @see SetterService
+     * @see WriteAccessorService
      */
     boolean isGetAndAddEnabled();
+
+    /**
+     * <p>
+     * If this is set to {@code true}, the generated builders will use direct field access if possible and if no setter
+     * is available.
+     * </p>
+     *
+     * @return Whether to support direct field access in generated builders.
+     * @see WriteAccessorService
+     */
+    boolean isDirectFieldAccessEnabled();
+
+    /**
+     * <p>
+     * If this is set to {@code true}, the generated builders will use adder methods. Adder methods will take precedence
+     * over setters if both are available.
+     * </p>
+     *
+     * @return Whether to support adder methods in generated builders.
+     * @see WriteAccessorService
+     */
+    boolean isAddersEnabled();
 
     /**
      * <p>

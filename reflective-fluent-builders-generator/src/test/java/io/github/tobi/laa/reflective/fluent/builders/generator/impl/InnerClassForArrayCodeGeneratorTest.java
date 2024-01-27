@@ -65,19 +65,17 @@ class InnerClassForArrayCodeGeneratorTest {
 
     private static Stream<Setter> testIsApplicableTrue() {
         return Stream.of( //
-                ArraySetter.builder() //
+                Setter.builder() //
                         .methodName("setFloats") //
-                        .paramName("floats") //
-                        .paramType(float[].class) //
-                        .paramComponentType(float.class) //
+                        .propertyName("floats") //
+                        .propertyType(new ArrayType(float[].class, float.class)) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build(), //
-                ArraySetter.builder() //
+                Setter.builder() //
                         .methodName("setStrings") //
-                        .paramName("strings") //
-                        .paramType(String[].class) //
-                        .paramComponentType(String.class) //
+                        .propertyName("strings") //
+                        .propertyType(new ArrayType(String[].class, String.class)) //
                         .visibility(Visibility.PRIVATE) //
                         .declaringClass(ClassWithCollections.class) //
                         .build());
@@ -121,11 +119,10 @@ class InnerClassForArrayCodeGeneratorTest {
                         null), //
                 Arguments.of( //
                         null, //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyName("floats") //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -140,7 +137,7 @@ class InnerClassForArrayCodeGeneratorTest {
         assertThatThrownBy(generate) //
                 .isInstanceOf(CodeGenerationException.class) //
                 .hasMessageMatching("Generation of inner array class for .+ is not supported.") //
-                .hasMessageContaining(setter.getParamType().toString());
+                .hasMessageContaining(setter.getPropertyType().toString());
         verifyNoInteractions(builderClassNameGenerator);
     }
 
@@ -155,10 +152,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        SimpleSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setAnInt") //
-                                .paramName("anInt") //
-                                .paramType(int.class) //
+                                .propertyName("anInt") //
+                                .propertyType(new SimpleType(int.class)) //
                                 .visibility(Visibility.PUBLIC) //
                                 .declaringClass(SimpleClass.class) //
                                 .build()), //
@@ -171,11 +168,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        CollectionSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setDeque") //
-                                .paramName("deque") //
-                                .paramType(Deque.class) //
-                                .paramTypeArg(TypeUtils.wildcardType().build()) //
+                                .propertyName("deque") //
+                                .propertyType(new CollectionType(Deque.class, TypeUtils.wildcardType().build())) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()), //
@@ -188,12 +184,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        MapSetter.builder() //
+                        Setter.builder() //
                                 .methodName("setMap") //
-                                .paramName("map") //
-                                .paramType(Map.class) //
-                                .keyType(String.class) //
-                                .valueType(Object.class) //
+                                .propertyName("map") //
+                                .propertyType(new MapType(Map.class, String.class, Object.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build()));
@@ -225,16 +219,27 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setFloats") //
-                                .paramName("floats") //
-                                .paramType(float[].class) //
-                                .paramComponentType(float.class) //
+                                .propertyName("floats") //
+                                .propertyType(new ArrayType(float[].class, float.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.ArrayFloats floats(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the array property {@code floats} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.floats()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the array property {@code floats}.\n" +
+                                        " */\n" +
+                                        "public %1$s.ArrayFloats floats(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.ArrayFloats();\n" +
                                         "}\n",
@@ -243,6 +248,11 @@ class InnerClassForArrayCodeGeneratorTest {
                                 "public class ArrayFloats {\n" +
                                         "  private java.util.List<java.lang.Float> list;\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the array property {@code floats}.\n" +
+                                        "   * @param item The item to add to the array {@code floats}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.ArrayFloats add(\n" +
                                         "      final float item) {\n" +
                                         "    if (this.list == null) {\n" +
@@ -253,6 +263,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    if (this.list != null) {\n" +
@@ -274,16 +288,27 @@ class InnerClassForArrayCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        ArraySetter.builder() //
+                        Setter.builder() //
                                 .methodName("setStrings") //
-                                .paramName("strings") //
-                                .paramType(String[].class) //
-                                .paramComponentType(String.class) //
+                                .propertyName("strings") //
+                                .propertyType(new ArrayType(String[].class, String.class)) //
                                 .visibility(Visibility.PRIVATE) //
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.ArrayStrings strings(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the array property {@code strings} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.strings()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the array property {@code strings}.\n" +
+                                        " */\n" +
+                                        "public %1$s.ArrayStrings strings(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.ArrayStrings();\n" +
                                         "}\n",
@@ -292,6 +317,11 @@ class InnerClassForArrayCodeGeneratorTest {
                                 "public class ArrayStrings {\n" +
                                         "  private java.util.List<java.lang.String> list;\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the array property {@code strings}.\n" +
+                                        "   * @param item The item to add to the array {@code strings}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.ArrayStrings add(\n" +
                                         "      final java.lang.String item) {\n" +
                                         "    if (this.list == null) {\n" +
@@ -302,6 +332,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    if (this.list != null) {\n" +

@@ -1,13 +1,19 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import io.github.classgraph.ClassInfo;
-import lombok.Data;
-import lombok.Singular;
+import lombok.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.IntSupplier;
+import java.util.stream.Stream;
+
+import static com.google.common.collect.ImmutableSortedSet.toImmutableSortedSet;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Objects.compare;
 
 /**
  * <p>
@@ -16,7 +22,7 @@ import java.util.SortedSet;
  */
 @lombok.Builder
 @Data
-public class BuilderMetadata {
+public class BuilderMetadata implements Comparable<BuilderMetadata> {
 
     @lombok.NonNull
     private final String packageName;
@@ -26,6 +32,73 @@ public class BuilderMetadata {
 
     @lombok.NonNull
     private final BuiltType builtType;
+
+    /**
+     * <p>
+     * The types of exceptions that can be thrown by the builder's {@code build} method. If no exceptions can be thrown,
+     * this set is empty. The exceptions contained are the condensed exceptions of all {@link WriteAccessor}s.
+     * </p>
+     */
+    @lombok.NonNull
+    @Singular
+    private final Set<Class<? extends Throwable>> exceptionTypes;
+
+    /**
+     * <p>
+     * Builders that will be nested within this builder. Nested builders correspond to nested static classes within the
+     * built type.
+     * </p>
+     */
+    @lombok.NonNull
+    @Singular
+    private final SortedSet<BuilderMetadata> nestedBuilders;
+
+    @With
+    @EqualsAndHashCode.Exclude
+    private final BuilderMetadata enclosingBuilder;
+
+    BuilderMetadata(
+            @NonNull final String packageName,
+            @NonNull final String name,
+            @NonNull final BuiltType builtType,
+            @NonNull final Set<Class<? extends Throwable>> exceptionTypes,
+            @NonNull final SortedSet<BuilderMetadata> nestedBuilders,
+            final BuilderMetadata enclosingBuilder) {
+        this.packageName = packageName;
+        this.name = name;
+        this.builtType = builtType;
+        this.exceptionTypes = exceptionTypes;
+        this.nestedBuilders = nestedBuilders.stream()
+                .map(nestedBuilder -> nestedBuilder.withEnclosingBuilder(this))
+                .collect(toImmutableSortedSet(naturalOrder()));
+        this.enclosingBuilder = enclosingBuilder;
+    }
+
+    /**
+     * <p>
+     * The builder that encloses this builder. If this builder is a top-level builder, this field is {@code null}.
+     * </p>
+     *
+     * @return The builder that encloses this builder or {@link Optional#empty()} if this builder is a top-level builder.
+     */
+    public Optional<BuilderMetadata> getEnclosingBuilder() {
+        return Optional.ofNullable(enclosingBuilder);
+    }
+
+    @Override
+    public int compareTo(@NonNull final BuilderMetadata other) {
+        if (equals(other)) {
+            return 0;
+        } else {
+            return Stream.<IntSupplier>of( //
+                            () -> compare(packageName, other.packageName, naturalOrder()), //
+                            () -> compare(name, other.name, naturalOrder())) //
+                    .map(IntSupplier::getAsInt) //
+                    .filter(i -> i != 0) //
+                    .findFirst() //
+                    .orElse(1);
+        }
+    }
 
     @lombok.Builder
     @Data
@@ -66,6 +139,6 @@ public class BuilderMetadata {
 
         @lombok.NonNull
         @Singular
-        private final SortedSet<Setter> setters;
+        private final SortedSet<WriteAccessor> writeAccessors;
     }
 }

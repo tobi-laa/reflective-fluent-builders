@@ -2,9 +2,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
-import io.github.tobi.laa.reflective.fluent.builders.model.MapSetter;
-import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
-import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
+import io.github.tobi.laa.reflective.fluent.builders.model.MapType;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -35,39 +33,31 @@ class EnumMapInitializerCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableTrue(final MapSetter mapSetter) {
+    void testIsApplicableTrue(final MapType mapType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(mapSetter);
+        final boolean isApplicable = generator.isApplicable(mapType);
         // Assert
         assertTrue(isApplicable);
     }
 
-    private static Stream<MapSetter> testIsApplicableTrue() {
-        return testGenerateMapInitializer().map(args -> args.get()[0]).map(MapSetter.class::cast);
+    private static Stream<MapType> testIsApplicableTrue() {
+        return testGenerateMapInitializer().map(args -> args.get()[0]).map(MapType.class::cast);
     }
 
     @ParameterizedTest
     @MethodSource
-    void testIsApplicableFalse(final MapSetter mapSetter) {
+    void testIsApplicableFalse(final MapType mapType) {
         // Act
-        final boolean isApplicable = generator.isApplicable(mapSetter);
+        final boolean isApplicable = generator.isApplicable(mapType);
         // Assert
         assertFalse(isApplicable);
     }
 
-    private static Stream<MapSetter> testIsApplicableFalse() {
+    private static Stream<MapType> testIsApplicableFalse() {
         return Stream.concat(
                         CollectionsApiInitializerCodeGenerator.SUPPORTED_MAPS.stream(),
                         Stream.of(Set.class, List.class, CollectionsApiInitializerCodeGeneratorTest.MyList.class))
-                .map(type -> MapSetter.builder() //
-                        .paramName("") //
-                        .paramType(type) //
-                        .keyType(Object.class) //
-                        .valueType(Object.class)
-                        .methodName("") //
-                        .visibility(Visibility.PRIVATE) //
-                        .declaringClass(ClassWithCollections.class) //
-                        .build());
+                .map(type -> new MapType(type, Object.class, Object.class));
     }
 
     @Test
@@ -80,26 +70,26 @@ class EnumMapInitializerCodeGeneratorTest {
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateMapInitializerCodeGenerationException(final MapSetter mapSetter) {
+    void testGenerateMapInitializerCodeGenerationException(final MapType mapType) {
         // Act
-        final ThrowableAssert.ThrowingCallable generateMapInitializer = () -> generator.generateMapInitializer(mapSetter);
+        final ThrowableAssert.ThrowingCallable generateMapInitializer = () -> generator.generateMapInitializer(mapType);
         // Assert
         assertThatThrownBy(generateMapInitializer)
                 .isInstanceOf(CodeGenerationException.class)
                 .message()
                 .matches("Generation of initializing code blocks for .+ is not supported.")
-                .contains(mapSetter.getParamType().getTypeName());
+                .contains(mapType.getType().getTypeName());
     }
 
-    private static Stream<MapSetter> testGenerateMapInitializerCodeGenerationException() {
+    private static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
         return testIsApplicableFalse();
     }
 
     @ParameterizedTest
     @MethodSource
-    void testGenerateMapInitializer(final MapSetter mapSetter, final CodeBlock expected) {
+    void testGenerateMapInitializer(final MapType mapType, final CodeBlock expected) {
         // Act
-        final CodeBlock actual = generator.generateMapInitializer(mapSetter);
+        final CodeBlock actual = generator.generateMapInitializer(mapType);
         // Assert
         assertThat(actual).hasToString(expected.toString());
     }
@@ -107,26 +97,10 @@ class EnumMapInitializerCodeGeneratorTest {
     private static Stream<Arguments> testGenerateMapInitializer() {
         return Stream.of(
                 Arguments.of(
-                        MapSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumMap.class) //
-                                .keyType(EnumA.class) //
-                                .valueType(Object.class) //
-                                .methodName("") //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(),
+                        new MapType(EnumMap.class, EnumA.class, Object.class),
                         CodeBlock.builder().add("new java.util.EnumMap<>(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumMapInitializerCodeGeneratorTest.EnumA.class)").build()),
                 Arguments.of(
-                        MapSetter.builder() //
-                                .paramName("") //
-                                .paramType(EnumMap.class) //
-                                .keyType(EnumB.class) //
-                                .valueType(Object.class) //
-                                .methodName("") //
-                                .visibility(Visibility.PRIVATE) //
-                                .declaringClass(ClassWithCollections.class) //
-                                .build(),
+                        new MapType(EnumMap.class, EnumB.class, Object.class),
                         CodeBlock.builder().add("new java.util.EnumMap<>(io.github.tobi.laa.reflective.fluent.builders.generator.impl.EnumMapInitializerCodeGeneratorTest.EnumB.class)").build()));
     }
 

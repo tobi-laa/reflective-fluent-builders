@@ -30,6 +30,13 @@ public final class BuilderConstants {
 
     /**
      * <p>
+     * Name of the variable which will hold the object being built by the {@code build()}-method.
+     * </p>
+     */
+    public static final String OBJECT_TO_BUILD_VARIABLE_NAME = "objectToBuild";
+
+    /**
+     * <p>
      * Name of the marker field which is solely used to be able to detect generated builders via reflection at a later stage.
      * </p>
      */

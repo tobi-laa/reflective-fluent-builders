@@ -2,7 +2,6 @@ package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassGraphException;
 import io.github.classgraph.ClassInfo;
@@ -24,7 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Predicates.not;
 
@@ -86,22 +85,11 @@ class ClassServiceImpl implements ClassService {
             return scanResult.getAllClasses()
                     .stream()
                     .map(this::loadEagerly)
-                    .flatMap(clazz -> Stream.concat(
-                            Stream.of(clazz),
-                            collectStaticInnerClassesRecursively(clazz).stream()))
-                    .collect(ImmutableSet.toImmutableSet());
+                    .filter(not(ClassInfo::isInnerClass))
+                    .collect(Collectors.toUnmodifiableSet());
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
-    }
-
-    private Set<ClassInfo> collectStaticInnerClassesRecursively(final ClassInfo clazz) {
-        final Set<ClassInfo> innerStaticClasses = new HashSet<>();
-        for (final ClassInfo innerClass : clazz.getInnerClasses()) {
-            innerStaticClasses.add(innerClass);
-            innerStaticClasses.addAll(collectStaticInnerClassesRecursively(innerClass));
-        }
-        return innerStaticClasses;
     }
 
     @Override
@@ -154,6 +142,7 @@ class ClassServiceImpl implements ClassService {
         classInfo.loadClass();
         classInfo.getSuperclasses().loadClasses();
         classInfo.getInterfaces().loadClasses();
+        classInfo.getInnerClasses().loadClasses();
         return classInfo;
     }
 

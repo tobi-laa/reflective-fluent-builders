@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.generator.api;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.Setter;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
 /**
  * <p>
@@ -15,15 +15,15 @@ public interface CollectionClassCodeGenerator {
 
     /**
      * <p>
-     * Returns {@code true} if this generator is applicable for {@code setter} (meaning it can be used for generating an
-     * inner class) and {@code false} otherwise.
+     * Returns {@code true} if this generator is applicable for {@code writeAccessor} (meaning it can be used for
+     * generating an inner class) and {@code false} otherwise.
      * </p>
      *
-     * @param setter The setter for which to check whether this generator is applicable. Must not be
-     *               {@code null}.
-     * @return {@code true} if this generator is applicable for {@code setter} and {@code false} otherwise.
+     * @param writeAccessor The write accessor for which to check whether this generator is applicable. Must not be
+     *                      {@code null}.
+     * @return {@code true} if this generator is applicable for {@code writeAccessor} and {@code false} otherwise.
      */
-    boolean isApplicable(final Setter setter);
+    boolean isApplicable(final WriteAccessor writeAccessor);
 
     /**
      * <p>
@@ -38,11 +38,11 @@ public interface CollectionClassCodeGenerator {
      *
      * @param builderMetadata The metadata of the builder for which to generate said inner class. Must not be
      *                        {@code null}.
-     * @param setter          The setter for which to generate said inner class. Must not be {@code null}.
+     * @param writeAccessor   The write accessor for which to generate said inner class. Must not be {@code null}.
      * @return An inner class which provides convenience methods for fluently adding elements to a collection, a map or
      * an array
      * @throws CodeGenerationException If called for a setter for which this generator is not
-     *                                 {@link #isApplicable(Setter)}.
+     *                                 {@link #isApplicable(WriteAccessor)}.
      */
-    CollectionClassSpec generate(final BuilderMetadata builderMetadata, final Setter setter);
+    CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor);
 }

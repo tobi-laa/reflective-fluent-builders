@@ -4,6 +4,7 @@ import com.soebes.itf.jupiter.extension.*;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.Complex;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.custom.naming.CustomNaming;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.full.Full;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.jaxb.Jaxb;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.nested.NestedMarker;
@@ -13,6 +14,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleCl
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.throwing.ThrowsThrowable;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.Visibility;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
@@ -106,6 +108,16 @@ class GenerateBuildersMojoIT {
                     .has(expectedBuilders(Jaxb.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
+
+        @MavenTest
+        void packageThrowing(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(expectedBuilders(ThrowsThrowable.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
+        }
     }
 
     @Nested
@@ -128,7 +140,7 @@ class GenerateBuildersMojoIT {
     class WithDebugLogging {
 
         @MavenTest
-        @MavenDebug
+        @MavenVerbose
         void packageSimpleWithDebugLogging(final MavenExecutionResult result) {
             assertThat(result).isSuccessful();
             final Path targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
@@ -159,7 +171,10 @@ class GenerateBuildersMojoIT {
                                     "builderSuffix=Builder, " +
                                     "setterPrefix=set, " +
                                     "getterPrefix=get, " +
+                                    "adderPattern=add(.+), " +
                                     "getAndAddEnabled=true, " +
+                                    "directFieldAccessEnabled=true, " +
+                                    "addersEnabled=true, " +
                                     "hierarchyCollection=MojoParams.HierarchyCollection(excludes=null), " +
                                     "includes=[Include(super=AbstractIncludeExclude(packageName=io.github.tobi.laa.reflective.fluent.builders.test.models.simple, className=null))], " +
                                     "excludes=null, " +
@@ -201,7 +216,7 @@ class GenerateBuildersMojoIT {
         }
 
         @MavenTest
-        @MavenDebug
+        @MavenVerbose
         void packageSimplePhaseGenerateTestSources(final MavenExecutionResult result) {
             assertThat(result) //
                     .isSuccessful() //
@@ -214,7 +229,7 @@ class GenerateBuildersMojoIT {
         }
 
         @MavenTest
-        @MavenDebug
+        @MavenVerbose
         void simpleClassOnly(final MavenExecutionResult result) {
             assertThat(result) //
                     .isSuccessful() //
@@ -251,6 +266,17 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(expectedBuilder(builderClass, false, expectedBuildersRootDir));
+            assertThat(result).out().warn().isEmpty();
+        }
+
+        @MavenTest
+        void packageCustomNamingWithCustomNamingConfig(final MavenExecutionResult result) {
+            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "custom-naming");
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(expectedBuilders(CustomNaming.class.getPackage(), false, expectedBuildersRootDir));
             assertThat(result).out().warn().isEmpty();
         }
     }
@@ -336,6 +362,17 @@ class GenerateBuildersMojoIT {
                     .error() //
                     .contains( //
                             "Invalid <exclude> tag. Exactly one of the fields packageName, packageRegex, className or classRegex needs to be initialized.", //
+                            "-> [Help 1]");
+        }
+
+        @MavenTest
+        void invalidAdderPattern(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isFailure() //
+                    .out() //
+                    .error() //
+                    .contains( //
+                            "The adder pattern must contain at least one group.", //
                             "-> [Help 1]");
         }
     }
