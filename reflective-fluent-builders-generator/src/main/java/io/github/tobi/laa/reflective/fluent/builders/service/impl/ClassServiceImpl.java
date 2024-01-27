@@ -23,9 +23,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 /**
  * <p>
@@ -86,7 +86,7 @@ class ClassServiceImpl implements ClassService {
                     .stream()
                     .map(this::loadEagerly)
                     .filter(not(ClassInfo::isInnerClass))
-                    .collect(Collectors.toUnmodifiableSet());
+                    .collect(toImmutableSet());
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }

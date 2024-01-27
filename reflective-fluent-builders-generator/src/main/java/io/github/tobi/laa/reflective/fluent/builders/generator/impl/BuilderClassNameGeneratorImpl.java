@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <p>
@@ -22,9 +23,9 @@ class BuilderClassNameGeneratorImpl implements BuilderClassNameGenerator {
     @Override
     public ClassName generateClassName(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var builderHierarchy = enclosingBuilderHierarchy(builderMetadata);
-        var currentBuilder = builderHierarchy.pop();
-        var className = ClassName.get(currentBuilder.getPackageName(), currentBuilder.getName());
+        final Deque<BuilderMetadata> builderHierarchy = enclosingBuilderHierarchy(builderMetadata);
+        BuilderMetadata currentBuilder = builderHierarchy.pop();
+        ClassName className = ClassName.get(currentBuilder.getPackageName(), currentBuilder.getName());
         while (!builderHierarchy.isEmpty()) {
             currentBuilder = builderHierarchy.pop();
             className = className.nestedClass(currentBuilder.getName());
@@ -35,7 +36,7 @@ class BuilderClassNameGeneratorImpl implements BuilderClassNameGenerator {
     private Deque<BuilderMetadata> enclosingBuilderHierarchy(final BuilderMetadata builderMetadata) {
         final Deque<BuilderMetadata> builderHierarchy = new ArrayDeque<>();
         builderHierarchy.push(builderMetadata);
-        var currentEnclosingBuilder = builderMetadata.getEnclosingBuilder();
+        Optional<BuilderMetadata> currentEnclosingBuilder = builderMetadata.getEnclosingBuilder();
         while (currentEnclosingBuilder.isPresent()) {
             builderHierarchy.push(currentEnclosingBuilder.get());
             currentEnclosingBuilder = currentEnclosingBuilder.get().getEnclosingBuilder();

@@ -282,7 +282,7 @@ class InnerClassForMapCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        final var mapType = (MapType) setter.getPropertyType();
+        final MapType mapType = (MapType) setter.getPropertyType();
         verify(typeNameGenerator).generateTypeName(mapType.getKeyType());
         verify(typeNameGenerator).generateTypeName(mapType.getValueType());
         verify(initializerGeneratorA).generateMapInitializer(mapType);

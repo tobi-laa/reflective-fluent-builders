@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
+import com.squareup.javapoet.CodeBlock;
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
@@ -114,7 +115,7 @@ class AdderBuildMethodStepCodeGeneratorTest {
                 .build();
         doReturn(true).when(writeAccessorService).isAdder(writeAccessor);
         // Act
-        final var expected = generator.generate(writeAccessor);
+        final CodeBlock expected = generator.generate(writeAccessor);
         // Assert
         assertThat(expected).hasToString("if (this.callSetterFor.items && this.fieldValue.items != null) {\n" +
                 "  this.fieldValue.items.forEach(objectToBuild::addItem);\n" +

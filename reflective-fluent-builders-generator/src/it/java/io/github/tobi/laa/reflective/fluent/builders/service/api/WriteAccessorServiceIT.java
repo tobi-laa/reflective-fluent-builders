@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.api;
 
+import com.google.common.collect.ImmutableSet;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
@@ -157,20 +158,20 @@ class WriteAccessorServiceIT {
 
     @SneakyThrows
     private static Stream<Arguments> testGatherAllSetters() {
-        final var setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
+        final Type setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
         return Stream.of( //
                 Arguments.of("set", null, false, false, true, classInfo.get(SimpleClass.class), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setAnInt").propertyName("anInt").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 Setter.builder().methodName("setAString").propertyName("aString").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 Setter.builder().methodName("setBooleanField").propertyName("booleanField").propertyType(new SimpleType(boolean.class)).visibility(PUBLIC).declaringClass(SimpleClass.class).build(), //
                                 Setter.builder().methodName("setSetClass").propertyName("setClass").propertyType(new SimpleType(parameterize(Class.class, wildcardType().withUpperBounds(Object.class).build()))).visibility(PUBLIC).declaringClass(SimpleClass.class).build())), //
                 Arguments.of("", null, false, false, true, classInfo.get(SimpleClassNoSetPrefix.class), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("anInt").propertyName("anInt").propertyType(new SimpleType(int.class)).visibility(PACKAGE_PRIVATE).declaringClass(SimpleClassNoSetPrefix.class).build(), //
                                 Setter.builder().methodName("aString").propertyName("aString").propertyType(new SimpleType(String.class)).visibility(PACKAGE_PRIVATE).declaringClass(SimpleClassNoSetPrefix.class).build())), //
                 Arguments.of("set", "get", false, false, true, classInfo.get(ClassWithCollections.class), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setInts").propertyName("ints").propertyType(new CollectionType(parameterize(Collection.class, Integer.class), Integer.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 Setter.builder().methodName("setList").propertyName("list").propertyType(new CollectionType(List.class, Object.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 Setter.builder().methodName("setSet").propertyName("set").propertyType(new CollectionType(setOfList, List.class)).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
@@ -184,30 +185,30 @@ class WriteAccessorServiceIT {
                                 Setter.builder().methodName("setListWithTwoParams").propertyName("listWithTwoParams").propertyType(new CollectionType(parameterize(ListWithTwoParams.class, String.class, Integer.class), parameterize(Map.class, String.class, Integer.class))).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build(), //
                                 Setter.builder().methodName("setMapWithThreeParams").propertyName("mapWithThreeParams").propertyType(new MapType(parameterize(MapWithThreeParams.class, String.class, Integer.class, Boolean.class), String.class, parameterize(Map.class, Integer.class, Boolean.class))).visibility(PUBLIC).declaringClass(ClassWithCollections.class).build())), //
                 Arguments.of("set", "get", false, false, true, classInfo.get(PetJaxb.class), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setFullName").propertyName("fullName").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setOwner").propertyName("owner").propertyType(new SimpleType(PersonJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build())),
                 Arguments.of("set", "get", true, false, true, classInfo.get(PetJaxb.class), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setFullName").propertyName("fullName").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Getter.builder().methodName("getSiblings").propertyName("siblings").propertyType(new CollectionType(parameterize(List.class, PetJaxb.class), PetJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setOwner").propertyName("owner").propertyType(new SimpleType(PersonJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build())),
                 Arguments.of("set", "myPrefix", true, false, true, classInfo.get(PetJaxb.class), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setFullName").propertyName("fullName").propertyType(new SimpleType(String.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(), //
                                 Setter.builder().methodName("setOwner").propertyName("owner").propertyType(new SimpleType(PersonJaxb.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build())), //
                 Arguments.of("set", "get", true, false, true, classInfo.get(GetAndAdd.class), //
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setListGetterAndSetter").propertyName("listGetterAndSetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Getter.builder().methodName("getListNoSetter").propertyName("listNoSetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Setter.builder().methodName("setListNoGetter").propertyName("listNoGetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Getter.builder().methodName("getListSetterWrongType").propertyName("listSetterWrongType").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build(), //
                                 Setter.builder().methodName("setListSetterWrongType").propertyName("listSetterWrongType").propertyType(new ArrayType(String[].class, String.class)).visibility(PUBLIC).declaringClass(GetAndAdd.class).build())),
                 Arguments.of("set", "get", true, true, true, classInfo.get(DirectFieldAccess.class), //
-                        Set.<WriteAccessor>of( //
+                        ImmutableSet.<WriteAccessor>of( //
                                 FieldAccessor.builder().propertyName("packagePrivateFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PACKAGE_PRIVATE).declaringClass(DirectFieldAccess.class).build(), //
                                 FieldAccessor.builder().propertyName("protectedFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PROTECTED).declaringClass(DirectFieldAccess.class).build(), //
                                 FieldAccessor.builder().propertyName("publicFieldNoSetter").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(DirectFieldAccess.class).build(), //
@@ -220,7 +221,7 @@ class WriteAccessorServiceIT {
                                 FieldAccessor.builder().propertyName("publicFieldWithPrivateSetter").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(DirectFieldAccess.class).build(),
                                 FieldAccessor.builder().propertyName("publicFinalFieldNoSetter").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).isFinal(true).declaringClass(DirectFieldAccess.class).build())),
                 Arguments.of("set", "get", true, true, true, classInfo.get(WithAdders.class), //
-                        Set.<WriteAccessor>of( //
+                        ImmutableSet.<WriteAccessor>of( //
                                 Adder.builder()
                                         .methodName("addHasAdder")
                                         .propertyName("hasAdders")
@@ -254,7 +255,7 @@ class WriteAccessorServiceIT {
                                         .declaringClass(WithAdders.class) //
                                         .build())),
                 Arguments.of("set", "get", true, true, false, classInfo.get(WithAdders.class), //
-                        Set.<WriteAccessor>of( //
+                        ImmutableSet.<WriteAccessor>of( //
                                 Setter.builder()
                                         .methodName("setHasAdders")
                                         .propertyName("hasAdders")
@@ -310,7 +311,7 @@ class WriteAccessorServiceIT {
         return Stream.of( //
                 Arguments.of(
                         classInfo.get(ClassWithHierarchy.class),
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setOne").propertyName("one").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(ClassWithHierarchy.class).build(), //
                                 Setter.builder().methodName("setTwo").propertyName("two").propertyType(new SimpleType(int.class)).visibility(PACKAGE_PRIVATE).declaringClass(FirstSuperClass.class).build(), //
                                 Setter.builder().methodName("setThree").propertyName("three").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(AnInterface.class).build(), //
@@ -319,7 +320,7 @@ class WriteAccessorServiceIT {
                                 Setter.builder().methodName("setEight").propertyName("eight").propertyType(new SimpleType(int.class)).visibility(PUBLIC).declaringClass(AnotherInterface.class).build())), //
                 Arguments.of(
                         classInfo.get(GenericChild.class),
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setList").propertyName("list").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 Setter.builder().methodName("setMap").propertyName("map").propertyType(new MapType(parameterize(Map.class, typeVariableS(), typeVariableT()), typeVariableS(), typeVariableT())).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 Setter.builder().methodName("setGeneric").propertyName("generic").propertyType(new SimpleType(parameterize(Generic.class, typeVariableT()))).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
@@ -336,7 +337,7 @@ class WriteAccessorServiceIT {
                                         .build())), //
                 Arguments.of(
                         classInfo.get(GenericGrandChild.class),
-                        Set.of( //
+                        ImmutableSet.of( //
                                 Setter.builder().methodName("setList").propertyName("list").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 Setter.builder().methodName("setMap").propertyName("map").propertyType(new MapType(parameterize(Map.class, Long.class, Boolean.class), Long.class, Boolean.class)).visibility(PUBLIC).declaringClass(GenericGrandChild.class).build(), //
                                 Setter.builder().methodName("setGeneric").propertyName("generic").propertyType(new SimpleType(parameterize(Generic.class, Boolean.class))).visibility(PUBLIC).declaringClass(GenericGrandChild.class).build(),
@@ -436,7 +437,7 @@ class WriteAccessorServiceIT {
     }
 
     private static Stream<Arguments> testEquivalentAccessorsNull() {
-        final var writeAccessor = Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build();
+        final Setter writeAccessor = Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build();
         return Stream.of(
                 Arguments.of(null, null),
                 Arguments.of(null, writeAccessor),

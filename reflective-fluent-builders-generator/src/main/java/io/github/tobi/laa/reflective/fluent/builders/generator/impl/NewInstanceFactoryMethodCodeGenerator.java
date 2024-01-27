@@ -33,7 +33,7 @@ class NewInstanceFactoryMethodCodeGenerator implements MethodCodeGenerator {
         Objects.requireNonNull(builderMetadata);
         final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         if (builderMetadata.getBuiltType().isAccessibleNonArgsConstructor()) {
-            final var builtType = builderMetadata.getBuiltType().getType().loadClass();
+            final Class<?> builtType = builderMetadata.getBuiltType().getType().loadClass();
             return Optional.of(MethodSpec.methodBuilder("newInstance")
                     .addJavadoc(
                             "Creates an instance of {@link $T} that will work on a new instance of {@link $T} once {@link #build()} is called.\n",

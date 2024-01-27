@@ -271,7 +271,7 @@ class GenerateBuildersMojoIT {
 
         @MavenTest
         void packageCustomNamingWithCustomNamingConfig(final MavenExecutionResult result) {
-            final var expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "custom-naming");
+            final Path expectedBuildersRootDir = Paths.get("src", "it", "resources", "expected-builders", "custom-naming");
             assertThat(result) //
                     .isSuccessful() //
                     .project() //

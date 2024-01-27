@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -37,7 +38,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
     @SuppressWarnings("unused")
     BuildMethodCodeGeneratorImpl(final Set<BuildMethodStepCodeGenerator> stepCodeGenerators) {
         // to ensure deterministic outputs, sets are sorted on construction
-        final var compareByClassName = comparing(o -> o.getClass().getName());
+        final Comparator<BuildMethodStepCodeGenerator> compareByClassName = comparing(o -> o.getClass().getName());
         this.stepCodeGenerators = copyOf(compareByClassName, stepCodeGenerators);
     }
 
@@ -51,7 +52,7 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
         methodBuilder
                 .addJavadoc("Performs the actual construction of an instance for {@link $T}.\n", clazz)
                 .addJavadoc("@return The constructed instance. Never {@code null}.\n");
-        final var thrownExceptions = getCheckedExceptions(builderMetadata);
+        final SortedSet<Class<? extends Throwable>> thrownExceptions = getCheckedExceptions(builderMetadata);
         thrownExceptions.forEach(methodBuilder::addException);
         thrownExceptions.forEach(e -> methodBuilder.addJavadoc("@throws $T If thrown by an accessor of $T, i.e. a setter, getter or adder.\n", e, clazz));
         methodBuilder.addStatement("final $T $L = this.$L.get()", clazz, OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);

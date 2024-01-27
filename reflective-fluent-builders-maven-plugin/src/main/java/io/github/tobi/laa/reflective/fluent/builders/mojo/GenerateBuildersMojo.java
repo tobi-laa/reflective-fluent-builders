@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
 import com.google.common.collect.Sets;
+import com.squareup.javapoet.JavaFile;
 import io.github.classgraph.ClassInfo;
 import io.github.tobi.laa.reflective.fluent.builders.constants.BuilderConstants;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator;
@@ -75,7 +76,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
         final Set<ClassInfo> classes = collectAndFilterClasses();
         final Set<BuilderMetadata> nonEmptyBuilderMetadata = collectNonEmptyBuilderMetadata(classes);
         createTargetDirectory();
-        final var generatedBuilderFiles = generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
+        final Set<Path> generatedBuilderFiles = generateAndWriteBuildersToTarget(nonEmptyBuilderMetadata);
         deleteOrphanedBuilders(nonEmptyBuilderMetadata);
         refreshBuildContext(generatedBuilderFiles);
         addCompileSourceRoot();
@@ -204,12 +205,12 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     private Set<Path> generateAndWriteBuildersToTarget(final Set<BuilderMetadata> nonEmptyBuilderMetadata) throws MojoFailureException {
         final Set<Path> generatedBuilderFiles = new HashSet<>();
-        for (final var metadata : nonEmptyBuilderMetadata) {
+        for (final BuilderMetadata metadata : nonEmptyBuilderMetadata) {
             if (isGenerationNecessary(metadata)) {
                 generateAndWriteBuilderToTarget(metadata);
                 generatedBuilderFiles.add(resolveBuilderFile(metadata));
             } else {
-                final var className = metadata.getBuiltType().getType().getName();
+                final String className = metadata.getBuiltType().getType().getName();
                 getLog().info("Builder for class " + className + " already exists and is up to date.");
             }
         }
@@ -217,9 +218,9 @@ public class GenerateBuildersMojo extends AbstractMojo {
     }
 
     private void generateAndWriteBuilderToTarget(final BuilderMetadata metadata) throws MojoFailureException {
-        final var className = metadata.getBuiltType().getType().getName();
+        final String className = metadata.getBuiltType().getType().getName();
         getLog().info("Generate builder for class " + className);
-        final var javaFile = javaFileGenerator.generateJavaFile(metadata);
+        final JavaFile javaFile = javaFileGenerator.generateJavaFile(metadata);
         try {
             javaFile.writeTo(params.getTarget());
         } catch (final IOException e) {

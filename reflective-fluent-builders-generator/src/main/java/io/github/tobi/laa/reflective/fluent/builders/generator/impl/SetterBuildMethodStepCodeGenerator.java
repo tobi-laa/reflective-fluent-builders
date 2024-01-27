@@ -41,7 +41,7 @@ class SetterBuildMethodStepCodeGenerator implements BuildMethodStepCodeGenerator
         if (!isApplicable(writeAccessor)) {
             throw new CodeGenerationException("This generator is not applicable for " + writeAccessor);
         } else {
-            final var setter = (Setter) writeAccessor;
+            final Setter setter = (Setter) writeAccessor;
             return CodeBlock.builder()
                     .beginControlFlow("if (this.$L.$L)", BuilderConstants.CallSetterFor.FIELD_NAME, setter.getPropertyName())
                     .addStatement(

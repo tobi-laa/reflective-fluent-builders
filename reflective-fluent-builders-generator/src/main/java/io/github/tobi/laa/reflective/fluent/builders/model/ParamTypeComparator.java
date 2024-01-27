@@ -1,6 +1,7 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Comparator;
 
 /**
@@ -18,8 +19,8 @@ class ParamTypeComparator implements Comparator<PropertyType> {
         } else if (b == null) {
             return 1;
         } else if (a.getType() instanceof ParameterizedType && b.getType() instanceof ParameterizedType) {
-            final var aRawType = ((ParameterizedType) a.getType()).getRawType();
-            final var bRawType = ((ParameterizedType) b.getType()).getRawType();
+            final Type aRawType = ((ParameterizedType) a.getType()).getRawType();
+            final Type bRawType = ((ParameterizedType) b.getType()).getRawType();
             return aRawType.getTypeName().compareTo(bRawType.getTypeName());
         } else {
             return a.getType().getTypeName().compareTo(b.getType().getTypeName());

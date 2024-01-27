@@ -46,7 +46,7 @@ abstract class AbstractMethodAccessor extends AbstractWriteAccessor implements M
         } else if (anObject == null || anObject.getClass() != this.getClass()) {
             return false;
         }
-        final var aSetter = (AbstractMethodAccessor) anObject;
+        final AbstractMethodAccessor aSetter = (AbstractMethodAccessor) anObject;
         return Objects.equals(getMethodName(), aSetter.getMethodName()) && //
                 getPropertyType().equals(aSetter.getPropertyType());
     }

@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -373,19 +374,19 @@ class MavenBuildIT {
             @Values(strings = {"exists.for.test", "exists.for.compile", "does.not.exist"}) final String packageName,
             @Values(strings = {"ExistsForTest.java", "ExistsForCompile.java", "DoesNotExist.java"}) final String sourceFile) {
         // Arrange
-        final var testRoot = tempDir.resolve("testroot");
-        final var testSource = testRoot.resolve("exists").resolve("for").resolve("test").resolve("ExistsForTest.java");
+        final Path testRoot = tempDir.resolve("testroot");
+        final Path testSource = testRoot.resolve("exists").resolve("for").resolve("test").resolve("ExistsForTest.java");
         Files.createDirectories(testSource.getParent());
         Files.createFile(testSource);
-        final var compileRoot = tempDir.resolve("compileroot");
-        final var compileSource = compileRoot.resolve("exists").resolve("for").resolve("compile").resolve("ExistsForCompile.java");
+        final Path compileRoot = tempDir.resolve("compileroot");
+        final Path compileSource = compileRoot.resolve("exists").resolve("for").resolve("compile").resolve("ExistsForCompile.java");
         Files.createDirectories(compileSource.getParent());
         Files.createFile(compileSource);
         mockTestPhase(testPhase);
-        doReturn(List.of(testRoot.toString())).when(mavenProject).getTestCompileSourceRoots();
-        doReturn(List.of(compileRoot.toString())).when(mavenProject).getCompileSourceRoots();
+        doReturn(ImmutableList.of(testRoot.toString())).when(mavenProject).getTestCompileSourceRoots();
+        doReturn(ImmutableList.of(compileRoot.toString())).when(mavenProject).getCompileSourceRoots();
         // Act
-        final var actual = mavenBuild.resolveSourceFile(packageName, Paths.get(sourceFile));
+        final Optional<Path> actual = mavenBuild.resolveSourceFile(packageName, Paths.get(sourceFile));
         // Assert
         if (packageName.contains("compile") && sourceFile.equals("ExistsForCompile.java")
                 || testPhase && packageName.contains("test") && sourceFile.equals("ExistsForTest.java")) {

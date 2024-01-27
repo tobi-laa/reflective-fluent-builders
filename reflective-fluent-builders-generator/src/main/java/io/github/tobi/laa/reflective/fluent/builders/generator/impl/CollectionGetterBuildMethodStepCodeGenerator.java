@@ -41,7 +41,7 @@ class CollectionGetterBuildMethodStepCodeGenerator implements BuildMethodStepCod
         if (!isApplicable(writeAccessor)) {
             throw new CodeGenerationException("This generator is not applicable for " + writeAccessor);
         } else {
-            final var getter = (Getter) writeAccessor;
+            final Getter getter = (Getter) writeAccessor;
             return CodeBlock.builder()
                     .beginControlFlow(
                             "if (this.$1L.$3L && this.$2L.$3L != null)",

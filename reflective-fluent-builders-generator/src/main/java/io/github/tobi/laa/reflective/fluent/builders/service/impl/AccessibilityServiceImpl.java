@@ -69,7 +69,7 @@ class AccessibilityServiceImpl implements AccessibilityService {
     public boolean isAccessibleFrom(final Field field, final String packageName) {
         Objects.requireNonNull(field);
         Objects.requireNonNull(packageName);
-        final var visibility = visibilityService.toVisibility(field.getModifiers());
+        final Visibility visibility = visibilityService.toVisibility(field.getModifiers());
         return isAccessible(field.getDeclaringClass(), visibility, packageName) && //
                 isAccessibleFrom(field.getGenericType(), packageName);
     }

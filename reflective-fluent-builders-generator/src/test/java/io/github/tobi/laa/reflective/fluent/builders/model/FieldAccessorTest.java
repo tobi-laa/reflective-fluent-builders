@@ -22,7 +22,7 @@ class FieldAccessorTest {
     }
 
     private static Stream<Arguments> testEquals() {
-        final var fieldAccessor = FieldAccessor.builder() //
+        final FieldAccessor fieldAccessor = FieldAccessor.builder() //
                 .propertyType(new SimpleType(String.class)) //
                 .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
@@ -57,14 +57,14 @@ class FieldAccessorTest {
     @ValueSource(strings = {"otherName", "yetAnotherName"})
     void testWithParamName(final String paramName) {
         // Arrange
-        final var fieldAccessor = FieldAccessor.builder() //
+        final FieldAccessor fieldAccessor = FieldAccessor.builder() //
                 .propertyType(new SimpleType(String.class)) //
                 .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //
                 .declaringClass(ClassWithCollections.class) //
                 .build();
         // Act
-        final var withParamName = fieldAccessor.withPropertyName(paramName);
+        final FieldAccessor withParamName = fieldAccessor.withPropertyName(paramName);
         // Assert
         assertThat(withParamName).usingRecursiveComparison().isEqualTo(FieldAccessor.builder() //
                 .propertyType(new SimpleType(String.class)) //

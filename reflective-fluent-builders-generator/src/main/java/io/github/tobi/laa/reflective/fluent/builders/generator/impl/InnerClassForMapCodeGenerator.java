@@ -52,7 +52,7 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
         if (!(writeAccessor.getPropertyType() instanceof MapType)) {
             return false;
         } else {
-            final var mapType = (MapType) writeAccessor.getPropertyType();
+            final MapType mapType = (MapType) writeAccessor.getPropertyType();
             return initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(mapType));
         }
     }

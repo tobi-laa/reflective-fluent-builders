@@ -4,6 +4,8 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.*;
+import io.github.tobi.laa.reflective.fluent.builders.generator.model.CollectionClassSpec;
+import io.github.tobi.laa.reflective.fluent.builders.generator.model.EncapsulatingClassSpec;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 
@@ -11,10 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.lang.model.element.Modifier;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import static com.google.common.collect.ImmutableSortedSet.copyOf;
 
@@ -72,7 +71,7 @@ class BuilderClassCodeGeneratorImpl implements BuilderClassCodeGenerator {
         Objects.requireNonNull(encapsulatingClassCodeGenerators);
         Objects.requireNonNull(collectionClassCodeGenerators);
         // to ensure deterministic outputs, sets are sorted on construction
-        final var compareByClassName = Comparator.comparing(o -> o.getClass().getName());
+        final Comparator<Object> compareByClassName = Comparator.comparing(o -> o.getClass().getName());
         this.annotationCodeGenerators = copyOf(compareByClassName, annotationCodeGenerators);
         this.fieldCodeGenerators = copyOf(compareByClassName, fieldCodeGenerators);
         this.methodCodeGenerators = copyOf(compareByClassName, methodCodeGenerators);
@@ -83,12 +82,12 @@ class BuilderClassCodeGeneratorImpl implements BuilderClassCodeGenerator {
     @Override
     public TypeSpec generateBuilderClass(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
+        final ClassName builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         return generateBuilderClass(builderMetadata, builderClassName);
     }
 
     private TypeSpec generateBuilderClass(final BuilderMetadata builderMetadata, final ClassName builderClassName) {
-        final var builderTypeSpec = generateTypeSpec(builderMetadata, builderClassName);
+        final TypeSpec.Builder builderTypeSpec = generateTypeSpec(builderMetadata, builderClassName);
         generateAnnotations(builderMetadata, builderTypeSpec);
         generateFields(builderMetadata, builderTypeSpec);
         generateConstructorsAndMethods(builderMetadata, builderTypeSpec);
@@ -101,14 +100,13 @@ class BuilderClassCodeGeneratorImpl implements BuilderClassCodeGenerator {
     }
 
     private TypeSpec.Builder generateTypeSpec(final BuilderMetadata builderMetadata, final ClassName builderClassName) {
-        final var builder = TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
+        final TypeSpec.Builder builder = TypeSpec.classBuilder(builderClassName).addModifiers(Modifier.PUBLIC);
         if (builderMetadata.getEnclosingBuilder().isPresent()) {
             builder.addModifiers(Modifier.STATIC);
         }
         builder.addJavadoc("Builder for {@link $T}.\n", builderMetadata.getBuiltType().getType().loadClass());
-        for (final var typeParam : builderMetadata.getBuiltType().getType().loadClass().getTypeParameters()) {
-            builder.addTypeVariable(TypeVariableName.get(typeParam));
-        }
+        Arrays.stream(builderMetadata.getBuiltType().getType().loadClass().getTypeParameters())
+                .forEach(typeParam -> builder.addTypeVariable(TypeVariableName.get(typeParam)));
         return builder;
     }
 
@@ -132,7 +130,7 @@ class BuilderClassCodeGeneratorImpl implements BuilderClassCodeGenerator {
 
     private void generateEncapsulatingClasses(final BuilderMetadata builderMetadata, final TypeSpec.Builder builderTypeSpec) {
         for (final EncapsulatingClassCodeGenerator generator : encapsulatingClassCodeGenerators) {
-            final var encapsulatingClassSpec = generator.generate(builderMetadata);
+            final EncapsulatingClassSpec encapsulatingClassSpec = generator.generate(builderMetadata);
             builderTypeSpec.addField(encapsulatingClassSpec.getField());
             builderTypeSpec.addType(encapsulatingClassSpec.getInnerClass());
         }
@@ -142,7 +140,7 @@ class BuilderClassCodeGeneratorImpl implements BuilderClassCodeGenerator {
         for (final CollectionClassCodeGenerator generator : collectionClassCodeGenerators) {
             for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
                 if (generator.isApplicable(writeAccessor)) {
-                    final var collectionClassSpec = generator.generate(builderMetadata, writeAccessor);
+                    final CollectionClassSpec collectionClassSpec = generator.generate(builderMetadata, writeAccessor);
                     builderTypeSpec.addMethod(collectionClassSpec.getGetter());
                     builderTypeSpec.addType(collectionClassSpec.getInnerClass());
                 }

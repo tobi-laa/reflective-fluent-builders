@@ -23,7 +23,7 @@ class AbstractWriteAccessorTest {
     }
 
     private static Stream<Arguments> testCompareTo() {
-        final var accessor = TestAccessor.builder() //
+        final TestAccessor accessor = TestAccessor.builder() //
                 .propertyType(new MapType(Map.class, Object.class, Object.class)) //
                 .propertyName("aName") //
                 .visibility(Visibility.PRIVATE) //

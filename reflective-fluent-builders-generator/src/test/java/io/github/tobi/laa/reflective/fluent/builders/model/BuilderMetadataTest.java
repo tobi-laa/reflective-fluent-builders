@@ -44,7 +44,7 @@ class BuilderMetadataTest {
     }
 
     private static Stream<Arguments> testConstructionNull() {
-        final var builtType = BuilderMetadata.BuiltType.builder() //
+        final BuilderMetadata.BuiltType builtType = BuilderMetadata.BuiltType.builder() //
                 .type(classInfo.get(SimpleClass.class.getName())) //
                 .location(Paths.get("foo")) //
                 .accessibleNonArgsConstructor(true) //
@@ -61,7 +61,7 @@ class BuilderMetadataTest {
     @SuppressWarnings("all")
     void testCompareToNull() {
         // Arrange
-        final var builderMetadata = BuilderMetadata.builder() //
+        final BuilderMetadata builderMetadata = BuilderMetadata.builder() //
                 .packageName("io.example.pack") //
                 .name("ItemBuilder") //
                 .builtType(BuilderMetadata.BuiltType.builder() //

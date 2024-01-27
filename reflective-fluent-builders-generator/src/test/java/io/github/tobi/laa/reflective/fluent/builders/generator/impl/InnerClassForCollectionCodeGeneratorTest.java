@@ -301,7 +301,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertThat(actual.getGetter().toString()).isEqualToNormalizingNewlines(expectedGetter);
         assertThat(actual.getInnerClass().toString()).isEqualToNormalizingNewlines(expectedInnerClass);
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
-        final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+        final CollectionType collectionType = (CollectionType) writeAccessor.getPropertyType();
         verify(typeNameGenerator).generateTypeName(collectionType.getTypeArg());
         verify(initializerGeneratorA).generateCollectionInitializer(collectionType);
     }

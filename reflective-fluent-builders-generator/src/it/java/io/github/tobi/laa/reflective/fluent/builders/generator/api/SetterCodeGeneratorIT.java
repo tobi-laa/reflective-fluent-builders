@@ -76,9 +76,9 @@ class SetterCodeGeneratorIT {
     }
 
     private static Stream<Arguments> testGenerate() {
-        final var mockTypeName = MockType.class.getName().replace('$', '.');
-        final var builderMetadata = BuilderMetadata.builder() //
-                .packageName(MockType.class.getPackageName()) //
+        final String mockTypeName = MockType.class.getName().replace('$', '.');
+        final BuilderMetadata builderMetadata = BuilderMetadata.builder() //
+                .packageName(MockType.class.getPackage().getName()) //
                 .name("SetterCodeGeneratorIT.MockType") //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(classInfo.get(SimpleClass.class)) //

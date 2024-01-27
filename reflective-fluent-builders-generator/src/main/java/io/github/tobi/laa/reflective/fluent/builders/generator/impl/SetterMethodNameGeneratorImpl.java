@@ -30,13 +30,13 @@ class SetterMethodNameGeneratorImpl implements SetterMethodNameGenerator {
     public String generate(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
         if (writeAccessorService.isCollectionGetter(writeAccessor)) {
-            final var getter = (Getter) writeAccessor;
+            final Getter getter = (Getter) writeAccessor;
             return writeAccessorService.dropGetterPrefix(getter.getMethodName());
         } else if (writeAccessorService.isSetter(writeAccessor)) {
-            final var setter = (Setter) writeAccessor;
+            final Setter setter = (Setter) writeAccessor;
             return writeAccessorService.dropSetterPrefix(setter.getMethodName());
         } else if (writeAccessorService.isAdder(writeAccessor)) {
-            final var adder = (Adder) writeAccessor;
+            final Adder adder = (Adder) writeAccessor;
             return writeAccessorService.dropAdderPattern(adder.getMethodName());
         } else {
             return writeAccessor.getPropertyName();

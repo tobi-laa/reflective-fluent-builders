@@ -19,9 +19,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Predicates.not;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.stream;
-import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
@@ -53,28 +53,28 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     @Override
     public SortedSet<WriteAccessor> gatherAllWriteAccessors(final ClassInfo classInfo) {
         Objects.requireNonNull(classInfo);
-        final var clazz = classInfo.loadClass();
-        final var builderPackage = builderPackageService.resolveBuilderPackage(clazz);
-        final var classHierarchy = classService.collectFullClassHierarchy(classInfo);
-        final var methods = gatherAllNonStaticNonBridgeAccessibleMethods(classHierarchy, builderPackage);
+        final Class<?> clazz = classInfo.loadClass();
+        final String builderPackage = builderPackageService.resolveBuilderPackage(clazz);
+        final List<ClassInfo> classHierarchy = classService.collectFullClassHierarchy(classInfo);
+        final List<Method> methods = gatherAllNonStaticNonBridgeAccessibleMethods(classHierarchy, builderPackage);
         final SortedSet<WriteAccessor> writeAccessors = new TreeSet<>();
         // adders take precedence over setters
         if (properties.isAddersEnabled()) {
-            final var adders = gatherAllAdders(methods, classInfo);
+            final SortedSet<Adder> adders = gatherAllAdders(methods, classInfo);
             addAllThatAreNotYetCovered(writeAccessors, adders);
         }
         // setters take precedence over collection getters
-        final var setters = gatherAllSetters(methods, classInfo);
+        final SortedSet<Setter> setters = gatherAllSetters(methods, classInfo);
         addAllThatAreNotYetCovered(writeAccessors, setters);
         // collection getters take precedence over field accessors
         if (properties.isGetAndAddEnabled()) {
-            final var collectionGetters = gatherAllCollectionGetters(methods, classInfo);
+            final SortedSet<Getter> collectionGetters = gatherAllCollectionGetters(methods, classInfo);
             addAllThatAreNotYetCovered(writeAccessors, collectionGetters);
         }
         // field accessors are the last resort if nothing else is available
         if (properties.isDirectFieldAccessEnabled()) {
-            final var fields = gatherAllNonStaticAccessibleFields(classHierarchy, builderPackage);
-            final var fieldAccessors = gatherAllFieldAccessors(fields, classInfo);
+            final List<Field> fields = gatherAllNonStaticAccessibleFields(classHierarchy, builderPackage);
+            final SortedSet<FieldAccessor> fieldAccessors = gatherAllFieldAccessors(fields, classInfo);
             addAllThatAreNotYetCovered(writeAccessors, fieldAccessors);
         }
         return ImmutableSortedSet.copyOf(writeAccessors);
@@ -182,7 +182,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private Class<?> getRawCollectionTypeArg(final WriteAccessor writeAccessor) {
-        final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+        final CollectionType collectionType = (CollectionType) writeAccessor.getPropertyType();
         return getRawType(collectionType.getTypeArg());
     }
 
@@ -195,9 +195,9 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private Adder toAdder(final Class<?> clazz, final Method method) {
-        final var param = method.getParameters()[0];
-        final var paramName = dropAdderPattern(method.getName());
-        final var paramType = toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0]);
+        final Parameter param = method.getParameters()[0];
+        final String paramName = dropAdderPattern(method.getName());
+        final PropertyType paramType = toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0]);
         return Adder.builder() //
                 .methodName(method.getName()) //
                 .propertyType(new CollectionType(TypeUtils.parameterize(List.class, paramType.getType()), paramType.getType())) //
@@ -222,7 +222,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private Setter toSetter(final Class<?> clazz, final Method method) {
-        final var param = method.getParameters()[0];
+        final Parameter param = method.getParameters()[0];
         return Setter.builder() //
                 .methodName(method.getName()) //
                 .propertyType(toPropertyType(clazz, param.getType(), method.getGenericParameterTypes()[0])) //
@@ -234,14 +234,14 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private PropertyType toPropertyType(final Class<?> declaringClass, final Class<?> rawType, final Type genericType) {
-        final var type = resolveType(declaringClass, genericType);
+        final Type type = resolveType(declaringClass, genericType);
         if (rawType.isArray()) {
             return new ArrayType(type, rawType.getComponentType());
         } else if (Collection.class.isAssignableFrom(rawType)) {
-            final var collectionType = resolveCollectionType(declaringClass, type);
+            final Type collectionType = resolveCollectionType(declaringClass, type);
             return new CollectionType(type, typeArg(collectionType, 0));
         } else if (Map.class.isAssignableFrom(rawType)) {
-            final var mapType = resolveMapType(declaringClass, type);
+            final Type mapType = resolveMapType(declaringClass, type);
             return new MapType(type, typeArg(mapType, 0), typeArg(mapType, 1));
         } else {
             return new SimpleType(type);
@@ -319,7 +319,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         if (StringUtils.isEmpty(prefix) || name.length() <= prefix.length()) {
             return name;
         }
-        final var paramName = name.replaceFirst('^' + Pattern.quote(prefix), "");
+        final String paramName = name.replaceFirst('^' + Pattern.quote(prefix), "");
         return uncapitalize(paramName);
     }
 

@@ -162,7 +162,7 @@ class BuildMethodCodeGeneratorIT {
                                 PetJaxb.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
-                                .packageName(DirectFieldAccess.class.getPackageName()) //
+                                .packageName(DirectFieldAccess.class.getPackage().getName()) //
                                 .name("DirectFieldAccessBuilder") //
                                 .builtType(BuilderMetadata.BuiltType.builder() //
                                         .type(classInfo.get(DirectFieldAccess.class)) //
