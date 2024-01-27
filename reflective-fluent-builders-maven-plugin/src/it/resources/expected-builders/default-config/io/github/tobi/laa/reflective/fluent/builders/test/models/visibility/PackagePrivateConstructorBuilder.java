@@ -5,6 +5,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
+/**
+ * Builder for {@link PackagePrivateConstructor}.
+ */
 @Generated(
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
     date = "3333-03-13T00:00Z[UTC]"
@@ -22,32 +25,58 @@ public class PackagePrivateConstructorBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
+  /**
+   * Creates a new instance of {@link PackagePrivateConstructor} using the given {@code objectSupplier}.
+   * Has been set to visibility {@code protected} so that users may choose to inherit the builder.
+   */
   protected PackagePrivateConstructorBuilder(
       final Supplier<PackagePrivateConstructor> objectSupplier) {
     this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
+  /**
+   * Creates an instance of {@link PackagePrivateConstructorBuilder} that will work on a new instance of {@link PackagePrivateConstructor} once {@link #build()} is called.
+   */
   public static PackagePrivateConstructorBuilder newInstance() {
     return new PackagePrivateConstructorBuilder(PackagePrivateConstructor::new);
   }
 
+  /**
+   * Creates an instance of {@link PackagePrivateConstructorBuilder} that will work on an instance of {@link PackagePrivateConstructor} that is created initially by the given {@code supplier} once {@link #build()} is called.
+   */
   public static PackagePrivateConstructorBuilder withSupplier(
       final Supplier<PackagePrivateConstructor> supplier) {
     return new PackagePrivateConstructorBuilder(supplier);
   }
 
+  /**
+   * Sets the value for the {@code intField} property.
+   * To be more precise, this will lead to {@link PackagePrivateConstructor#setIntField(int)} being called on construction of the object.
+   * @param intField the value to set.
+   * @return This builder for chained calls.
+   */
   public PackagePrivateConstructorBuilder intField(final int intField) {
     this.fieldValue.intField = intField;
     this.callSetterFor.intField = true;
     return this;
   }
 
+  /**
+   * Sets the value for the {@code packagePrivate} property.
+   * To be more precise, this will lead to {@link PackagePrivateConstructor#setPackagePrivate(PackagePrivate)} being called on construction of the object.
+   * @param packagePrivate the value to set.
+   * @return This builder for chained calls.
+   */
   public PackagePrivateConstructorBuilder packagePrivate(final PackagePrivate packagePrivate) {
     this.fieldValue.packagePrivate = packagePrivate;
     this.callSetterFor.packagePrivate = true;
     return this;
   }
 
+  /**
+   * Performs the actual construction of an instance for {@link PackagePrivateConstructor}.
+   * @return The constructed instance. Never {@code null}.
+   */
   public PackagePrivateConstructor build() {
     final PackagePrivateConstructor objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.intField) {

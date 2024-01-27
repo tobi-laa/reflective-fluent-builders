@@ -74,6 +74,18 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
                         .methodBuilder(writeAccessor.getPropertyName()) //
+                        .addJavadoc(
+                                "Returns an inner builder for the map property {@code $L} for chained calls of adding items to it.\n",
+                                writeAccessor.getPropertyName()) //
+                        .addJavadoc("Can be used like follows:\n") //
+                        .addJavadoc("<pre>\n") //
+                        .addJavadoc("builder.$L()\n", writeAccessor.getPropertyName()) //
+                        .addJavadoc("       .put(key1, value1)\n") //
+                        .addJavadoc("       .put(key2, value2)\n") //
+                        .addJavadoc("       .and()\n") //
+                        .addJavadoc("       .build()\n") //
+                        .addJavadoc("</pre>\n") //
+                        .addJavadoc("@return The inner builder for the map property {@code $L}.\n", writeAccessor.getPropertyName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
@@ -82,6 +94,10 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
                         .classBuilder(className) //
                         .addModifiers(Modifier.PUBLIC) //
                         .addMethod(MethodSpec.methodBuilder("put") //
+                                .addJavadoc("Adds an entry to the map property {@code $L}.\n", writeAccessor.getPropertyName()) //
+                                .addJavadoc("@param key The key of the entry to add to the map {@code $L}.\n", writeAccessor.getPropertyName()) //
+                                .addJavadoc("@param value The value of the entry to add to the map {@code $L}.\n", writeAccessor.getPropertyName()) //
+                                .addJavadoc("@return This builder for chained calls.\n") //
                                 .addModifiers(Modifier.PUBLIC) //
                                 .addParameter(typeNameGenerator.generateTypeName(mapType.getKeyType()), "key", FINAL) //
                                 .addParameter(typeNameGenerator.generateTypeName(mapType.getValueType()), "value", FINAL) //
@@ -102,6 +118,8 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
                                 .addStatement("return this") //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("and") //
+                                .addJavadoc("Returns the builder for the parent object.\n") //
+                                .addJavadoc("@return The builder for the parent object.\n") //
                                 .addModifiers(Modifier.PUBLIC) //
                                 .returns(builderClassName) //
                                 .addStatement("return $T.this", builderClassName) //

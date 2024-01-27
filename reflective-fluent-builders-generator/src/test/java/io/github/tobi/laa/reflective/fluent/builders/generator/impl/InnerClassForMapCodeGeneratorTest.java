@@ -308,13 +308,31 @@ class InnerClassForMapCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.MapMap map(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the map property {@code map} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.map()\n" +
+                                        " *        .put(key1, value1)\n" +
+                                        " *        .put(key2, value2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the map property {@code map}.\n" +
+                                        " */\n" +
+                                        "public %1$s.MapMap map(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.MapMap();\n" +
                                         "}\n",
                                 mockTypeName), //
                         String.format(
                                 "public class MapMap {\n" +
+                                        "  /**\n" +
+                                        "   * Adds an entry to the map property {@code map}.\n" +
+                                        "   * @param key The key of the entry to add to the map {@code map}.\n" +
+                                        "   * @param value The value of the entry to add to the map {@code map}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.MapMap put(\n" +
                                         "      final java.lang.String key, final ? value) {\n" +
                                         "    if (%1$s.this.fieldValue.map == null) {\n" +
@@ -325,6 +343,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    return %1$s.this;\n" +
@@ -348,13 +370,31 @@ class InnerClassForMapCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.MapSortedMap sortedMap(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the map property {@code sortedMap} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.sortedMap()\n" +
+                                        " *        .put(key1, value1)\n" +
+                                        " *        .put(key2, value2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the map property {@code sortedMap}.\n" +
+                                        " */\n" +
+                                        "public %1$s.MapSortedMap sortedMap(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.MapSortedMap();\n" +
                                         "}\n",
                                 mockTypeName),
                         String.format(
                                 "public class MapSortedMap {\n" +
+                                        "  /**\n" +
+                                        "   * Adds an entry to the map property {@code sortedMap}.\n" +
+                                        "   * @param key The key of the entry to add to the map {@code sortedMap}.\n" +
+                                        "   * @param value The value of the entry to add to the map {@code sortedMap}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.MapSortedMap put(\n" +
                                         "      final java.lang.Integer key, final java.lang.Object value) {\n" +
                                         "    if (%1$s.this.fieldValue.sortedMap == null) {\n" +
@@ -365,6 +405,10 @@ class InnerClassForMapCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    return %1$s.this;\n" +

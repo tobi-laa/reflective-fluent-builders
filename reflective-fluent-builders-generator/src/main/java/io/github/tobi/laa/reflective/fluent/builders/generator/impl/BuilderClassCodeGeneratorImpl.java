@@ -105,6 +105,7 @@ class BuilderClassCodeGeneratorImpl implements BuilderClassCodeGenerator {
         if (builderMetadata.getEnclosingBuilder().isPresent()) {
             builder.addModifiers(Modifier.STATIC);
         }
+        builder.addJavadoc("Builder for {@link $T}.\n", builderMetadata.getBuiltType().getType().loadClass());
         for (final var typeParam : builderMetadata.getBuiltType().getType().loadClass().getTypeParameters()) {
             builder.addTypeVariable(TypeVariableName.get(typeParam));
         }

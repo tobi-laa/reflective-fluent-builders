@@ -93,7 +93,10 @@ class NewInstanceFactoryMethodCodeGeneratorTest {
                                         .build()) //
                                 .build(), //
                         String.format(
-                                "public static %1$s newInstance(\n" +
+                                "/**\n" +
+                                        " * Creates an instance of {@link %1$s} that will work on a new instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass} once {@link #build()} is called.\n" +
+                                        " */\n" +
+                                        "public static %1$s newInstance(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s(io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass::new);\n" +
                                         "}\n", MockType.class.getName().replace('$', '.'))));

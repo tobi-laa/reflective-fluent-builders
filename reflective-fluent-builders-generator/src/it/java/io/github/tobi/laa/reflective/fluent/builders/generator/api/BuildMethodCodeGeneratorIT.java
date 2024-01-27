@@ -78,7 +78,11 @@ class BuildMethodCodeGeneratorIT {
                                         .build()) //
                                 .build(), //
                         String.format(
-                                "public %1$s build() {\n" +
+                                "/**\n" +
+                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
+                                        " * @return The constructed instance. Never {@code null}.\n" +
+                                        " */\n" +
+                                        "public %1$s build() {\n" +
                                         "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.anInt) {\n" +
                                         "    objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
@@ -112,7 +116,11 @@ class BuildMethodCodeGeneratorIT {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        String.format("public %1$s build(\n" +
+                        String.format("/**\n" +
+                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
+                                        " * @return The constructed instance. Never {@code null}.\n" +
+                                        " */\n" +
+                                        "public %1$s build(\n" +
                                         "    ) {\n" +
                                         "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.list) {\n" +
@@ -140,7 +148,11 @@ class BuildMethodCodeGeneratorIT {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        String.format("public %1$s build() {\n" +
+                        String.format("/**\n" +
+                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
+                                        " * @return The constructed instance. Never {@code null}.\n" +
+                                        " */\n" +
+                                        "public %1$s build() {\n" +
                                         "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.siblings && this.fieldValue.siblings != null) {\n" +
                                         "    this.fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);\n" +
@@ -170,7 +182,11 @@ class BuildMethodCodeGeneratorIT {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        String.format("public %1$s build() {\n" +
+                        String.format("/**\n" +
+                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
+                                        " * @return The constructed instance. Never {@code null}.\n" +
+                                        " */\n" +
+                                        "public %1$s build() {\n" +
                                         "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
                                         "  if (this.callSetterFor.publicFieldNoSetter) {\n" +
                                         "    objectToBuild.publicFieldNoSetter = this.fieldValue.publicFieldNoSetter;\n" +

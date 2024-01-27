@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ConstructorWithObjectSupplieCodeGeneratorTest {
+class ConstructorWithObjectSupplierCodeGeneratorTest {
 
     @RegisterExtension
     static ClassGraphExtension classInfo = new ClassGraphExtension();
 
-    private final ConstructorWithObjectSupplieCodeGenerator generator = new ConstructorWithObjectSupplieCodeGenerator();
+    private final ConstructorWithObjectSupplierCodeGenerator generator = new ConstructorWithObjectSupplierCodeGenerator();
 
     @Test
     void testGenerateNull() {
@@ -56,7 +56,11 @@ class ConstructorWithObjectSupplieCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        "protected Constructor(\n" +
+                        "/**\n" +
+                                " * Creates a new instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass} using the given {@code objectSupplier}.\n" +
+                                " * Has been set to visibility {@code protected} so that users may choose to inherit the builder.\n" +
+                                " */" +
+                                "protected Constructor(\n" +
                                 "    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass> objectSupplier) {\n" +
                                 "  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);\n" +
                                 "}\n"),
@@ -69,7 +73,11 @@ class ConstructorWithObjectSupplieCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build(), //
-                        "protected Constructor(\n" +
+                        "/**\n" +
+                                " * Creates a new instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy} using the given {@code objectSupplier}.\n" +
+                                " * Has been set to visibility {@code protected} so that users may choose to inherit the builder.\n" +
+                                " */" +
+                                "protected Constructor(\n" +
                                 "    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy> objectSupplier) {\n" +
                                 "  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);\n" +
                                 "}\n"));
