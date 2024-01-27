@@ -20,7 +20,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.lang.reflect.Modifier.isStatic;
+import static java.util.Arrays.stream;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 /**
@@ -204,7 +206,15 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .paramType(paramType) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
+                .exceptionTypes(gatherExceptionTypes(method)) //
                 .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Class<? extends Throwable>> gatherExceptionTypes(final Method method) {
+        return stream(method.getExceptionTypes())
+                .map(type -> (Class<? extends Throwable>) type)
+                .collect(toSet());
     }
 
     private String pluralize(final String name) {
@@ -219,6 +229,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .propertyName(dropSetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
+                .exceptionTypes(gatherExceptionTypes(method)) //
                 .build();
     }
 
@@ -245,6 +256,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .propertyName(dropGetterPrefix(method.getName())) //
                 .visibility(visibilityService.toVisibility(method.getModifiers())) //
                 .declaringClass(method.getDeclaringClass()) //
+                .exceptionTypes(gatherExceptionTypes(method)) //
                 .build();
     }
 

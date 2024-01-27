@@ -7,6 +7,7 @@ import lombok.Singular;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -26,6 +27,16 @@ public class BuilderMetadata {
 
     @lombok.NonNull
     private final BuiltType builtType;
+
+    /**
+     * <p>
+     * The types of exceptions that can be thrown by the builder's {@code build} method. If no exceptions can be thrown,
+     * this set is empty. The exceptions contained are the condensed exceptions of all {@link WriteAccessor}s.
+     * </p>
+     */
+    @lombok.NonNull
+    @Singular
+    private final Set<Class<? extends Throwable>> exceptionTypes;
 
     @lombok.Builder
     @Data

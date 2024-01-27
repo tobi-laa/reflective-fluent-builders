@@ -14,6 +14,7 @@ import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleCl
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClassNoSetPrefix;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Child;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.simple.hierarchy.Parent;
+import io.github.tobi.laa.reflective.fluent.builders.test.models.throwing.ThrowsThrowable;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.Visibility;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
@@ -104,6 +105,16 @@ class GenerateBuildersMojoIT {
                     .project() //
                     .hasTarget() //
                     .has(expectedBuilders(Jaxb.class.getPackage(), false));
+            assertThat(result).out().warn().isEmpty();
+        }
+
+        @MavenTest
+        void packageThrowing(final MavenExecutionResult result) {
+            assertThat(result) //
+                    .isSuccessful() //
+                    .project() //
+                    .hasTarget() //
+                    .has(expectedBuilders(ThrowsThrowable.class.getPackage(), false));
             assertThat(result).out().warn().isEmpty();
         }
     }

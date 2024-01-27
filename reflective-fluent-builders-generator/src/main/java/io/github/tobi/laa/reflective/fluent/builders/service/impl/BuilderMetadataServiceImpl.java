@@ -4,6 +4,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.FieldInfo;
 import io.github.classgraph.FieldInfoList;
 import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
+import io.github.tobi.laa.reflective.fluent.builders.model.MethodAccessor;
 import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.*;
@@ -51,16 +52,43 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
         Objects.requireNonNull(classInfo);
         final var clazz = classInfo.loadClass();
         final String builderPackage = builderPackageService.resolveBuilderPackage(clazz);
+        final var writeAccessors = gatherWriteAccessorsAndAvoidNameCollisions(classInfo);
         return BuilderMetadata.builder() //
                 .packageName(builderPackage) //
                 .name(builderClassName(clazz, builderPackage)) //
+                .exceptionTypes(condenseExceptions(writeAccessors)) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(classInfo) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
                         .accessibleNonArgsConstructor(hasAccessibleNonArgsConstructor(clazz, builderPackage)) //
-                        .writeAccessors(gatherWriteAccessorsAndAvoidNameCollisions(classInfo))
+                        .writeAccessors(writeAccessors)
                         .build()) //
                 .build();
+    }
+
+    private Set<Class<? extends Throwable>> condenseExceptions(final Set<WriteAccessor> writeAccessors) {
+        final Set<Class<? extends Throwable>> condensed = new HashSet<>();
+        writeAccessors //
+                .stream() //
+                .filter(MethodAccessor.class::isInstance) //
+                .map(MethodAccessor.class::cast) //
+                .map(MethodAccessor::getExceptionTypes) //
+                .flatMap(Set::stream)
+                .forEach(exception -> {
+                    removeExceptionsThatAreSubclasses(condensed, exception);
+                    addExceptionIfSuperclassIsNotPresent(condensed, exception);
+                });
+        return Collections.unmodifiableSet(condensed);
+    }
+
+    private void addExceptionIfSuperclassIsNotPresent(final Set<Class<? extends Throwable>> exceptions, final Class<? extends Throwable> exception) {
+        if (exceptions.stream().noneMatch(candidate -> candidate.isAssignableFrom(exception))) {
+            exceptions.add(exception);
+        }
+    }
+
+    private void removeExceptionsThatAreSubclasses(final Set<Class<? extends Throwable>> exceptions, final Class<? extends Throwable> exception) {
+        exceptions.removeIf(exception::isAssignableFrom);
     }
 
     private String builderClassName(final Class<?> clazz, final String builderPackage) {
