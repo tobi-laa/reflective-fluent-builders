@@ -53,4 +53,47 @@ public class ClassWithBuilderExistingBuilder {
   private class FieldValue {
     int aField;
   }
+
+  @Generated(
+      value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
+      date = "3333-03-13T00:00Z[UTC]"
+  )
+  public static class ClassWithBuilderExistingBuilderBuilder {
+    /**
+     * This field is solely used to be able to detect generated builders via reflection at a later stage.
+     */
+    @SuppressWarnings("unused")
+    private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
+    private final Supplier<ClassWithBuilderExisting.ClassWithBuilderExistingBuilder> objectSupplier;
+
+    private final CallSetterFor callSetterFor = new CallSetterFor();
+
+    private final FieldValue fieldValue = new FieldValue();
+
+    protected ClassWithBuilderExistingBuilderBuilder(
+        final Supplier<ClassWithBuilderExisting.ClassWithBuilderExistingBuilder> objectSupplier) {
+      this.objectSupplier = Objects.requireNonNull(objectSupplier);
+    }
+
+    public static ClassWithBuilderExistingBuilderBuilder newInstance() {
+      return new ClassWithBuilderExistingBuilderBuilder(ClassWithBuilderExisting.ClassWithBuilderExistingBuilder::new);
+    }
+
+    public static ClassWithBuilderExistingBuilderBuilder withSupplier(
+        final Supplier<ClassWithBuilderExisting.ClassWithBuilderExistingBuilder> supplier) {
+      return new ClassWithBuilderExistingBuilderBuilder(supplier);
+    }
+
+    public ClassWithBuilderExisting.ClassWithBuilderExistingBuilder build() {
+      final ClassWithBuilderExisting.ClassWithBuilderExistingBuilder objectToBuild = this.objectSupplier.get();
+      return objectToBuild;
+    }
+
+    private class CallSetterFor {
+    }
+
+    private class FieldValue {
+    }
+  }
 }

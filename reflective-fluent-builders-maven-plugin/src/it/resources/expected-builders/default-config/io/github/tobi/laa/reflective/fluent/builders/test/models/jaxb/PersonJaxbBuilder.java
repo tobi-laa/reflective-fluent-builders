@@ -181,4 +181,140 @@ public class PersonJaxbBuilder {
       return PersonJaxbBuilder.this;
     }
   }
+
+  @Generated(
+      value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
+      date = "3333-03-13T00:00Z[UTC]"
+  )
+  public static class RelationsBuilder {
+    /**
+     * This field is solely used to be able to detect generated builders via reflection at a later stage.
+     */
+    @SuppressWarnings("unused")
+    private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
+    private final Supplier<PersonJaxb.Relations> objectSupplier;
+
+    private final CallSetterFor callSetterFor = new CallSetterFor();
+
+    private final FieldValue fieldValue = new FieldValue();
+
+    protected RelationsBuilder(final Supplier<PersonJaxb.Relations> objectSupplier) {
+      this.objectSupplier = Objects.requireNonNull(objectSupplier);
+    }
+
+    public static RelationsBuilder newInstance() {
+      return new RelationsBuilder(PersonJaxb.Relations::new);
+    }
+
+    public static RelationsBuilder withSupplier(final Supplier<PersonJaxb.Relations> supplier) {
+      return new RelationsBuilder(supplier);
+    }
+
+    public CollectionEntry entry() {
+      return new CollectionEntry();
+    }
+
+    public RelationsBuilder entry(final List<PersonJaxb.Relations.Entry> entry) {
+      this.fieldValue.entry = entry;
+      this.callSetterFor.entry = true;
+      return this;
+    }
+
+    public PersonJaxb.Relations build() {
+      final PersonJaxb.Relations objectToBuild = this.objectSupplier.get();
+      if (this.callSetterFor.entry && this.fieldValue.entry != null) {
+        this.fieldValue.entry.forEach(objectToBuild.getEntry()::add);
+      }
+      return objectToBuild;
+    }
+
+    private class CallSetterFor {
+      boolean entry;
+    }
+
+    private class FieldValue {
+      List<PersonJaxb.Relations.Entry> entry;
+    }
+
+    public class CollectionEntry {
+      public CollectionEntry add(final PersonJaxb.Relations.Entry item) {
+        if (RelationsBuilder.this.fieldValue.entry == null) {
+          RelationsBuilder.this.fieldValue.entry = new ArrayList<>();
+        }
+        RelationsBuilder.this.fieldValue.entry.add(item);
+        RelationsBuilder.this.callSetterFor.entry = true;
+        return this;
+      }
+
+      public RelationsBuilder and() {
+        return RelationsBuilder.this;
+      }
+    }
+
+    @Generated(
+        value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
+        date = "3333-03-13T00:00Z[UTC]"
+    )
+    public static class EntryBuilder {
+      /**
+       * This field is solely used to be able to detect generated builders via reflection at a later stage.
+       */
+      @SuppressWarnings("unused")
+      private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
+      private final Supplier<PersonJaxb.Relations.Entry> objectSupplier;
+
+      private final CallSetterFor callSetterFor = new CallSetterFor();
+
+      private final FieldValue fieldValue = new FieldValue();
+
+      protected EntryBuilder(final Supplier<PersonJaxb.Relations.Entry> objectSupplier) {
+        this.objectSupplier = Objects.requireNonNull(objectSupplier);
+      }
+
+      public static EntryBuilder newInstance() {
+        return new EntryBuilder(PersonJaxb.Relations.Entry::new);
+      }
+
+      public static EntryBuilder withSupplier(final Supplier<PersonJaxb.Relations.Entry> supplier) {
+        return new EntryBuilder(supplier);
+      }
+
+      public EntryBuilder key(final String key) {
+        this.fieldValue.key = key;
+        this.callSetterFor.key = true;
+        return this;
+      }
+
+      public EntryBuilder value(final PersonJaxb value) {
+        this.fieldValue.value = value;
+        this.callSetterFor.value = true;
+        return this;
+      }
+
+      public PersonJaxb.Relations.Entry build() {
+        final PersonJaxb.Relations.Entry objectToBuild = this.objectSupplier.get();
+        if (this.callSetterFor.key) {
+          objectToBuild.setKey(this.fieldValue.key);
+        }
+        if (this.callSetterFor.value) {
+          objectToBuild.setValue(this.fieldValue.value);
+        }
+        return objectToBuild;
+      }
+
+      private class CallSetterFor {
+        boolean key;
+
+        boolean value;
+      }
+
+      private class FieldValue {
+        String key;
+
+        PersonJaxb value;
+      }
+    }
+  }
 }
