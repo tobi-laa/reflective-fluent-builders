@@ -1,10 +1,12 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import lombok.Data;
+import lombok.Singular;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * <p>
@@ -15,7 +17,7 @@ import java.util.Objects;
 @SuperBuilder(toBuilder = true)
 @Data
 @ToString(callSuper = true)
-abstract class AbstractMethodAccessor extends AbstractWriteAccessor {
+abstract class AbstractMethodAccessor extends AbstractWriteAccessor implements MethodAccessor {
 
     /**
      * <p>
@@ -24,6 +26,18 @@ abstract class AbstractMethodAccessor extends AbstractWriteAccessor {
      */
     @lombok.NonNull
     private final String methodName;
+
+    /**
+     * <p>
+     * The types of exceptions that can be thrown by the method.
+     * </p>
+     * <p>
+     * If no exceptions can be thrown, this set is empty.
+     * </p>
+     */
+    @lombok.NonNull
+    @Singular
+    private final Set<Class<? extends Throwable>> exceptionTypes;
 
     @Override
     public boolean equals(final Object anObject) {

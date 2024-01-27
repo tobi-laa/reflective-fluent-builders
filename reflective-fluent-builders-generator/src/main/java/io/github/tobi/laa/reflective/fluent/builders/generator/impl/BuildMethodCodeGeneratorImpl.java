@@ -47,6 +47,12 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("build")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(clazz.loadClass());
+        builderMetadata
+                .getExceptionTypes()
+                .stream()
+                .filter(this::isCheckedException)
+                .sorted(Comparator.comparing(Class::getName))
+                .forEach(methodBuilder::addException);
         methodBuilder.addStatement("final $T $L = this.$L.get()", clazz.loadClass(), OBJECT_TO_BUILD_FIELD_NAME, OBJECT_SUPPLIER_FIELD_NAME);
         for (final WriteAccessor writeAccessor : builderMetadata.getBuiltType().getWriteAccessors()) {
             stepCodeGenerators.stream()
@@ -55,5 +61,9 @@ class BuildMethodCodeGeneratorImpl implements BuildMethodCodeGenerator {
         }
         methodBuilder.addStatement("return $L", OBJECT_TO_BUILD_FIELD_NAME);
         return methodBuilder.build();
+    }
+
+    private boolean isCheckedException(final Class<? extends Throwable> exceptionType) {
+        return !RuntimeException.class.isAssignableFrom(exceptionType) && !Error.class.isAssignableFrom(exceptionType);
     }
 }
