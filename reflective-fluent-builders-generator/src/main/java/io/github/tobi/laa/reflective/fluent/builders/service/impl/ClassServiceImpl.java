@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 
@@ -84,22 +83,10 @@ class ClassServiceImpl implements ClassService {
             return scanResult.getAllClasses()
                     .stream()
                     .map(this::loadEagerly)
-                    .flatMap(clazz -> Stream.concat(
-                            Stream.of(clazz),
-                            collectStaticInnerClassesRecursively(clazz).stream()))
                     .collect(Collectors.toUnmodifiableSet());
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
         }
-    }
-
-    private Set<ClassInfo> collectStaticInnerClassesRecursively(final ClassInfo clazz) {
-        final Set<ClassInfo> innerStaticClasses = new HashSet<>();
-        for (final ClassInfo innerClass : clazz.getInnerClasses()) {
-            innerStaticClasses.add(innerClass);
-            innerStaticClasses.addAll(collectStaticInnerClassesRecursively(innerClass));
-        }
-        return innerStaticClasses;
     }
 
     @Override
