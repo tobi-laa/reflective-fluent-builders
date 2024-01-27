@@ -57,6 +57,7 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                 .packageName(builderPackage) //
                 .name(builderClassName(clazz, builderPackage)) //
                 .exceptionTypes(condenseExceptions(writeAccessors)) //
+                .nestedBuilders(nestedBuilders(classInfo)) //
                 .builtType(BuilderMetadata.BuiltType.builder() //
                         .type(classInfo) //
                         .location(classService.determineClassLocation(clazz).orElse(null)) //
@@ -79,6 +80,14 @@ class BuilderMetadataServiceImpl implements BuilderMetadataService {
                     addExceptionIfSuperclassIsNotPresent(condensed, exception);
                 });
         return Collections.unmodifiableSet(condensed);
+    }
+
+    private Set<BuilderMetadata> nestedBuilders(final ClassInfo classInfo) {
+        return filterOutNonBuildableClasses(new HashSet<>(classInfo.getInnerClasses().getStandardClasses()))
+                .stream()
+                .filter(ci -> ci.loadClass().getEnclosingClass() == classInfo.loadClass())
+                .map(this::collectBuilderMetadata)
+                .collect(Collectors.toSet());
     }
 
     private void addExceptionIfSuperclassIsNotPresent(final Set<Class<? extends Throwable>> exceptions, final Class<? extends Throwable> exception) {

@@ -156,4 +156,45 @@ public class ClassWithGenericsBuilder<T> {
       return ClassWithGenericsBuilder.this;
     }
   }
+
+  @Generated(
+      value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
+      date = "3333-03-13T00:00Z[UTC]"
+  )
+  public static class FooBuilder<T> {
+    /**
+     * This field is solely used to be able to detect generated builders via reflection at a later stage.
+     */
+    @SuppressWarnings("unused")
+    private boolean ______generatedByReflectiveFluentBuildersGenerator;
+
+    private final Supplier<ClassWithGenerics.Foo> objectSupplier;
+
+    private final CallSetterFor callSetterFor = new CallSetterFor();
+
+    private final FieldValue fieldValue = new FieldValue();
+
+    protected FooBuilder(final Supplier<ClassWithGenerics.Foo> objectSupplier) {
+      this.objectSupplier = Objects.requireNonNull(objectSupplier);
+    }
+
+    public static FooBuilder newInstance() {
+      return new FooBuilder(ClassWithGenerics.Foo::new);
+    }
+
+    public static FooBuilder withSupplier(final Supplier<ClassWithGenerics.Foo> supplier) {
+      return new FooBuilder(supplier);
+    }
+
+    public ClassWithGenerics.Foo build() {
+      final ClassWithGenerics.Foo objectToBuild = this.objectSupplier.get();
+      return objectToBuild;
+    }
+
+    private class CallSetterFor {
+    }
+
+    private class FieldValue {
+    }
+  }
 }

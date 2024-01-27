@@ -83,6 +83,7 @@ class ClassServiceImpl implements ClassService {
             return scanResult.getAllClasses()
                     .stream()
                     .map(this::loadEagerly)
+                    .filter(not(ClassInfo::isInnerClass))
                     .collect(Collectors.toUnmodifiableSet());
         } catch (final ClassGraphException e) {
             throw new ReflectionException("Error while attempting to collect classes recursively.", e);
