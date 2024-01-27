@@ -40,6 +40,10 @@ public class GenericChildBuilder<S extends Number, T> {
     return new GenericChildBuilder(supplier);
   }
 
+  public CollectionGenericList genericList() {
+    return new CollectionGenericList();
+  }
+
   public CollectionList list() {
     return new CollectionList();
   }
@@ -51,6 +55,12 @@ public class GenericChildBuilder<S extends Number, T> {
   public GenericChildBuilder generic(final Generic<T> generic) {
     this.fieldValue.generic = generic;
     this.callSetterFor.generic = true;
+    return this;
+  }
+
+  public GenericChildBuilder genericList(final List<Number> genericList) {
+    this.fieldValue.genericList = genericList;
+    this.callSetterFor.genericList = true;
     return this;
   }
 
@@ -77,6 +87,9 @@ public class GenericChildBuilder<S extends Number, T> {
     if (this.callSetterFor.generic) {
       objectToBuild.setGeneric(this.fieldValue.generic);
     }
+    if (this.callSetterFor.genericList && this.fieldValue.genericList != null) {
+      this.fieldValue.genericList.forEach(objectToBuild.getGenericList()::add);
+    }
     if (this.callSetterFor.list) {
       objectToBuild.setList(this.fieldValue.list);
     }
@@ -92,6 +105,8 @@ public class GenericChildBuilder<S extends Number, T> {
   private class CallSetterFor {
     boolean generic;
 
+    boolean genericList;
+
     boolean list;
 
     boolean map;
@@ -102,11 +117,28 @@ public class GenericChildBuilder<S extends Number, T> {
   private class FieldValue {
     Generic<T> generic;
 
+    List<Number> genericList;
+
     List<String> list;
 
     Map<S, T> map;
 
     Generic<String> otherGeneric;
+  }
+
+  public class CollectionGenericList {
+    public CollectionGenericList add(final Number item) {
+      if (GenericChildBuilder.this.fieldValue.genericList == null) {
+        GenericChildBuilder.this.fieldValue.genericList = new ArrayList<>();
+      }
+      GenericChildBuilder.this.fieldValue.genericList.add(item);
+      GenericChildBuilder.this.callSetterFor.genericList = true;
+      return this;
+    }
+
+    public GenericChildBuilder and() {
+      return GenericChildBuilder.this;
+    }
   }
 
   public class CollectionList {

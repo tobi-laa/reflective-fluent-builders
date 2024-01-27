@@ -41,6 +41,10 @@ public class GenericGrandChildBuilder {
     return new GenericGrandChildBuilder(supplier);
   }
 
+  public CollectionGenericList genericList() {
+    return new CollectionGenericList();
+  }
+
   public CollectionList list() {
     return new CollectionList();
   }
@@ -52,6 +56,12 @@ public class GenericGrandChildBuilder {
   public GenericGrandChildBuilder generic(final Generic<Boolean> generic) {
     this.fieldValue.generic = generic;
     this.callSetterFor.generic = true;
+    return this;
+  }
+
+  public GenericGrandChildBuilder genericList(final List<Long> genericList) {
+    this.fieldValue.genericList = genericList;
+    this.callSetterFor.genericList = true;
     return this;
   }
 
@@ -78,6 +88,9 @@ public class GenericGrandChildBuilder {
     if (this.callSetterFor.generic) {
       objectToBuild.setGeneric(this.fieldValue.generic);
     }
+    if (this.callSetterFor.genericList && this.fieldValue.genericList != null) {
+      this.fieldValue.genericList.forEach(objectToBuild.getGenericList()::add);
+    }
     if (this.callSetterFor.list) {
       objectToBuild.setList(this.fieldValue.list);
     }
@@ -93,6 +106,8 @@ public class GenericGrandChildBuilder {
   private class CallSetterFor {
     boolean generic;
 
+    boolean genericList;
+
     boolean list;
 
     boolean map;
@@ -103,11 +118,28 @@ public class GenericGrandChildBuilder {
   private class FieldValue {
     Generic<Boolean> generic;
 
+    List<Long> genericList;
+
     List<String> list;
 
     Map<Long, Boolean> map;
 
     Generic<String> otherGeneric;
+  }
+
+  public class CollectionGenericList {
+    public CollectionGenericList add(final Long item) {
+      if (GenericGrandChildBuilder.this.fieldValue.genericList == null) {
+        GenericGrandChildBuilder.this.fieldValue.genericList = new ArrayList<>();
+      }
+      GenericGrandChildBuilder.this.fieldValue.genericList.add(item);
+      GenericGrandChildBuilder.this.callSetterFor.genericList = true;
+      return this;
+    }
+
+    public GenericGrandChildBuilder and() {
+      return GenericGrandChildBuilder.this;
+    }
   }
 
   public class CollectionList {

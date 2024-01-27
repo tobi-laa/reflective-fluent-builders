@@ -58,7 +58,8 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
         final SortedSet<WriteAccessor> writeAccessors = new TreeSet<>();
         // adders take precedence over setters
         if (properties.isAddersEnabled()) {
-            writeAccessors.addAll(gatherAllAdders(methods, classInfo));
+            final var adders = gatherAllAdders(methods, classInfo);
+            addAllThatAreNotYetCovered(writeAccessors, adders);
         }
         // setters take precedence over collection getters
         final var setters = gatherAllSetters(methods, classInfo);

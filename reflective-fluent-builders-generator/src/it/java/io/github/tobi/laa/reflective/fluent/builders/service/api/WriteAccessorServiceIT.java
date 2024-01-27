@@ -323,14 +323,31 @@ class WriteAccessorServiceIT {
                                 Setter.builder().methodName("setList").propertyName("list").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 Setter.builder().methodName("setMap").propertyName("map").propertyType(new MapType(parameterize(Map.class, typeVariableS(), typeVariableT()), typeVariableS(), typeVariableT())).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 Setter.builder().methodName("setGeneric").propertyName("generic").propertyType(new SimpleType(parameterize(Generic.class, typeVariableT()))).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
-                                Setter.builder().methodName("setOtherGeneric").propertyName("otherGeneric").propertyType(new SimpleType(parameterize(Generic.class, String.class))).visibility(PUBLIC).declaringClass(GenericParent.class).build())), //
+                                Setter.builder().methodName("setOtherGeneric").propertyName("otherGeneric").propertyType(new SimpleType(parameterize(Generic.class, String.class))).visibility(PUBLIC).declaringClass(GenericParent.class).build(),
+                                Getter.builder()
+                                        .methodName("getGenericList")
+                                        .propertyName("genericList")
+                                        .propertyType(
+                                                new CollectionType(
+                                                        parameterize(List.class, wildcardType().withUpperBounds(Number.class).build()),
+                                                        wildcardType().withUpperBounds(Number.class).build()))
+                                        .visibility(PUBLIC)
+                                        .declaringClass(GenericChild.class)
+                                        .build())), //
                 Arguments.of(
                         classInfo.get(GenericGrandChild.class),
                         Set.of( //
                                 Setter.builder().methodName("setList").propertyName("list").propertyType(new CollectionType(parameterize(List.class, String.class), String.class)).visibility(PUBLIC).declaringClass(GenericChild.class).build(), //
                                 Setter.builder().methodName("setMap").propertyName("map").propertyType(new MapType(parameterize(Map.class, Long.class, Boolean.class), Long.class, Boolean.class)).visibility(PUBLIC).declaringClass(GenericGrandChild.class).build(), //
                                 Setter.builder().methodName("setGeneric").propertyName("generic").propertyType(new SimpleType(parameterize(Generic.class, Boolean.class))).visibility(PUBLIC).declaringClass(GenericGrandChild.class).build(),
-                                Setter.builder().methodName("setOtherGeneric").propertyName("otherGeneric").propertyType(new SimpleType(parameterize(Generic.class, String.class))).visibility(PUBLIC).declaringClass(GenericParent.class).build()))); //
+                                Setter.builder().methodName("setOtherGeneric").propertyName("otherGeneric").propertyType(new SimpleType(parameterize(Generic.class, String.class))).visibility(PUBLIC).declaringClass(GenericParent.class).build(),
+                                Getter.builder()
+                                        .methodName("getGenericList")
+                                        .propertyName("genericList")
+                                        .propertyType(new CollectionType(parameterize(List.class, Long.class), Long.class))
+                                        .visibility(PUBLIC)
+                                        .declaringClass(GenericGrandChild.class)
+                                        .build()))); //
     }
 
     private static TypeVariable<?> typeVariableS() {

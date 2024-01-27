@@ -1,7 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.lang.reflect.Type;
 
@@ -11,11 +10,9 @@ import java.lang.reflect.Type;
  * </p>
  */
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CollectionType implements PropertyType {
 
     @lombok.NonNull
-    @EqualsAndHashCode.Include
     private final Type type;
 
     /**
