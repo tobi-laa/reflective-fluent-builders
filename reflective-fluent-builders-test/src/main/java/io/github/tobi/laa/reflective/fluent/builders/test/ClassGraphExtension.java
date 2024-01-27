@@ -47,6 +47,7 @@ public class ClassGraphExtension implements BeforeAllCallback {
         classInfo.loadClass();
         classInfo.getSuperclasses().loadClasses();
         classInfo.getInterfaces().loadClasses();
+        classInfo.getInnerClasses().loadClasses();
     }
 
     /**

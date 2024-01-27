@@ -152,6 +152,7 @@ class ClassServiceImpl implements ClassService {
         classInfo.loadClass();
         classInfo.getSuperclasses().loadClasses();
         classInfo.getInterfaces().loadClasses();
+        classInfo.getInnerClasses().loadClasses();
         return classInfo;
     }
 
