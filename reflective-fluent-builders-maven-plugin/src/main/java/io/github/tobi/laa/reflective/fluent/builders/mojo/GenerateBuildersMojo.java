@@ -504,10 +504,14 @@ public class GenerateBuildersMojo extends AbstractMojo {
      * The target directory in which to place the generated builders.
      * </p>
      * <p>
-     * If not specified, the default value is dependent on the {@link LifecyclePhase}.For any test-related phase, the
-     * default target directory will be the following:<br>
+     * If not specified, the default value is dependent on the {@link LifecyclePhase}.
+     * </p>
+     * <p>
+     * For any test-related phase, the default target directory will be the following:
+     * <br>
      * <code>${project.build.directory}/generated-test-sources/builders</code><br>
-     * For any other phase, the default target directory will be:<br>
+     * For any other phase, the default target directory will be:
+     * <br>
      * <code>${project.build.directory}/generated-sources/builders</code>
      * </p>
      *
@@ -538,7 +542,7 @@ public class GenerateBuildersMojo extends AbstractMojo {
 
     /**
      * <p>
-     * Specifies whether to delete orphaned builders from the {@link #setTarget(File) target directory}.
+     * Specifies whether to delete orphaned builders from the {@link #setTarget(File) <target>} directory.
      * </p>
      * <p>
      * A builder is considered orphaned if it would no longer be generated during a clean build, be it due to a class
