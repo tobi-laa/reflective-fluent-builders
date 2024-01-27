@@ -31,9 +31,14 @@ class WithSupplierFactoryMethodCodeGenerator implements MethodCodeGenerator {
     @Override
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
+        final var builtType = builderMetadata.getBuiltType().getType().loadClass();
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
-        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType().loadClass());
+        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builtType);
         return Optional.of(MethodSpec.methodBuilder("withSupplier")
+                .addJavadoc(
+                        "Creates an instance of {@link $T} that will work on an instance of {@link $T} that is created initially by the given {@code supplier} once {@link #build()} is called.\n",
+                        builderClassName,
+                        builtType)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(builderClassName)
                 .addParameter(supplierTypeName, "supplier", Modifier.FINAL)

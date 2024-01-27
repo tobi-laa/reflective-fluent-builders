@@ -227,7 +227,19 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.ArrayFloats floats(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the array property {@code floats} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.floats()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the array property {@code floats}.\n" +
+                                        " */\n" +
+                                        "public %1$s.ArrayFloats floats(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.ArrayFloats();\n" +
                                         "}\n",
@@ -236,6 +248,11 @@ class InnerClassForArrayCodeGeneratorTest {
                                 "public class ArrayFloats {\n" +
                                         "  private java.util.List<java.lang.Float> list;\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the array property {@code floats}.\n" +
+                                        "   * @param item The item to add to the array {@code floats}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.ArrayFloats add(\n" +
                                         "      final float item) {\n" +
                                         "    if (this.list == null) {\n" +
@@ -246,6 +263,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    if (this.list != null) {\n" +
@@ -275,7 +296,19 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.ArrayStrings strings(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the array property {@code strings} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.strings()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the array property {@code strings}.\n" +
+                                        " */\n" +
+                                        "public %1$s.ArrayStrings strings(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.ArrayStrings();\n" +
                                         "}\n",
@@ -284,6 +317,11 @@ class InnerClassForArrayCodeGeneratorTest {
                                 "public class ArrayStrings {\n" +
                                         "  private java.util.List<java.lang.String> list;\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the array property {@code strings}.\n" +
+                                        "   * @param item The item to add to the array {@code strings}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.ArrayStrings add(\n" +
                                         "      final java.lang.String item) {\n" +
                                         "    if (this.list == null) {\n" +
@@ -294,6 +332,10 @@ class InnerClassForArrayCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    if (this.list != null) {\n" +

@@ -22,13 +22,16 @@ import static io.github.tobi.laa.reflective.fluent.builders.constants.BuilderCon
  */
 @Named
 @Singleton
-class ConstructorWithObjectSupplieCodeGenerator implements MethodCodeGenerator {
+class ConstructorWithObjectSupplierCodeGenerator implements MethodCodeGenerator {
 
     @Override
     public Optional<MethodSpec> generate(final BuilderMetadata builderMetadata) {
         Objects.requireNonNull(builderMetadata);
-        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builderMetadata.getBuiltType().getType().loadClass());
+        final var builtType = builderMetadata.getBuiltType().getType().loadClass();
+        final var supplierTypeName = ParameterizedTypeName.get(Supplier.class, builtType);
         return Optional.of(MethodSpec.constructorBuilder()
+                .addJavadoc("Creates a new instance of {@link $T} using the given {@code $L}.\n", builtType, OBJECT_SUPPLIER_FIELD_NAME)
+                .addJavadoc("Has been set to visibility {@code protected} so that users may choose to inherit the builder.\n")
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(supplierTypeName, OBJECT_SUPPLIER_FIELD_NAME, Modifier.FINAL)
                 .addStatement("this.$1L = $2T.requireNonNull($1L)", OBJECT_SUPPLIER_FIELD_NAME, Objects.class)

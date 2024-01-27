@@ -325,13 +325,30 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.CollectionDeque deque(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the collection property {@code deque} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.deque()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the collection property {@code deque}.\n" +
+                                        " */\n" +
+                                        "public %1$s.CollectionDeque deque(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.CollectionDeque();\n" +
                                         "}\n",
                                 mockTypeName), //
                         String.format(
                                 "public class CollectionDeque {\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the collection property {@code deque}.\n" +
+                                        "   * @param item The item to add to the collection {@code deque}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.CollectionDeque add(\n" +
                                         "      final ? item) {\n" +
                                         "    if (%1$s.this.fieldValue.deque == null) {\n" +
@@ -342,6 +359,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    return %1$s.this;\n" +
@@ -365,13 +386,30 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "public %1$s.CollectionList list(\n" +
+                                "/**\n" +
+                                        " * Returns an inner builder for the collection property {@code list} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.list()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the collection property {@code list}.\n" +
+                                        " */\n" +
+                                        "public %1$s.CollectionList list(\n" +
                                         "    ) {\n" +
                                         "  return new %1$s.CollectionList();\n" +
                                         "}\n",
                                 mockTypeName),
                         String.format(
                                 "public class CollectionList {\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the collection property {@code list}.\n" +
+                                        "   * @param item The item to add to the collection {@code list}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
                                         "  public %1$s.CollectionList add(\n" +
                                         "      final java.lang.String item) {\n" +
                                         "    if (%1$s.this.fieldValue.list == null) {\n" +
@@ -382,6 +420,10 @@ class InnerClassForCollectionCodeGeneratorTest {
                                         "    return this;\n" +
                                         "  }\n" +
                                         "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
                                         "  public %1$s and(\n" +
                                         "      ) {\n" +
                                         "    return %1$s.this;\n" +

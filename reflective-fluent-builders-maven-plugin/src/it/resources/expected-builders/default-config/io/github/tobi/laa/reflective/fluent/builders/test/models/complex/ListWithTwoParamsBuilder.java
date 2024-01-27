@@ -9,6 +9,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
+/**
+ * Builder for {@link ListWithTwoParams}.
+ */
 @Generated(
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
     date = "3333-03-13T00:00Z[UTC]"
@@ -26,18 +29,34 @@ public class ListWithTwoParamsBuilder<A, B> {
 
   private final FieldValue fieldValue = new FieldValue();
 
+  /**
+   * Creates a new instance of {@link ListWithTwoParams} using the given {@code objectSupplier}.
+   * Has been set to visibility {@code protected} so that users may choose to inherit the builder.
+   */
   protected ListWithTwoParamsBuilder(final Supplier<ListWithTwoParams> objectSupplier) {
     this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
+  /**
+   * Creates an instance of {@link ListWithTwoParamsBuilder} that will work on a new instance of {@link ListWithTwoParams} once {@link #build()} is called.
+   */
   public static ListWithTwoParamsBuilder newInstance() {
     return new ListWithTwoParamsBuilder(ListWithTwoParams::new);
   }
 
+  /**
+   * Creates an instance of {@link ListWithTwoParamsBuilder} that will work on an instance of {@link ListWithTwoParams} that is created initially by the given {@code supplier} once {@link #build()} is called.
+   */
   public static ListWithTwoParamsBuilder withSupplier(final Supplier<ListWithTwoParams> supplier) {
     return new ListWithTwoParamsBuilder(supplier);
   }
 
+  /**
+   * Adds a value to the {@code alls} property.
+   * To be more precise, this will lead to {@link ArrayList#addAll(List<Collection<? extends Map<A, B>>>)} being called on construction of the object.
+   * @param all the value to add to {@code alls}.
+   * @return This builder for chained calls.
+   */
   public ListWithTwoParamsBuilder all(final Collection<Map<A, B>> all) {
     if (this.fieldValue.alls == null) {
       this.fieldValue.alls = new ArrayList<>();
@@ -47,6 +66,10 @@ public class ListWithTwoParamsBuilder<A, B> {
     return this;
   }
 
+  /**
+   * Performs the actual construction of an instance for {@link ListWithTwoParams}.
+   * @return The constructed instance. Never {@code null}.
+   */
   public ListWithTwoParams build() {
     final ListWithTwoParams objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.alls && this.fieldValue.alls != null) {

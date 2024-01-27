@@ -7,9 +7,7 @@ import io.github.tobi.laa.reflective.fluent.builders.generator.api.BuilderClassN
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.SetterCodeGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.SetterMethodNameGenerator;
 import io.github.tobi.laa.reflective.fluent.builders.generator.api.TypeNameGenerator;
-import io.github.tobi.laa.reflective.fluent.builders.model.Adder;
-import io.github.tobi.laa.reflective.fluent.builders.model.BuilderMetadata;
-import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
+import io.github.tobi.laa.reflective.fluent.builders.model.*;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -54,6 +52,7 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         final String name = methodNameGenerator.generate(writeAccessor);
         return MethodSpec.methodBuilder(name)
+                .addJavadoc(generateJavadocForNonAdder(writeAccessor, name))
                 .addModifiers(Modifier.PUBLIC)
                 .returns(builderClassName)
                 .addParameter(typeNameGenerator.generateTypeName(writeAccessor.getPropertyType()), name, Modifier.FINAL)
@@ -63,10 +62,32 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
                 .build();
     }
 
+    private CodeBlock generateJavadocForNonAdder(final WriteAccessor writeAccessor, final String paramName) {
+        final var javadoc = CodeBlock.builder()
+                .add("Sets the value for the {@code $L} property.\n", writeAccessor.getPropertyName());
+        if (writeAccessor instanceof Getter) {
+            final var getter = (Getter) writeAccessor;
+            javadoc.add("To be more precise, this will lead to {@link $T#$L()} being called on construction of the object.\n",
+                    getter.getDeclaringClass(), getter.getMethodName());
+        } else if (writeAccessor instanceof Setter) {
+            final var setter = (Setter) writeAccessor;
+            javadoc.add("To be more precise, this will lead to {@link $T#$L($T)} being called on construction of the object.\n",
+                    setter.getDeclaringClass(), setter.getMethodName(), setter.getPropertyType().getType());
+        } else {
+            javadoc.add("To be more precise, this will lead to the field {@link $T#$L} being modified directly on construction of the object.\n",
+                    writeAccessor.getDeclaringClass(), writeAccessor.getPropertyName());
+        }
+        return javadoc
+                .add("@param $L the value to set.\n", paramName)
+                .add("@return This builder for chained calls.\n")
+                .build();
+    }
+
     private MethodSpec generateForAdder(final BuilderMetadata builderMetadata, final Adder adder) {
         final var builderClassName = builderClassNameGenerator.generateClassName(builderMetadata);
         final String name = methodNameGenerator.generate(adder);
         final var methodBuilder = MethodSpec.methodBuilder(name)
+                .addJavadoc(generateJavadocForAdder(adder, name))
                 .addModifiers(Modifier.PUBLIC)
                 .returns(builderClassName)
                 .addParameter(typeNameGenerator.generateTypeName(adder.getParamType()), name, Modifier.FINAL);
@@ -79,6 +100,16 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
                 .addStatement("this.$L.$L.add($L)", BuilderConstants.FieldValue.FIELD_NAME, adder.getPropertyName(), name)
                 .addStatement("this.$L.$L = $L", BuilderConstants.CallSetterFor.FIELD_NAME, adder.getPropertyName(), true)
                 .addStatement("return this")
+                .build();
+    }
+
+    private CodeBlock generateJavadocForAdder(final Adder adder, final String paramName) {
+        return CodeBlock.builder()
+                .add("Adds a value to the {@code $L} property.\n", adder.getPropertyName())
+                .add("To be more precise, this will lead to {@link $T#$L($T)} being called on construction of the object.\n",
+                        adder.getDeclaringClass(), adder.getMethodName(), adder.getPropertyType().getType())
+                .add("@param $L the value to add to {@code $L}.\n", paramName, adder.getPropertyName())
+                .add("@return This builder for chained calls.\n")
                 .build();
     }
 }

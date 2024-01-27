@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.processing.Generated;
 
+/**
+ * Builder for {@link GetAndAdd}.
+ */
 @Generated(
     value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
     date = "3333-03-13T00:00Z[UTC]"
@@ -25,68 +28,172 @@ public class GetAndAddBuilder {
 
   private final FieldValue fieldValue = new FieldValue();
 
+  /**
+   * Creates a new instance of {@link GetAndAdd} using the given {@code objectSupplier}.
+   * Has been set to visibility {@code protected} so that users may choose to inherit the builder.
+   */
   protected GetAndAddBuilder(final Supplier<GetAndAdd> objectSupplier) {
     this.objectSupplier = Objects.requireNonNull(objectSupplier);
   }
 
+  /**
+   * Creates an instance of {@link GetAndAddBuilder} that will work on a new instance of {@link GetAndAdd} once {@link #build()} is called.
+   */
   public static GetAndAddBuilder newInstance() {
     return new GetAndAddBuilder(GetAndAdd::new);
   }
 
+  /**
+   * Creates an instance of {@link GetAndAddBuilder} that will work on an instance of {@link GetAndAdd} that is created initially by the given {@code supplier} once {@link #build()} is called.
+   */
   public static GetAndAddBuilder withSupplier(final Supplier<GetAndAdd> supplier) {
     return new GetAndAddBuilder(supplier);
   }
 
+  /**
+   * Returns an inner builder for the array property {@code listSetterWrongType} for chained calls of adding items to it.
+   * Can be used like follows:
+   * <pre>
+   * builder.listSetterWrongType()
+   *        .add(item1)
+   *        .add(item2)
+   *        .and()
+   *        .build()
+   * </pre>
+   * @return The inner builder for the array property {@code listSetterWrongType}.
+   */
   public ArrayListSetterWrongType listSetterWrongType() {
     return new ArrayListSetterWrongType();
   }
 
+  /**
+   * Returns an inner builder for the collection property {@code listGetterAndSetter} for chained calls of adding items to it.
+   * Can be used like follows:
+   * <pre>
+   * builder.listGetterAndSetter()
+   *        .add(item1)
+   *        .add(item2)
+   *        .and()
+   *        .build()
+   * </pre>
+   * @return The inner builder for the collection property {@code listGetterAndSetter}.
+   */
   public CollectionListGetterAndSetter listGetterAndSetter() {
     return new CollectionListGetterAndSetter();
   }
 
+  /**
+   * Returns an inner builder for the collection property {@code listNoGetter} for chained calls of adding items to it.
+   * Can be used like follows:
+   * <pre>
+   * builder.listNoGetter()
+   *        .add(item1)
+   *        .add(item2)
+   *        .and()
+   *        .build()
+   * </pre>
+   * @return The inner builder for the collection property {@code listNoGetter}.
+   */
   public CollectionListNoGetter listNoGetter() {
     return new CollectionListNoGetter();
   }
 
+  /**
+   * Returns an inner builder for the collection property {@code listNoSetter} for chained calls of adding items to it.
+   * Can be used like follows:
+   * <pre>
+   * builder.listNoSetter()
+   *        .add(item1)
+   *        .add(item2)
+   *        .and()
+   *        .build()
+   * </pre>
+   * @return The inner builder for the collection property {@code listNoSetter}.
+   */
   public CollectionListNoSetter listNoSetter() {
     return new CollectionListNoSetter();
   }
 
+  /**
+   * Returns an inner builder for the collection property {@code listSetterWrongType0} for chained calls of adding items to it.
+   * Can be used like follows:
+   * <pre>
+   * builder.listSetterWrongType0()
+   *        .add(item1)
+   *        .add(item2)
+   *        .and()
+   *        .build()
+   * </pre>
+   * @return The inner builder for the collection property {@code listSetterWrongType0}.
+   */
   public CollectionListSetterWrongType0 listSetterWrongType0() {
     return new CollectionListSetterWrongType0();
   }
 
+  /**
+   * Sets the value for the {@code listGetterAndSetter} property.
+   * To be more precise, this will lead to {@link GetAndAdd#setListGetterAndSetter(List<String>)} being called on construction of the object.
+   * @param listGetterAndSetter the value to set.
+   * @return This builder for chained calls.
+   */
   public GetAndAddBuilder listGetterAndSetter(final List<String> listGetterAndSetter) {
     this.fieldValue.listGetterAndSetter = listGetterAndSetter;
     this.callSetterFor.listGetterAndSetter = true;
     return this;
   }
 
+  /**
+   * Sets the value for the {@code listNoGetter} property.
+   * To be more precise, this will lead to {@link GetAndAdd#setListNoGetter(List<String>)} being called on construction of the object.
+   * @param listNoGetter the value to set.
+   * @return This builder for chained calls.
+   */
   public GetAndAddBuilder listNoGetter(final List<String> listNoGetter) {
     this.fieldValue.listNoGetter = listNoGetter;
     this.callSetterFor.listNoGetter = true;
     return this;
   }
 
+  /**
+   * Sets the value for the {@code listNoSetter} property.
+   * To be more precise, this will lead to {@link GetAndAdd#getListNoSetter()} being called on construction of the object.
+   * @param listNoSetter the value to set.
+   * @return This builder for chained calls.
+   */
   public GetAndAddBuilder listNoSetter(final List<String> listNoSetter) {
     this.fieldValue.listNoSetter = listNoSetter;
     this.callSetterFor.listNoSetter = true;
     return this;
   }
 
+  /**
+   * Sets the value for the {@code listSetterWrongType} property.
+   * To be more precise, this will lead to {@link GetAndAdd#setListSetterWrongType(String[])} being called on construction of the object.
+   * @param listSetterWrongType the value to set.
+   * @return This builder for chained calls.
+   */
   public GetAndAddBuilder listSetterWrongType(final String[] listSetterWrongType) {
     this.fieldValue.listSetterWrongType = listSetterWrongType;
     this.callSetterFor.listSetterWrongType = true;
     return this;
   }
 
+  /**
+   * Sets the value for the {@code listSetterWrongType0} property.
+   * To be more precise, this will lead to {@link GetAndAdd#getListSetterWrongType()} being called on construction of the object.
+   * @param listSetterWrongType the value to set.
+   * @return This builder for chained calls.
+   */
   public GetAndAddBuilder listSetterWrongType(final List<String> listSetterWrongType) {
     this.fieldValue.listSetterWrongType0 = listSetterWrongType;
     this.callSetterFor.listSetterWrongType0 = true;
     return this;
   }
 
+  /**
+   * Performs the actual construction of an instance for {@link GetAndAdd}.
+   * @return The constructed instance. Never {@code null}.
+   */
   public GetAndAdd build() {
     final GetAndAdd objectToBuild = this.objectSupplier.get();
     if (this.callSetterFor.listGetterAndSetter) {
@@ -134,6 +241,11 @@ public class GetAndAddBuilder {
   public class ArrayListSetterWrongType {
     private List<String> list;
 
+    /**
+     * Adds an item to the array property {@code listSetterWrongType}.
+     * @param item The item to add to the array {@code listSetterWrongType}.
+     * @return This builder for chained calls.
+     */
     public ArrayListSetterWrongType add(final String item) {
       if (this.list == null) {
         this.list = new ArrayList<>();
@@ -143,6 +255,10 @@ public class GetAndAddBuilder {
       return this;
     }
 
+    /**
+     * Returns the builder for the parent object.
+     * @return The builder for the parent object.
+     */
     public GetAndAddBuilder and() {
       if (this.list != null) {
         GetAndAddBuilder.this.fieldValue.listSetterWrongType = new String[this.list.size()];
@@ -155,6 +271,11 @@ public class GetAndAddBuilder {
   }
 
   public class CollectionListGetterAndSetter {
+    /**
+     * Adds an item to the collection property {@code listGetterAndSetter}.
+     * @param item The item to add to the collection {@code listGetterAndSetter}.
+     * @return This builder for chained calls.
+     */
     public CollectionListGetterAndSetter add(final String item) {
       if (GetAndAddBuilder.this.fieldValue.listGetterAndSetter == null) {
         GetAndAddBuilder.this.fieldValue.listGetterAndSetter = new ArrayList<>();
@@ -164,12 +285,21 @@ public class GetAndAddBuilder {
       return this;
     }
 
+    /**
+     * Returns the builder for the parent object.
+     * @return The builder for the parent object.
+     */
     public GetAndAddBuilder and() {
       return GetAndAddBuilder.this;
     }
   }
 
   public class CollectionListNoGetter {
+    /**
+     * Adds an item to the collection property {@code listNoGetter}.
+     * @param item The item to add to the collection {@code listNoGetter}.
+     * @return This builder for chained calls.
+     */
     public CollectionListNoGetter add(final String item) {
       if (GetAndAddBuilder.this.fieldValue.listNoGetter == null) {
         GetAndAddBuilder.this.fieldValue.listNoGetter = new ArrayList<>();
@@ -179,12 +309,21 @@ public class GetAndAddBuilder {
       return this;
     }
 
+    /**
+     * Returns the builder for the parent object.
+     * @return The builder for the parent object.
+     */
     public GetAndAddBuilder and() {
       return GetAndAddBuilder.this;
     }
   }
 
   public class CollectionListNoSetter {
+    /**
+     * Adds an item to the collection property {@code listNoSetter}.
+     * @param item The item to add to the collection {@code listNoSetter}.
+     * @return This builder for chained calls.
+     */
     public CollectionListNoSetter add(final String item) {
       if (GetAndAddBuilder.this.fieldValue.listNoSetter == null) {
         GetAndAddBuilder.this.fieldValue.listNoSetter = new ArrayList<>();
@@ -194,12 +333,21 @@ public class GetAndAddBuilder {
       return this;
     }
 
+    /**
+     * Returns the builder for the parent object.
+     * @return The builder for the parent object.
+     */
     public GetAndAddBuilder and() {
       return GetAndAddBuilder.this;
     }
   }
 
   public class CollectionListSetterWrongType0 {
+    /**
+     * Adds an item to the collection property {@code listSetterWrongType0}.
+     * @param item The item to add to the collection {@code listSetterWrongType0}.
+     * @return This builder for chained calls.
+     */
     public CollectionListSetterWrongType0 add(final String item) {
       if (GetAndAddBuilder.this.fieldValue.listSetterWrongType0 == null) {
         GetAndAddBuilder.this.fieldValue.listSetterWrongType0 = new ArrayList<>();
@@ -209,6 +357,10 @@ public class GetAndAddBuilder {
       return this;
     }
 
+    /**
+     * Returns the builder for the parent object.
+     * @return The builder for the parent object.
+     */
     public GetAndAddBuilder and() {
       return GetAndAddBuilder.this;
     }

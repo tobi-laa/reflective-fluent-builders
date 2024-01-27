@@ -64,6 +64,18 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
         return CollectionClassSpec.builder() //
                 .getter(MethodSpec //
                         .methodBuilder(writeAccessor.getPropertyName()) //
+                        .addJavadoc(
+                                "Returns an inner builder for the array property {@code $L} for chained calls of adding items to it.\n",
+                                writeAccessor.getPropertyName()) //
+                        .addJavadoc("Can be used like follows:\n") //
+                        .addJavadoc("<pre>\n") //
+                        .addJavadoc("builder.$L()\n", writeAccessor.getPropertyName()) //
+                        .addJavadoc("       .add(item1)\n") //
+                        .addJavadoc("       .add(item2)\n") //
+                        .addJavadoc("       .and()\n") //
+                        .addJavadoc("       .build()\n") //
+                        .addJavadoc("</pre>\n") //
+                        .addJavadoc("@return The inner builder for the array property {@code $L}.\n", writeAccessor.getPropertyName()) //
                         .addModifiers(Modifier.PUBLIC) //
                         .returns(className) //
                         .addStatement("return new $T()", className) //
@@ -79,6 +91,9 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
                                         Modifier.PRIVATE) //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("add") //
+                                .addJavadoc("Adds an item to the array property {@code $L}.\n", writeAccessor.getPropertyName()) //
+                                .addJavadoc("@param item The item to add to the array {@code $L}.\n", writeAccessor.getPropertyName()) //
+                                .addJavadoc("@return This builder for chained calls.\n") //
                                 .addModifiers(Modifier.PUBLIC) //
                                 .addParameter(arrayType.getComponentType(), "item", FINAL) //
                                 .returns(className) //
@@ -90,6 +105,8 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
                                 .addStatement("return this") //
                                 .build()) //
                         .addMethod(MethodSpec.methodBuilder("and") //
+                                .addJavadoc("Returns the builder for the parent object.\n") //
+                                .addJavadoc("@return The builder for the parent object.\n") //
                                 .addModifiers(Modifier.PUBLIC) //
                                 .returns(builderClassName) //
                                 .beginControlFlow("if (this.list != null)") //
