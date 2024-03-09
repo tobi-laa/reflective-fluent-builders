@@ -284,7 +284,7 @@ class ClassServiceIT {
 
     private static Stream<Arguments> testLoadClass() {
         return Stream.of( //
-                Arguments.of("java.lang.String", String.class), //
+                Arguments.of("io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass", SimpleClass.class), //
                 Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", ClassService.class));
     }
 
