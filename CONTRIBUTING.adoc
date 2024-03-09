@@ -29,6 +29,7 @@ They can also be added after the original pull request but before a merge.
 This project _tries_ to stay at 100% code coverage, so this is considered a must.
 * Run the following command to regenerate IT samples and verify that the changes introduced are as expected:
 +
+[,bash]
 ----
  mvn clean verify -Pgenerate-expected-builders-for-it
 ----
@@ -49,6 +50,7 @@ and open new pull requests for each, referencing the original pull request and i
 
 The project can be built from the root directory using:
 
+[,bash]
 ----
 mvn clean install
 ----
@@ -65,6 +67,7 @@ To simplify the release process, the
 https://maven.apache.org/maven-release/maven-release-plugin/[Maven Release Plugin]
 can be used like this:
 
+[,bash]
 ----
 mvn release:prepare release:clean -B
 ----
@@ -72,6 +75,7 @@ mvn release:prepare release:clean -B
 For the `java8` branch, the versioning scheme does not seem to be understood correctly. Thus, the command from above
 should contain the release version, tag and following development version explicitly:
 
+[,bash]
 ----
 mvn release:prepare release:clean -B -DreleaseVersion=1.0.0-java8 -DdevelopmentVersion=1.1.0-java8-SNAPSHOT -Dtag=v1.0.0-java8
 ----
