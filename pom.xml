@@ -8,13 +8,13 @@
     <description>
         Provides the possibility of generating fluent builders for existing classes via reflection.
     </description>
-    <url>https://github.com/tobias-laa/reflective-fluent-builders.git</url>
+    <url>https://github.com/tobi-laa/reflective-fluent-builders.git</url>
     <developers>
         <developer>
             <id>tobi-laa</id>
             <name>Tobias Laatsch</name>
             <email>tobias.laatsch@posteo.de</email>
-            <organizationUrl>https://github.com/tobias-laa</organizationUrl>
+            <organizationUrl>https://github.com/tobi-laa</organizationUrl>
         </developer>
     </developers>
     <licenses>
@@ -26,14 +26,14 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git@github.com:tobias-laa/reflective-fluent-builders.git</connection>
-        <developerConnection>scm:git:git@github.com:tobias-laa/reflective-fluent-builders.git</developerConnection>
-        <url>https://github.com/tobias-laa/reflective-fluent-builders/tree/master</url>
+        <connection>scm:git:git@github.com:tobi-laa/reflective-fluent-builders.git</connection>
+        <developerConnection>scm:git:git@github.com:tobi-laa/reflective-fluent-builders.git</developerConnection>
+        <url>https://github.com/tobi-laa/reflective-fluent-builders/tree/master</url>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/tobias-laa/reflective-fluent-builders/issues</url>
+        <url>https://github.com/tobi-laa/reflective-fluent-builders/issues</url>
     </issueManagement>
     <inceptionYear>2022</inceptionYear>
     <distributionManagement>
@@ -59,7 +59,7 @@
         <site.deploy.directory>${project.basedir}/target/gh-pages</site.deploy.directory>
         <release.skip>false</release.skip>
         <!-- integration with SonarCloud -->
-        <sonar.organization>tobias-laa</sonar.organization>
+        <sonar.organization>tobi-laa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/reflective-fluent-builders-maven-plugin/target/site/jacoco-aggregate/jacoco.xml,
