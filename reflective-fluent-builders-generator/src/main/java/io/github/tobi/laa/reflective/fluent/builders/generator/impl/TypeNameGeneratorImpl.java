@@ -28,8 +28,7 @@ class TypeNameGeneratorImpl implements TypeNameGenerator {
     @SuppressWarnings("java:S3252") // false positive for static method call
     public TypeName generateTypeName(final PropertyType propertyType) {
         Objects.requireNonNull(propertyType);
-        if (propertyType.getType() instanceof ParameterizedType) {
-            final var parameterizedType = (ParameterizedType) propertyType.getType();
+        if (propertyType.getType() instanceof ParameterizedType parameterizedType) {
             final var rawType = (Class<?>) parameterizedType.getRawType();
             final Type[] typeArgs = Arrays.stream(parameterizedType.getActualTypeArguments()).map(this::wildcardToUpperBound).toArray(Type[]::new);
             return ParameterizedTypeName.get(rawType, typeArgs);
@@ -46,8 +45,8 @@ class TypeNameGeneratorImpl implements TypeNameGenerator {
     }
 
     private Type wildcardToUpperBound(final Type type) {
-        if (type instanceof WildcardType) {
-            final var upperBounds = ((WildcardType) type).getUpperBounds();
+        if (type instanceof WildcardType wildcardType) {
+            final var upperBounds = wildcardType.getUpperBounds();
             return upperBounds.length == 0 ? Object.class : upperBounds[0];
         } else {
             return type;

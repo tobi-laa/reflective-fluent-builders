@@ -60,7 +60,7 @@ class ClassServiceImpl implements ClassService {
                     .filter(not(this::excludeFromHierarchyCollection)) //
                     .forEach(classHierarchy::add);
         }
-        return classHierarchy.stream().distinct().collect(Collectors.toUnmodifiableList());
+        return classHierarchy.stream().distinct().toList();
     }
 
     private boolean isDirectInterface(final ClassInfo anInterface, final ClassInfo clazz) {

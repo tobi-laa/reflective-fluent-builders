@@ -41,21 +41,18 @@ class TypeServiceImpl implements TypeService {
             return builder.build();
         }
 
+        @SuppressWarnings("rawtypes")
         private void collect(final Type type) {
             if (!alreadyProcessedTypes.contains(type)) {
                 alreadyProcessedTypes.add(type);
-                if (type instanceof GenericArrayType) {
-                    final var genericArrayType = (GenericArrayType) type;
+                if (type instanceof GenericArrayType genericArrayType) {
                     collect(genericArrayType.getGenericComponentType());
-                } else if (type instanceof ParameterizedType) {
-                    final var parameterizedType = (ParameterizedType) type;
+                } else if (type instanceof ParameterizedType parameterizedType) {
                     collect(parameterizedType.getRawType());
                     Arrays.stream(parameterizedType.getActualTypeArguments()).forEach(this::collect);
-                } else if (type instanceof TypeVariable) {
-                    final var typeVariable = (TypeVariable<?>) type;
+                } else if (type instanceof TypeVariable typeVariable) {
                     Arrays.stream(typeVariable.getBounds()).forEach(this::collect);
-                } else if (type instanceof WildcardType) {
-                    final var wildcardType = (WildcardType) type;
+                } else if (type instanceof WildcardType wildcardType) {
                     Arrays.stream(wildcardType.getUpperBounds()).forEach(this::collect);
                     Arrays.stream(wildcardType.getLowerBounds()).forEach(this::collect);
                 } else {

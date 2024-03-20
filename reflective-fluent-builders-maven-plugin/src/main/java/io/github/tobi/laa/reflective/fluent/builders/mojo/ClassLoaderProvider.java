@@ -10,6 +10,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import java.io.Closeable;
 import java.io.File;
+import java.io.Serial;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -129,6 +130,7 @@ class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLo
 
     static class ClassLoaderProviderException extends RuntimeException {
 
+        @Serial
         private static final long serialVersionUID = -8178484321714698102L;
 
         private ClassLoaderProviderException(final String message, final Throwable cause) {

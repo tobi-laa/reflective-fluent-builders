@@ -50,8 +50,7 @@ class InnerClassForCollectionCodeGenerator implements CollectionClassCodeGenerat
     @Override
     public boolean isApplicable(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor.getPropertyType() instanceof CollectionType && (!(writeAccessor instanceof Adder))) {
-            final var collectionType = (CollectionType) writeAccessor.getPropertyType();
+        if (writeAccessor.getPropertyType() instanceof CollectionType collectionType && (!(writeAccessor instanceof Adder))) {
             return initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(collectionType));
         } else {
             return false;

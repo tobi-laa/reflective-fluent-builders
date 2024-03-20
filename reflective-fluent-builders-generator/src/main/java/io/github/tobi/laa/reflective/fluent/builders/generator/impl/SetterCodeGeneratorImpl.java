@@ -41,8 +41,8 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
     public MethodSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor instanceof Adder) {
-            return generateForAdder(builderMetadata, (Adder) writeAccessor);
+        if (writeAccessor instanceof Adder adder) {
+            return generateForAdder(builderMetadata, adder);
         } else {
             return generateForNonAdder(builderMetadata, writeAccessor);
         }
@@ -65,12 +65,10 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
     private CodeBlock generateJavadocForNonAdder(final WriteAccessor writeAccessor, final String paramName) {
         final var javadoc = CodeBlock.builder()
                 .add("Sets the value for the {@code $L} property.\n", writeAccessor.getPropertyName());
-        if (writeAccessor instanceof Getter) {
-            final var getter = (Getter) writeAccessor;
+        if (writeAccessor instanceof Getter getter) {
             javadoc.add("To be more precise, this will lead to {@link $T#$L()} being called on construction of the object.\n",
                     getter.getDeclaringClass(), getter.getMethodName());
-        } else if (writeAccessor instanceof Setter) {
-            final var setter = (Setter) writeAccessor;
+        } else if (writeAccessor instanceof Setter setter) {
             javadoc.add("To be more precise, this will lead to {@link $T#$L($T)} being called on construction of the object.\n",
                     setter.getDeclaringClass(), setter.getMethodName(), setter.getPropertyType().getType());
         } else {

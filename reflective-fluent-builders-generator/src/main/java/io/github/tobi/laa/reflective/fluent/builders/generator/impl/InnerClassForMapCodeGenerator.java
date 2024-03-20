@@ -48,11 +48,10 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
     @Override
     public boolean isApplicable(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
-        if (!(writeAccessor.getPropertyType() instanceof MapType)) {
-            return false;
-        } else {
-            final var mapType = (MapType) writeAccessor.getPropertyType();
+        if (writeAccessor.getPropertyType() instanceof MapType mapType) {
             return initializerGenerators.stream().anyMatch(gen -> gen.isApplicable(mapType));
+        } else {
+            return false;
         }
     }
 
@@ -60,8 +59,7 @@ class InnerClassForMapCodeGenerator implements CollectionClassCodeGenerator {
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor.getPropertyType() instanceof MapType) {
-            final var mapType = (MapType) writeAccessor.getPropertyType();
+        if (writeAccessor.getPropertyType() instanceof MapType mapType) {
             return generate(builderMetadata, writeAccessor, mapType);
         } else {
             throw new CodeGenerationException("Generation of inner map class for " + writeAccessor + " is not supported.");

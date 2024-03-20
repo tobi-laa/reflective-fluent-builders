@@ -17,9 +17,9 @@ class ParamTypeComparator implements Comparator<PropertyType> {
             return -1;
         } else if (b == null) {
             return 1;
-        } else if (a.getType() instanceof ParameterizedType && b.getType() instanceof ParameterizedType) {
-            final var aRawType = ((ParameterizedType) a.getType()).getRawType();
-            final var bRawType = ((ParameterizedType) b.getType()).getRawType();
+        } else if (a.getType() instanceof ParameterizedType typeA && b.getType() instanceof ParameterizedType typeB) {
+            final var aRawType = typeA.getRawType();
+            final var bRawType = typeB.getRawType();
             return aRawType.getTypeName().compareTo(bRawType.getTypeName());
         } else {
             return a.getType().getTypeName().compareTo(b.getType().getTypeName());
