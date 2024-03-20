@@ -37,7 +37,7 @@ jobs:
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn \
+          ./mvnw \
             --no-transfer-progress \
             --batch-mode \
             -Prelease \

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.tobi-laa</groupId>
@@ -131,6 +132,13 @@
                             <includes>
                                 <include>GenerateExpectedBuilders.java</include>
                             </includes>
+                            <systemPropertyVariables>
+                                <!-- currently needed to run integration tests. -->
+                                <!--suppress UnresolvedMavenProperty -->
+                                <maven.version>${maven.version}</maven.version>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <maven.home>${maven.home}</maven.home>
+                            </systemPropertyVariables>
                             <environmentVariables>
                                 <useFixedClockForIntegrationTests>true</useFixedClockForIntegrationTests>
                             </environmentVariables>
@@ -151,6 +159,11 @@
                                 <project.version>${project.version}</project.version>
                                 <jakarta.xml.bind-api.version>${jakarta.xml.bind-api.version}
                                 </jakarta.xml.bind-api.version>
+                                <!-- currently needed to run integration tests. -->
+                                <!--suppress UnresolvedMavenProperty -->
+                                <maven.version>${maven.version}</maven.version>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <maven.home>${maven.home}</maven.home>
                             </systemPropertyVariables>
                             <environmentVariables>
                                 <useFixedClockForIntegrationTests>true</useFixedClockForIntegrationTests>
@@ -224,6 +237,11 @@
                     <systemPropertyVariables>
                         <project.version>${project.version}</project.version>
                         <jakarta.xml.bind-api.version>${jakarta.xml.bind-api.version}</jakarta.xml.bind-api.version>
+                        <!-- currently needed to run integration tests. -->
+                        <!--suppress UnresolvedMavenProperty -->
+                        <maven.version>${maven.version}</maven.version>
+                        <!--suppress UnresolvedMavenProperty -->
+                        <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
                     <environmentVariables>
                         <useFixedClockForIntegrationTests>true</useFixedClockForIntegrationTests>
