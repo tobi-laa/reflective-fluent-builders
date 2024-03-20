@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.tobi-laa</groupId>
     <artifactId>reflective-fluent-builders</artifactId>
@@ -115,7 +116,7 @@
         <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
+        <lombok-maven-plugin.version>1.18.30</lombok-maven-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
     </properties>
     <modules>
@@ -444,7 +445,7 @@
                     <version>${jaxb2-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.projectlombok</groupId>
+                    <groupId>io.github.qsy7.org.projectlombok</groupId>
                     <artifactId>lombok-maven-plugin</artifactId>
                     <version>${lombok-maven-plugin.version}</version>
                 </plugin>
