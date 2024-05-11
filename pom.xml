@@ -82,7 +82,7 @@
         <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
-        <jakarta.el-api.version>5.0.1</jakarta.el-api.version>
+        <jakarta.el-api.version>6.0.0</jakarta.el-api.version>
         <jakarta.el.version>5.0.0-M1</jakarta.el.version>
         <plexus-build-api.version>1.2.0</plexus-build-api.version>
         <slf4j.version>2.0.7</slf4j.version>
