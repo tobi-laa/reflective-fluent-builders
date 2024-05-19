@@ -8,8 +8,8 @@ on:
       - opened
       - synchronize
       - reopened
-    branches:
-      - *
+    branches-ignore:
+      - java8
 jobs:
   build:
     name: Build and analyze
