@@ -2,16 +2,14 @@ name: SonarCloud
 on:
   push:
     branches:
-      - main
-      - java17
+      - *
   pull_request:
     types:
       - opened
       - synchronize
       - reopened
     branches:
-      - main
-      - java17
+      - *
 jobs:
   build:
     name: Build and analyze

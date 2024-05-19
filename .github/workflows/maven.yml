@@ -11,16 +11,14 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - main
-      - java17
+      - *
   pull_request:
     types:
       - opened
       - synchronize
       - reopened
     branches:
-      - main
-      - java17
+      - *
 
 jobs:
   build:
