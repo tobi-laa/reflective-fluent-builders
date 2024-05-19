@@ -10,8 +10,8 @@ name: Java CI with Maven
 
 on:
   push:
-    branches:
-      - *
+    branches-ignore:
+      - java8
   pull_request:
     types:
       - opened
