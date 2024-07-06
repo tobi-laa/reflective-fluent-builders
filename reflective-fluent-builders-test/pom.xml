@@ -15,8 +15,18 @@
         <!-- the module is solely used for tests and should thus never be deployed -->
         <maven.deploy.skip>true</maven.deploy.skip>
         <release.skip>true</release.skip>
-        <!-- none of the test models should be scanned by sonar due to various 'ugly' constructs to test edge cases -->
-        <sonar.exclusions>**/io/github/tobi/laa/reflective/fluent/builders/test/models/**/*.java</sonar.exclusions>
+        <!--
+            (1) none of the test models should be scanned by sonar due to various 'ugly' constructs to test edge cases
+            (2) Spring configuration/properties classes should not be scanned as they are tested implicitly by the
+                integration tests
+        -->
+        <sonar.exclusions>
+            **/io/github/tobi/laa/reflective/fluent/builders/test/models/**/*.java,
+            **/*Config.java,
+            **/*Configuration.java,
+            **/*Props.java,
+            **/*Properties.java
+        </sonar.exclusions>
         <!-- for now, however, a site is still generated -->
         <site.deploy.directory>${project.basedir}/../target/gh-pages</site.deploy.directory>
     </properties>
@@ -48,6 +58,22 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-testkit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
