@@ -26,8 +26,8 @@ class FinalCollectionFieldAccessorBuildMethodStepCodeGenerator implements BuildM
     @Override
     public boolean isApplicable(final WriteAccessor writeAccessor) {
         Objects.requireNonNull(writeAccessor);
-        return writeAccessor instanceof FieldAccessor fieldAccessor
-                && fieldAccessor.isFinal()
+        return writeAccessor instanceof FieldAccessor
+                && ((FieldAccessor) writeAccessor).isFinal()
                 && writeAccessor.getPropertyType() instanceof CollectionType;
     }
 

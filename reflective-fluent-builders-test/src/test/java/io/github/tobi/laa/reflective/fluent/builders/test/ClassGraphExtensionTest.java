@@ -8,9 +8,11 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.platform.testkit.engine.EngineTestKit;
+import org.mockito.MockedConstruction;
 import org.mockito.invocation.InvocationOnMock;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,8 +42,8 @@ class ClassGraphExtensionTest {
     @Test
     void testClassGraphException() {
         // Arrange
-        final var cause = classGraphException("Thrown in unit test");
-        try (final var ignored = mockConstruction(
+        final ClassGraphException cause = classGraphException("Thrown in unit test");
+        try (final MockedConstruction<ClassGraph> ignored = mockConstruction(
                 ClassGraph.class,
                 withSettings().defaultAnswer(InvocationOnMock::getMock),
                 (mock, ctx) -> doThrow(cause).when(mock).scan())) {
@@ -61,11 +63,11 @@ class ClassGraphExtensionTest {
     @Test
     void testExceptionOnClose() {
         // Arrange
-        final var cause = new IOException("Thrown in unit test");
-        final var scanResult = mock(ScanResult.class);
+        final IOException cause = new IOException("Thrown in unit test");
+        final ScanResult scanResult = mock(ScanResult.class);
         doThrow(cause).when(scanResult).close();
         doReturn(mock(ClassInfoList.class)).when(scanResult).getAllClasses();
-        try (final var ignored = mockConstruction(
+        try (final MockedConstruction<ClassGraph> ignored = mockConstruction(
                 ClassGraph.class,
                 withSettings().defaultAnswer(InvocationOnMock::getMock),
                 (mock, ctx) -> doReturn(scanResult).when(mock).scan())) {
@@ -83,7 +85,7 @@ class ClassGraphExtensionTest {
 
     @SneakyThrows
     private ClassGraphException classGraphException(final String message) {
-        final var constructor = ClassGraphException.class.getDeclaredConstructor(String.class);
+        final Constructor<ClassGraphException> constructor = ClassGraphException.class.getDeclaredConstructor(String.class);
         constructor.setAccessible(true);
         return constructor.newInstance(message);
     }

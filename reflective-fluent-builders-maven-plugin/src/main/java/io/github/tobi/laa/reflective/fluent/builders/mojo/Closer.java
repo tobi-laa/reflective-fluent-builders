@@ -26,9 +26,9 @@ class Closer extends AbstractLogEnabled {
      * @throws CloseException In case an {@link IOException error} occurs while attempting to close {@code classLoader}.
      */
     <T> void closeIfCloseable(final T object) {
-        if (object instanceof Closeable closeable) {
+        if (object instanceof Closeable) {
             try {
-                closeable.close();
+                ((Closeable) object).close();
             } catch (final IOException e) {
                 throw new CloseException("Error while attempting to close " + object.getClass() + '.', e);
             }

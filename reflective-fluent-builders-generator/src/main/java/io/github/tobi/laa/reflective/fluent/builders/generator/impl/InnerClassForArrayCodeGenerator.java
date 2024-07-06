@@ -48,8 +48,8 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor.getPropertyType() instanceof ArrayType arrayType) {
-            return generate(builderMetadata, writeAccessor, arrayType);
+        if (writeAccessor.getPropertyType() instanceof ArrayType) {
+            return generate(builderMetadata, writeAccessor, (ArrayType) writeAccessor.getPropertyType());
         } else {
             throw new CodeGenerationException("Generation of inner array class for " + writeAccessor + " is not supported.");
         }

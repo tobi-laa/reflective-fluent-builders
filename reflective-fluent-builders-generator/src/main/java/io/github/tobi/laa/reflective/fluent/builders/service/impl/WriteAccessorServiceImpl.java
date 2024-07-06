@@ -1,5 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.service.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.reflect.TypeToken;
 import io.github.classgraph.ClassInfo;
@@ -95,7 +96,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .filter(not(Method::isBridge)) //
                 .filter(not(method -> isStatic(method.getModifiers()))) //
                 .filter(method -> accessibilityService.isAccessibleFrom(method, builderPackage)) //
-                .toList();
+                .collect(ImmutableList.toImmutableList());
     }
 
     private SortedSet<Adder> gatherAllAdders(final List<Method> methods, final ClassInfo classInfo) {
@@ -141,7 +142,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .flatMap(Arrays::stream) //
                 .filter(not(field -> isStatic(field.getModifiers()))) //
                 .filter(field -> accessibilityService.isAccessibleFrom(field, builderPackage)) //
-                .toList();
+                .collect(ImmutableList.toImmutableList());
     }
 
     private SortedSet<FieldAccessor> gatherAllFieldAccessors(final List<Field> fields, final ClassInfo classInfo) {
@@ -290,8 +291,8 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private Type typeArg(final Type type, final int num) {
-        if (type instanceof ParameterizedType parameterizedType) {
-            return parameterizedType.getActualTypeArguments()[num];
+        if (type instanceof ParameterizedType) {
+            return ((ParameterizedType) type).getActualTypeArguments()[num];
         } else {
             return Object.class;
         }

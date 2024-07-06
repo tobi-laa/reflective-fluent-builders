@@ -43,8 +43,8 @@ class SetterCodeGeneratorImpl implements SetterCodeGenerator {
     public MethodSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor instanceof Adder adder) {
-            return generateForAdder(builderMetadata, adder);
+        if (writeAccessor instanceof Adder) {
+            return generateForAdder(builderMetadata, (Adder) writeAccessor);
         } else {
             return generateForNonAdder(builderMetadata, writeAccessor);
         }
