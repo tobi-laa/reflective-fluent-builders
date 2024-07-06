@@ -40,7 +40,7 @@ class EnumMapInitializerCodeGeneratorTest {
         assertTrue(isApplicable);
     }
 
-    private static Stream<MapType> testIsApplicableTrue() {
+    static Stream<MapType> testIsApplicableTrue() {
         return testGenerateMapInitializer().map(args -> args.get()[0]).map(MapType.class::cast);
     }
 
@@ -53,7 +53,7 @@ class EnumMapInitializerCodeGeneratorTest {
         assertFalse(isApplicable);
     }
 
-    private static Stream<MapType> testIsApplicableFalse() {
+    static Stream<MapType> testIsApplicableFalse() {
         return Stream.concat(
                         CollectionsApiInitializerCodeGenerator.SUPPORTED_MAPS.stream(),
                         Stream.of(Set.class, List.class, CollectionsApiInitializerCodeGeneratorTest.MyList.class))
@@ -81,7 +81,7 @@ class EnumMapInitializerCodeGeneratorTest {
                 .contains(mapType.getType().getTypeName());
     }
 
-    private static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
+    static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
         return testIsApplicableFalse();
     }
 
@@ -94,7 +94,7 @@ class EnumMapInitializerCodeGeneratorTest {
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> testGenerateMapInitializer() {
+    static Stream<Arguments> testGenerateMapInitializer() {
         return Stream.of(
                 Arguments.of(
                         new MapType(EnumMap.class, EnumA.class, Object.class),

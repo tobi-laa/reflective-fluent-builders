@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.script.Bindings;
+import java.io.Serial;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
@@ -41,7 +42,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertTrue(isApplicable);
     }
 
-    private static Stream<CollectionType> testIsApplicableTrueForCollectionType() {
+    static Stream<CollectionType> testIsApplicableTrueForCollectionType() {
         return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionType.class::cast);
     }
 
@@ -54,7 +55,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertFalse(isApplicable);
     }
 
-    private static Stream<CollectionType> testIsApplicableFalseForCollectionType() {
+    static Stream<CollectionType> testIsApplicableFalseForCollectionType() {
         return Stream.of(
                 collectionType(EnumSet.class),
                 collectionType(MyList.class));
@@ -81,7 +82,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .contains(collectionType.getType().getTypeName());
     }
 
-    private static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
+    static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
         return testIsApplicableFalseForCollectionType();
     }
 
@@ -94,7 +95,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> testGenerateCollectionInitializer() {
+    static Stream<Arguments> testGenerateCollectionInitializer() {
         return Stream.concat( //
                 CollectionsApiInitializerCodeGenerator.SUPPORTED_COLLECTIONS //
                         .stream() //
@@ -154,7 +155,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertTrue(isApplicable);
     }
 
-    private static Stream<MapType> testIsApplicableTrueForMapType() {
+    static Stream<MapType> testIsApplicableTrueForMapType() {
         return testGenerateMapInitializer().map(args -> args.get()[0]).map(MapType.class::cast);
     }
 
@@ -167,7 +168,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertFalse(isApplicable);
     }
 
-    private static Stream<MapType> testIsApplicableFalseForMapType() {
+    static Stream<MapType> testIsApplicableFalseForMapType() {
         return Stream.of(
                 mapType(EnumMap.class),
                 mapType(MyMap.class));
@@ -194,7 +195,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .contains(mapType.getType().getTypeName());
     }
 
-    private static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
+    static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
         return testIsApplicableFalseForMapType();
     }
 
@@ -207,7 +208,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> testGenerateMapInitializer() {
+    static Stream<Arguments> testGenerateMapInitializer() {
         return Stream.concat( //
                 CollectionsApiInitializerCodeGenerator.SUPPORTED_MAPS //
                         .stream() //
@@ -241,6 +242,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
     }
 
     static class MyMap<K, V> extends HashMap<K, V> {
+        @Serial
         private static final long serialVersionUID = 3204706075779867698L;
     }
 
@@ -249,6 +251,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
     }
 
     static class MyList<T> extends ArrayList<T> {
+        @Serial
         private static final long serialVersionUID = 3204706075779867698L;
     }
 }

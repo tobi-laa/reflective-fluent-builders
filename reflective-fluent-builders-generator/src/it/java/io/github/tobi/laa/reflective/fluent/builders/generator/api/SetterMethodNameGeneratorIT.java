@@ -50,7 +50,7 @@ class SetterMethodNameGeneratorIT {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         return Stream.of( //
                 Arguments.of(
                         Setter.builder()

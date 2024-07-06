@@ -40,7 +40,7 @@ class EnumSetInitializerCodeGeneratorTest {
         assertTrue(isApplicable);
     }
 
-    private static Stream<CollectionType> testIsApplicableTrue() {
+    static Stream<CollectionType> testIsApplicableTrue() {
         return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionType.class::cast);
     }
 
@@ -53,7 +53,7 @@ class EnumSetInitializerCodeGeneratorTest {
         assertFalse(isApplicable);
     }
 
-    private static Stream<CollectionType> testIsApplicableFalse() {
+    static Stream<CollectionType> testIsApplicableFalse() {
         return Stream.concat(
                         CollectionsApiInitializerCodeGenerator.SUPPORTED_COLLECTIONS.stream(),
                         Stream.of(Set.class, List.class, CollectionsApiInitializerCodeGeneratorTest.MyList.class))
@@ -81,7 +81,7 @@ class EnumSetInitializerCodeGeneratorTest {
                 .contains(collectionType.getType().getTypeName());
     }
 
-    private static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
+    static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
         return testIsApplicableFalse();
     }
 
@@ -94,7 +94,7 @@ class EnumSetInitializerCodeGeneratorTest {
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> testGenerateCollectionInitializer() {
+    static Stream<Arguments> testGenerateCollectionInitializer() {
         return Stream.of(
                 Arguments.of(
                         new CollectionType(EnumSet.class, EnumA.class),

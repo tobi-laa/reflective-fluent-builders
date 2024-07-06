@@ -43,7 +43,7 @@ class BuilderMetadataTest {
         assertThatThrownBy(construct).isExactlyInstanceOf(NullPointerException.class);
     }
 
-    private static Stream<Arguments> testConstructionNull() {
+    static Stream<Arguments> testConstructionNull() {
         final BuilderMetadata.BuiltType builtType = BuilderMetadata.BuiltType.builder() //
                 .type(classInfo.get(SimpleClass.class.getName())) //
                 .location(Paths.get("foo")) //

@@ -6,6 +6,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * <p>
@@ -26,9 +27,9 @@ class Closer extends AbstractLogEnabled {
      * @throws CloseException In case an {@link IOException error} occurs while attempting to close {@code classLoader}.
      */
     <T> void closeIfCloseable(final T object) {
-        if (object instanceof Closeable) {
+        if (object instanceof Closeable closeable) {
             try {
-                ((Closeable) object).close();
+                closeable.close();
             } catch (final IOException e) {
                 throw new CloseException("Error while attempting to close " + object.getClass() + '.', e);
             }
@@ -39,6 +40,7 @@ class Closer extends AbstractLogEnabled {
 
     static class CloseException extends RuntimeException {
 
+        @Serial
         private static final long serialVersionUID = -7002501270233855148L;
 
         CloseException(final String message, final Throwable cause) {

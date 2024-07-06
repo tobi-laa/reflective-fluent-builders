@@ -14,6 +14,7 @@ class ClockProviderTest {
     void testGetFixedClockForIntegrationTests() {
         // Arrange
         final ClockProvider clockProvider = new ClockProvider() {
+            @Override
             boolean useFixedClockForIntegrationTests() {
                 return true;
             }
@@ -28,6 +29,7 @@ class ClockProviderTest {
     void testGet() {
         // Arrange
         final ClockProvider clockProvider = new ClockProvider() {
+            @Override
             boolean useFixedClockForIntegrationTests() {
                 return false;
             }

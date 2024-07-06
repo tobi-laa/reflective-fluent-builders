@@ -23,7 +23,7 @@ class VisibilityServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    private static Stream<Arguments> testToVisibility() {
+    static Stream<Arguments> testToVisibility() {
         return Stream.of( //
                 Arguments.of(modifiersOf("privateMethod"), Visibility.PRIVATE), //
                 Arguments.of(modifiersOf("privateStaticMethod"), Visibility.PRIVATE), //
@@ -40,7 +40,7 @@ class VisibilityServiceImplTest {
         return SomeMethods.class.getDeclaredMethod(name).getModifiers();
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "java:S1186"})
     private static class SomeMethods {
         private void privateMethod() {
         }

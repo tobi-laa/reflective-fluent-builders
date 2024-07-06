@@ -108,7 +108,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         verifyNoInteractions(initializerGeneratorA, initializerGeneratorB);
     }
 
-    private static Stream<WriteAccessor> testIsApplicableFalseWrongType() {
+    static Stream<WriteAccessor> testIsApplicableFalseWrongType() {
         return testGenerateCodeGenerationExceptionWrongType().map(args -> args.get()[1]).map(WriteAccessor.class::cast);
     }
 
@@ -121,7 +121,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         assertFalse(actual);
     }
 
-    private static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
+    static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
         return Stream.of( //
                 Setter.builder() //
                         .methodName("setDeque") //
@@ -149,7 +149,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
     }
 
-    private static Stream<Arguments> testGenerateCodeNull() {
+    static Stream<Arguments> testGenerateCodeNull() {
         return Stream.of( //
                 Arguments.of(null, null),
                 Arguments.of( //
@@ -186,7 +186,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorB, initializerGeneratorB);
     }
 
-    private static Stream<Arguments> testGenerateCodeGenerationExceptionWrongType() {
+    static Stream<Arguments> testGenerateCodeGenerationExceptionWrongType() {
         return Stream.of( //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -272,7 +272,7 @@ class InnerClassForCollectionCodeGeneratorTest {
                 .hasMessageContaining(writeAccessor.getPropertyType().toString());
     }
 
-    private static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
+    static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
         return testIsApplicableFalseNoInitializerGeneratorApplicable() //
                 .map(writeAccessor -> Arguments.of( //
                         BuilderMetadata.builder() //
@@ -306,7 +306,7 @@ class InnerClassForCollectionCodeGeneratorTest {
         verify(initializerGeneratorA).generateCollectionInitializer(collectionType);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         final String mockTypeName = MockType.class.getName().replace('$', '.');
         return Stream.of( //
                 Arguments.of( //

@@ -2,8 +2,8 @@
 
 image:https://img.shields.io/maven-metadata/v/https/repo1.maven.org/maven2/io/github/tobi-laa/reflective-fluent-builders-maven-plugin/maven-metadata.xml.svg[Releases,link=http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.github.tobi-laa%22%20AND%20a%3A%22reflective-fluent-builders-maven-plugin%22]
 link:./LICENSE[image:https://img.shields.io/badge/License-Apache%202.0-orange[Apache 2.0 License\]]
-image:https://sonarcloud.io/api/project_badges/measure?project=tobias-laa_reflective-fluent-builders&metric=alert_status[Quality Gate Status,link=https://sonarcloud.io/summary/new_code?id=tobias-laa_reflective-fluent-builders]
-image:https://sonarcloud.io/api/project_badges/measure?project=tobias-laa_reflective-fluent-builders&metric=coverage[Coverage,link=https://sonarcloud.io/summary/new_code?id=tobias-laa_reflective-fluent-builders]
+image:https://sonarcloud.io/api/project_badges/measure?project=tobi-laa_reflective-fluent-builders&metric=alert_status[Quality Gate Status,link=https://sonarcloud.io/summary/new_code?id=tobi-laa_reflective-fluent-builders]
+image:https://sonarcloud.io/api/project_badges/measure?project=tobi-laa_reflective-fluent-builders&metric=coverage[Coverage,link=https://sonarcloud.io/summary/new_code?id=tobi-laa_reflective-fluent-builders]
 
 = Reflective Fluent Builders
 
@@ -14,7 +14,8 @@ The artifact of the corresponding maven plugin is `reflective-fluent-builders-ma
 
 = Use cases and preferable alternatives
 
-If you have full control of the sources for which you want to generate fluent builders, this project is probably not the best choice available. You might want to look at these well-maintained and stable alternatives:
+If you have full control of the sources for which you want to generate fluent builders, this project is probably not the best choice available.
+You might want to look at these well-maintained and stable alternatives:
 
 * 🌶️ https://projectlombok.org/[Project Lombok]'s https://projectlombok.org/features/Builder[@Builder] feature.
 * https://immutables.github.io/[Immutables]
@@ -29,8 +30,8 @@ If however one of these conditions applies to your situation, this maven plugin 
 
 = Generator usage
 
-If you are only interested in using the maven plugin, skip to the <<maven-plugin-usage,corresponding section>>. However, if for some reaseon you want to use the generator directly in one of your projects,
-these are the steps you have to follow:
+If you are only interested in using the maven plugin, skip to the <<maven-plugin-usage,corresponding section>>.
+However, if for some reaseon you want to use the generator directly in one of your projects, these are the steps you have to follow:
 
 . Include the maven dependency:
 +
@@ -45,14 +46,15 @@ these are the steps you have to follow:
 
 . Instantiate all JSR-330-annotated components from the package `io.github.tobi.laa.reflective.fluent.builders` with a dependency injection framework of your choice.
 . _Manually_ add instances of the following classes as they are needed by some components:
- ** `io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties`
- ** `java.time.Clock`
- ** `java.lang.ClassLoader`
+** `io.github.tobi.laa.reflective.fluent.builders.props.api.BuildersProperties`
+** `java.time.Clock`
+** `java.lang.ClassLoader`
 . The relevant components to inject whereever you need them are `BuilderMetadataService` and `JavaFileGenerator`.
 
 = Maven Plugin usage
 
-To use the maven plugin, all you need to do (at a minimum) is to tell it which packages and/or classes you want builders generated for. A small example might look like this:
+To use the maven plugin, all you need to do (at a minimum) is to tell it which packages and/or classes you want builders generated for.
+A small example might look like this:
 
 [,xml]
 ----
@@ -73,8 +75,7 @@ To use the maven plugin, all you need to do (at a minimum) is to tell it which p
 </plugin>
 ----
 
-A caveat when using the plugin is that all classes for which you desire builders need to be compiled already as reflection is used for scanning packages and classes, so depending on your usecase you need
-to decide during which phase of the maven build to execute the plugin.
+A caveat when using the plugin is that all classes for which you desire builders need to be compiled already as reflection is used for scanning packages and classes, so depending on your usecase you need to decide during which phase of the maven build to execute the plugin.
 Refer also to the https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#default-lifecycle[default lifecycle].
 This will of course not be a problem if you are solely generating builders for classes from third party libraries.
 
@@ -124,7 +125,8 @@ If you want to generate builders in compile scope for classes whose sources are 
 </plugin>
 ----
 
-It is also possible to specify exclusions. For instance, let us assume you use a _logical_ rather than a _functional_ naming convention within your application like so:
+It is also possible to specify exclusions.
+For instance, let us assume you use a _logical_ rather than a _functional_ naming convention within your application like so:
 
 ----
 com.example.app.dog
@@ -173,4 +175,4 @@ This could be achieved by doing the following:
 ----
 
 Full documentation of the maven plugin and its parameters can be found
-https://tobias-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/plugin-info.html[here].
+https://tobi-laa.github.io/reflective-fluent-builders/reflective-fluent-builders-maven-plugin/plugin-info.html[here].

@@ -36,9 +36,9 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Create and deploy Maven Site to local directory
-        run: mvn compile site site:deploy --file pom.xml
+        run: ./mvnw compile site site:deploy --file pom.xml
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

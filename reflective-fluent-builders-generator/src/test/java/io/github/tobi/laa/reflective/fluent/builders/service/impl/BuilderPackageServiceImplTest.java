@@ -53,7 +53,7 @@ class BuilderPackageServiceImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testResolveBuilderPackage() {
+    static Stream<Arguments> testResolveBuilderPackage() {
         return Stream.of( //
                 Arguments.of(SimpleClass.class, "a.fixed.package", "a.fixed.package"), //
                 Arguments.of(ClassWithBuilderExisting.class, PACKAGE_PLACEHOLDER, ClassWithBuilderExisting.class.getPackage().getName()), //

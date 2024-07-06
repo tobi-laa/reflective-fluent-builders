@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FieldAccessorBuildMethodStepCodeGeneratorTest {
 
-    private FieldAccessorBuildMethodStepCodeGenerator generator = new FieldAccessorBuildMethodStepCodeGenerator();
+    private final FieldAccessorBuildMethodStepCodeGenerator generator = new FieldAccessorBuildMethodStepCodeGenerator();
 
     @Test
     void testIsApplicableNull() {
@@ -40,7 +40,7 @@ class FieldAccessorBuildMethodStepCodeGeneratorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testIsApplicable() {
+    static Stream<Arguments> testIsApplicable() {
         return Stream.of(
                 Arguments.of(
                         Getter.builder() //

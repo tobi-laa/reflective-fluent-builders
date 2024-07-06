@@ -54,7 +54,7 @@ class CloserTest {
         verify(logger).debug("Not closing " + object + " of type " + object.getClass() + " as it does not implements Closeable.");
     }
 
-    private static Stream<Object> testCloseIfCloseableNonCloseable() {
+    static Stream<Object> testCloseIfCloseableNonCloseable() {
         return Stream.of("aString", new Object(), 6, new ArrayList<>());
     }
 

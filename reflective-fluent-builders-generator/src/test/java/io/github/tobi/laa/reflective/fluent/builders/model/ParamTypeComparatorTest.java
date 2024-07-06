@@ -25,7 +25,7 @@ class ParamTypeComparatorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testCompare() {
+    static Stream<Arguments> testCompare() {
         return Stream.of( //
                 Arguments.of(null, null, -1), //
                 Arguments.of(null, new SimpleType(Long.class), -1), //

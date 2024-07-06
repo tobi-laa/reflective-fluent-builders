@@ -81,7 +81,7 @@ class JavaFileGeneratorIT {
                         "  /**\n" +
                         "   * This field is solely used to be able to detect generated builders via reflection at a later stage.\n" +
                         "   */\n" +
-                        "  @SuppressWarnings(\"unused\")\n" +
+                        "  @SuppressWarnings(\"all\")\n" +
                         "  private boolean ______generatedByReflectiveFluentBuildersGenerator;\n" +
                         "\n" +
                         "  private final Supplier<ClassWithGenerics> objectSupplier;\n" +

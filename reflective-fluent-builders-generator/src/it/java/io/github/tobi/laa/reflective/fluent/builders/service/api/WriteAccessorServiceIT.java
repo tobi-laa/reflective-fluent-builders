@@ -78,7 +78,7 @@ class WriteAccessorServiceIT {
         assertEquals(expected, actual);
     }
 
-    private static Stream<Arguments> testDropSetterPrefix() {
+    static Stream<Arguments> testDropSetterPrefix() {
         return Stream.of( //
                 Arguments.of("set", "set", "set"), //
                 Arguments.of("set", "setAge", "age"), //
@@ -105,7 +105,7 @@ class WriteAccessorServiceIT {
         assertEquals(expected, actual);
     }
 
-    private static Stream<Arguments> testDropGetterPrefix() {
+    static Stream<Arguments> testDropGetterPrefix() {
         return Stream.of( //
                 Arguments.of("get", "get", "get"), //
                 Arguments.of("get", "getAge", "age"), //
@@ -157,7 +157,7 @@ class WriteAccessorServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testGatherAllSetters() {
+    static Stream<Arguments> testGatherAllSetters() {
         final Type setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
         return Stream.of( //
                 Arguments.of("set", null, false, false, true, classInfo.get(SimpleClass.class), //
@@ -307,7 +307,7 @@ class WriteAccessorServiceIT {
                 .isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testGatherAllSettersForClassWithHierarchy() {
+    static Stream<Arguments> testGatherAllSettersForClassWithHierarchy() {
         return Stream.of( //
                 Arguments.of(
                         classInfo.get(ClassWithHierarchy.class),
@@ -382,7 +382,7 @@ class WriteAccessorServiceIT {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testIsSetter() {
+    static Stream<Arguments> testIsSetter() {
         return Stream.of(
                 Arguments.of(
                         Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
@@ -414,7 +414,7 @@ class WriteAccessorServiceIT {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testIsCollectionGetter() {
+    static Stream<Arguments> testIsCollectionGetter() {
         return Stream.of(
                 Arguments.of(
                         Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build(),
@@ -435,8 +435,8 @@ class WriteAccessorServiceIT {
         // Assert
         assertThatThrownBy(equivalentAccessors).isInstanceOf(NullPointerException.class);
     }
-
-    private static Stream<Arguments> testEquivalentAccessorsNull() {
+    
+    static Stream<Arguments> testEquivalentAccessorsNull() {
         final Setter writeAccessor = Setter.builder().methodName("setWeight").propertyName("weight").propertyType(new SimpleType(float.class)).visibility(PUBLIC).declaringClass(PetJaxb.class).build();
         return Stream.of(
                 Arguments.of(null, null),

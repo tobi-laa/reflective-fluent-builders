@@ -21,7 +21,7 @@ class IncludeValidatorTest {
         assertTrue(actual);
     }
 
-    private static Stream<Include> isValidTrue() {
+    static Stream<Include> isValidTrue() {
         return Stream.of( //
                 null, //
                 new Include(null, "notNull"), //
@@ -37,7 +37,7 @@ class IncludeValidatorTest {
         assertFalse(actual);
     }
 
-    private static Stream<Include> isValidFalse() {
+    static Stream<Include> isValidFalse() {
         return Stream.of( //
                 new Include(null, null), //
                 new Include("notNull", "notNull"));

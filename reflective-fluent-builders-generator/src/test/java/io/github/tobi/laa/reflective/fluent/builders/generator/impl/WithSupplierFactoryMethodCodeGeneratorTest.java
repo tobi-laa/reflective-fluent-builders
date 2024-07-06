@@ -62,7 +62,7 @@ class WithSupplierFactoryMethodCodeGeneratorTest {
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         return Stream.of(
                 Arguments.of(
                         BuilderMetadata.builder() //

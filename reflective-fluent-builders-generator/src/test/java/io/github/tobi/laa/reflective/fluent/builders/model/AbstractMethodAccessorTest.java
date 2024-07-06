@@ -23,7 +23,7 @@ class AbstractMethodAccessorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testEquals() {
+    static Stream<Arguments> testEquals() {
         final TestAccessor abstractSetter = TestAccessor.builder() //
                 .propertyType(new MapType(Map.class, Object.class, Object.class)) //
                 .propertyName("aName") //

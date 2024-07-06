@@ -39,7 +39,7 @@ class AccessibilityServiceIT {
         assertThatThrownBy(isAccessibleFrom).isExactlyInstanceOf(NullPointerException.class);
     }
 
-    private static Stream<Arguments> testIsClassAccessibleFromNull() {
+    static Stream<Arguments> testIsClassAccessibleFromNull() {
         return Stream.of( //
                 Arguments.of(null, null), //
                 Arguments.of(String.class, null), //
@@ -56,7 +56,7 @@ class AccessibilityServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testIsClassAccessibleFrom() {
+    static Stream<Arguments> testIsClassAccessibleFrom() {
         final String packageName = Visibility.class.getPackage().getName();
         final Class<?> privateClass = Class.forName(InnerPrivateClass.class.getName() + "$PrivateInnerClass");
         final Class<?> packagePrivateClass = Class.forName(packageName + ".PackagePrivate");
@@ -82,7 +82,7 @@ class AccessibilityServiceIT {
         assertThatThrownBy(isAccessibleFrom).isExactlyInstanceOf(NullPointerException.class);
     }
 
-    private static Stream<Arguments> testIsTypeAccessibleFromNull() {
+    static Stream<Arguments> testIsTypeAccessibleFromNull() {
         return Stream.of( //
                 Arguments.of(null, null), //
                 Arguments.of(String.class, null), //
@@ -124,7 +124,7 @@ class AccessibilityServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testIsMethodAccessibleFromNull() {
+    static Stream<Arguments> testIsMethodAccessibleFromNull() {
         return Stream.of( //
                 Arguments.of(null, null), //
                 Arguments.of(Object.class.getDeclaredMethod("toString"), null), //
@@ -190,7 +190,7 @@ class AccessibilityServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testIsConstructorAccessibleFromNull() {
+    static Stream<Arguments> testIsConstructorAccessibleFromNull() {
         return Stream.of( //
                 Arguments.of(null, null), //
                 Arguments.of(Object.class.getDeclaredConstructor(), null), //
@@ -209,7 +209,7 @@ class AccessibilityServiceIT {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testIsConstructorAccessibleFrom() {
+    static Stream<Arguments> testIsConstructorAccessibleFrom() {
         return Stream.concat(
                 testIsClassAccessibleFrom(),
                 Stream.of( //
@@ -227,7 +227,7 @@ class AccessibilityServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testIsFieldAccessibleFromNull() {
+    static Stream<Arguments> testIsFieldAccessibleFromNull() {
         return Stream.of( //
                 Arguments.of(null, null), //
                 Arguments.of(SimpleClass.class.getDeclaredField("anInt"), null), //

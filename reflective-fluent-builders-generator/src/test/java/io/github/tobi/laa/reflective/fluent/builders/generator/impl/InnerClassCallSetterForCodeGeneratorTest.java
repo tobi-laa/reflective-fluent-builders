@@ -73,7 +73,7 @@ class InnerClassCallSetterForCodeGeneratorTest {
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         final ClassName fieldValue = ClassName.get(MockType.class).nestedClass(CallSetterFor.CLASS_NAME);
         return Stream.of(
                 Arguments.of(

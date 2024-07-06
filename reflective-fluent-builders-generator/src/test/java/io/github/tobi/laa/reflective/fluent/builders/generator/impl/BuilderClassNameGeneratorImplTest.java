@@ -42,7 +42,7 @@ class BuilderClassNameGeneratorImplTest {
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> testGenerateClassName() {
+    static Stream<Arguments> testGenerateClassName() {
         return Stream.of(
                 Arguments.of(
                         BuilderMetadata.builder() //

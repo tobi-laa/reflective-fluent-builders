@@ -48,8 +48,7 @@ class InnerClassForArrayCodeGenerator implements CollectionClassCodeGenerator {
     public CollectionClassSpec generate(final BuilderMetadata builderMetadata, final WriteAccessor writeAccessor) {
         Objects.requireNonNull(builderMetadata);
         Objects.requireNonNull(writeAccessor);
-        if (writeAccessor.getPropertyType() instanceof ArrayType) {
-            final ArrayType arrayType = (ArrayType) writeAccessor.getPropertyType();
+        if (writeAccessor.getPropertyType() instanceof ArrayType arrayType) {
             return generate(builderMetadata, writeAccessor, arrayType);
         } else {
             throw new CodeGenerationException("Generation of inner array class for " + writeAccessor + " is not supported.");

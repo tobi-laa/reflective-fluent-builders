@@ -51,7 +51,7 @@ class TypeServiceImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testExplodeTypeWildcard() {
+    static Stream<Arguments> testExplodeTypeWildcard() {
         return Stream.of( //
                 Arguments.of( //
                         wildcardType().withLowerBounds(Number.class).build(), //
@@ -64,6 +64,7 @@ class TypeServiceImplTest {
                         ImmutableSet.of(Number.class, String.class)));
     }
 
+    @SuppressWarnings("java:S4144")
     @ParameterizedTest
     @MethodSource
     void testExplodeTypeTypeVariable(final Type type, final Set<Class<?>> expected) {
@@ -73,7 +74,7 @@ class TypeServiceImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testExplodeTypeTypeVariable() {
+    static Stream<Arguments> testExplodeTypeTypeVariable() {
         return Stream.of( //
                 Arguments.of(typeVariable("r"), ImmutableSet.of(Object.class)), //
                 Arguments.of(typeVariable("s"), ImmutableSet.of(Number.class)), //
@@ -87,6 +88,7 @@ class TypeServiceImplTest {
         return TypeVariables.class.getDeclaredField(fieldName).getGenericType();
     }
 
+    @SuppressWarnings("java:S4144")
     @ParameterizedTest
     @MethodSource
     void testExplodeTypeParameterizedType(final Type type, final Set<Class<?>> expected) {
@@ -96,7 +98,7 @@ class TypeServiceImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testExplodeTypeParameterizedType() {
+    static Stream<Arguments> testExplodeTypeParameterizedType() {
         return Stream.of( //
                 // constructed type is List<String>
                 Arguments.of( //

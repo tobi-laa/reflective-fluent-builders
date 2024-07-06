@@ -41,6 +41,7 @@ class TypeServiceImpl implements TypeService {
             return builder.build();
         }
 
+        @SuppressWarnings("rawtypes")
         private void collect(final Type type) {
             if (!alreadyProcessedTypes.contains(type)) {
                 alreadyProcessedTypes.add(type);

@@ -16,7 +16,7 @@ public class SettersWithDifferentVisibilityBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
-  @SuppressWarnings("unused")
+  @SuppressWarnings("all")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private final Supplier<SettersWithDifferentVisibility> objectSupplier;

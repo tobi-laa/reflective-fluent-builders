@@ -16,7 +16,7 @@ public class TopLevelClassBuilder {
   /**
    * This field is solely used to be able to detect generated builders via reflection at a later stage.
    */
-  @SuppressWarnings("unused")
+  @SuppressWarnings("all")
   private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
   private final Supplier<TopLevelClass> objectSupplier;
@@ -149,7 +149,7 @@ public class TopLevelClassBuilder {
     /**
      * This field is solely used to be able to detect generated builders via reflection at a later stage.
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("all")
     private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
     private final Supplier<TopLevelClass.NestedPackagePrivateLevelOne> objectSupplier;
@@ -226,7 +226,7 @@ public class TopLevelClassBuilder {
     /**
      * This field is solely used to be able to detect generated builders via reflection at a later stage.
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("all")
     private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
     private final Supplier<TopLevelClass.NestedProtectedLevelOne> objectSupplier;
@@ -303,7 +303,7 @@ public class TopLevelClassBuilder {
     /**
      * This field is solely used to be able to detect generated builders via reflection at a later stage.
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("all")
     private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
     private final Supplier<TopLevelClass.NestedPublicLevelOne> objectSupplier;
@@ -380,7 +380,7 @@ public class TopLevelClassBuilder {
       /**
        * This field is solely used to be able to detect generated builders via reflection at a later stage.
        */
-      @SuppressWarnings("unused")
+      @SuppressWarnings("all")
       private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
       private final Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo> objectSupplier;
@@ -457,7 +457,7 @@ public class TopLevelClassBuilder {
         /**
          * This field is solely used to be able to detect generated builders via reflection at a later stage.
          */
-        @SuppressWarnings("unused")
+        @SuppressWarnings("all")
         private boolean ______generatedByReflectiveFluentBuildersGenerator;
 
         private final Supplier<TopLevelClass.NestedPublicLevelOne.NestedPublicLevelTwo.NestedPublicLevelThree> objectSupplier;

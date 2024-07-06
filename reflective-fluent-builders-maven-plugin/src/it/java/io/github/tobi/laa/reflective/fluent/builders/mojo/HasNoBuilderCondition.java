@@ -25,6 +25,7 @@ class HasNoBuilderCondition extends Condition<MavenProjectResult> {
         this.builderClass = Objects.requireNonNull(builderClass);
     }
 
+    @Override
     public boolean matches(final MavenProjectResult result) {
         final Path buildersDir = projectResultHelper.getGeneratedSourcesDir(result).resolve("builders");
         final Path builderFile = fileHelper.resolveJavaFile(buildersDir, builderClass);

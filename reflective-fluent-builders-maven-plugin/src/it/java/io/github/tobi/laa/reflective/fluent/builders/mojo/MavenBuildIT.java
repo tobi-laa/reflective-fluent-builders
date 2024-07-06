@@ -341,7 +341,7 @@ class MavenBuildIT {
         verifyNoMoreInteractions(mavenProject);
     }
 
-    private static Stream<Arguments> testGetClasspathElements() {
+    static Stream<Arguments> testGetClasspathElements() {
         return Stream.of( //
                 Arguments.of(false, new String[0]), //
                 Arguments.of(true, new String[0]), //

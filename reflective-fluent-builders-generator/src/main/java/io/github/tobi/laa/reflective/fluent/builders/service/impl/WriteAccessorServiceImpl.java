@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Predicates.not;
 import static java.lang.reflect.Modifier.isStatic;
@@ -96,7 +95,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .filter(not(Method::isBridge)) //
                 .filter(not(method -> isStatic(method.getModifiers()))) //
                 .filter(method -> accessibilityService.isAccessibleFrom(method, builderPackage)) //
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private SortedSet<Adder> gatherAllAdders(final List<Method> methods, final ClassInfo classInfo) {
@@ -142,7 +141,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
                 .flatMap(Arrays::stream) //
                 .filter(not(field -> isStatic(field.getModifiers()))) //
                 .filter(field -> accessibilityService.isAccessibleFrom(field, builderPackage)) //
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private SortedSet<FieldAccessor> gatherAllFieldAccessors(final List<Field> fields, final ClassInfo classInfo) {
@@ -291,8 +290,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private Type typeArg(final Type type, final int num) {
-        if (type instanceof ParameterizedType) {
-            final ParameterizedType parameterizedType = (ParameterizedType) type;
+        if (type instanceof ParameterizedType parameterizedType) {
             return parameterizedType.getActualTypeArguments()[num];
         } else {
             return Object.class;

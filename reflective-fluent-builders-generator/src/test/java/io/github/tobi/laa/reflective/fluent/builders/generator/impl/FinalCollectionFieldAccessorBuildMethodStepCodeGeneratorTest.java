@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FinalCollectionFieldAccessorBuildMethodStepCodeGeneratorTest {
 
-    private FinalCollectionFieldAccessorBuildMethodStepCodeGenerator generator = new FinalCollectionFieldAccessorBuildMethodStepCodeGenerator();
+    private final FinalCollectionFieldAccessorBuildMethodStepCodeGenerator generator = new FinalCollectionFieldAccessorBuildMethodStepCodeGenerator();
 
     @Test
     void testIsApplicableNull() {
@@ -40,7 +40,7 @@ class FinalCollectionFieldAccessorBuildMethodStepCodeGeneratorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testIsApplicable() {
+    static Stream<Arguments> testIsApplicable() {
         return Stream.of(
                 Arguments.of(
                         Getter.builder() //
