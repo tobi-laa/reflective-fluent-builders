@@ -6,7 +6,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.Serial;
 
 /**
  * <p>
@@ -40,7 +39,6 @@ class Closer extends AbstractLogEnabled {
 
     static class CloseException extends RuntimeException {
 
-        @Serial
         private static final long serialVersionUID = -7002501270233855148L;
 
         CloseException(final String message, final Throwable cause) {

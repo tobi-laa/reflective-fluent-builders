@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.script.Bindings;
-import java.io.Serial;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
@@ -242,7 +241,6 @@ class CollectionsApiInitializerCodeGeneratorTest {
     }
 
     static class MyMap<K, V> extends HashMap<K, V> {
-        @Serial
         private static final long serialVersionUID = 3204706075779867698L;
     }
 
@@ -251,7 +249,6 @@ class CollectionsApiInitializerCodeGeneratorTest {
     }
 
     static class MyList<T> extends ArrayList<T> {
-        @Serial
         private static final long serialVersionUID = 3204706075779867698L;
     }
 }
