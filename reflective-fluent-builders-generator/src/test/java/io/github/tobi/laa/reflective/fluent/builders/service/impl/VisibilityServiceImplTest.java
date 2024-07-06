@@ -40,7 +40,7 @@ class VisibilityServiceImplTest {
         return SomeMethods.class.getDeclaredMethod(name).getModifiers();
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "java:S1186"})
     private static class SomeMethods {
         private void privateMethod() {
         }
