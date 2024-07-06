@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FinalCollectionFieldAccessorBuildMethodStepCodeGeneratorTest {
 
-    private FinalCollectionFieldAccessorBuildMethodStepCodeGenerator generator = new FinalCollectionFieldAccessorBuildMethodStepCodeGenerator();
+    private final FinalCollectionFieldAccessorBuildMethodStepCodeGenerator generator = new FinalCollectionFieldAccessorBuildMethodStepCodeGenerator();
 
     @Test
     void testIsApplicableNull() {

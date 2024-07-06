@@ -12,6 +12,7 @@ import static com.tngtech.archunit.library.GeneralCodingRules.*;
  * Some general coding rules, in broad parts copied over from the ArchUnit examples.
  * </p>
  */
+@SuppressWarnings("unused")
 class CodingRules {
 
     @ArchTest

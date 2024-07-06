@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FieldAccessorBuildMethodStepCodeGeneratorTest {
 
-    private FieldAccessorBuildMethodStepCodeGenerator generator = new FieldAccessorBuildMethodStepCodeGenerator();
+    private final FieldAccessorBuildMethodStepCodeGenerator generator = new FieldAccessorBuildMethodStepCodeGenerator();
 
     @Test
     void testIsApplicableNull() {
