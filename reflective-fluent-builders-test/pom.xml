@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.tobi-laa</groupId>
@@ -14,8 +15,8 @@
         <!-- the module is solely used for tests and should thus never be deployed -->
         <maven.deploy.skip>true</maven.deploy.skip>
         <release.skip>true</release.skip>
-        <!-- for the same reason it should also not be scanned by sonar -->
-        <sonar.skip>true</sonar.skip>
+        <!-- none of the test models should be scanned by sonar due to various 'ugly' constructs to test edge cases -->
+        <sonar.exclusions>**/io/github/tobi/laa/reflective/fluent/builders/test/models/**/*.java</sonar.exclusions>
         <!-- for now, however, a site is still generated -->
         <site.deploy.directory>${project.basedir}/../target/gh-pages</site.deploy.directory>
     </properties>
