@@ -96,18 +96,20 @@ class SetterCodeGeneratorIT {
                                 .declaringClass(SimpleClass.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Sets the value for the {@code anInt} property.\n" +
-                                        " * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass#setAnInt(int)} being called on construction of the object.\n" +
-                                        " * @param anInt the value to set.\n" +
-                                        " * @return This builder for chained calls.\n" +
-                                        " */\n" +
-                                        "public %1$s anInt(\n" +
-                                        "    final int anInt) {\n" +
-                                        "  this.fieldValue.anInt = anInt;\n" +
-                                        "  this.callSetterFor.anInt = true;\n" +
-                                        "  return this;\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Sets the value for the {@code anInt} property.
+                                         * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass#setAnInt(int)} being called on construction of the object.
+                                         * @param anInt the value to set.
+                                         * @return This builder for chained calls.
+                                         */
+                                        public %1$s anInt(
+                                            final int anInt) {
+                                          this.fieldValue.anInt = anInt;
+                                          this.callSetterFor.anInt = true;
+                                          return this;
+                                        }
+                                        """,
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
@@ -119,18 +121,20 @@ class SetterCodeGeneratorIT {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Sets the value for the {@code floats} property.\n" +
-                                        " * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections#setFloats(float[])} being called on construction of the object.\n" +
-                                        " * @param floats the value to set.\n" +
-                                        " * @return This builder for chained calls.\n" +
-                                        " */\n" +
-                                        "public %1$s floats(\n" +
-                                        "    final float[] floats) {\n" +
-                                        "  this.fieldValue.floats = floats;\n" +
-                                        "  this.callSetterFor.floats = true;\n" +
-                                        "  return this;\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Sets the value for the {@code floats} property.
+                                         * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections#setFloats(float[])} being called on construction of the object.
+                                         * @param floats the value to set.
+                                         * @return This builder for chained calls.
+                                         */
+                                        public %1$s floats(
+                                            final float[] floats) {
+                                          this.fieldValue.floats = floats;
+                                          this.callSetterFor.floats = true;
+                                          return this;
+                                        }
+                                        """,
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
@@ -142,18 +146,20 @@ class SetterCodeGeneratorIT {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Sets the value for the {@code sortedMap} property.\n" +
-                                        " * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections#setSortedMap(java.util.SortedMap)} being called on construction of the object.\n" +
-                                        " * @param sortedMap the value to set.\n" +
-                                        " * @return This builder for chained calls.\n" +
-                                        " */\n" +
-                                        "public %1$s sortedMap(\n" +
-                                        "    final java.util.SortedMap sortedMap) {\n" +
-                                        "  this.fieldValue.sortedMap = sortedMap;\n" +
-                                        "  this.callSetterFor.sortedMap = true;\n" +
-                                        "  return this;\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Sets the value for the {@code sortedMap} property.
+                                         * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections#setSortedMap(java.util.SortedMap)} being called on construction of the object.
+                                         * @param sortedMap the value to set.
+                                         * @return This builder for chained calls.
+                                         */
+                                        public %1$s sortedMap(
+                                            final java.util.SortedMap sortedMap) {
+                                          this.fieldValue.sortedMap = sortedMap;
+                                          this.callSetterFor.sortedMap = true;
+                                          return this;
+                                        }
+                                        """,
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
@@ -165,18 +171,20 @@ class SetterCodeGeneratorIT {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Sets the value for the {@code list} property.\n" +
-                                        " * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections#setList(java.util.List)} being called on construction of the object.\n" +
-                                        " * @param list the value to set.\n" +
-                                        " * @return This builder for chained calls.\n" +
-                                        " */\n" +
-                                        "public %1$s list(\n" +
-                                        "    final java.util.List list) {\n" +
-                                        "  this.fieldValue.list = list;\n" +
-                                        "  this.callSetterFor.list = true;\n" +
-                                        "  return this;\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Sets the value for the {@code list} property.
+                                         * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections#setList(java.util.List)} being called on construction of the object.
+                                         * @param list the value to set.
+                                         * @return This builder for chained calls.
+                                         */
+                                        public %1$s list(
+                                            final java.util.List list) {
+                                          this.fieldValue.list = list;
+                                          this.callSetterFor.list = true;
+                                          return this;
+                                        }
+                                        """,
                                 mockTypeName)), //
                 Arguments.of( //
                         builderMetadata, //
@@ -188,18 +196,20 @@ class SetterCodeGeneratorIT {
                                 .declaringClass(GetAndAdd.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Sets the value for the {@code list} property.\n" +
-                                        " * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd#getList()} being called on construction of the object.\n" +
-                                        " * @param list the value to set.\n" +
-                                        " * @return This builder for chained calls.\n" +
-                                        " */\n" +
-                                        "public %1$s list(\n" +
-                                        "    final java.util.List list) {\n" +
-                                        "  this.fieldValue.list = list;\n" +
-                                        "  this.callSetterFor.list = true;\n" +
-                                        "  return this;\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Sets the value for the {@code list} property.
+                                         * To be more precise, this will lead to {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.GetAndAdd#getList()} being called on construction of the object.
+                                         * @param list the value to set.
+                                         * @return This builder for chained calls.
+                                         */
+                                        public %1$s list(
+                                            final java.util.List list) {
+                                          this.fieldValue.list = list;
+                                          this.callSetterFor.list = true;
+                                          return this;
+                                        }
+                                        """,
                                 mockTypeName)),
                 Arguments.of( //
                         builderMetadata, //
@@ -210,18 +220,20 @@ class SetterCodeGeneratorIT {
                                 .declaringClass(DirectFieldAccess.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Sets the value for the {@code publicFieldNoSetter} property.\n" +
-                                        " * To be more precise, this will lead to the field {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.DirectFieldAccess#publicFieldNoSetter} being modified directly on construction of the object.\n" +
-                                        " * @param publicFieldNoSetter the value to set.\n" +
-                                        " * @return This builder for chained calls.\n" +
-                                        " */\n" +
-                                        "public %1$s publicFieldNoSetter(\n" +
-                                        "    final int publicFieldNoSetter) {\n" +
-                                        "  this.fieldValue.publicFieldNoSetter = publicFieldNoSetter;\n" +
-                                        "  this.callSetterFor.publicFieldNoSetter = true;\n" +
-                                        "  return this;\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Sets the value for the {@code publicFieldNoSetter} property.
+                                         * To be more precise, this will lead to the field {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.DirectFieldAccess#publicFieldNoSetter} being modified directly on construction of the object.
+                                         * @param publicFieldNoSetter the value to set.
+                                         * @return This builder for chained calls.
+                                         */
+                                        public %1$s publicFieldNoSetter(
+                                            final int publicFieldNoSetter) {
+                                          this.fieldValue.publicFieldNoSetter = publicFieldNoSetter;
+                                          this.callSetterFor.publicFieldNoSetter = true;
+                                          return this;
+                                        }
+                                        """,
                                 mockTypeName)));
     }
 

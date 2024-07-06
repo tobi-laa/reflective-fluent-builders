@@ -325,49 +325,53 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Returns an inner builder for the collection property {@code deque} for chained calls of adding items to it.\n" +
-                                        " * Can be used like follows:\n" +
-                                        " * <pre>\n" +
-                                        " * builder.deque()\n" +
-                                        " *        .add(item1)\n" +
-                                        " *        .add(item2)\n" +
-                                        " *        .and()\n" +
-                                        " *        .build()\n" +
-                                        " * </pre>\n" +
-                                        " * @return The inner builder for the collection property {@code deque}.\n" +
-                                        " */\n" +
-                                        "public %1$s.CollectionDeque deque(\n" +
-                                        "    ) {\n" +
-                                        "  return new %1$s.CollectionDeque();\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Returns an inner builder for the collection property {@code deque} for chained calls of adding items to it.
+                                         * Can be used like follows:
+                                         * <pre>
+                                         * builder.deque()
+                                         *        .add(item1)
+                                         *        .add(item2)
+                                         *        .and()
+                                         *        .build()
+                                         * </pre>
+                                         * @return The inner builder for the collection property {@code deque}.
+                                         */
+                                        public %1$s.CollectionDeque deque(
+                                            ) {
+                                          return new %1$s.CollectionDeque();
+                                        }
+                                        """,
                                 mockTypeName), //
                         String.format(
-                                "public class CollectionDeque {\n" +
-                                        "  /**\n" +
-                                        "   * Adds an item to the collection property {@code deque}.\n" +
-                                        "   * @param item The item to add to the collection {@code deque}.\n" +
-                                        "   * @return This builder for chained calls.\n" +
-                                        "   */\n" +
-                                        "  public %1$s.CollectionDeque add(\n" +
-                                        "      final ? item) {\n" +
-                                        "    if (%1$s.this.fieldValue.deque == null) {\n" +
-                                        "      %1$s.this.fieldValue.deque = new MockList<>();\n" +
-                                        "    }\n" +
-                                        "    %1$s.this.fieldValue.deque.add(item);\n" +
-                                        "    %1$s.this.callSetterFor.deque = true;\n" +
-                                        "    return this;\n" +
-                                        "  }\n" +
-                                        "\n" +
-                                        "  /**\n" +
-                                        "   * Returns the builder for the parent object.\n" +
-                                        "   * @return The builder for the parent object.\n" +
-                                        "   */\n" +
-                                        "  public %1$s and(\n" +
-                                        "      ) {\n" +
-                                        "    return %1$s.this;\n" +
-                                        "  }\n" +
-                                        "}\n",
+                                """
+                                        public class CollectionDeque {
+                                          /**
+                                           * Adds an item to the collection property {@code deque}.
+                                           * @param item The item to add to the collection {@code deque}.
+                                           * @return This builder for chained calls.
+                                           */
+                                          public %1$s.CollectionDeque add(
+                                              final ? item) {
+                                            if (%1$s.this.fieldValue.deque == null) {
+                                              %1$s.this.fieldValue.deque = new MockList<>();
+                                            }
+                                            %1$s.this.fieldValue.deque.add(item);
+                                            %1$s.this.callSetterFor.deque = true;
+                                            return this;
+                                          }
+
+                                          /**
+                                           * Returns the builder for the parent object.
+                                           * @return The builder for the parent object.
+                                           */
+                                          public %1$s and(
+                                              ) {
+                                            return %1$s.this;
+                                          }
+                                        }
+                                        """,
                                 mockTypeName)), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -386,49 +390,53 @@ class InnerClassForCollectionCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Returns an inner builder for the collection property {@code list} for chained calls of adding items to it.\n" +
-                                        " * Can be used like follows:\n" +
-                                        " * <pre>\n" +
-                                        " * builder.list()\n" +
-                                        " *        .add(item1)\n" +
-                                        " *        .add(item2)\n" +
-                                        " *        .and()\n" +
-                                        " *        .build()\n" +
-                                        " * </pre>\n" +
-                                        " * @return The inner builder for the collection property {@code list}.\n" +
-                                        " */\n" +
-                                        "public %1$s.CollectionList list(\n" +
-                                        "    ) {\n" +
-                                        "  return new %1$s.CollectionList();\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Returns an inner builder for the collection property {@code list} for chained calls of adding items to it.
+                                         * Can be used like follows:
+                                         * <pre>
+                                         * builder.list()
+                                         *        .add(item1)
+                                         *        .add(item2)
+                                         *        .and()
+                                         *        .build()
+                                         * </pre>
+                                         * @return The inner builder for the collection property {@code list}.
+                                         */
+                                        public %1$s.CollectionList list(
+                                            ) {
+                                          return new %1$s.CollectionList();
+                                        }
+                                        """,
                                 mockTypeName),
                         String.format(
-                                "public class CollectionList {\n" +
-                                        "  /**\n" +
-                                        "   * Adds an item to the collection property {@code list}.\n" +
-                                        "   * @param item The item to add to the collection {@code list}.\n" +
-                                        "   * @return This builder for chained calls.\n" +
-                                        "   */\n" +
-                                        "  public %1$s.CollectionList add(\n" +
-                                        "      final java.lang.String item) {\n" +
-                                        "    if (%1$s.this.fieldValue.list == null) {\n" +
-                                        "      %1$s.this.fieldValue.list = new MockList<>();\n" +
-                                        "    }\n" +
-                                        "    %1$s.this.fieldValue.list.add(item);\n" +
-                                        "    %1$s.this.callSetterFor.list = true;\n" +
-                                        "    return this;\n" +
-                                        "  }\n" +
-                                        "\n" +
-                                        "  /**\n" +
-                                        "   * Returns the builder for the parent object.\n" +
-                                        "   * @return The builder for the parent object.\n" +
-                                        "   */\n" +
-                                        "  public %1$s and(\n" +
-                                        "      ) {\n" +
-                                        "    return %1$s.this;\n" +
-                                        "  }\n" +
-                                        "}\n",
+                                """
+                                        public class CollectionList {
+                                          /**
+                                           * Adds an item to the collection property {@code list}.
+                                           * @param item The item to add to the collection {@code list}.
+                                           * @return This builder for chained calls.
+                                           */
+                                          public %1$s.CollectionList add(
+                                              final java.lang.String item) {
+                                            if (%1$s.this.fieldValue.list == null) {
+                                              %1$s.this.fieldValue.list = new MockList<>();
+                                            }
+                                            %1$s.this.fieldValue.list.add(item);
+                                            %1$s.this.callSetterFor.list = true;
+                                            return this;
+                                          }
+
+                                          /**
+                                           * Returns the builder for the parent object.
+                                           * @return The builder for the parent object.
+                                           */
+                                          public %1$s and(
+                                              ) {
+                                            return %1$s.this;
+                                          }
+                                        }
+                                        """,
                                 mockTypeName)));
     }
 

@@ -78,20 +78,22 @@ class BuildMethodCodeGeneratorIT {
                                         .build()) //
                                 .build(), //
                         String.format(
-                                "/**\n" +
-                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
-                                        " * @return The constructed instance. Never {@code null}.\n" +
-                                        " */\n" +
-                                        "public %1$s build() {\n" +
-                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
-                                        "  if (this.callSetterFor.anInt) {\n" +
-                                        "    objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
-                                        "  }\n" +
-                                        "  if (this.callSetterFor.floats) {\n" +
-                                        "    objectToBuild.setFloats(this.fieldValue.floats);\n" +
-                                        "  }\n" +
-                                        "  return objectToBuild;\n" +
-                                        "}\n",
+                                """
+                                        /**
+                                         * Performs the actual construction of an instance for {@link %1$s}.
+                                         * @return The constructed instance. Never {@code null}.
+                                         */
+                                        public %1$s build() {
+                                          final %1$s objectToBuild = this.objectSupplier.get();
+                                          if (this.callSetterFor.anInt) {
+                                            objectToBuild.setAnInt(this.fieldValue.anInt);
+                                          }
+                                          if (this.callSetterFor.floats) {
+                                            objectToBuild.setFloats(this.fieldValue.floats);
+                                          }
+                                          return objectToBuild;
+                                        }
+                                        """,
                                 SimpleClass.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
@@ -116,21 +118,23 @@ class BuildMethodCodeGeneratorIT {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        String.format("/**\n" +
-                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
-                                        " * @return The constructed instance. Never {@code null}.\n" +
-                                        " */\n" +
-                                        "public %1$s build(\n" +
-                                        "    ) {\n" +
-                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
-                                        "  if (this.callSetterFor.list) {\n" +
-                                        "    objectToBuild.setList(this.fieldValue.list);\n" +
-                                        "  }\n" +
-                                        "  if (this.callSetterFor.sortedMap) {\n" +
-                                        "    objectToBuild.setSortedMap(this.fieldValue.sortedMap);\n" +
-                                        "  }\n" +
-                                        "  return objectToBuild;\n" +
-                                        "}\n",
+                        String.format("""
+                                        /**
+                                         * Performs the actual construction of an instance for {@link %1$s}.
+                                         * @return The constructed instance. Never {@code null}.
+                                         */
+                                        public %1$s build(
+                                            ) {
+                                          final %1$s objectToBuild = this.objectSupplier.get();
+                                          if (this.callSetterFor.list) {
+                                            objectToBuild.setList(this.fieldValue.list);
+                                          }
+                                          if (this.callSetterFor.sortedMap) {
+                                            objectToBuild.setSortedMap(this.fieldValue.sortedMap);
+                                          }
+                                          return objectToBuild;
+                                        }
+                                        """,
                                 ClassWithHierarchy.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
@@ -148,17 +152,19 @@ class BuildMethodCodeGeneratorIT {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        String.format("/**\n" +
-                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
-                                        " * @return The constructed instance. Never {@code null}.\n" +
-                                        " */\n" +
-                                        "public %1$s build() {\n" +
-                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
-                                        "  if (this.callSetterFor.siblings && this.fieldValue.siblings != null) {\n" +
-                                        "    this.fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);\n" +
-                                        "  }\n" +
-                                        "  return objectToBuild;\n" +
-                                        "}\n",
+                        String.format("""
+                                        /**
+                                         * Performs the actual construction of an instance for {@link %1$s}.
+                                         * @return The constructed instance. Never {@code null}.
+                                         */
+                                        public %1$s build() {
+                                          final %1$s objectToBuild = this.objectSupplier.get();
+                                          if (this.callSetterFor.siblings && this.fieldValue.siblings != null) {
+                                            this.fieldValue.siblings.forEach(objectToBuild.getSiblings()::add);
+                                          }
+                                          return objectToBuild;
+                                        }
+                                        """,
                                 PetJaxb.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
@@ -182,20 +188,22 @@ class BuildMethodCodeGeneratorIT {
                                                 .build()) //
                                         .build()) //
                                 .build(), //
-                        String.format("/**\n" +
-                                        " * Performs the actual construction of an instance for {@link %1$s}.\n" +
-                                        " * @return The constructed instance. Never {@code null}.\n" +
-                                        " */\n" +
-                                        "public %1$s build() {\n" +
-                                        "  final %1$s objectToBuild = this.objectSupplier.get();\n" +
-                                        "  if (this.callSetterFor.publicFieldNoSetter) {\n" +
-                                        "    objectToBuild.publicFieldNoSetter = this.fieldValue.publicFieldNoSetter;\n" +
-                                        "  }\n" +
-                                        "  if (this.callSetterFor.publicFinalFieldNoSetter && this.fieldValue.publicFinalFieldNoSetter != null) {\n" +
-                                        "    this.fieldValue.publicFinalFieldNoSetter.forEach(objectToBuild.publicFinalFieldNoSetter::add);\n" +
-                                        "  }\n" +
-                                        "  return objectToBuild;\n" +
-                                        "}\n",
+                        String.format("""
+                                        /**
+                                         * Performs the actual construction of an instance for {@link %1$s}.
+                                         * @return The constructed instance. Never {@code null}.
+                                         */
+                                        public %1$s build() {
+                                          final %1$s objectToBuild = this.objectSupplier.get();
+                                          if (this.callSetterFor.publicFieldNoSetter) {
+                                            objectToBuild.publicFieldNoSetter = this.fieldValue.publicFieldNoSetter;
+                                          }
+                                          if (this.callSetterFor.publicFinalFieldNoSetter && this.fieldValue.publicFinalFieldNoSetter != null) {
+                                            this.fieldValue.publicFinalFieldNoSetter.forEach(objectToBuild.publicFinalFieldNoSetter::add);
+                                          }
+                                          return objectToBuild;
+                                        }
+                                        """,
                                 DirectFieldAccess.class.getName())));
     }
 }
