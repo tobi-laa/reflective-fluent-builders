@@ -515,6 +515,7 @@ class BuilderMetadataServiceIT {
     @SuppressWarnings("unused")
     private static class ClassWithMarkerField {
 
+        @SuppressWarnings("java:S116")
         private boolean ______generatedByReflectiveFluentBuildersGenerator;
     }
 

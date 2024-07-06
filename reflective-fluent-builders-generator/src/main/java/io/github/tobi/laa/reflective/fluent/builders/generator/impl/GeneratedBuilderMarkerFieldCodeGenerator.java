@@ -23,7 +23,7 @@ class GeneratedBuilderMarkerFieldCodeGenerator implements FieldCodeGenerator {
     public FieldSpec generate(final BuilderMetadata builderMetadata) {
         return FieldSpec.builder(boolean.class, GENERATED_BUILDER_MARKER_FIELD_NAME, PRIVATE)
                 .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class)
-                        .addMember("value", "$S", "unused")
+                        .addMember("value", "$S", "all")
                         .build())
                 .addJavadoc("This field is solely used to be able to detect generated builders via reflection at a later stage.")
                 .build();
