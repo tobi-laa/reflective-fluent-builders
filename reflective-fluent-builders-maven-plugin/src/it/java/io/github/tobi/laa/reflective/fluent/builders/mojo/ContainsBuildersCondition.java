@@ -57,6 +57,7 @@ class ContainsBuildersCondition extends Condition<MavenProjectResult> {
         this.expectedBuildersRootDir = Objects.requireNonNull(expectedBuildersRootDir);
     }
 
+    @Override
     public boolean matches(final MavenProjectResult result) {
         final Path actualBuildersDir = actualBuildersDir(result);
         final List<Path> expectedBuilderFiles = expectedBuilderFiles();

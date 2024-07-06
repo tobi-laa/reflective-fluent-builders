@@ -55,7 +55,7 @@ class ObjectSupplierFieldCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        String.format("private final java.util.function.Supplier<%s> objectSupplier;\n", SimpleClass.class.getName())),
+                        String.format("private final java.util.function.Supplier<%s> objectSupplier;%n", SimpleClass.class.getName())),
                 Arguments.of(
                         BuilderMetadata.builder() //
                                 .packageName("a.whole.different.pack") //
@@ -65,6 +65,6 @@ class ObjectSupplierFieldCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build(), //
-                        String.format("private final java.util.function.Supplier<%s> objectSupplier;\n", ClassWithHierarchy.class.getName())));
+                        String.format("private final java.util.function.Supplier<%s> objectSupplier;%n", ClassWithHierarchy.class.getName())));
     }
 }

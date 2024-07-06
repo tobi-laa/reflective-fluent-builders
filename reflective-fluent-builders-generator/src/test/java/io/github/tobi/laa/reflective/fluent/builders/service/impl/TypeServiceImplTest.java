@@ -63,6 +63,7 @@ class TypeServiceImplTest {
                         Set.of(Number.class, String.class)));
     }
 
+    @SuppressWarnings("java:S4144")
     @ParameterizedTest
     @MethodSource
     void testExplodeTypeTypeVariable(final Type type, final Set<Class<?>> expected) {
@@ -86,6 +87,7 @@ class TypeServiceImplTest {
         return TypeVariables.class.getDeclaredField(fieldName).getGenericType();
     }
 
+    @SuppressWarnings("java:S4144")
     @ParameterizedTest
     @MethodSource
     void testExplodeTypeParameterizedType(final Type type, final Set<Class<?>> expected) {

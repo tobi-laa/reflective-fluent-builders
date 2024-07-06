@@ -26,17 +26,17 @@ class CodingRules {
     @ArchTest
     private final ArchRule loggersShouldBePrivateStaticFinal =
             fields().that()
-                    // FIXME rather go for matching of type than name
-                    .haveFullName("log")
-                    .or().haveFullName("LOG")
-                    .or().haveFullName("logger")
-                    .or().haveFullName("LOGGER")
+                    .haveRawType("org.codehaus.plexus.logging.Logger")
+                    .or().haveRawType("org.apache.maven.plugin.logging.Log")
+                    .or().haveRawType("org.slf4j.Logger")
+                    .and().areNotAnnotatedWith("org.mockito.Mock")
+                    .and().areNotAnnotatedWith("io.github.tobi.laa.reflective.fluent.builders.test.InjectMock")
                     .should().bePrivate()
                     .andShould().beStatic()
                     .andShould().beFinal()
                     .as("Loggers should private static final.")
                     .because("That is a convention for this project.")
-                    .allowEmptyShould(true); // FIXME
+                    .allowEmptyShould(true);
 
     @ArchTest
     private final ArchRule noJodatime = NO_CLASSES_SHOULD_USE_JODATIME;

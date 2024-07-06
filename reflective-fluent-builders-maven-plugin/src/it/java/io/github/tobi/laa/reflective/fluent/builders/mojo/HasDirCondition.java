@@ -32,6 +32,7 @@ class HasDirCondition extends Condition<MavenProjectResult> {
         this.predicate = Objects.requireNonNull(predicate);
     }
 
+    @Override
     public boolean matches(final MavenProjectResult result) {
         final var dirInTarget = result.getTargetProjectDirectory().resolve("target").resolve(dir);
         return predicate.test(fileHelper.findFilesRecursively(dirInTarget));

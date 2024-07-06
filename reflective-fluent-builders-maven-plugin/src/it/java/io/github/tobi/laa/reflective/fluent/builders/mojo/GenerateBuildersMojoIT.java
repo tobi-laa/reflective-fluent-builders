@@ -478,27 +478,7 @@ class GenerateBuildersMojoIT {
         @MavenTest
         @SystemProperty(value = "incrementalBuildForIntegrationTests", content = "true")
         void packageSimpleAllBuilderFilesExistAndBuildContextHasDelta(final MavenExecutionResult result) {
-            assertThat(result) //
-                    .isSuccessful() //
-                    .project() //
-                    .hasTarget() //
-                    .has(expectedBuilders(Simple.class.getPackage(), false));
-            final var targetDirectory = projectResultHelper.getGeneratedSourcesDir(result.getMavenProjectResult()).resolve("builders");
-            assertThat(result) //
-                    .out() //
-                    .info() //
-                    .contains( //
-                            "Scan package " + Simple.class.getPackage().getName() + " recursively for classes.", //
-                            "Found 5 classes for which to generate builders.", //
-                            "Make sure target directory " + targetDirectory + " exists.", //
-                            "Generate builder for class " + Child.class.getName(), //
-                            "Generate builder for class " + SimpleClass.class.getName(), //
-                            "Generate builder for class " + Parent.class.getName())
-                    .doesNotContain( //
-                            "Builder for class " + Child.class.getName() + " already exists and is up to date.", //
-                            "Builder for class " + SimpleClass.class.getName() + " already exists and is up to date.", //
-                            "Builder for class " + Parent.class.getName() + " already exists and is up to date.");
-            assertThat(result).out().warn().isEmpty();
+            packageSimpleNotAllBuilderFilesExist(result);
         }
 
         @MavenTest
