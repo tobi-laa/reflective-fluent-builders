@@ -42,7 +42,7 @@ class SetterCodeGeneratorIT {
         assertThrows(NullPointerException.class, generate);
     }
 
-    private static Stream<Arguments> testGenerateNull() {
+    static Stream<Arguments> testGenerateNull() {
         return Stream.of( //
                 Arguments.of(null, null),
                 Arguments.of( //
@@ -75,7 +75,7 @@ class SetterCodeGeneratorIT {
         assertThat(actual).hasToString(expected);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         final var mockTypeName = MockType.class.getName().replace('$', '.');
         final var builderMetadata = BuilderMetadata.builder() //
                 .packageName(MockType.class.getPackageName()) //

@@ -76,7 +76,7 @@ class ClassServiceIT {
         assertEquals(expected, actual);
     }
 
-    private static Stream<Arguments> testCollectFullClassHierarchy() {
+    static Stream<Arguments> testCollectFullClassHierarchy() {
         return Stream.of( //
                 Arguments.of( //
                         classInfo.get(ClassWithHierarchy.class.getName()), //
@@ -172,7 +172,7 @@ class ClassServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testCollectClassesRecursively() {
+    static Stream<Arguments> testCollectClassesRecursively() {
         return Stream.of( //
                 Arguments.of(
                         Simple.class.getPackageName(), //
@@ -282,7 +282,7 @@ class ClassServiceIT {
         assertThat(actual).get().hasFieldOrPropertyWithValue("name", expected.getName());
     }
 
-    private static Stream<Arguments> testLoadClass() {
+    static Stream<Arguments> testLoadClass() {
         return Stream.of( //
                 Arguments.of("io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass", SimpleClass.class), //
                 Arguments.of("io.github.tobi.laa.reflective.fluent.builders.service.api.ClassService", ClassService.class));
@@ -307,7 +307,7 @@ class ClassServiceIT {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testIsAbstract() {
+    static Stream<Arguments> testIsAbstract() {
         return Stream.of( //
                 Arguments.of(SimpleClass.class, false), //
                 Arguments.of(SimpleAbstractClass.class, true));

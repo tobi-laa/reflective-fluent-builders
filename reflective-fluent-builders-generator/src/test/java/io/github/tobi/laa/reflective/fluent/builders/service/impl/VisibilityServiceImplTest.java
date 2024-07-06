@@ -23,7 +23,7 @@ class VisibilityServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    private static Stream<Arguments> testToVisibility() {
+    static Stream<Arguments> testToVisibility() {
         return Stream.of( //
                 Arguments.of(modifiersOf("privateMethod"), Visibility.PRIVATE), //
                 Arguments.of(modifiersOf("privateStaticMethod"), Visibility.PRIVATE), //

@@ -43,7 +43,7 @@ class TypeNameGeneratorImplTest {
         assertThat(actual).hasToString(expected);
     }
 
-    private static Stream<Arguments> testGenerateTypeNameForParamSetter() {
+    static Stream<Arguments> testGenerateTypeNameForParamSetter() {
         return Stream.of(Arguments.of(new SimpleType(int.class), "int"),
                 Arguments.of(new CollectionType(
                                 TypeUtils.parameterize(Deque.class, Object.class),
@@ -105,7 +105,7 @@ class TypeNameGeneratorImplTest {
         assertThat(actual).hasToString(expected);
     }
 
-    private static Stream<Arguments> testGenerateTypeNameForParamType() {
+    static Stream<Arguments> testGenerateTypeNameForParamType() {
         return Stream.of(
                 Arguments.of(int.class, "int"),
                 Arguments.of(String.class, "java.lang.String"),

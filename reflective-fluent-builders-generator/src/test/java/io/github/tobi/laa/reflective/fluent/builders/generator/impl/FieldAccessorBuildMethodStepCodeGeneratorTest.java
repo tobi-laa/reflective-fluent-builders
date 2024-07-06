@@ -40,7 +40,7 @@ class FieldAccessorBuildMethodStepCodeGeneratorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testIsApplicable() {
+    static Stream<Arguments> testIsApplicable() {
         return Stream.of(
                 Arguments.of(
                         Getter.builder() //

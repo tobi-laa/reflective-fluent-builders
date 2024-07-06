@@ -22,7 +22,7 @@ class AbstractWriteAccessorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testCompareTo() {
+    static Stream<Arguments> testCompareTo() {
         final var accessor = TestAccessor.builder() //
                 .propertyType(new MapType(Map.class, Object.class, Object.class)) //
                 .propertyName("aName") //

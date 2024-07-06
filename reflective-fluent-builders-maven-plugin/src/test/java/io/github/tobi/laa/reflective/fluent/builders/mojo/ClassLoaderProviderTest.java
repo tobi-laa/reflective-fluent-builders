@@ -107,7 +107,7 @@ class ClassLoaderProviderTest {
         verifyNoMoreInteractions(logger);
     }
 
-    private static Stream<Arguments> testGetNoOldClassLoader() {
+    static Stream<Arguments> testGetNoOldClassLoader() {
         return Stream.of( //
                 Arguments.of(new String[0], new URL[0]), //
                 Arguments.of( //

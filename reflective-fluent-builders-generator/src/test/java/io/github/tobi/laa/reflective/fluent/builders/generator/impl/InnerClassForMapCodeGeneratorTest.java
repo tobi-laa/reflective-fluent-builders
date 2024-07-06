@@ -108,7 +108,7 @@ class InnerClassForMapCodeGeneratorTest {
         verifyNoInteractions(initializerGeneratorA, initializerGeneratorB);
     }
 
-    private static Stream<Setter> testIsApplicableFalseWrongType() {
+    static Stream<Setter> testIsApplicableFalseWrongType() {
         return testGenerateCodeGenerationExceptionWrongType().map(args -> args.get()[1]).map(Setter.class::cast);
     }
 
@@ -121,7 +121,7 @@ class InnerClassForMapCodeGeneratorTest {
         assertFalse(actual);
     }
 
-    private static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
+    static Stream<Setter> testIsApplicableFalseNoInitializerGeneratorApplicable() {
         return Stream.of( //
                 Setter.builder() //
                         .methodName("setMap") //
@@ -149,7 +149,7 @@ class InnerClassForMapCodeGeneratorTest {
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorA, initializerGeneratorB);
     }
 
-    private static Stream<Arguments> testGenerateCodeNull() {
+    static Stream<Arguments> testGenerateCodeNull() {
         return Stream.of( //
                 Arguments.of(null, null),
                 Arguments.of( //
@@ -186,7 +186,7 @@ class InnerClassForMapCodeGeneratorTest {
         verifyNoInteractions(builderClassNameGenerator, initializerGeneratorB, initializerGeneratorB);
     }
 
-    private static Stream<Arguments> testGenerateCodeGenerationExceptionWrongType() {
+    static Stream<Arguments> testGenerateCodeGenerationExceptionWrongType() {
         return Stream.of( //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -253,7 +253,7 @@ class InnerClassForMapCodeGeneratorTest {
                 .hasMessageContaining(setter.getPropertyType().toString());
     }
 
-    private static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
+    static Stream<Arguments> testGenerateCodeGenerationExceptionNoInitializerGeneratorApplicable() {
         return testIsApplicableFalseNoInitializerGeneratorApplicable() //
                 .map(setter -> Arguments.of( //
                         BuilderMetadata.builder() //
@@ -288,7 +288,7 @@ class InnerClassForMapCodeGeneratorTest {
         verify(initializerGeneratorA).generateMapInitializer(mapType);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         final var mockTypeName = MockType.class.getName().replace('$', '.');
         return Stream.of( //
                 Arguments.of( //

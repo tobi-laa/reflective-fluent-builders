@@ -63,7 +63,7 @@ class InnerClassForArrayCodeGeneratorTest {
         assertTrue(actual);
     }
 
-    private static Stream<Setter> testIsApplicableTrue() {
+    static Stream<Setter> testIsApplicableTrue() {
         return Stream.of( //
                 Setter.builder() //
                         .methodName("setFloats") //
@@ -90,7 +90,7 @@ class InnerClassForArrayCodeGeneratorTest {
         assertFalse(actual);
     }
 
-    private static Stream<Setter> testIsApplicableFalse() {
+    static Stream<Setter> testIsApplicableFalse() {
         return testGenerateCodeGenerationException().map(args -> args.get()[1]).map(Setter.class::cast);
     }
 
@@ -104,7 +104,7 @@ class InnerClassForArrayCodeGeneratorTest {
         verifyNoInteractions(builderClassNameGenerator);
     }
 
-    private static Stream<Arguments> testGenerateCodeNull() {
+    static Stream<Arguments> testGenerateCodeNull() {
         return Stream.of( //
                 Arguments.of(null, null),
                 Arguments.of( //
@@ -141,7 +141,7 @@ class InnerClassForArrayCodeGeneratorTest {
         verifyNoInteractions(builderClassNameGenerator);
     }
 
-    private static Stream<Arguments> testGenerateCodeGenerationException() {
+    static Stream<Arguments> testGenerateCodeGenerationException() {
         return Stream.of( //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -207,7 +207,7 @@ class InnerClassForArrayCodeGeneratorTest {
         verify(builderClassNameGenerator).generateClassName(builderMetadata);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         final var mockTypeName = MockType.class.getName().replace('$', '.');
         return Stream.of( //
                 Arguments.of( //

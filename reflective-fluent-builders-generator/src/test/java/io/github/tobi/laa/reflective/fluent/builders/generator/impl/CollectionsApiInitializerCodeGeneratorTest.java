@@ -42,7 +42,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertTrue(isApplicable);
     }
 
-    private static Stream<CollectionType> testIsApplicableTrueForCollectionType() {
+    static Stream<CollectionType> testIsApplicableTrueForCollectionType() {
         return testGenerateCollectionInitializer().map(args -> args.get()[0]).map(CollectionType.class::cast);
     }
 
@@ -55,7 +55,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertFalse(isApplicable);
     }
 
-    private static Stream<CollectionType> testIsApplicableFalseForCollectionType() {
+    static Stream<CollectionType> testIsApplicableFalseForCollectionType() {
         return Stream.of(
                 collectionType(EnumSet.class),
                 collectionType(MyList.class));
@@ -82,7 +82,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .contains(collectionType.getType().getTypeName());
     }
 
-    private static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
+    static Stream<CollectionType> testGenerateCollectionInitializerCodeGenerationException() {
         return testIsApplicableFalseForCollectionType();
     }
 
@@ -95,7 +95,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> testGenerateCollectionInitializer() {
+    static Stream<Arguments> testGenerateCollectionInitializer() {
         return Stream.concat( //
                 CollectionsApiInitializerCodeGenerator.SUPPORTED_COLLECTIONS //
                         .stream() //
@@ -155,7 +155,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertTrue(isApplicable);
     }
 
-    private static Stream<MapType> testIsApplicableTrueForMapType() {
+    static Stream<MapType> testIsApplicableTrueForMapType() {
         return testGenerateMapInitializer().map(args -> args.get()[0]).map(MapType.class::cast);
     }
 
@@ -168,7 +168,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertFalse(isApplicable);
     }
 
-    private static Stream<MapType> testIsApplicableFalseForMapType() {
+    static Stream<MapType> testIsApplicableFalseForMapType() {
         return Stream.of(
                 mapType(EnumMap.class),
                 mapType(MyMap.class));
@@ -195,7 +195,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
                 .contains(mapType.getType().getTypeName());
     }
 
-    private static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
+    static Stream<MapType> testGenerateMapInitializerCodeGenerationException() {
         return testIsApplicableFalseForMapType();
     }
 
@@ -208,7 +208,7 @@ class CollectionsApiInitializerCodeGeneratorTest {
         assertThat(actual).hasToString(expected.toString());
     }
 
-    private static Stream<Arguments> testGenerateMapInitializer() {
+    static Stream<Arguments> testGenerateMapInitializer() {
         return Stream.concat( //
                 CollectionsApiInitializerCodeGenerator.SUPPORTED_MAPS //
                         .stream() //

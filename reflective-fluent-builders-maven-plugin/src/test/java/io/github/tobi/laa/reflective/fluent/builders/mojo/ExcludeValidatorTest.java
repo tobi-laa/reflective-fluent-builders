@@ -21,7 +21,7 @@ class ExcludeValidatorTest {
         assertTrue(actual);
     }
 
-    private static Stream<Exclude> isValidTrue() {
+    static Stream<Exclude> isValidTrue() {
         return Stream.of( //
                 null, //
                 new Exclude(null, null, null, "notNull"), //
@@ -39,7 +39,7 @@ class ExcludeValidatorTest {
         assertFalse(actual);
     }
 
-    private static Stream<Exclude> isValidFalse() {
+    static Stream<Exclude> isValidFalse() {
         return Stream.of( //
                 new Exclude(null, null, null, null), //
                 new Exclude(null, null, "notNull", "notNull"), //

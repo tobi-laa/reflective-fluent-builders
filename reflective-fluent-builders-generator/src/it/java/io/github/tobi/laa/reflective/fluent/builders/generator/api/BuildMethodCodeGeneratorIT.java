@@ -52,7 +52,7 @@ class BuildMethodCodeGeneratorIT {
         assertThat(actual).hasToString(expected);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         return Stream.of(
                 Arguments.of(
                         BuilderMetadata.builder() //

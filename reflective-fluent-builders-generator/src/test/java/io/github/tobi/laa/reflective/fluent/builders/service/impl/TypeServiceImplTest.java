@@ -50,7 +50,7 @@ class TypeServiceImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testExplodeTypeWildcard() {
+    static Stream<Arguments> testExplodeTypeWildcard() {
         return Stream.of( //
                 Arguments.of( //
                         wildcardType().withLowerBounds(Number.class).build(), //
@@ -72,7 +72,7 @@ class TypeServiceImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testExplodeTypeTypeVariable() {
+    static Stream<Arguments> testExplodeTypeTypeVariable() {
         return Stream.of( //
                 Arguments.of(typeVariable("r"), Set.of(Object.class)), //
                 Arguments.of(typeVariable("s"), Set.of(Number.class)), //
@@ -95,7 +95,7 @@ class TypeServiceImplTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testExplodeTypeParameterizedType() {
+    static Stream<Arguments> testExplodeTypeParameterizedType() {
         return Stream.of( //
                 // constructed type is List<String>
                 Arguments.of( //

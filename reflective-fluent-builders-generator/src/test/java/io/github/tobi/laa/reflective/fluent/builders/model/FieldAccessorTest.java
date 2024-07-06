@@ -21,7 +21,7 @@ class FieldAccessorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> testEquals() {
+    static Stream<Arguments> testEquals() {
         final var fieldAccessor = FieldAccessor.builder() //
                 .propertyType(new SimpleType(String.class)) //
                 .propertyName("aName") //

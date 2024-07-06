@@ -82,7 +82,7 @@ class InnerClassFieldValueCodeGeneratorTest {
                 .forEach(verify(typeNameGenerator)::generateTypeName);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         final var fieldValue = ClassName.get(MockType.class).nestedClass(FieldValue.CLASS_NAME);
         return Stream.of(
                 Arguments.of(

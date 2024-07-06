@@ -96,7 +96,7 @@ class BuilderMetadataServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testCollectBuilderMetadata() {
+    static Stream<Arguments> testCollectBuilderMetadata() {
         final var packagePrivate = Class.forName("io.github.tobi.laa.reflective.fluent.builders.test.models.visibility.PackagePrivate");
         final var setOfList = ClassWithCollections.class.getDeclaredField("set").getGenericType();
         return Stream.of( //
@@ -379,7 +379,7 @@ class BuilderMetadataServiceIT {
     }
 
     @SneakyThrows
-    private static Stream<Arguments> testFilterOutConfiguredExcludes() {
+    static Stream<Arguments> testFilterOutConfiguredExcludes() {
         return Stream.of( //
                 Arguments.of( //
                         Collections.emptySet(), //
@@ -435,7 +435,7 @@ class BuilderMetadataServiceIT {
         assertEquals(expected, actual);
     }
 
-    private static Stream<Arguments> testFilterOutEmptyBuilders() {
+    static Stream<Arguments> testFilterOutEmptyBuilders() {
         return Stream.of( //
                 Arguments.of(Collections.emptySet(), Collections.emptySet()), //
                 Arguments.of(

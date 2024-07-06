@@ -45,7 +45,7 @@ class ConstructorWithObjectSupplierCodeGeneratorTest {
         assertThat(actual.get().toString()).isEqualToIgnoringNewLines(expected);
     }
 
-    private static Stream<Arguments> testGenerate() {
+    static Stream<Arguments> testGenerate() {
         return Stream.of(
                 Arguments.of(
                         BuilderMetadata.builder() //
