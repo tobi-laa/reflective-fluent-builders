@@ -32,19 +32,13 @@ class GeneratedBuilderMarkerFieldCodeGeneratorTest {
         final FieldSpec actual = generator.generate(builderMetadata);
         // Assert
         assertThat(actual).isNotNull();
-        //
-        //
-        //
-        //
         assertThat(actual.toString())
                 .isEqualToIgnoringNewLines(String.format( //
-                        """
-                                /**
-                                 * This field is solely used to be able to detect generated builders via reflection at a later stage.
-                                 */
-                                @java.lang.SuppressWarnings("all")
-                                private boolean %s;
-                                """, //
+                        "/**\n" + //
+                                " * This field is solely used to be able to detect generated builders via reflection at a later stage.\n" + //
+                                " */\n" + //
+                                "@java.lang.SuppressWarnings(\"all\")\n" + //
+                                "private boolean %s;\n", //
                         GENERATED_BUILDER_MARKER_FIELD_NAME));
     }
 }

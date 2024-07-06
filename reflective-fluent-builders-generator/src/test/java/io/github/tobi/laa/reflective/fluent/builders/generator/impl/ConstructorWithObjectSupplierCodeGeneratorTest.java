@@ -56,16 +56,14 @@ class ConstructorWithObjectSupplierCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(true) //
                                         .build()) //
                                 .build(), //
-                        """
-                                /**
-                                 * Creates a new instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass} using the given {@code objectSupplier}.
-                                 * Has been set to visibility {@code protected} so that users may choose to inherit the builder.
-                                 */\
-                                protected Constructor(
-                                    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass> objectSupplier) {
-                                  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);
-                                }
-                                """),
+                        "/**\n" +
+                                " * Creates a new instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass} using the given {@code objectSupplier}.\n" +
+                                " * Has been set to visibility {@code protected} so that users may choose to inherit the builder.\n" +
+                                " */" +
+                                "protected Constructor(\n" +
+                                "    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.simple.SimpleClass> objectSupplier) {\n" +
+                                "  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);\n" +
+                                "}\n"),
                 Arguments.of(
                         BuilderMetadata.builder() //
                                 .packageName("a.whole.different.pack") //
@@ -75,15 +73,13 @@ class ConstructorWithObjectSupplierCodeGeneratorTest {
                                         .accessibleNonArgsConstructor(false) //
                                         .build()) //
                                 .build(), //
-                        """
-                                /**
-                                 * Creates a new instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy} using the given {@code objectSupplier}.
-                                 * Has been set to visibility {@code protected} so that users may choose to inherit the builder.
-                                 */\
-                                protected Constructor(
-                                    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy> objectSupplier) {
-                                  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);
-                                }
-                                """));
+                        "/**\n" +
+                                " * Creates a new instance of {@link io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy} using the given {@code objectSupplier}.\n" +
+                                " * Has been set to visibility {@code protected} so that users may choose to inherit the builder.\n" +
+                                " */" +
+                                "protected Constructor(\n" +
+                                "    final java.util.function.Supplier<io.github.tobi.laa.reflective.fluent.builders.test.models.complex.hierarchy.ClassWithHierarchy> objectSupplier) {\n" +
+                                "  this.objectSupplier = java.util.Objects.requireNonNull(objectSupplier);\n" +
+                                "}\n"));
     }
 }

@@ -58,177 +58,176 @@ class JavaFileGeneratorIT {
         // Assert
         assertThat(actual).isNotNull();
         assertThat(actual.toString()).isEqualToIgnoringNewLines(
-                """
-                        package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;
-
-                        import java.lang.Float;
-                        import java.lang.SuppressWarnings;
-                        import java.util.ArrayList;
-                        import java.util.List;
-                        import java.util.Objects;
-                        import java.util.function.Supplier;
-                        import javax.annotation.processing.Generated;
-
-                        /**
-                         * Builder for {@link ClassWithGenerics}.
-                         */
-                        @Generated(
-                            value = "io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator",
-                            date = "3333-03-13T00:00Z[UTC]"
-                        )
-                        public class ClassWithGenericsBuilder<T> {
-                          /**
-                           * This field is solely used to be able to detect generated builders via reflection at a later stage.
-                           */
-                          @SuppressWarnings("all")
-                          private boolean ______generatedByReflectiveFluentBuildersGenerator;
-
-                          private final Supplier<ClassWithGenerics> objectSupplier;
-
-                          private final CallSetterFor callSetterFor = new CallSetterFor();
-
-                          private final FieldValue fieldValue = new FieldValue();
-
-                          /**
-                           * Creates a new instance of {@link ClassWithGenerics} using the given {@code objectSupplier}.
-                           * Has been set to visibility {@code protected} so that users may choose to inherit the builder.
-                           */
-                          protected ClassWithGenericsBuilder(final Supplier<ClassWithGenerics> objectSupplier) {
-                            this.objectSupplier = Objects.requireNonNull(objectSupplier);
-                          }
-
-                          /**
-                           * Creates an instance of {@link ClassWithGenericsBuilder} that will work on a new instance of {@link ClassWithGenerics} once {@link #build()} is called.
-                           */
-                          public static ClassWithGenericsBuilder newInstance() {
-                            return new ClassWithGenericsBuilder(ClassWithGenerics::new);
-                          }
-
-                          /**
-                           * Creates an instance of {@link ClassWithGenericsBuilder} that will work on an instance of {@link ClassWithGenerics} that is created initially by the given {@code supplier} once {@link #build()} is called.
-                           */
-                          public static ClassWithGenericsBuilder withSupplier(final Supplier<ClassWithGenerics> supplier) {
-                            return new ClassWithGenericsBuilder(supplier);
-                          }
-
-                          /**
-                           * Returns an inner builder for the array property {@code floats} for chained calls of adding items to it.
-                           * Can be used like follows:
-                           * <pre>
-                           * builder.floats()
-                           *        .add(item1)
-                           *        .add(item2)
-                           *        .and()
-                           *        .build()
-                           * </pre>
-                           * @return The inner builder for the array property {@code floats}.
-                           */
-                          public ArrayFloats floats() {
-                            return new ArrayFloats();
-                          }
-
-                          /**
-                           * Sets the value for the {@code anInt} property.
-                           * To be more precise, this will lead to {@link ClassWithGenerics#setAnInt(int)} being called on construction of the object.
-                           * @param anInt the value to set.
-                           * @return This builder for chained calls.
-                           */
-                          public ClassWithGenericsBuilder anInt(final int anInt) {
-                            this.fieldValue.anInt = anInt;
-                            this.callSetterFor.anInt = true;
-                            return this;
-                          }
-
-                          /**
-                           * Sets the value for the {@code floats} property.
-                           * To be more precise, this will lead to {@link ClassWithGenerics#setFloats(float[])} being called on construction of the object.
-                           * @param floats the value to set.
-                           * @return This builder for chained calls.
-                           */
-                          public ClassWithGenericsBuilder floats(final float[] floats) {
-                            this.fieldValue.floats = floats;
-                            this.callSetterFor.floats = true;
-                            return this;
-                          }
-
-                          /**
-                           * Sets the value for the {@code t} property.
-                           * To be more precise, this will lead to {@link ClassWithGenerics#setT(T)} being called on construction of the object.
-                           * @param t the value to set.
-                           * @return This builder for chained calls.
-                           */
-                          public ClassWithGenericsBuilder t(final T t) {
-                            this.fieldValue.t = t;
-                            this.callSetterFor.t = true;
-                            return this;
-                          }
-
-                          /**
-                           * Performs the actual construction of an instance for {@link ClassWithGenerics}.
-                           * @return The constructed instance. Never {@code null}.
-                           */
-                          public ClassWithGenerics build() {
-                            final ClassWithGenerics objectToBuild = this.objectSupplier.get();
-                            if (this.callSetterFor.anInt) {
-                              objectToBuild.setAnInt(this.fieldValue.anInt);
-                            }
-                            if (this.callSetterFor.floats) {
-                              objectToBuild.setFloats(this.fieldValue.floats);
-                            }
-                            if (this.callSetterFor.t) {
-                              objectToBuild.setT(this.fieldValue.t);
-                            }
-                            return objectToBuild;
-                          }
-
-                          private class CallSetterFor {
-                            boolean anInt;
-
-                            boolean floats;
-
-                            boolean t;
-                          }
-
-                          private class FieldValue {
-                            int anInt;
-
-                            float[] floats;
-
-                            T t;
-                          }
-
-                          public class ArrayFloats {
-                            private List<Float> list;
-
-                            /**
-                             * Adds an item to the array property {@code floats}.
-                             * @param item The item to add to the array {@code floats}.
-                             * @return This builder for chained calls.
-                             */
-                            public ArrayFloats add(final float item) {
-                              if (this.list == null) {
-                                this.list = new ArrayList<>();
-                              }
-                              this.list.add(item);
-                              ClassWithGenericsBuilder.this.callSetterFor.floats = true;
-                              return this;
-                            }
-
-                            /**
-                             * Returns the builder for the parent object.
-                             * @return The builder for the parent object.
-                             */
-                            public ClassWithGenericsBuilder and() {
-                              if (this.list != null) {
-                                ClassWithGenericsBuilder.this.fieldValue.floats = new float[this.list.size()];
-                                for (int i = 0; i < this.list.size(); i++) {
-                                  ClassWithGenericsBuilder.this.fieldValue.floats[i] = this.list.get(i);
-                                }
-                              }
-                              return ClassWithGenericsBuilder.this;
-                            }
-                          }
-                        }""");
+                "package io.github.tobi.laa.reflective.fluent.builders.test.models.complex;\n" +
+                        "\n" +
+                        "import java.lang.Float;\n" +
+                        "import java.lang.SuppressWarnings;\n" +
+                        "import java.util.ArrayList;\n" +
+                        "import java.util.List;\n" +
+                        "import java.util.Objects;\n" +
+                        "import java.util.function.Supplier;\n" +
+                        "import javax.annotation.processing.Generated;\n" +
+                        "\n" +
+                        "/**\n" +
+                        " * Builder for {@link ClassWithGenerics}.\n" +
+                        " */\n" +
+                        "@Generated(\n" +
+                        "    value = \"io.github.tobi.laa.reflective.fluent.builders.generator.api.JavaFileGenerator\",\n" +
+                        "    date = \"3333-03-13T00:00Z[UTC]\"\n" +
+                        ")\n" +
+                        "public class ClassWithGenericsBuilder<T> {\n" +
+                        "  /**\n" +
+                        "   * This field is solely used to be able to detect generated builders via reflection at a later stage.\n" +
+                        "   */\n" +
+                        "  @SuppressWarnings(\"all\")\n" +
+                        "  private boolean ______generatedByReflectiveFluentBuildersGenerator;\n" +
+                        "\n" +
+                        "  private final Supplier<ClassWithGenerics> objectSupplier;\n" +
+                        "\n" +
+                        "  private final CallSetterFor callSetterFor = new CallSetterFor();\n" +
+                        "\n" +
+                        "  private final FieldValue fieldValue = new FieldValue();\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Creates a new instance of {@link ClassWithGenerics} using the given {@code objectSupplier}.\n" +
+                        "   * Has been set to visibility {@code protected} so that users may choose to inherit the builder.\n" +
+                        "   */\n" +
+                        "  protected ClassWithGenericsBuilder(final Supplier<ClassWithGenerics> objectSupplier) {\n" +
+                        "    this.objectSupplier = Objects.requireNonNull(objectSupplier);\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Creates an instance of {@link ClassWithGenericsBuilder} that will work on a new instance of {@link ClassWithGenerics} once {@link #build()} is called.\n" +
+                        "   */\n" +
+                        "  public static ClassWithGenericsBuilder newInstance() {\n" +
+                        "    return new ClassWithGenericsBuilder(ClassWithGenerics::new);\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Creates an instance of {@link ClassWithGenericsBuilder} that will work on an instance of {@link ClassWithGenerics} that is created initially by the given {@code supplier} once {@link #build()} is called.\n" +
+                        "   */\n" +
+                        "  public static ClassWithGenericsBuilder withSupplier(final Supplier<ClassWithGenerics> supplier) {\n" +
+                        "    return new ClassWithGenericsBuilder(supplier);\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Returns an inner builder for the array property {@code floats} for chained calls of adding items to it.\n" +
+                        "   * Can be used like follows:\n" +
+                        "   * <pre>\n" +
+                        "   * builder.floats()\n" +
+                        "   *        .add(item1)\n" +
+                        "   *        .add(item2)\n" +
+                        "   *        .and()\n" +
+                        "   *        .build()\n" +
+                        "   * </pre>\n" +
+                        "   * @return The inner builder for the array property {@code floats}.\n" +
+                        "   */\n" +
+                        "  public ArrayFloats floats() {\n" +
+                        "    return new ArrayFloats();\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Sets the value for the {@code anInt} property.\n" +
+                        "   * To be more precise, this will lead to {@link ClassWithGenerics#setAnInt(int)} being called on construction of the object.\n" +
+                        "   * @param anInt the value to set.\n" +
+                        "   * @return This builder for chained calls.\n" +
+                        "   */\n" +
+                        "  public ClassWithGenericsBuilder anInt(final int anInt) {\n" +
+                        "    this.fieldValue.anInt = anInt;\n" +
+                        "    this.callSetterFor.anInt = true;\n" +
+                        "    return this;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Sets the value for the {@code floats} property.\n" +
+                        "   * To be more precise, this will lead to {@link ClassWithGenerics#setFloats(float[])} being called on construction of the object.\n" +
+                        "   * @param floats the value to set.\n" +
+                        "   * @return This builder for chained calls.\n" +
+                        "   */\n" +
+                        "  public ClassWithGenericsBuilder floats(final float[] floats) {\n" +
+                        "    this.fieldValue.floats = floats;\n" +
+                        "    this.callSetterFor.floats = true;\n" +
+                        "    return this;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Sets the value for the {@code t} property.\n" +
+                        "   * To be more precise, this will lead to {@link ClassWithGenerics#setT(T)} being called on construction of the object.\n" +
+                        "   * @param t the value to set.\n" +
+                        "   * @return This builder for chained calls.\n" +
+                        "   */\n" +
+                        "  public ClassWithGenericsBuilder t(final T t) {\n" +
+                        "    this.fieldValue.t = t;\n" +
+                        "    this.callSetterFor.t = true;\n" +
+                        "    return this;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  /**\n" +
+                        "   * Performs the actual construction of an instance for {@link ClassWithGenerics}.\n" +
+                        "   * @return The constructed instance. Never {@code null}.\n" +
+                        "   */\n" +
+                        "  public ClassWithGenerics build() {\n" +
+                        "    final ClassWithGenerics objectToBuild = this.objectSupplier.get();\n" +
+                        "    if (this.callSetterFor.anInt) {\n" +
+                        "      objectToBuild.setAnInt(this.fieldValue.anInt);\n" +
+                        "    }\n" +
+                        "    if (this.callSetterFor.floats) {\n" +
+                        "      objectToBuild.setFloats(this.fieldValue.floats);\n" +
+                        "    }\n" +
+                        "    if (this.callSetterFor.t) {\n" +
+                        "      objectToBuild.setT(this.fieldValue.t);\n" +
+                        "    }\n" +
+                        "    return objectToBuild;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  private class CallSetterFor {\n" +
+                        "    boolean anInt;\n" +
+                        "\n" +
+                        "    boolean floats;\n" +
+                        "\n" +
+                        "    boolean t;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  private class FieldValue {\n" +
+                        "    int anInt;\n" +
+                        "\n" +
+                        "    float[] floats;\n" +
+                        "\n" +
+                        "    T t;\n" +
+                        "  }\n" +
+                        "\n" +
+                        "  public class ArrayFloats {\n" +
+                        "    private List<Float> list;\n" +
+                        "\n" +
+                        "    /**\n" +
+                        "     * Adds an item to the array property {@code floats}.\n" +
+                        "     * @param item The item to add to the array {@code floats}.\n" +
+                        "     * @return This builder for chained calls.\n" +
+                        "     */\n" +
+                        "    public ArrayFloats add(final float item) {\n" +
+                        "      if (this.list == null) {\n" +
+                        "        this.list = new ArrayList<>();\n" +
+                        "      }\n" +
+                        "      this.list.add(item);\n" +
+                        "      ClassWithGenericsBuilder.this.callSetterFor.floats = true;\n" +
+                        "      return this;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    /**\n" +
+                        "     * Returns the builder for the parent object.\n" +
+                        "     * @return The builder for the parent object.\n" +
+                        "     */\n" +
+                        "    public ClassWithGenericsBuilder and() {\n" +
+                        "      if (this.list != null) {\n" +
+                        "        ClassWithGenericsBuilder.this.fieldValue.floats = new float[this.list.size()];\n" +
+                        "        for (int i = 0; i < this.list.size(); i++) {\n" +
+                        "          ClassWithGenericsBuilder.this.fieldValue.floats[i] = this.list.get(i);\n" +
+                        "        }\n" +
+                        "      }\n" +
+                        "      return ClassWithGenericsBuilder.this;\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}");
     }
 
     private TypeVariable<?> typeVariableT() {

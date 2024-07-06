@@ -116,10 +116,8 @@ class AdderBuildMethodStepCodeGeneratorTest {
         // Act
         final var expected = generator.generate(writeAccessor);
         // Assert
-        assertThat(expected).hasToString("""
-                if (this.callSetterFor.items && this.fieldValue.items != null) {
-                  this.fieldValue.items.forEach(objectToBuild::addItem);
-                }
-                """);
+        assertThat(expected).hasToString("if (this.callSetterFor.items && this.fieldValue.items != null) {\n" +
+                "  this.fieldValue.items.forEach(objectToBuild::addItem);\n" +
+                "}\n");
     }
 }

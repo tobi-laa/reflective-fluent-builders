@@ -227,61 +227,57 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                """
-                                        /**
-                                         * Returns an inner builder for the array property {@code floats} for chained calls of adding items to it.
-                                         * Can be used like follows:
-                                         * <pre>
-                                         * builder.floats()
-                                         *        .add(item1)
-                                         *        .add(item2)
-                                         *        .and()
-                                         *        .build()
-                                         * </pre>
-                                         * @return The inner builder for the array property {@code floats}.
-                                         */
-                                        public %1$s.ArrayFloats floats(
-                                            ) {
-                                          return new %1$s.ArrayFloats();
-                                        }
-                                        """,
+                                "/**\n" +
+                                        " * Returns an inner builder for the array property {@code floats} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.floats()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the array property {@code floats}.\n" +
+                                        " */\n" +
+                                        "public %1$s.ArrayFloats floats(\n" +
+                                        "    ) {\n" +
+                                        "  return new %1$s.ArrayFloats();\n" +
+                                        "}\n",
                                 mockTypeName), //
                         String.format(
-                                """
-                                        public class ArrayFloats {
-                                          private java.util.List<java.lang.Float> list;
-
-                                          /**
-                                           * Adds an item to the array property {@code floats}.
-                                           * @param item The item to add to the array {@code floats}.
-                                           * @return This builder for chained calls.
-                                           */
-                                          public %1$s.ArrayFloats add(
-                                              final float item) {
-                                            if (this.list == null) {
-                                              this.list = new java.util.ArrayList<>();
-                                            }
-                                            this.list.add(item);
-                                            %1$s.this.callSetterFor.floats = true;
-                                            return this;
-                                          }
-
-                                          /**
-                                           * Returns the builder for the parent object.
-                                           * @return The builder for the parent object.
-                                           */
-                                          public %1$s and(
-                                              ) {
-                                            if (this.list != null) {
-                                              %1$s.this.fieldValue.floats = new float[this.list.size()];
-                                              for (int i = 0; i < this.list.size(); i++) {
-                                                %1$s.this.fieldValue.floats[i] = this.list.get(i);
-                                              }
-                                            }
-                                            return %1$s.this;
-                                          }
-                                        }
-                                        """,
+                                "public class ArrayFloats {\n" +
+                                        "  private java.util.List<java.lang.Float> list;\n" +
+                                        "\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the array property {@code floats}.\n" +
+                                        "   * @param item The item to add to the array {@code floats}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
+                                        "  public %1$s.ArrayFloats add(\n" +
+                                        "      final float item) {\n" +
+                                        "    if (this.list == null) {\n" +
+                                        "      this.list = new java.util.ArrayList<>();\n" +
+                                        "    }\n" +
+                                        "    this.list.add(item);\n" +
+                                        "    %1$s.this.callSetterFor.floats = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    if (this.list != null) {\n" +
+                                        "      %1$s.this.fieldValue.floats = new float[this.list.size()];\n" +
+                                        "      for (int i = 0; i < this.list.size(); i++) {\n" +
+                                        "        %1$s.this.fieldValue.floats[i] = this.list.get(i);\n" +
+                                        "      }\n" +
+                                        "    }\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)), //
                 Arguments.of( //
                         BuilderMetadata.builder() //
@@ -300,61 +296,57 @@ class InnerClassForArrayCodeGeneratorTest {
                                 .declaringClass(ClassWithCollections.class) //
                                 .build(), //
                         String.format(
-                                """
-                                        /**
-                                         * Returns an inner builder for the array property {@code strings} for chained calls of adding items to it.
-                                         * Can be used like follows:
-                                         * <pre>
-                                         * builder.strings()
-                                         *        .add(item1)
-                                         *        .add(item2)
-                                         *        .and()
-                                         *        .build()
-                                         * </pre>
-                                         * @return The inner builder for the array property {@code strings}.
-                                         */
-                                        public %1$s.ArrayStrings strings(
-                                            ) {
-                                          return new %1$s.ArrayStrings();
-                                        }
-                                        """,
+                                "/**\n" +
+                                        " * Returns an inner builder for the array property {@code strings} for chained calls of adding items to it.\n" +
+                                        " * Can be used like follows:\n" +
+                                        " * <pre>\n" +
+                                        " * builder.strings()\n" +
+                                        " *        .add(item1)\n" +
+                                        " *        .add(item2)\n" +
+                                        " *        .and()\n" +
+                                        " *        .build()\n" +
+                                        " * </pre>\n" +
+                                        " * @return The inner builder for the array property {@code strings}.\n" +
+                                        " */\n" +
+                                        "public %1$s.ArrayStrings strings(\n" +
+                                        "    ) {\n" +
+                                        "  return new %1$s.ArrayStrings();\n" +
+                                        "}\n",
                                 mockTypeName),
                         String.format(
-                                """
-                                        public class ArrayStrings {
-                                          private java.util.List<java.lang.String> list;
-
-                                          /**
-                                           * Adds an item to the array property {@code strings}.
-                                           * @param item The item to add to the array {@code strings}.
-                                           * @return This builder for chained calls.
-                                           */
-                                          public %1$s.ArrayStrings add(
-                                              final java.lang.String item) {
-                                            if (this.list == null) {
-                                              this.list = new java.util.ArrayList<>();
-                                            }
-                                            this.list.add(item);
-                                            %1$s.this.callSetterFor.strings = true;
-                                            return this;
-                                          }
-
-                                          /**
-                                           * Returns the builder for the parent object.
-                                           * @return The builder for the parent object.
-                                           */
-                                          public %1$s and(
-                                              ) {
-                                            if (this.list != null) {
-                                              %1$s.this.fieldValue.strings = new java.lang.String[this.list.size()];
-                                              for (int i = 0; i < this.list.size(); i++) {
-                                                %1$s.this.fieldValue.strings[i] = this.list.get(i);
-                                              }
-                                            }
-                                            return %1$s.this;
-                                          }
-                                        }
-                                        """,
+                                "public class ArrayStrings {\n" +
+                                        "  private java.util.List<java.lang.String> list;\n" +
+                                        "\n" +
+                                        "  /**\n" +
+                                        "   * Adds an item to the array property {@code strings}.\n" +
+                                        "   * @param item The item to add to the array {@code strings}.\n" +
+                                        "   * @return This builder for chained calls.\n" +
+                                        "   */\n" +
+                                        "  public %1$s.ArrayStrings add(\n" +
+                                        "      final java.lang.String item) {\n" +
+                                        "    if (this.list == null) {\n" +
+                                        "      this.list = new java.util.ArrayList<>();\n" +
+                                        "    }\n" +
+                                        "    this.list.add(item);\n" +
+                                        "    %1$s.this.callSetterFor.strings = true;\n" +
+                                        "    return this;\n" +
+                                        "  }\n" +
+                                        "\n" +
+                                        "  /**\n" +
+                                        "   * Returns the builder for the parent object.\n" +
+                                        "   * @return The builder for the parent object.\n" +
+                                        "   */\n" +
+                                        "  public %1$s and(\n" +
+                                        "      ) {\n" +
+                                        "    if (this.list != null) {\n" +
+                                        "      %1$s.this.fieldValue.strings = new java.lang.String[this.list.size()];\n" +
+                                        "      for (int i = 0; i < this.list.size(); i++) {\n" +
+                                        "        %1$s.this.fieldValue.strings[i] = this.list.get(i);\n" +
+                                        "      }\n" +
+                                        "    }\n" +
+                                        "    return %1$s.this;\n" +
+                                        "  }\n" +
+                                        "}\n",
                                 mockTypeName)));
     }
 
