@@ -114,7 +114,7 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private boolean isJava21Adder(final Method method) {
-        return method.getDeclaringClass().getPackageName().equals(List.class.getPackageName()) &&
+        return method.getDeclaringClass().getPackage().getName().equals(List.class.getPackage().getName()) &&
                 (method.getName().equals("addFirst") || method.getName().equals("addLast"));
     }
 
