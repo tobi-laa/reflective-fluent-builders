@@ -107,7 +107,15 @@ class WriteAccessorServiceImpl implements WriteAccessorService {
     }
 
     private boolean isAdder(final Method method) {
-        return method.getParameterCount() == 1 && method.getName().matches(properties.getAdderPattern());
+        return method.getParameterCount() == 1
+                && method.getName().matches(properties.getAdderPattern())
+                // exclude addFirst and addLast introduced in Java 21
+                && !isJava21Adder(method);
+    }
+
+    private boolean isJava21Adder(final Method method) {
+        return method.getDeclaringClass().getPackageName().equals(List.class.getPackageName()) &&
+                (method.getName().equals("addFirst") || method.getName().equals("addLast"));
     }
 
     private SortedSet<Setter> gatherAllSetters(final List<Method> methods, final ClassInfo classInfo) {
