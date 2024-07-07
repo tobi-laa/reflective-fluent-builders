@@ -153,7 +153,7 @@ class ClassLoaderProviderTest {
 
     @SneakyThrows
     private static URL fileUrl(final String file) {
-        return new URL("file", "", -1, Paths.get(file).toAbsolutePath().toString());
+        return Paths.get(file).toAbsolutePath().toUri().toURL();
     }
 
     @SneakyThrows
