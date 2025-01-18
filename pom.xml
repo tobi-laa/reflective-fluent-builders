@@ -90,7 +90,7 @@
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <mockito.version>5.15.2</mockito.version>
-        <assertj.version>3.27.2</assertj.version>
+        <assertj.version>3.27.3</assertj.version>
         <archunit.version>1.3.0</archunit.version>
         <itf-jupiter-extension.version>0.13.1</itf-jupiter-extension.version>
         <java-diff-utils.version>4.15</java-diff-utils.version>
