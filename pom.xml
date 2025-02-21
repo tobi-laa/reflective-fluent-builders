@@ -87,7 +87,7 @@
         <plexus-build-api.version>1.2.0</plexus-build-api.version>
         <slf4j.version>2.0.7</slf4j.version>
         <!-- versions of testing dependencies -->
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <junit-jupiter.version>5.12.0</junit-jupiter.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <mockito.version>5.15.2</mockito.version>
         <assertj.version>3.27.3</assertj.version>
