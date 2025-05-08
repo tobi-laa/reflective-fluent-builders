@@ -91,7 +91,7 @@
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
         <mockito.version>5.17.0</mockito.version>
         <assertj.version>3.27.3</assertj.version>
-        <archunit.version>1.4.0</archunit.version>
+        <archunit.version>1.4.1</archunit.version>
         <itf-jupiter-extension.version>0.13.1</itf-jupiter-extension.version>
         <java-diff-utils.version>4.15</java-diff-utils.version>
         <spring-boot.version>3.4.5</spring-boot.version>
