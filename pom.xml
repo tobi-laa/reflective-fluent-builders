@@ -93,7 +93,7 @@
         <assertj.version>3.27.3</assertj.version>
         <archunit.version>1.4.1</archunit.version>
         <itf-jupiter-extension.version>0.13.1</itf-jupiter-extension.version>
-        <java-diff-utils.version>4.15</java-diff-utils.version>
+        <java-diff-utils.version>4.16</java-diff-utils.version>
         <spring-boot.version>3.5.3</spring-boot.version>
         <tycho-compiler-jdt.version>2.7.5</tycho-compiler-jdt.version>
         <!-- versions of plugins -->
