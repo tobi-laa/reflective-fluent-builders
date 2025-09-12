@@ -412,6 +412,7 @@
                         <projectVersionPolicyId>SemVerVersionPolicy</projectVersionPolicyId>
                         <tagNameFormat>v@{project.version}</tagNameFormat>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <scmCommentPrefix>:rocket:</scmCommentPrefix>
                     </configuration>
                 </plugin>
                 <plugin>
