@@ -7,6 +7,7 @@
     </parent>
     <artifactId>reflective-fluent-builders-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>A Maven plugin for generating fluent builders for existing classes via reflection.</description>
     <properties>
         <site.deploy.directory>${project.basedir}/../target/gh-pages</site.deploy.directory>

@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import java.lang.reflect.Method;
 import java.nio.file.Path;
@@ -154,7 +155,7 @@ class JavaFileHelperTest {
     private static class ClassProvider implements ArgumentsProvider {
 
         @Override
-        public Stream<Arguments> provideArguments(final ExtensionContext extensionContext) {
+        public Stream<Arguments> provideArguments(final ParameterDeclarations parameters, final ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(String.class, Paths.get("java").resolve("lang").resolve("String.class")),
                     Arguments.of(
@@ -172,7 +173,7 @@ class JavaFileHelperTest {
     private static class PackageProvider implements ArgumentsProvider {
 
         @Override
-        public Stream<Arguments> provideArguments(final ExtensionContext extensionContext) {
+        public Stream<Arguments> provideArguments(final ParameterDeclarations parameters, final ExtensionContext extensionContext) {
             final Path nested = Paths.get("io", "github", "tobi", "laa", "reflective", "fluent", "builders", "test", "models", "nested");
             return Stream.of(
                     Arguments.of(String.class.getPackage(), Paths.get("java").resolve("lang")),
@@ -191,10 +192,10 @@ class JavaFileHelperTest {
     private static class JavaNameProvider implements ArgumentsProvider {
 
         @Override
-        public Stream<Arguments> provideArguments(final ExtensionContext extensionContext) {
+        public Stream<Arguments> provideArguments(final ParameterDeclarations parameters, final ExtensionContext extensionContext) {
             return Stream.concat(
-                            new ClassProvider().provideArguments(extensionContext),
-                            new PackageProvider().provideArguments(extensionContext))
+                            new ClassProvider().provideArguments(parameters, extensionContext),
+                            new PackageProvider().provideArguments(parameters, extensionContext))
                     .map(args -> Arguments.of(getName(args.get()[0]), dropFileNameExtension(args.get()[1])));
         }
 
@@ -207,10 +208,10 @@ class JavaFileHelperTest {
     private static class PathProvider implements ArgumentsProvider {
 
         @Override
-        public Stream<Arguments> provideArguments(final ExtensionContext extensionContext) {
+        public Stream<Arguments> provideArguments(final ParameterDeclarations parameters, final ExtensionContext extensionContext) {
             return Stream.concat(
-                            new ClassProvider().provideArguments(extensionContext),
-                            new PackageProvider().provideArguments(extensionContext))
+                            new ClassProvider().provideArguments(parameters, extensionContext),
+                            new PackageProvider().provideArguments(parameters, extensionContext))
                     .map(args -> Arguments.of(args.get()[1], getName(args.get()[0])));
         }
     }
