@@ -1,6 +1,6 @@
 package io.github.tobi.laa.reflective.fluent.builders.test;
 
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@MockBean
+@MockitoBean
 public @interface InjectMock {
     // no content
 }
