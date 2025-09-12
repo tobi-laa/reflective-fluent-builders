@@ -1,6 +1,5 @@
 package io.github.tobi.laa.reflective.fluent.builders.mojo;
 
-import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -26,7 +25,6 @@ import static java.lang.ClassLoader.getSystemClassLoader;
  * </p>
  */
 @Named
-@Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 class ClassLoaderProvider extends AbstractLogEnabled implements Provider<ClassLoader> {
 
