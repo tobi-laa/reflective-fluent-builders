@@ -3,7 +3,7 @@ package io.github.tobi.laa.reflective.fluent.builders.mojo;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecution;
@@ -94,7 +94,7 @@ class MavenBuild extends AbstractLogEnabled {
     }
 
     boolean isTestPhase() {
-        return StringUtils.containsIgnoreCase(mojoExecution.getLifecyclePhase(), "test");
+        return Strings.CI.contains(mojoExecution.getLifecyclePhase(), "test");
     }
 
     void addCompileSourceRoot(final File path) {
