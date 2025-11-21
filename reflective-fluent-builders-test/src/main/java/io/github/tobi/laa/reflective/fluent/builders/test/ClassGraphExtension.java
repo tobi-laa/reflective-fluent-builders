@@ -28,7 +28,7 @@ public class ClassGraphExtension implements BeforeAllCallback {
     @Override
     public void beforeAll(final ExtensionContext extensionContext) {
         allClasses = extensionContext.getStore(Namespace.create(NAMESPACE))
-                .getOrComputeIfAbsent(ALL_CLASSES_ID, key -> loadAllClasses(), ClassInfoList.class);
+                .computeIfAbsent(ALL_CLASSES_ID, key -> loadAllClasses(), ClassInfoList.class);
     }
 
     private ClassInfoList loadAllClasses() {
