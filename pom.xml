@@ -97,7 +97,7 @@
         <spring-boot.version>3.5.9</spring-boot.version>
         <tycho-compiler-jdt.version>5.0.1</tycho-compiler-jdt.version>
         <!-- versions of plugins -->
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <maven-plugin-plugin.version>3.15.2</maven-plugin-plugin.version>
         <maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
