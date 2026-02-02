@@ -95,7 +95,7 @@
         <itf-jupiter-extension.version>0.13.1</itf-jupiter-extension.version>
         <java-diff-utils.version>4.16</java-diff-utils.version>
         <spring-boot.version>3.5.9</spring-boot.version>
-        <tycho-compiler-jdt.version>5.0.1</tycho-compiler-jdt.version>
+        <tycho-compiler-jdt.version>5.0.2</tycho-compiler-jdt.version>
         <!-- versions of plugins -->
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
