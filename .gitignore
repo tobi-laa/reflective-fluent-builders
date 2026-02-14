@@ -69,3 +69,6 @@ pom.xml.tag
 ### Jetbrains AI
 .ai
 .aiassistant
+
+### Claude Code
+CLAUDE.md
