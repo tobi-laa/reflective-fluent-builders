@@ -38,11 +38,6 @@ This project _tries_ to stay at 100% code coverage, so this is considered a must
 ----
 
 * Keep your feature branch up-to-date with `main`.
-* Multiple branches exist within this project for different Java versions:
-| Branch | Java version | | ------ | -------- | | `main`   | Java 11 | | `java8`  | Java 8 | | `java17` | Java 17 |
-+
-After your branch has been merged to `main`, please consider creating new branches based on `java8` and `java17` into which you merge `main`.
-Adjust where necessary and open new pull requests for each, referencing the original pull request and issue.
 
 == Building from Source
 
@@ -56,11 +51,7 @@ mvn clean install
 == Releases
 
 Releases are automatically built and published to Maven Central once a tag following the semantic versioning pattern is pushed (i.e. `v1.0.0`).
-For the `java8` branch, a suffix should be appended to the tag, yielding something like
-`v1.0.0-java8`.
-The artifact version should correspond to the aforementioned tag, meaning tags such as `v1.0.0` or
-`v1.0.0-java8` should only be applied if the artifact version within the project's `pom.xml` files is `1.0.0` or
-`1.0.0-java8`, respectively.
+The artifact version should correspond to the aforementioned tag, meaning a tag such as `v1.0.0` should only be applied if the artifact version within the project's `pom.xml` files is `1.0.0`.
 
 To simplify the release process, the
 https://maven.apache.org/maven-release/maven-release-plugin/[Maven Release Plugin]
@@ -69,12 +60,4 @@ can be used like this:
 [,bash]
 ----
 mvn release:prepare release:clean -B
-----
-
-For the `java8` branch, the versioning scheme does not seem to be understood correctly.
-Thus, the command from above should contain the release version, tag and following development version explicitly:
-
-[,bash]
-----
-mvn release:prepare release:clean -B -DreleaseVersion=1.0.0-java8 -DdevelopmentVersion=1.1.0-java8-SNAPSHOT -Dtag=v1.0.0-java8
 ----
