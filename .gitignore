@@ -62,3 +62,10 @@ release.properties
 pom.xml.releaseBackup
 pom.xml.next
 pom.xml.tag
+
+### Continue.dev
+.continue
+
+### Jetbrains AI
+.ai
+.aiassistant
