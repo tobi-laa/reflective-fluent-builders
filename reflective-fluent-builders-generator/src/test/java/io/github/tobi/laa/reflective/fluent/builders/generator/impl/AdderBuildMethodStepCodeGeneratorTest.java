@@ -1,14 +1,20 @@
 package io.github.tobi.laa.reflective.fluent.builders.generator.impl;
 
 import io.github.tobi.laa.reflective.fluent.builders.exception.CodeGenerationException;
-import io.github.tobi.laa.reflective.fluent.builders.model.*;
+import io.github.tobi.laa.reflective.fluent.builders.model.Adder;
+import io.github.tobi.laa.reflective.fluent.builders.model.CollectionType;
+import io.github.tobi.laa.reflective.fluent.builders.model.Getter;
+import io.github.tobi.laa.reflective.fluent.builders.model.SimpleType;
+import io.github.tobi.laa.reflective.fluent.builders.model.Visibility;
+import io.github.tobi.laa.reflective.fluent.builders.model.WriteAccessor;
 import io.github.tobi.laa.reflective.fluent.builders.service.api.WriteAccessorService;
-import io.github.tobi.laa.reflective.fluent.builders.test.IntegrationTest;
 import io.github.tobi.laa.reflective.fluent.builders.test.models.complex.ClassWithCollections;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
@@ -16,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 
-@IntegrationTest
+@ExtendWith(MockitoExtension.class)
 class AdderBuildMethodStepCodeGeneratorTest {
 
     @InjectMocks
